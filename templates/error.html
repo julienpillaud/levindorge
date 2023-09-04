@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container h-100">
+  <div class="row h-100 justify-content-center align-items-center">
+  	<div class="col-8">
+
+		{% if current_user.is_authenticated %}
+			<div class="text-center">
+				<h1 class="text-white">TU N'AS PAS ACCES A CETTE PAGE ! &#x1F606</h1>
+			</div>
+			<div class="text-center">
+				<a class="btn bg-dark-purple text-white btn-lg" href="{{ url_for('get_articles', shop=current_user.shops[0], list_category='beer') }}"><i class="fas fa-angle-left"></i>  Retour</a>
+			</div>
+		{% else %}
+			<div class="text-center">
+				<h1 class="text-white">TU N'EST PAS CONNECTE ! &#x1F632</h1>
+			</div>
+			<div class="text-center">
+				<a class="btn bg-dark-purple text-white btn-lg" href="{{ url_for('login') }}"><i class="fas fa-angle-left"></i>  Connexion</a>
+			</div>
+		{% endif %}
+
+		</div>
+	</div>
+</div>
+
+{% endblock %}

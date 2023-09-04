@@ -1,0 +1,457 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- RATIO_CATEGORY -->
+<input type="hidden" id="ratio_category" value="{{ ratio_category }}">
+
+<form method="post" id="form_product">
+  <!-- id="update_article" pour la fonction du calcul des prix -->
+  <div class="modal-dialog modal-lg" role="document" id="update_article">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+
+        <div class="col-6">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text bg-dark text-white">Edition</span>
+            </div>
+              <input type="text" class="form-control" name="type" value="{{ article.type }}" readonly>            
+          </div>
+        </div>
+        
+      </div>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+      <div class="modal-body">
+        <div class="container-fluid">
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- NAME -->
+          <div class="form-row mb-2">
+<!-- ----------------------------------------------------------------------- -->
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                {% if list_category in ['beer', 'keg', 'mini_keg'] %}
+                  <span class="input-group-text bg-dark-purple text-white">Brasserie</span>
+                {% elif list_category in ['cider'] %}
+                  <span class="input-group-text bg-dark-purple text-white">Cidrerie</span>
+                {% elif list_category in spirit_types_list %}
+                  <span class="input-group-text bg-dark-purple text-white">Distillerie</span>
+                {% elif list_category in wine_types_list %}
+                  <span class="input-group-text bg-dark-purple text-white">Appellation</span>
+                {% else %}
+                  <span class="input-group-text bg-dark-purple text-white">Désignation</span>
+                {% endif %}
+                </div>
+                {% if list_category not in wine_types_list + others_types_list %}
+                <select class="custom-select" name="name1" {% if action == 'update' %}disabled{% endif %}>
+                  <option selected></option>
+                  {% if list_category in beer_types_list %}
+                    {% for x in brewery_list %}
+                      {% if x == article.name.name1 %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    {% for x in distillery_list %}
+                      {% if x == article.name.name1 %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+                </select>
+                {% else %}
+                  <input type="text" class="form-control" name="name1" value="{{ article.name.name1 }}" required {% if action == 'update' %}readonly{% endif %}>
+                {% endif %}
+              </div>
+            </div>
+<!-- ----------------------------------------------------------------------- -->
+            {% if list_category not in others_types_list %}
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                {% if list_category in ['beer', 'keg', 'mini_keg'] %}
+                  <span class="input-group-text bg-dark-purple text-white">Bière</span>
+                {% elif list_category in ['cider'] %}
+                  <span class="input-group-text bg-dark-purple text-white">Cidre</span>
+                {% elif list_category in spirit_types_list %}
+                  <span class="input-group-text bg-dark-purple text-white">Spiritueux</span>
+                {% elif list_category in wine_types_list %}
+                  <span class="input-group-text bg-dark-purple text-white">Produit</span>
+                {% endif %}
+                </div>
+                <input type="text" class="form-control" name="name2" value="{{ article.name.name2 }}" required {% if action == 'update' %}readonly{% endif %}>
+              </div>
+            </div>
+            {% endif %}
+<!-- ----------------------------------------------------------------------- -->
+          </div>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- REGION / COLOR / TASTE -->
+          {% set beer_color_list = ['Ambrée', 'Blanche', 'Blonde', 'Brune', 'Fruitée'] %}
+          {% set wine_color_list = ['Blanc', 'Rosé', 'Rouge'] %}
+          {% set taste_list = ['-', 'Boisé', 'Epicé', 'Floral', 'Fruité', 'Iodé', 'Toasté', 'Tourbé', 'Végétal'] %}
+
+          {% if list_category not in others_types_list %}
+          <div class="form-row mb-2">
+<!-- ----------------------------------------------------------------------- -->
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">{% if list_category in wine_types_list %}Région{% else %}Pays{% endif %}</span>
+                </div>
+                <select class="custom-select" name="region" required {% if action == 'update' %}disabled{% endif %}>
+                  <option selected></option>
+                  {% if list_category in wine_types_list %}
+                    {% for x in region_list %}
+                      {% if x == article.region %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    {% for x in country_list %}
+                      {% if x == article.region %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+                </select>
+              </div>
+            </div>
+<!-- ----------------------------------------------------------------------- -->
+            {% if list_category != 'arranged' %}
+            <div class="col-6">
+              <div class="input-group">
+                {% if list_category in ['rhum', 'whisky', 'spirit'] %}
+                  <div class="input-group-prepend">
+                    <span class="input-group-text bg-dark-purple text-white">Saveur</span>
+                  </div>
+                  <select class="custom-select" name="taste" required {% if action == 'update' %}disabled{% endif %}>
+                    <option selected></option>
+                    {% for x in taste_list %}
+                      {% if x == article.taste %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                {% else %}
+                  <div class="input-group-prepend">
+                    <span class="input-group-text bg-dark-purple text-white">Couleur</span>
+                  </div>
+                  <select class="custom-select" name="color" required {% if action == 'update' %}disabled{% endif %}>
+                    <option selected></option>
+                    {% if list_category in beer_types_list %}
+                      {% for x in beer_color_list %}
+                      {% if x == article.color %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                      {% endfor %}
+                    {% else %}
+                      {% for x in wine_color_list %}
+                      {% if x == article.color %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                  </select>
+                {% endif %}
+                </div>
+              </div>
+            {% endif %}
+<!-- ----------------------------------------------------------------------- -->
+          </div>
+          {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- VOLUME / ALCOHOL_BY_VOLUME / BIODYNAMIC-->
+          {% set bio_list = ['-', 'Bio', 'Biodynamique'] %}
+
+          {% if list_category not in others_types_list %}
+          <div class="form-row mb-2">
+<!-- ----------------------------------------------------------------------- -->
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  {% if list_category in ['keg', 'mini_keg', 'bib'] %}
+                    <span class="input-group-text bg-dark-purple text-white">Volume (L)</span>
+                  {% else %}
+                    <span class="input-group-text bg-dark-purple text-white">Volume (cL)</span>
+                  {% endif %}
+                </div>
+                <select class="custom-select" name="volume" required {% if action == 'update' %}disabled{% endif %}>
+                  <option selected></option>
+                  {% for x in volume_list %}
+                      {% if x == article.volume %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+<!-- ----------------------------------------------------------------------- -->
+            {% if list_category not in wine_types_list + others_types_list %}
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Degré</span>
+                </div>
+                <input type="number" step="0.1" min="0.5" class="form-control" name="alcohol_by_volume" value="{{ article.alcohol_by_volume }}" required {% if action == 'update' %}readonly{% endif %}>
+              </div>
+            </div>
+            {% elif list_category == 'wine' %}
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Bio</span>
+                </div>
+                <select class="custom-select" name="biodynamic" required {% if action == 'update' %}disabled{% endif %}>
+                  <option selected></option>
+                  {% for x in bio_list %}
+                      {% if x == article.biodynamic %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            {% endif %}
+<!-- ----------------------------------------------------------------------- -->
+          </div>
+          {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- FOOD PAIRING -->
+          {% set food_pairing_list = ['-', 'Fruits de mer', 'Dessert', 'Fois gras', 'Fromage', 'Poisson',
+            'Viande rouge', 'Volaille', 'Charcuterie'] %}
+
+          {% if list_category == 'wine' %}
+          <div class="form-row mb-2">
+            <div class="col-12">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Accords</span>
+                </div>
+                {% for i in range(3) %}
+                  <select class="custom-select" name="food_pairing_{{ i }}" required {% if action == 'update' %}disabled{% endif %}>
+                    <option selected></option>
+                    {% for x in food_pairing_list %}
+                      {% if x == article.food_pairing[i] %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+<!-- ----------------------------------------------------------------------- -->
+          <div class="form-row mb-2">
+            <div class="col-12">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Accords</span>
+                </div>
+                {% for i in range(3, 6) %}
+                  <select class="custom-select" name="food_pairing_{{ i }}" required {% if action == 'update' %}disabled{% endif %}>
+                    <option selected></option>
+                    {% for x in food_pairing_list %}
+                      {% if x == article.food_pairing[i] %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+{% include 'article_price.html' %}
+
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- DISTRIBUTOR / REFERENCE -->
+          <div class="form-row mb-2">
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Fournisseur</span>
+                </div>
+                <select class="custom-select" name="distributor" required {% if action == 'update' %}disabled{% endif %}>
+                  <option selected></option>
+                  {% for x in distributor_list %}
+                      {% if x == article.distributor %}
+                        <option selected>{{ x }}</option>
+                      {% else %}
+                        <option>{{ x }}</option>
+                      {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Ref fournisseur</span>
+                </div>
+                <input type="text" class="form-control" name="distributor_reference" value="{{ article.distributor_reference }}" {% if action == 'update' %}readonly{% endif %}>
+              </div>
+            </div>
+          </div>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- BARCODE -->
+          <div class="form-row mb-2">
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Code-barres</span>
+                </div>
+                <input type="text" class="form-control" name="barcode" value="{{ article.barcode }}" {% if action == 'update' %}readonly{% endif %}>
+              </div>
+            </div>
+            <div class="col-6" style="display: none;">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Reference</span>
+                </div>
+                <input type="text" class="form-control" name="reference" value="{{ article.reference }}" disabled>
+              </div>
+            </div>
+          </div>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- DEPOSIT -->
+          {% if list_category == 'beer' %}
+            {% set unit_deposit = [0, 0.08, 0.1, 0.12, 0.15, 0.2, 0.3, 0.4, 0.5] %}
+          {% elif list_category == 'keg' %}
+            {% set unit_deposit = [0, 30, 45, 48] %}
+          {% elif list_category == 'mini_keg' %}
+            {% set unit_deposit = [0, 7.1] %}
+          {% endif %}
+
+          {% set case_deposit = [0, 3.1, 3.42, 3.9, 4.2, 4.5, 5.5, 6, 6.9, 7, 8, 8.6, 9.5, 11.8, 12, 14,2] %}
+
+          {% if list_category in ['beer', 'keg', 'mini_keg'] %}
+          <div class="form-row mb-2">
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  {% if list_category == 'beer' %}
+                    <span class="input-group-text bg-dark-purple text-white">Consigne bouteille</span>
+                  {% else %}
+                    <span class="input-group-text bg-dark-purple text-white">Consigne</span>
+                  {% endif %}
+                </div>
+                <select class="custom-select" name="unit" required {% if action == 'update' %}disabled{% endif %}>
+                  <option selected></option>
+                  {% for x in unit_deposit %}
+                    {% if x == article.deposit.unit %}
+                      <option selected>{{ x }}</option>
+                    {% else %}
+                      <option>{{ x }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            {% if list_category == 'beer' %}
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Consigne caisse</span>
+                </div>
+                <select class="custom-select" name="case" required {% if action == 'update' %}disabled{% endif %}>
+                  <option selected></option>
+                  {% for x in case_deposit %}
+                    {% if x == article.deposit.case %}
+                      <option selected>{{ x }}</option>
+                    {% else %}
+                      <option>{{ x }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- PACKAGING -->
+          {% set packaging_list = [0, 6, 12, 20, 24] %}
+
+          {% if list_category == 'beer' %}
+          <div class="form-row mb-2">
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Conditionnement</span>
+                </div>
+                <select class="custom-select" name="packaging" required {% if action == 'update' %}disabled{% endif %}>
+                  <option selected></option>
+                  {% for x in packaging_list %}
+                    {% if x == article.packaging %}
+                      <option selected>{{ x }}</option>
+                    {% else %}
+                      <option>{{ x }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- CREATED -->
+          <div class="form-row mb-2">
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">Créé par</span>
+                </div>
+                <input type="text" class="form-control" value="{{ article.created_by }}" readonly>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text bg-dark-purple text-white">le</span>
+                </div>
+                <input type="text" class="form-control" value="{{ article.created_at }}" readonly>
+              </div>
+            </div>
+          </div>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+        </div>
+      </div>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-outline-primary" id="update" name="update">
+          Valider
+          <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true" style="display: none;"></span>
+        </button>
+        <button type="submit" class="btn btn-outline-secondary" name="cancel" formnovalidate>Annuler</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+{% endblock %}

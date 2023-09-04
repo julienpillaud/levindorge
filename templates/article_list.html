@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'navbar.html' %}
+
+<div class="container-fluid padding-navbar">
+  <!-- id="article_list" pour la fonction de coloration du prix -->
+  <table class="table table-dark table-striped table-bordered table-hover table-sm" id="article_list">
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+    <thead class="bg-light-purple">
+      <tr>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+        <th class="text-center align-middle">#</th>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- NAME 1 -->
+        {% if list_category in ['beer', 'keg', 'mini_keg'] %}
+          <th class="text-center align-middle">Brasserie</th>
+        {% elif list_category in ['cider'] %}
+          <th class="text-center align-middle">Cidrerie</th>
+        {% elif list_category in spirit_types_list %}
+          <th class="text-center align-middle">Distillerie</th>
+        {% elif list_category in wine_types_list %}
+          <th class="text-center align-middle">Appellation</th>
+        {% else %}
+          <th class="text-center align-middle">Désignation</th>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- NAME 2 -->
+        {% if list_category not in others_types_list %}
+          {% if list_category in ['beer', 'keg', 'mini_keg'] %}
+            <th class="text-center align-middle">Bière</th>
+          {% elif list_category in ['cider'] %}
+            <th class="text-center align-middle">Cidre</th>
+          {% elif list_category in spirit_types_list %}
+            <th class="text-center align-middle">Spiritueux</th>
+          {% elif list_category in wine_types_list %}
+            <th class="text-center align-middle">Produit</th>
+          {% endif %}
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- REGION -->
+        {% if list_category not in others_types_list %}
+        {% if list_category in wine_types_list %}
+          <th class="text-center align-middle">Région</th>
+        {% else %}
+        <th class="text-center align-middle">Pays</th>
+        {% endif %}
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- COLOR / TASTE -->
+        {% if list_category not in ['arranged', 'box', 'misc', 'food'] %}
+          {% if list_category in ['rhum', 'whisky', 'spirit'] %}
+            <th class="text-center align-middle">Saveur</th>
+          {% else %}
+            <th class="text-center align-middle">Couleur</th>
+          {% endif %}
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- VOLUME -->
+        {% if list_category not in others_types_list %}
+          <th class="text-center align-middle">Vol</th>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- ALCOHOL_BY_VOLUME -->
+        {% if list_category not in ['wine', 'fortified_wine', 'sparkling_wine', 'bib', 'box', 'misc', 'food'] %}
+          <th class="text-center align-middle">Deg</th>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- PRICE -->
+        <th class="text-center align-middle text-nowrap">HT DI</th>
+        {% if list_category not in ['misc', 'food'] %}
+          <th class="text-center align-middle text-nowrap">PVC</th>
+        {% endif %}
+        <th class="text-center align-middle text-nowrap">TTC</th>
+        <th class="text-center align-middle text-nowrap">M (€)</th>
+        <th class="text-center align-middle text-nowrap">Tm (%)</th>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- STOCK -->
+        <th class="text-center align-middle">Stock</th>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- DISTRIBUTOR -->
+        <th class="text-center align-middle">Fournisseur</th>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- PACKAGING / DEPOSIT -->
+        {% if list_category in ['beer'] %}
+          <th class="text-center align-middle">Cond</th>
+        {% endif %}
+        {% if list_category in ['beer'] %}
+          <th class="text-center align-middle">C.Btle</th>
+        {% endif %}
+        {% if list_category in ['keg', 'mini_keg'] %}
+          <th class="text-center align-middle">Cons</th>
+        {% endif %}
+        {% if list_category in ['beer'] %}
+          <th class="text-center align-middle">C.Cai</th>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- TYPE -->
+        {% if list_category in ['spirit', 'fortified_wine',  'misc'] %}
+          <th class="text-center align-middle">Type</th>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- BUTTON -->
+        {% if current_user.username != 'julien' %}
+          <th></th>
+        {% else %}
+          <th></th>
+          <th></th>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+      </tr>
+    </thead>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+    <tbody>
+    {% for x in articles %}
+      <tr>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+        <td class="text-center font-weight-bold">{{ loop.index }}</td>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- NAME 1 -->
+        <td class="">{{ x.name.name1 }}</td>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- NAME 2 -->
+        {% if list_category not in others_types_list %}
+          <td class="">{{ x.name.name2 }}</td>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- REGION -->
+        {% if list_category not in others_types_list %}
+          <td class="text-center">{{ x.region }}</td>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- COLOR / TASTE -->
+        {% if list_category not in ['arranged', 'box', 'misc', 'food'] %}
+          {% if list_category in ['rhum', 'whisky', 'spirit'] %}
+            <td class="text-center">{{ x.taste }}</td>
+          {% else %}
+            <td class="text-center">{{ x.color }}</td>
+          {% endif %}
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- VOLUME -->
+        {% if list_category not in others_types_list %}
+          <td class="text-center">{{ x.volume }}</td>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- ALCOHOL_BY_VOLUME -->
+        {% if list_category not in ['wine', 'fortified_wine', 'sparkling_wine', 'bib', 'box', 'misc', 'food'] %}
+          <td class="text-center">{{ x.alcohol_by_volume }}</td>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- PRICE -->
+        <td class="text-center">{{ x.taxfree_price }}</td>
+        {% if list_category not in ['misc', 'food'] %}
+          <td class="text-center recommended_price">{{ x.recommended_price }}</td>
+        {% endif %}
+        <td class="text-center sell_price">{{ x.shops[shop]['sell_price'] }}</td>
+        <td class="text-center">{{ x.margin['margin'] }}</td>
+        <td class="text-center">{{ x.margin['markup'] }}</td>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- STOCK -->
+        <td class="text-center stock_quantity">{{ x.shops[shop]['stock_quantity'] }}</td>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- DISTRIBUTOR -->
+        <td class="text-center">{{ x.distributor }}</td>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- PACKAGING / DEPOSIT -->
+        {% if list_category in ['beer'] %}
+          <td class="text-center">{{ x.packaging }}</td>
+        {% endif %}
+        {% if list_category in ['beer', 'keg', 'mini_keg'] %}
+          <td class="text-center">{{ x.deposit.unit }}</td>
+        {% endif %}
+        {% if list_category in ['beer'] %}
+          <td class="text-center">{{ x.deposit.case }}</td>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- TYPE -->
+        {% if list_category in ['spirit', 'fortified_wine', 'misc'] %}
+          <td class="text-center">{{ x.type }}</td>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- BUTTON -->
+        {% if current_user.username != 'julien' %}
+          <td class="text-center" style="width: 20px"><a href="{{ url_for('update_article', action='update', list_category=list_category, article_id=x._id) }}"><i class="fas fa-pen" style="color:orange"></i><a/></td>
+        {% else %}
+          <td class="text-center" style="width: 20px"><a href="{{ url_for('update_article', action='update_admin', list_category=list_category, article_id=x._id) }}"><i class="fas fa-pen" style="color:orange"></i><a/></td>
+          <td class="text-center" style="width: 20px"><a href="{{ url_for('delete_article', article_id=x._id) }}"><i class="fas fa-times" style="color:red"></i><a/></td>
+        {% endif %}
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+      </tr>
+    {% endfor %}
+    </tbody>
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+  </table>
+</div>
+
+{% endblock %}

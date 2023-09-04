@@ -1,0 +1,125 @@
+/*@font-face {
+  font-family: Local Brewery;
+  src: url(../fonts/localbrewerytwo-bold.otf);
+}
+
+@font-face {
+  font-family: Brandon Printed;
+  src: url(../fonts/Brandon_Printed_One_Shadow.ttf);
+}*/
+
+body {
+  margin: 0;
+  font-family: 'Local Brewery', sans-serif;
+  color: white;
+}
+
+.brandonClass {
+  font-family: 'Brandon Printed';
+}
+/*----------------------------------------------------------------------------*/
+.ambree {
+  background-image: url('../images/tag/etiquette_biere_ambree.jpg');
+  background-size:cover;
+}
+.blanche {
+  background-image: url('../images/tag/etiquette_biere_blanche.jpg');
+  background-size:cover;
+}
+.blonde {
+  background-image: url('../images/tag/etiquette_biere_blonde.jpg');
+  background-size:cover;
+}
+.brune {
+  background-image: url('../images/tag/etiquette_biere_brune.jpg');
+  background-size:cover;
+}
+.fruitee {
+  background-image: url('../images/tag/etiquette_biere_fruitee.jpg');
+  background-size:cover;
+}
+.coffret {
+  background-image: url('../images/tag/etiquette_coffret.jpg');
+  background-size:cover;
+}
+.blanc {
+  background-image: url('../images/tag/etiquette_vin_blanc.jpg');
+  background-size:cover;
+}
+.rose {
+  background-image: url('../images/tag/etiquette_vin_rose.jpg');
+  background-size:cover;
+}
+.rouge {
+  background-image: url('../images/tag/etiquette_vin_rouge.jpg');
+  background-size:cover;
+}
+/*----------------------------------------------------------------------------*/
+.bgClass {
+  position: absolute;
+  width: 360px;
+  height: 250px;
+}
+.toplinebeerClass {
+  color: black;
+  text-align: center;
+  height: 60px;
+  line-height: 60px;
+  font-size: 20px;
+}
+.toplinewineClass {
+  color: black;
+  text-align: center;
+  height: 60px;
+  line-height: 70px;
+  font-size: 25px;
+}
+/*----------------------------------------------------------------------------*/
+.nameSupClass {
+  text-align: center;
+  height: 40px;
+  line-height: 50px;
+  font-size: 18px;
+}
+.nameInfClass {
+  text-align: center;
+  height: 40px;
+  line-height: 50px;
+  font-size: 22px;
+}
+.nameClass {
+  text-align: center;
+  min-height: 80px;
+  line-height: 80px;
+  font-size: 25px;
+}
+
+.nameBoxContainer {
+  padding-top: 25px;
+  height: 140px;
+}
+.nameBoxClass {
+  text-align: center;
+  font-size: 30px;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+/*----------------------------------------------------------------------------*/
+.priceClass {
+  text-align: center;
+  height: 75px;
+  font-size: 65px;
+}
+/*----------------------------------------------------------------------------*/
+.consigneClass {
+  text-align: right;
+  padding-right: 10px;
+  padding-top: 7px;
+  font-size: 16px;
+}
+.volumeClass {
+  text-align: right;
+  padding-right: 10px;
+  font-size: 25px;
+}
