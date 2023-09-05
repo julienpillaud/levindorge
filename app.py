@@ -47,6 +47,11 @@ def post_shops_margins():
     return {"shops_margins": shops_margins}
 
 
+@app.template_filter()
+def strip_zeros(value):
+    return str(value).rstrip("0").rstrip(".")
+
+
 # =============================================================================
 class User(UserMixin):
     def __init__(self, name, username, email, password_hash, shops):
@@ -112,6 +117,13 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for("login"))
+
+
+# =============================================================================
+@app.route("/demo")
+def demo():
+    articles = mongo_db.get_articles_by_list("beer")
+    return render_template("demo_list.html", shop="pessac", articles=articles[:100])
 
 
 # =============================================================================
