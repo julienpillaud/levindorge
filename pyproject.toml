@@ -3,24 +3,19 @@ profile = "black"
 
 [tool.ruff]
 select = [
+    "F",  # pyflakes
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
     "C",  # flake8-comprehensions
     "B",  # flake8-bugbear
-]
-ignore = [
-    "E501",  # line too long, handled by black
-    "C901",  # too complex
+    "UP",  # pyupgrade
+    "PL",  # pylint
+    "S",  # bandit
+    "RUF",
 ]
 
-[tool.pylint]
-disable = """
-    missing-module-docstring,
-    missing-class-docstring,
-    missing-function-docstring,
-    too-few-public-methods,
-    too-many-arguments,
-    too-many-locals,
-"""
+[tool.mypy]
+strict = true
+exclude = [
+    "venv",
+]

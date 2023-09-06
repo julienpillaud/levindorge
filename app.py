@@ -1,26 +1,10 @@
 import json
 import os
 
-from flask import (
-    Flask,
-    abort,
-    flash,
-    jsonify,
-    redirect,
-    render_template,
-    request,
-    url_for,
-)
-from flask_bcrypt import Bcrypt
-from flask_login import (
-    LoginManager,
-    UserMixin,
-    current_user,
-    login_required,
-    login_user,
-    logout_user,
-)
+from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
 
+from application.blueprints import auth
 from utils import mongo_db, tactill, tag, vdo
 from utils.vdo import calculate_margin, calculate_profit, calculate_recommended_price
 
@@ -31,9 +15,9 @@ app = Flask(__name__)
 app.secret_key = "some_secret"
 app.config["VERIFY_SSL"] = os.environ.get("VERIFY_SSL", "True") == "True"
 
-bcrypt = Bcrypt(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
+auth.login_manager.init_app(app)
+auth.bcrypt.init_app(app)
+app.register_blueprint(auth.blueprint)
 
 
 @app.errorhandler(401)
@@ -50,73 +34,6 @@ def post_shops_margins():
 @app.template_filter()
 def strip_zeros(value):
     return str(value).rstrip("0").rstrip(".")
-
-
-# =============================================================================
-class User(UserMixin):
-    def __init__(self, name, username, email, password_hash, shops):
-        self.name = name
-        self.username = username
-        self.email = email
-        self.password_hash = password_hash
-        self.shops = shops
-
-    def get_id(self):
-        return self.email
-
-    def check_password(self, password):
-        return bcrypt.check_password_hash(self.password_hash, password)
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    user_load = mongo_db.get_user_by_email(user_id)
-    return User(
-        user_load["name"],
-        user_load["username"],
-        user_load["email"],
-        user_load["password"],
-        user_load["shops"],
-    )
-
-
-@app.route("/login", methods=["GET", "POST"])
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if current_user.is_authenticated:
-        return redirect(
-            url_for("get_articles", shop=current_user.shops[0], list_category="beer")
-        )
-
-    if request.method == "POST":
-        user_db = mongo_db.get_user_by_email(request.form["email"])
-        # !!! Ne tient pas compte d'un email qui n'existe pas !!!
-        user = User(
-            user_db["name"],
-            user_db["username"],
-            user_db["email"],
-            user_db["password"],
-            user_db["shops"],
-        )
-        if user is None or not user.check_password(request.form["password"]):
-            flash(
-                "Cette combinaison adresse email / mot de passe est invalide.",
-                category="error",
-            )
-            return redirect(url_for("login"))
-        login_user(user)
-
-        return redirect(
-            url_for("get_articles", shop=current_user.shops[0], list_category="beer")
-        )
-
-    return render_template("login.html")
-
-
-@app.route("/logout")
-def logout():
-    logout_user()
-    return redirect(url_for("login"))
 
 
 # =============================================================================
