@@ -14,6 +14,9 @@ select = [
     "RUF",
 ]
 
+[tool.ruff.per-file-ignores]
+"test*.py" = ["S101"]  # Use of `assert` detected
+
 [tool.mypy]
 strict = true
 exclude = [

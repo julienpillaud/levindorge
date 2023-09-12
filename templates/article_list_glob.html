@@ -1,64 +1,72 @@
 {% extends 'base.html' %}
 {% block content %}
-{% include 'navbar.html' %}
+    {% include 'navbar.html' %}
 
-<form method="post">
-<div class="container-fluid padding-navbar">
-  <table class="table table-dark table-striped table-bordered table-hover table-sm">
+    <form method="post">
+        <div class="container-fluid padding-navbar">
+            <table class="table table-dark table-striped table-bordered table-hover table-sm">
 
-    <thead class="bg-light-purple">
-      <tr>
-        <th class="text-center align-middle">#</th>
-        <th class="text-center align-middle">Produit</th>
-        <th class="text-center align-middle">Produit</th>
-        <th class="text-center align-middle">Région</th>
-        <th class="text-center align-middle">Couleur</th>
-        <th class="text-center align-middle">Volume</th>
-        <th class="text-center align-middle">Degré</th>
-        {% if action == 'tag' %}
-          <th class="text-center align-middle">TTC</th>
-        {% endif %}
-        <th class="text-center align-middle">Catégorie</th>
-        {% if action == 'validate' %}
-          <th class="text-center align-middle">Créé par</th>
-          <th class="text-center align-middle">Créé le</th>
-          <th></th>
-          <th></th>
-          <th></th>
-        {% else %}
-        <th style="width: 1%"><button type="submit" class="btn btn-outline-light btn-sm" style="border: 0; padding-bottom: 0; padding-top: 0"><i class="fas fa-tag fa-sm" style="color:violet"></i></button></th>
-        {% endif %}
-      </tr>
-    </thead>
+                <thead class="bg-light-purple">
+                <tr>
+                    <th class="text-center align-middle">#</th>
+                    <th class="text-center align-middle">Produit</th>
+                    <th class="text-center align-middle">Produit</th>
+                    <th class="text-center align-middle">Région</th>
+                    <th class="text-center align-middle">Couleur</th>
+                    <th class="text-center align-middle">Volume</th>
+                    <th class="text-center align-middle">Degré</th>
 
-    <tbody>
-    {% for x in articles %}
-      <tr>
-        <td class="text-center font-weight-bold">{{ loop.index }}</td>
-        <td class="">{{ x.name.name1 }}</td>
-        <td class="">{{ x.name.name2 }}</td>
-        <td class="text-center">{{ x.region }}</td>
-        <td class="text-center">{{ x.color }}</td>
-        <td class="text-center">{{ x.volume }}</td>
-        <td class="text-center">{{ x.alcohol_by_volume }}</td>
-        {% if action == 'tag' %}
-          <td class="text-center">{{ x.shops[shop]['sell_price'] }}</td>
-        {% endif %}
-        <td class="text-center font-weight-bold">{{ x.type }}</td>
-        {% if action == 'validate' %}
-        <td class="text-center">{{ x.created_by }}</td>
-        <td class="text-center">{{ x.created_at }}</td>
-        <td class="text-center"><a href="{{ url_for('validate_article', article_id=x._id) }}"><i class="fas fa-check" style="color: green"></i><a/></td>
-        <td class="text-center"><a href="{{ url_for('update_article', action='validate', list_category=x.list_category, article_id=x._id) }}"><i class="fas fa-pen" style="color:orange"></i><a/></td>
-        <td class="text-center"><a href="{{ url_for('delete_article', article_id=x._id) }}"><i class="fas fa-times" style="color:red"></i><a/></td>
-        {% else %}
-        <td style="padding: 0; width: 3%;"><input style="height: 25px;" class="form-control form-control-sm _id" type="number" step="1" min="1" name="{{ x._id }}"></td>
-        {% endif %}
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-</div>
-</form>
+                    {% if action == 'tag' %}
+                        <th class="text-center align-middle">TTC</th>
+                    {% endif %}
+
+                    <th class="text-center align-middle">Catégorie</th>
+
+                    {% if action == 'validate' %}
+                        <th class="text-center align-middle">Créé par</th>
+                        <th class="text-center align-middle">Créé le</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    {% else %}
+                        <th style="width: 1%">
+                            <button type="submit" class="btn btn-outline-light btn-sm" style="border: 0; padding-bottom: 0; padding-top: 0"><i class="fas fa-tag fa-sm" style="color:violet"></i></button>
+                        </th>
+                    {% endif %}
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for x in articles %}
+                    <tr>
+                        <td class="text-center font-weight-bold">{{ loop.index }}</td>
+                        <td class="">{{ x.name.name1 }}</td>
+                        <td class="">{{ x.name.name2 }}</td>
+                        <td class="text-center">{{ x.region }}</td>
+                        <td class="text-center">{{ x.color }}</td>
+                        <td class="text-center">{{ x.volume }}</td>
+                        <td class="text-center">{{ x.alcohol_by_volume }}</td>
+
+                        {% if action == 'tag' %}
+                            <td class="text-center">{{ x.shops[shop]['sell_price'] }}</td>
+                        {% endif %}
+
+                        <td class="text-center font-weight-bold">{{ x.type }}</td>
+
+                        {% if action == 'validate' %}
+                            <td class="text-center">{{ x.created_by }}</td>
+                            <td class="text-center">{{ x.created_at }}</td>
+                            <td class="text-center"><a href="{{ url_for('validate_article', article_id=x._id) }}"><i class="fas fa-check" style="color: green"></i><a/></td>
+                            <td class="text-center"><a href="{{ url_for('update_article', action='validate', list_category=x.list_category, article_id=x._id) }}"><i class="fas fa-pen" style="color:orange"></i><a/></td>
+                            <td class="text-center"><a href="{{ url_for('articles.delete_article', article_id=x._id) }}"><i class="fas fa-times" style="color:red"></i><a/></td>
+                        {% else %}
+                            <td style="padding: 0; width: 3%;"><input style="height: 25px;" class="form-control form-control-sm _id" type="number" step="1" min="1" name="{{ x._id }}"></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
 
 {% endblock %}

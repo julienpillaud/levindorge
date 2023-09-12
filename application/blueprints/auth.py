@@ -37,7 +37,11 @@ def load_user(email: str) -> User:
 def login_get():
     if current_user.is_authenticated:
         return redirect(
-            url_for("get_articles", shop=current_user.shops[0], list_category="beer")
+            url_for(
+                "articles.get_articles",
+                shop=current_user.shops[0],
+                list_category="beer",
+            )
         )
     return render_template("login.html")
 
@@ -53,7 +57,11 @@ def login_post():
 
         login_user(user)
         return redirect(
-            url_for("get_articles", shop=current_user.shops[0], list_category="beer")
+            url_for(
+                "articles.get_articles",
+                list_category="beer",
+                shop=current_user.shops[0],
+            )
         )
 
     flash("Email ou mot de passe incorrect")

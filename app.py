@@ -1,11 +1,11 @@
 import json
 import os
 
-from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
-from application.blueprints import auth
-from utils import mongo_db, tactill, tag, vdo
+from application.blueprints import articles, auth
+from utils import mongo_db, tag, vdo
 from utils.vdo import calculate_margin, calculate_profit, calculate_recommended_price
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -13,11 +13,11 @@ TAGS_PATH = os.path.join(APP_PATH, "templates", "tags")
 
 app = Flask(__name__)
 app.secret_key = "some_secret"
-app.config["VERIFY_SSL"] = os.environ.get("VERIFY_SSL", "True") == "True"
 
 auth.login_manager.init_app(app)
 auth.bcrypt.init_app(app)
 app.register_blueprint(auth.blueprint)
+app.register_blueprint(articles.blueprint)
 
 
 @app.errorhandler(401)
@@ -41,207 +41,6 @@ def strip_zeros(value):
 def demo():
     articles = mongo_db.get_articles_by_list("beer")
     return render_template("demo_list.html", shop="pessac", articles=articles[:100])
-
-
-# =============================================================================
-@app.route("/<shop>/catalog/articles/<list_category>")
-@login_required
-def get_articles(shop, list_category):
-    if request.view_args["shop"] not in current_user.shops:
-        abort(401)
-
-    ratio_category = mongo_db.get_type("list_category", list_category, "ratio_category")
-    articles = list(mongo_db.get_articles_by_list(list_category))
-    shops_margins = mongo_db.get_shops_margins()
-    formated_articles = vdo.format_articles_to_list(
-        articles, ratio_category, shops_margins, shop
-    )
-
-    return render_template(
-        "article_list.html",
-        shop=shop,
-        list_category=list_category,
-        articles=formated_articles,
-    )
-
-
-# =============================================================================
-@app.route("/catalog/create/<list_category>", methods=["GET", "POST"])
-@login_required
-def create_article(list_category):
-    ratio_category = mongo_db.get_type("list_category", list_category, "ratio_category")
-
-    if request.method == "GET":
-        type_list = mongo_db.get_types_by_list([list_category])
-        dropdown = mongo_db.get_dropdown(list_category)
-        return render_template(
-            "article_create.html",
-            list_category=list_category,
-            ratio_category=ratio_category,
-            type_list=type_list,
-            **dropdown,
-        )
-
-    if request.method == "POST":
-        if "cancel" not in request.form.keys():
-            request_form = request.form.to_dict(flat=True)
-            shops_margins = mongo_db.get_shops_margins()
-            formated_article = vdo.format_article_to_db(
-                "create",
-                {},
-                request_form,
-                current_user.name,
-                shops_margins,
-                ratio_category,
-            )
-            result = mongo_db.create_article(formated_article)
-
-            # -----------------------------------------------------------------
-            # Tactill
-            tactill_name = vdo.define_tactill_name(formated_article, list_category)
-            tactill_icon_text = vdo.define_tactill_icon_text(formated_article["volume"])
-            tactill_category = mongo_db.get_type(
-                "name", formated_article["type"], "tactill_category"
-            )
-            tactill_color = vdo.define_tactill_color(
-                formated_article["color"], list_category
-            )
-
-            for shop in shops_margins:
-                api_key = mongo_db.get_tactill_api_key(shop)
-                session = tactill.Tactill(api_key, verify=app.config["VERIFY_SSL"])
-                res = session.create_article(
-                    category=tactill_category,
-                    tax_rate=formated_article["tax"],
-                    name=tactill_name,
-                    full_price=formated_article["shops"][shop]["sell_price"],
-                    icon_text=tactill_icon_text,
-                    color=tactill_color,
-                    barcode=formated_article["barcode"],
-                    reference=str(result.inserted_id),
-                    in_stock="true",
-                )
-                app.logger.info(f"Tactill create: {res}")
-            # -----------------------------------------------------------------
-
-        return redirect(
-            url_for(
-                "get_articles", shop=current_user.shops[0], list_category=list_category
-            )
-        )
-
-
-# =============================================================================
-@app.route("/catalog/<action>/<list_category>/<article_id>", methods=["GET", "POST"])
-@login_required
-def update_article(action, list_category, article_id):
-    if request.method == "GET":
-        article = mongo_db.get_article_by_id(article_id)
-        ratio_category = mongo_db.get_type(
-            "list_category", list_category, "ratio_category"
-        )
-        type_list = mongo_db.get_types_by_list([list_category])
-
-        formated_article = vdo.format_articles_to_update(article, ratio_category)
-        dropdown = mongo_db.get_dropdown(list_category)
-        return render_template(
-            "article_update.html",
-            action=action,
-            article=formated_article,
-            list_category=list_category,
-            ratio_category=ratio_category,
-            type_list=type_list,
-            **dropdown,
-        )
-
-    if request.method == "POST":
-        if "cancel" not in request.form:
-            article = mongo_db.get_article_by_id(article_id)
-            ratio_category = mongo_db.get_type(
-                "list_category", list_category, "ratio_category"
-            )
-            shops_margins = mongo_db.get_shops_margins()
-
-            request_form = request.form.to_dict(flat=True)
-            updated_article = vdo.format_article_to_db(
-                action,
-                article,
-                request_form,
-                current_user.name,
-                shops_margins,
-                ratio_category,
-            )
-            mongo_db.update_article(article_id, updated_article)
-
-            # -----------------------------------------------------------------
-            # Tactill
-            tactill_name = vdo.define_tactill_name(updated_article, list_category)
-            tactill_icon_text = vdo.define_tactill_icon_text(updated_article["volume"])
-            tactill_color = vdo.define_tactill_color(
-                updated_article["color"], list_category
-            )
-
-            for shop in shops_margins:
-                api_key = mongo_db.get_tactill_api_key(shop)
-                session = tactill.Tactill(api_key, verify=app.config["VERIFY_SSL"])
-                res = session.update_article(
-                    reference=article_id,
-                    name=tactill_name,
-                    full_price=updated_article["shops"][shop]["sell_price"],
-                    icon_text=tactill_icon_text,
-                    color=tactill_color,
-                    barcode=updated_article["barcode"],
-                )
-                app.logger.info(f"Tactill update: {res}")
-            # -----------------------------------------------------------------
-
-        if action == "validate":
-            return redirect(url_for("check_validation"))
-
-        return redirect(
-            url_for(
-                "get_articles",
-                shop=current_user.shops[0],
-                list_category=list_category,
-            )
-        )
-
-
-# =============================================================================
-@app.route("/catalog/delete/<article_id>")
-@login_required
-def delete_article(article_id):
-    mongo_db.delete_article(article_id)
-
-    # -------------------------------------------------------------------------
-    # Tactill
-    for shop in mongo_db.get_shop_usernames():
-        api_key = mongo_db.get_tactill_api_key(shop)
-        session = tactill.Tactill(api_key, verify=app.config["VERIFY_SSL"])
-        res = session.delete_article(article_id)
-        app.logger.info(f"Tactill delete: {res}")
-    # -------------------------------------------------------------------------
-
-    return redirect(request.referrer)
-
-
-# =============================================================================
-@app.route("/catalog/validate")
-@login_required
-def check_validation():
-    articles = list(mongo_db.get_articles_to_validate())
-    types_dict = mongo_db.get_types_dict()
-    articles_to_validate = vdo.format_articles_to_validate(articles, types_dict)
-    return render_template(
-        "article_list_glob.html", action="validate", articles=articles_to_validate
-    )
-
-
-@app.route("/catalog/validate/<article_id>")
-@login_required
-def validate_article(article_id):
-    mongo_db.validate_article(article_id)
-    return redirect(request.referrer)
 
 
 # =============================================================================
@@ -312,7 +111,7 @@ def get_dropdown(dropdown_category):
         )
 
     if request.method == "POST":
-        dropdown = request.form.to_dict(flat=True)
+        dropdown = request.form.to_dict()
         mongo_db.create_dropdown(dropdown_category, dropdown)
         return redirect(url_for("get_dropdown", dropdown_category=dropdown_category))
 
