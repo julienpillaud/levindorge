@@ -44,7 +44,7 @@
                 {% endif %}
                 </div>
                 {% if list_category not in wine_types_list + others_types_list %}
-                <select class="custom-select" name="name1" {% if action == 'update' %}disabled{% endif %}>
+                <select class="custom-select" name="name1" {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                   <option selected></option>
                   {% if list_category in beer_types_list %}
                     {% for x in brewery_list %}
@@ -65,7 +65,7 @@
                   {% endif %}
                 </select>
                 {% else %}
-                  <input type="text" class="form-control" name="name1" value="{{ article.name.name1 }}" required {% if action == 'update' %}readonly{% endif %}>
+                  <input type="text" class="form-control" name="name1" value="{{ article.name.name1 }}" required {% if current_user.role not in ['admin', 'superuser'] %}readonly{% endif %}>
                 {% endif %}
               </div>
             </div>
@@ -84,7 +84,7 @@
                   <span class="input-group-text bg-dark-purple text-white">Produit</span>
                 {% endif %}
                 </div>
-                <input type="text" class="form-control" name="name2" value="{{ article.name.name2 }}" required {% if action == 'update' %}readonly{% endif %}>
+                <input type="text" class="form-control" name="name2" value="{{ article.name.name2 }}" required {% if current_user.role not in ['admin', 'superuser'] %}readonly{% endif %}>
               </div>
             </div>
             {% endif %}
@@ -104,7 +104,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text bg-dark-purple text-white">{% if list_category in wine_types_list %}Région{% else %}Pays{% endif %}</span>
                 </div>
-                <select class="custom-select" name="region" required {% if action == 'update' %}disabled{% endif %}>
+                <select class="custom-select" name="region" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                   <option selected></option>
                   {% if list_category in wine_types_list %}
                     {% for x in region_list %}
@@ -134,7 +134,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text bg-dark-purple text-white">Saveur</span>
                   </div>
-                  <select class="custom-select" name="taste" required {% if action == 'update' %}disabled{% endif %}>
+                  <select class="custom-select" name="taste" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                     <option selected></option>
                     {% for x in taste_list %}
                       {% if x == article.taste %}
@@ -148,7 +148,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text bg-dark-purple text-white">Couleur</span>
                   </div>
-                  <select class="custom-select" name="color" required {% if action == 'update' %}disabled{% endif %}>
+                  <select class="custom-select" name="color" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                     <option selected></option>
                     {% if list_category in beer_types_list %}
                       {% for x in beer_color_list %}
@@ -191,7 +191,7 @@
                     <span class="input-group-text bg-dark-purple text-white">Volume (cL)</span>
                   {% endif %}
                 </div>
-                <select class="custom-select" name="volume" required {% if action == 'update' %}disabled{% endif %}>
+                <select class="custom-select" name="volume" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                   <option selected></option>
                   {% for x in volume_list %}
                       {% if x == article.volume %}
@@ -210,7 +210,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text bg-dark-purple text-white">Degré</span>
                 </div>
-                <input type="number" step="0.1" min="0.5" class="form-control" name="alcohol_by_volume" value="{{ article.alcohol_by_volume }}" required {% if action == 'update' %}readonly{% endif %}>
+                <input type="number" step="0.1" min="0.5" class="form-control" name="alcohol_by_volume" value="{{ article.alcohol_by_volume }}" required {% if current_user.role not in ['admin', 'superuser'] %}readonly{% endif %}>
               </div>
             </div>
             {% elif list_category == 'wine' %}
@@ -219,7 +219,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text bg-dark-purple text-white">Bio</span>
                 </div>
-                <select class="custom-select" name="biodynamic" required {% if action == 'update' %}disabled{% endif %}>
+                <select class="custom-select" name="biodynamic" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                   <option selected></option>
                   {% for x in bio_list %}
                       {% if x == article.biodynamic %}
@@ -248,7 +248,7 @@
                   <span class="input-group-text bg-dark-purple text-white">Accords</span>
                 </div>
                 {% for i in range(3) %}
-                  <select class="custom-select" name="food_pairing_{{ i }}" required {% if action == 'update' %}disabled{% endif %}>
+                  <select class="custom-select" name="food_pairing_{{ i }}" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                     <option selected></option>
                     {% for x in food_pairing_list %}
                       {% if x == article.food_pairing[i] %}
@@ -270,7 +270,7 @@
                   <span class="input-group-text bg-dark-purple text-white">Accords</span>
                 </div>
                 {% for i in range(3, 6) %}
-                  <select class="custom-select" name="food_pairing_{{ i }}" required {% if action == 'update' %}disabled{% endif %}>
+                  <select class="custom-select" name="food_pairing_{{ i }}" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                     <option selected></option>
                     {% for x in food_pairing_list %}
                       {% if x == article.food_pairing[i] %}
@@ -297,7 +297,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text bg-dark-purple text-white">Fournisseur</span>
                 </div>
-                <select class="custom-select" name="distributor" required {% if action == 'update' %}disabled{% endif %}>
+                <select class="custom-select" name="distributor" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                   <option selected></option>
                   {% for x in distributor_list %}
                       {% if x == article.distributor %}
@@ -314,7 +314,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text bg-dark-purple text-white">Ref fournisseur</span>
                 </div>
-                <input type="text" class="form-control" name="distributor_reference" value="{{ article.distributor_reference }}" {% if action == 'update' %}readonly{% endif %}>
+                <input type="text" class="form-control" name="distributor_reference" value="{{ article.distributor_reference }}" {% if current_user.role not in ['admin', 'superuser'] %}readonly{% endif %}>
               </div>
             </div>
           </div>
@@ -326,7 +326,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text bg-dark-purple text-white">Code-barres</span>
                 </div>
-                <input type="text" class="form-control" name="barcode" value="{{ article.barcode }}" {% if action == 'update' %}readonly{% endif %}>
+                <input type="text" class="form-control" name="barcode" value="{{ article.barcode }}" {% if current_user.role not in ['admin', 'superuser'] %}readonly{% endif %}>
               </div>
             </div>
             <div class="col-6" style="display: none;">
@@ -361,7 +361,7 @@
                     <span class="input-group-text bg-dark-purple text-white">Consigne</span>
                   {% endif %}
                 </div>
-                <select class="custom-select" name="unit" required {% if action == 'update' %}disabled{% endif %}>
+                <select class="custom-select" name="unit" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                   <option selected></option>
                   {% for x in unit_deposit %}
                     {% if x == article.deposit.unit %}
@@ -379,7 +379,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text bg-dark-purple text-white">Consigne caisse</span>
                 </div>
-                <select class="custom-select" name="case" required {% if action == 'update' %}disabled{% endif %}>
+                <select class="custom-select" name="case" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                   <option selected></option>
                   {% for x in case_deposit %}
                     {% if x == article.deposit.case %}
@@ -405,7 +405,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text bg-dark-purple text-white">Conditionnement</span>
                 </div>
-                <select class="custom-select" name="packaging" required {% if action == 'update' %}disabled{% endif %}>
+                <select class="custom-select" name="packaging" required {% if current_user.role not in ['admin', 'superuser'] %}disabled{% endif %}>
                   <option selected></option>
                   {% for x in packaging_list %}
                     {% if x == article.packaging %}

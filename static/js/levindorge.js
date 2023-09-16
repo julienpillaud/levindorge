@@ -6,13 +6,22 @@ $(function() {
   }
 
   // Calculate taxfree on buy price change
-  $('#buy_price, #excise_duty, #social_security_levy').on('input', function() {
-    calculate_taxfree_price(false);
+  let buyPriceArray = document.querySelectorAll("#buy_price, #excise_duty, #social_security_levy")
+  buyPriceArray.forEach(function(elem) {
+    elem.addEventListener("input", function() {
+        console.log("calculate_taxfree_price")
+        calculate_taxfree_price(false);
+    });
   });
+
   // Calculate profit and margin on sell price change
-  $('[id^="sell_price_"]').on('input', function() {
-    get_margins();
-  });
+    let sellPriceArray = document.querySelectorAll("[id^='sell_price_']")
+    sellPriceArray.forEach(function(elem) {
+      elem.addEventListener("input", function() {
+          console.log("get_margins")
+          get_margins();
+      });
+    });
 
 });
 

@@ -2,6 +2,8 @@ import datetime
 import math
 from collections import OrderedDict
 
+from application.blueprints.auth import Role
+
 
 def calculate_recommended_price(taxfree_price, tax, ratio_category, margins):
     """Calculate recommended price"""
@@ -56,10 +58,10 @@ def update_price(
         new_sell_price = sell_price * new_taxfree_price / old_taxfree_price
     else:
         old_rp = calculate_recommended_price(
-            old_taxfree_price, tax, ratio_category, **margins
+            old_taxfree_price, tax, ratio_category, margins
         )
         new_rp = calculate_recommended_price(
-            new_taxfree_price, tax, ratio_category, **margins
+            new_taxfree_price, tax, ratio_category, margins
         )
         new_sell_price = sell_price - old_rp + new_rp
 
@@ -265,24 +267,24 @@ def format_articles_to_validate(articles, types_dict):
 # FORMAT_ARTICLE_TO_DB
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def format_article_to_db(
-    action, article, request_form, current_user_name, shops_margins, ratio_category
+    action, article, request_form, current_user, shops_margins, ratio_category
 ):
     formated_article = OrderedDict()
     # ------------------------------------------------------------------------------
     # 02 VALIDATED
     if action == "create":
-        if current_user_name == "Julien":
+        if current_user.role == Role.ADMIN:
             formated_article["validated"] = True
         else:
             formated_article["validated"] = False
-    elif action == "validate":
+    elif current_user.role == Role.ADMIN:
         formated_article["validated"] = True
     else:
         formated_article["validated"] = article["validated"]
     # ------------------------------------------------------------------------------
     # 03 CREATED_BY
     if action == "create":
-        formated_article["created_by"] = current_user_name
+        formated_article["created_by"] = current_user.name
     else:
         formated_article["created_by"] = article["created_by"]
     # ------------------------------------------------------------------------------
@@ -377,7 +379,7 @@ def format_article_to_db(
                     temp["sell_price"] = calculate_recommended_price(
                         taxfree_price, tax, ratio_category, margins
                     )
-                temp["bar_price"] = 1.0  # !!! ???
+                temp["bar_price"] = 0.0
                 temp["stock_quantity"] = 0
             elif action != "create":
                 if (

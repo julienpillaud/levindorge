@@ -1,3 +1,7 @@
+import functools
+from enum import Enum
+from typing import Any, Callable, ParamSpec, TypeVar
+
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user
@@ -8,15 +12,31 @@ login_manager = LoginManager()
 bcrypt = Bcrypt()
 blueprint = Blueprint(name="auth", import_name=__name__)
 
+P = ParamSpec("P")
+T = TypeVar("T")
+
+
+class Role(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
+    SUPERUSER = "superuser"
+
 
 class User(UserMixin):
     def __init__(
-        self, name: str, username: str, email: str, password: str, shops: list[str]
+        self,
+        name: str,
+        username: str,
+        email: str,
+        password: str,
+        role: Role,
+        shops: list[str],
     ) -> None:
         self.name = name
         self.username = username
         self.email = email
         self.password_hash = password
+        self.role = role
         self.shops = shops
 
     def get_id(self) -> str:
@@ -31,6 +51,16 @@ class User(UserMixin):
 def load_user(email: str) -> User:
     user = mongo_db.get_user_by_email(email)
     return User(**user)
+
+
+def admin_required(func: Callable[P, T]) -> Callable[P, T]:
+    @functools.wraps(func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
+        if current_user.role not in {"admin", "superuser"}:
+            return login_manager.unauthorized()
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 @blueprint.get("/")

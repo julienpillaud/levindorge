@@ -88,7 +88,15 @@
         <input class="form-control" type="search" id="search" placeholder="Rechercher" aria-label="Search">
     </form>
 
-    {% if current_user.username == 'julien' %}
+    {% if current_user.role in ['admin', 'superuser'] %}
+        <div class="nav-item dropdown ml-1">
+            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownAdmin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Admin
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownAdmin">
+                <a class="dropdown-item" href="{{ url_for('articles.validate_articles') }}">Validation</a>
+            </div>
+        </div>
         <div class="nav-item dropdown ml-1">
             <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Ajouter

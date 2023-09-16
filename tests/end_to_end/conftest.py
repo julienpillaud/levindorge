@@ -5,22 +5,26 @@ from typing import Any, Mapping
 
 import pytest
 from bson.objectid import ObjectId
+from dotenv import load_dotenv
 from pymongo import MongoClient
 from pymongo.database import Database
 from pymongo.results import InsertOneResult
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+load_dotenv()
+
 
 @pytest.fixture
 def driver() -> Iterator[webdriver.Chrome]:
     options = Options()
-    options.add_argument("--headless=new")
+    # options.add_argument("--headless=new")
     driver_ = webdriver.Chrome(options=options)
     driver_.get("http://127.0.0.1:5000")
     cookie = os.getenv("COOKIE")
     driver_.add_cookie({"name": "session", "value": cookie})
     yield driver_
+
     driver_.quit()
 
 
@@ -36,12 +40,12 @@ def database() -> Iterator[Database[Mapping[str, Any]]]:
 def created_article(database: Database[Mapping[str, Any]]) -> Iterator[InsertOneResult]:
     date = datetime.now(timezone.utc)
     price_data = {
-        "sell_price": 3.7,
+        "sell_price": 3.5,
         "bar_price": 5.0,
         "stock_quantity": 0,
     }
     article_data = {
-        "validated": True,
+        "validated": False,
         "created_by": "Admin",
         "created_at": date,
         "updated_at": date,

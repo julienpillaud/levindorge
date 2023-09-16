@@ -1,6 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from application.blueprints.auth import admin_required
 from utils import mongo_db, tactill, vdo
 
 blueprint = Blueprint(name="articles", import_name=__name__, url_prefix="/articles")
@@ -54,7 +55,7 @@ def create_article(list_category: str):
             "create",
             {},
             request_form,
-            current_user.name,
+            current_user,
             shops_margins,
             ratio_category,
         )
@@ -98,7 +99,7 @@ def create_article(list_category: str):
 
 @blueprint.get("/update/<article_id>")
 @login_required
-def update_article_get(article_id):
+def update_article_get(article_id: str):
     article = mongo_db.get_article_by_id(article_id)
 
     list_category = mongo_db.get_type("name", article["type"], "list_category")
@@ -119,7 +120,7 @@ def update_article_get(article_id):
 
 @blueprint.post("/update/<article_id>")
 @login_required
-def update_article(article_id):
+def update_article(article_id: str):
     article = mongo_db.get_article_by_id(article_id)
     list_category = mongo_db.get_type("name", article["type"], "list_category")
 
@@ -134,7 +135,7 @@ def update_article(article_id):
             "update",
             article,
             request_form,
-            current_user.name,
+            current_user,
             shops_margins,
             ratio_category,
         )
@@ -161,6 +162,9 @@ def update_article(article_id):
             )
         # -----------------------------------------------------------------
 
+    if _ := request.args.get("validate"):
+        return redirect(url_for("articles.validate_articles"))
+
     return redirect(
         url_for(
             "articles.get_articles",
@@ -171,6 +175,7 @@ def update_article(article_id):
 
 
 @blueprint.get("/delete/<article_id>")
+@admin_required
 @login_required
 def delete_article(article_id: str):
     mongo_db.delete_article(article_id)
@@ -180,4 +185,22 @@ def delete_article(article_id: str):
         session = tactill.Tactill(api_key)
         session.delete_article(article_id)
 
+    return redirect(request.referrer)
+
+
+@blueprint.get("/validate")
+@admin_required
+@login_required
+def validate_articles():
+    articles = list(mongo_db.get_articles_to_validate())
+    types_dict = mongo_db.get_types_dict()
+    articles_to_validate = vdo.format_articles_to_validate(articles, types_dict)
+    return render_template("articles_to_validate.html", articles=articles_to_validate)
+
+
+@blueprint.get("/validate/<article_id>")
+@admin_required
+@login_required
+def validate_article(article_id):
+    mongo_db.validate_article(article_id)
     return redirect(request.referrer)

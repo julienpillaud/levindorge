@@ -14,13 +14,12 @@
                     <th class="text-center align-middle">Couleur</th>
                     <th class="text-center align-middle">Volume</th>
                     <th class="text-center align-middle">Degré</th>
-                    <th class="text-center align-middle">TTC</th>
                     <th class="text-center align-middle">Catégorie</th>
-                    <th style="width: 1%">
-                        <button type="submit" class="btn btn-outline-light btn-sm" style="border: 0; padding-bottom: 0; padding-top: 0">
-                            <i class="fas fa-tag fa-sm" style="color:violet"></i>
-                        </button>
-                    </th>
+                    <th class="text-center align-middle">Créé par</th>
+                    <th class="text-center align-middle">Créé le</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -33,10 +32,23 @@
                         <td class="text-center">{{ x.color }}</td>
                         <td class="text-center">{{ x.volume }}</td>
                         <td class="text-center">{{ x.alcohol_by_volume }}</td>
-                        <td class="text-center">{{ x.shops[shop]['sell_price'] }}</td>
                         <td class="text-center font-weight-bold">{{ x.type }}</td>
-                        <td style="padding: 0; width: 3%;">
-                            <input style="height: 25px;" class="form-control form-control-sm _id" type="number" step="1" min="1" name="{{ x._id }}">
+                        <td class="text-center">{{ x.created_by }}</td>
+                        <td class="text-center">{{ x.created_at }}</td>
+                        <td class="text-center">
+                            <a href="{{ url_for('articles.validate_article', article_id=x._id) }}">
+                                <i class="fas fa-check" style="color: green"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('articles.update_article', validate=True, article_id=x._id) }}">
+                                <i class="fas fa-pen" style="color:orange"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('articles.delete_article', article_id=x._id) }}">
+                                <i class="fas fa-times" style="color:red"></i>
+                            </a>
                         </td>
                     </tr>
                 {% endfor %}
