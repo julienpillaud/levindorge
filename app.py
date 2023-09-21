@@ -5,6 +5,7 @@ from flask_login import login_required
 
 from application.blueprints import articles as articles_blueprint
 from application.blueprints import auth as auth_blueprint
+from application.blueprints import items as items_blueprint
 from utils import mongo_db, tag, vdo
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -17,6 +18,7 @@ auth_blueprint.login_manager.init_app(app)
 auth_blueprint.bcrypt.init_app(app)
 app.register_blueprint(auth_blueprint.blueprint)
 app.register_blueprint(articles_blueprint.blueprint)
+app.register_blueprint(items_blueprint.blueprint)
 
 
 @app.errorhandler(401)
@@ -40,31 +42,6 @@ def strip_zeros(value):
 def demo():
     articles = mongo_db.get_articles_by_list("beer")
     return render_template("demo_list.html", shop="pessac", articles=articles[:100])
-
-
-# =============================================================================
-@app.route("/dropdown/<dropdown_category>/create", methods=["GET", "POST"])
-@login_required
-def get_dropdown(dropdown_category):
-    if request.method == "GET":
-        return render_template(
-            "dropdown_list.html",
-            dropdown_name=mongo_db.DROPDOWN_DICT[dropdown_category]["name"],
-            dropdown_category=dropdown_category,
-            dropdown_list=mongo_db.get_dropdown_by_category(dropdown_category),
-        )
-
-    if request.method == "POST":
-        dropdown = request.form.to_dict()
-        mongo_db.create_dropdown(dropdown_category, dropdown)
-        return redirect(url_for("get_dropdown", dropdown_category=dropdown_category))
-
-
-@app.route("/dropdown/<dropdown_category>/delete/<dropdown_id>")
-@login_required
-def delete_dropdown(dropdown_category, dropdown_id):
-    mongo_db.delete_dropdown(dropdown_category, dropdown_id)
-    return redirect(request.referrer)
 
 
 # =============================================================================

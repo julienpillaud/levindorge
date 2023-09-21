@@ -7,6 +7,7 @@ from pymongo import ASCENDING, MongoClient
 from pymongo.results import DeleteResult, InsertOneResult, UpdateResult
 
 from application.entities.article import Article, ArticleType, CreateOrUpdateArticle
+from application.entities.item import Item, RequestItem
 from application.entities.shop import Shop
 
 load_dotenv()
@@ -33,6 +34,10 @@ DROPDOWN_DICT = {
     "regions": {"name": "Région", "collection": regions},
     "volumes": {"name": "Volume", "collection": volumes},
 }
+
+
+def get_collection(name):
+    return db.get_collection(name)
 
 
 def get_user_by_email(email: str):
@@ -124,6 +129,24 @@ def get_shop_by_username(username: str) -> Shop:
     return Shop(**shop)
 
 
+def get_items(category: str) -> list[Item]:
+    collection = get_collection(category)
+    return [Item(**item) for item in collection.find().sort("name")]
+
+
+def create_item(category: str, item: RequestItem) -> InsertOneResult:
+    collection = get_collection(category)
+    item = item.model_dump()
+    if category != "countries":
+        item.pop("demonym")
+    return collection.insert_one(item)
+
+
+def delete_item(category: str, item_id: str) -> DeleteResult:
+    collection = get_collection(category)
+    return collection.delete_one({"_id": ObjectId(item_id)})
+
+
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def get_shops_margins(ratio_category=None):
     if ratio_category is None:
@@ -192,18 +215,3 @@ def get_distributors():
 def get_volumes(list_category):
     types_ = types.find_one({"list_category": list_category})
     return types_.get("volumes", [])
-
-
-def get_dropdown_by_category(category):
-    dropdown_collection = DROPDOWN_DICT[category]["collection"]
-    return dropdown_collection.find({}).sort([("name", ASCENDING)])
-
-
-def create_dropdown(dropdown_category, dropdown):
-    dropdown_collection = DROPDOWN_DICT[dropdown_category]["collection"]
-    return dropdown_collection.insert_one(dropdown)
-
-
-def delete_dropdown(dropdown_category, dropdown_id):
-    dropdown_collection = DROPDOWN_DICT[dropdown_category]["collection"]
-    return dropdown_collection.delete_one({"_id": ObjectId(dropdown_id)})

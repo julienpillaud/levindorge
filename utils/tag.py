@@ -151,7 +151,7 @@ class PriceTag(object):
                 for tag_index, tag in enumerate(chunk):
                     color = tag["color"]
 
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     if tag["ratio_category"] in {"box", "food", "misc"}:
                         background = "coffret"
                     else:
@@ -160,9 +160,11 @@ class PriceTag(object):
                         f'<div class="bgClass bgClass{tag_index + 1} {background}">\n'
                     )
 
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     if tag["ratio_category"] in {"beer", "mini_keg"}:
-                        volume = self.convert_volume(tag["ratio_category"], tag["volume"])
+                        volume = self.convert_volume(
+                            tag["ratio_category"], tag["volume"]
+                        )
                         demonym = demonym_dict[tag["region"]]
                         f.write(
                             f'<div class="toplinebeerClass brandonClass">{color} - {volume} - {demonym}</div>\n'
@@ -178,7 +180,7 @@ class PriceTag(object):
                                 f'<div class="toplinewineClass">{color} - {tag["type"]}</div>\n'
                             )
 
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     if tag["ratio_category"] in {"beer", "mini_keg"}:
                         name_beer, name_sup_beer, name_inf_beer = self.define_beer_name(
                             tag
@@ -215,12 +217,12 @@ class PriceTag(object):
                         )
                         f.write("</div>\n")
 
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     sell_price = tag["shops"][shop_code]["sell_price"]
                     sell_price_tag = "{:.2f}".format(sell_price).replace(".", ", ")
                     f.write(f'<div class="priceClass">{sell_price_tag} €</div>\n')
 
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     if tag["ratio_category"] == "beer" and tag["deposit"]["unit"] == 0:
                         f.write('<div class="consigneClass"></div>\n')
                     elif (
@@ -230,7 +232,9 @@ class PriceTag(object):
                     elif tag["ratio_category"] == "mini_keg":
                         f.write('<div class="consigneClass">Consigne : 7, 50 €</div>\n')
                     elif tag["ratio_category"] in {"wine", "sparkling_wine", "bib"}:
-                        volume = self.convert_volume(tag["ratio_category"], tag["volume"])
+                        volume = self.convert_volume(
+                            tag["ratio_category"], tag["volume"]
+                        )
                         f.write(f'<div class="volumeClass">{volume}</div>\n')
 
                     f.write("</div>\n")
@@ -250,7 +254,7 @@ class PriceTag(object):
                 f.write("{% block content %}\n")
 
                 for tag_index, tag in enumerate(chunk):
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     taste = tag["taste"]
                     (
                         name_spirit,
@@ -288,19 +292,19 @@ class PriceTag(object):
                             f.write(
                                 f'<div class="spiritNamesClass">{name_spirit_inf}</div>\n'
                             )
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     f.write('<div class="bottomlineClass">\n')
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     volume = self.convert_volume(tag["ratio_category"], tag["volume"])
                     f.write(f'<div class="bottleClass">{volume}</div>')
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     sell_price = tag["shops"][shop_code]["sell_price"]
                     sell_price_tag = "{:.0f}".format(sell_price).replace(".", ", ")
                     f.write(f'<div class="priceClass">{sell_price_tag} €</div>')
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     flag_class = unidecode.unidecode(tag["region"].replace(" ", "_"))
                     f.write(f'<div class="flagClass {flag_class}"></div>\n')
-                    # --------------------------------------------------------------------------------------------------
+                    # ----------------------------------------------------------
                     f.write("</div>\n")
                     f.write("</div>\n")
 

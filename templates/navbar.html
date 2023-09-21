@@ -103,11 +103,11 @@
                 Ajouter
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="{{ url_for('get_dropdown', dropdown_category='breweries') }}">Brasserie</a>
-                <a class="dropdown-item" href="{{ url_for('get_dropdown', dropdown_category='distilleries') }}">Distillerie</a>
-                <a class="dropdown-item" href="{{ url_for('get_dropdown', dropdown_category='distributors') }}">Fournisseur</a>
-                <a class="dropdown-item" href="{{ url_for('get_dropdown', dropdown_category='countries') }}">Pays</a>
-                <a class="dropdown-item" href="{{ url_for('get_dropdown', dropdown_category='regions') }}">Région</a>
+                <a class="dropdown-item" href="{{ url_for('items.get_items', category='breweries') }}">Brasserie</a>
+                <a class="dropdown-item" href="{{ url_for('items.get_items', category='distilleries') }}">Distillerie</a>
+                <a class="dropdown-item" href="{{ url_for('items.get_items', category='distributors') }}">Fournisseur</a>
+                <a class="dropdown-item" href="{{ url_for('items.get_items', category='countries') }}">Pays</a>
+                <a class="dropdown-item" href="{{ url_for('items.get_items', category='regions') }}">Région</a>
             </div>
         </div>
     {% endif %}

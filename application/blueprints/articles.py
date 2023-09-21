@@ -7,6 +7,7 @@ from flask_login import current_user, login_required
 
 from application.blueprints.auth import Role, admin_required
 from application.entities.article import (
+    Article,
     ArticleShops,
     ArticleType,
     AugmentedArticle,
@@ -88,7 +89,7 @@ def create_article(list_category: str):
 
         shops = mongo_db.get_shops()
         article_type = mongo_db.get_article_type(request_article.type)
-        article_shops = get_article_shops(
+        article_shops = create_article_shops(
             request_form=request_form,
             request_article=request_article,
             shops=shops,
@@ -145,7 +146,7 @@ def update_article_get(article_id: str):
 @login_required
 def update_article(article_id: str):
     article = mongo_db.get_article_by_id(article_id)
-    list_category = mongo_db.get_type("name", article.type, "list_category")
+    article_type = mongo_db.get_article_type(article.type)
 
     if "cancel" not in request.form:
         request_form = request.form.to_dict()
@@ -153,12 +154,12 @@ def update_article(article_id: str):
         request_article = RequestArticle(**request_form)
 
         shops = mongo_db.get_shops()
-        article_type = mongo_db.get_article_type(request_article.type)
-        article_shops = get_article_shops(
-            request_form=request_form,
-            request_article=request_article,
-            shops=shops,
+        article_shops = update_article_shops(
+            article=article,
             article_type=article_type,
+            request_article=request_article,
+            request_form=request_form,
+            shops=shops,
         )
 
         validated = True if current_user.role == Role.ADMIN else article.validated
@@ -189,7 +190,7 @@ def update_article(article_id: str):
         url_for(
             "articles.get_articles",
             shop=current_user.shops[0],
-            list_category=list_category,
+            list_category=article_type.list_category,
         )
     )
 
@@ -284,7 +285,7 @@ def format_request_food_pairing(request_form: dict[str, Any]) -> None:
             request_form["food_pairing"].append(food_pairing)
 
 
-def get_article_shops(
+def create_article_shops(
     request_form: dict[str, Any],
     request_article: RequestArticle,
     shops: list[Shop],
@@ -292,8 +293,8 @@ def get_article_shops(
 ) -> ArticleShops:
     article_shops = defaultdict(dict)
     for shop in shops:
-        sell_price = request_form.pop(
-            f"sell_price_{shop.username}", None
+        sell_price = request_form.get(
+            f"sell_price_{shop.username}"
         ) or compute_recommended_price(
             taxfree_price=request_article.taxfree_price,
             tax=request_article.tax,
@@ -302,11 +303,86 @@ def get_article_shops(
         )
         article_shops[shop.username]["sell_price"] = sell_price
 
-        article_shops[shop.username]["bar_price"] = request_form.pop(
-            f"bar_price_{shop.username}", 0
-        )
-        article_shops[shop.username]["stock_quantity"] = request_form.pop(
-            f"stock_quantity_{shop.username}", 0
-        )
+        bar_price = request_form.get(f"bar_price_{shop.username}", 0)
+        article_shops[shop.username]["bar_price"] = bar_price
+
+        article_shops[shop.username]["stock_quantity"] = 0
 
     return ArticleShops(**article_shops)
+
+
+def update_article_shops(
+    article: Article,
+    article_type: ArticleType,
+    request_article: RequestArticle,
+    request_form: dict[str, Any],
+    shops: list[Shop],
+) -> ArticleShops:
+    price_updated = (
+        request_article.buy_price != article.buy_price
+        or request_article.excise_duty != article.excise_duty
+        or request_article.buy_price != article.social_security_levy
+    )
+
+    article_shops = defaultdict(dict)
+    for shop in shops:
+        article_shops[shop.username]["sell_price"] = update_sell_price(
+            article=article,
+            article_type=article_type,
+            request_article=request_article,
+            request_form=request_form,
+            shop=shop,
+            price_updated=price_updated,
+        )
+        article_shops[shop.username]["bar_price"] = update_bar_price(
+            article=article, request_form=request_form, shop=shop
+        )
+        article_shops[shop.username]["stock_quantity"] = update_stock_quantity(
+            article=article, request_form=request_form, shop=shop
+        )
+    return ArticleShops(**article_shops)
+
+
+def update_sell_price(
+    article: Article,
+    article_type: ArticleType,
+    request_article: RequestArticle,
+    request_form: dict[str, Any],
+    shop: Shop,
+    price_updated: bool,
+) -> float:
+    sell_price = request_form.get(f"sell_price_{shop.username}")
+
+    # sell price is in the request form
+    if sell_price is not None:
+        return sell_price
+
+    # buy price has been updated, sell price is taken as recommended price
+    if price_updated:
+        return compute_recommended_price(
+            taxfree_price=request_article.taxfree_price,
+            tax=article.tax,
+            shop_margins=shop.margins[article_type.ratio_category],
+            ratio_category=article_type.ratio_category,
+        )
+
+    # buy price has not changed, return previous value
+    return article.shops[shop.username].sell_price
+
+
+def update_bar_price(
+    article: Article, request_form: dict[str, Any], shop: Shop
+) -> float:
+    bar_price = request_form.get(f"bar_price_{shop.username}")
+    if bar_price is not None:
+        return bar_price
+    return article.shops[shop.username].bar_price
+
+
+def update_stock_quantity(
+    article: Article, request_form: dict[str, Any], shop: Shop
+) -> int:
+    stock_quantity = request_form.get(f"stock_quantity_{shop.username}")
+    if stock_quantity is not None:
+        return stock_quantity
+    return article.shops[shop.username].stock_quantity

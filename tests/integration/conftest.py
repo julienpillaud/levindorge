@@ -3,16 +3,17 @@ from collections.abc import Iterator
 from typing import Any, Mapping
 
 import pytest
+from bson import ObjectId
 from dotenv import load_dotenv
 from flask import Flask, template_rendered
 from flask.testing import FlaskClient
 from flask_login import FlaskLoginClient
 from pymongo import MongoClient
 from pymongo.database import Database
-from pymongo.results import InsertOneResult
 
 from app import app
 from application.blueprints.auth import Role, User
+from application.entities.article import Article
 from tests.integration.data import article_to_insert
 
 load_dotenv()
@@ -57,11 +58,21 @@ def templates(flask_app: Flask) -> Iterator[list[tuple[Any, Any]]]:
 def database() -> Iterator[Database[Mapping[str, Any]]]:
     mongo_uri = os.environ.get("MONGO_URI")
     client: MongoClient[Mapping[str, Any]] = MongoClient(mongo_uri)
-    yield client.dashboard_test
-    client.dashboard_test.catalog.delete_many({})
+    yield client.dashboard
     client.close()
 
 
 @pytest.fixture
-def inserted_article(database: Database[Mapping[str, Any]]) -> InsertOneResult:
-    return database.catalog.insert_one(article_to_insert)
+def inserted_article(database: Database[Mapping[str, Any]]) -> Iterator[Article]:
+    result = database.catalog.insert_one(article_to_insert.model_dump())
+    article_id = result.inserted_id
+    yield Article(id=article_id, **article_to_insert.model_dump())
+    database.catalog.delete_one({"_id": ObjectId(article_id)})
+
+
+@pytest.fixture
+def article_to_delete(database: Database[Mapping[str, Any]]) -> Iterator[list[str]]:
+    to_delete: list[str] = []
+    yield to_delete
+    for article_id in to_delete:
+        database.catalog.delete_one({"_id": ObjectId(article_id)})
