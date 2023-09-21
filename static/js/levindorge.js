@@ -9,7 +9,6 @@ $(function() {
   let buyPriceArray = document.querySelectorAll("#buy_price, #excise_duty, #social_security_levy")
   buyPriceArray.forEach(function(elem) {
     elem.addEventListener("input", function() {
-        console.log("calculate_taxfree_price")
         calculate_taxfree_price(false);
     });
   });
@@ -18,7 +17,6 @@ $(function() {
     let sellPriceArray = document.querySelectorAll("[id^='sell_price_']")
     sellPriceArray.forEach(function(elem) {
       elem.addEventListener("input", function() {
-          console.log("get_margins")
           get_margins();
       });
     });
@@ -27,24 +25,25 @@ $(function() {
 
 //=============================================================================
 function calculate_taxfree_price(on_load) {
-  $.ajax({
-    url: '/catalog/taxfree_price',
-    type: 'POST',
-    data: {
-      'buy_price': $('#buy_price').val(),
-      'excise_duty': $('#excise_duty').val(),
-      'social_security_levy': $('#social_security_levy').val(),
-    },
-    success: function(json) {
-      $('#taxfree_price').val(json.taxfree_price);
-      calculate_recommended_prices(on_load);
-    }
-  });
-};
+  const buy_price = document.getElementById("buy_price");
+  const buy_price_value = buy_price ? buy_price.value : 0;
+
+  const excise_duty = document.getElementById("excise_duty");
+  const excise_duty_value = excise_duty ? excise_duty.value : 0;
+
+  const social_security_levy = document.getElementById("social_security_levy");
+  const social_security_levy_value = social_security_levy ? social_security_levy.value : 0;
+
+  const taxfree_price = document.getElementById("taxfree_price");
+  const value = Number(buy_price_value) + Number(excise_duty_value) + Number(social_security_levy_value);
+  taxfree_price.value = Math.round(value * 100) / 100;
+
+  calculate_recommended_prices(on_load);
+}
 
 function calculate_recommended_prices(on_load) {
   $.ajax({
-    url: '/catalog/recommended_prices',
+    url: '/articles/recommended_prices',
     type: 'POST',
     data: {
       'ratio_category': $('#ratio_category').val(),
@@ -61,32 +60,29 @@ function calculate_recommended_prices(on_load) {
       get_margins();
     }
   });
-};
+}
 
 function get_margins() {
-  var sell_prices = {};
   $('[id^="sell_price_"]').each(function() {
-    sell_prices[$(this).attr('id')] = $(this).val();
-  });
+    const sell_price = $(this).val();
+    const shop = $(this).attr("id").split("sell_price_")[1];
 
-  $.ajax({
-    url: '/catalog/margins',
-    type: 'POST',
-    data: {
-      'taxfree_price': $('#taxfree_price').val(),
-      'tax': $('#tax').val(),
-      'sell_prices': JSON.stringify(sell_prices)
-    },
-    success: function(json) {
-      $.each(json.profits, function(index, value) {
-        $('#profit_' + index).val(value);
-      });
-      $.each(json.margins, function(index, value) {
-        $('#margin_' + index).val(value);
-      });
-      color_sell_prices();
-      enable_form_submit();
-    }
+    $.ajax({
+      url: "/articles/margins",
+      type: "POST",
+      data: {
+        "taxfree_price": $('#taxfree_price').val(),
+        "tax": $('#tax').val(),
+        "sell_price": sell_price,
+      },
+      success: function(json) {
+        $('#profit_' + shop).val(json.margin);
+        $('#margin_' + shop).val(json.markup);
+        color_sell_prices();
+        enable_form_submit();
+      }
+    })
+
   });
 }
 

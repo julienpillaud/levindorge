@@ -1,12 +1,11 @@
-import json
 import os
 
-from flask import Flask, jsonify, redirect, render_template, request, url_for
-from flask_login import current_user, login_required
+from flask import Flask, redirect, render_template, request, url_for
+from flask_login import login_required
 
-from application.blueprints import articles, auth
+from application.blueprints import articles as articles_blueprint
+from application.blueprints import auth as auth_blueprint
 from utils import mongo_db, tag, vdo
-from utils.vdo import calculate_margin, calculate_profit, calculate_recommended_price
 
 APP_PATH = os.path.dirname(os.path.abspath(__file__))
 TAGS_PATH = os.path.join(APP_PATH, "templates", "tags")
@@ -14,10 +13,10 @@ TAGS_PATH = os.path.join(APP_PATH, "templates", "tags")
 app = Flask(__name__)
 app.secret_key = "some_secret"
 
-auth.login_manager.init_app(app)
-auth.bcrypt.init_app(app)
-app.register_blueprint(auth.blueprint)
-app.register_blueprint(articles.blueprint)
+auth_blueprint.login_manager.init_app(app)
+auth_blueprint.bcrypt.init_app(app)
+app.register_blueprint(auth_blueprint.blueprint)
+app.register_blueprint(articles_blueprint.blueprint)
 
 
 @app.errorhandler(401)
@@ -41,61 +40,6 @@ def strip_zeros(value):
 def demo():
     articles = mongo_db.get_articles_by_list("beer")
     return render_template("demo_list.html", shop="pessac", articles=articles[:100])
-
-
-# =============================================================================
-@app.route("/catalog/taxfree_price", methods=["POST"])
-@login_required
-def get_taxfree_price():
-    """Calculate taxfree price"""
-    buy_price = request.form.get("buy_price", default=0, type=float)
-    excise_duty = request.form.get("excise_duty", default=0, type=float)
-    social_security_levy = request.form.get(
-        "social_security_levy", default=0, type=float
-    )
-    taxfree_price = round(buy_price + excise_duty + social_security_levy, 4)
-
-    return jsonify({"taxfree_price": taxfree_price})
-
-
-@app.route("/catalog/recommended_prices", methods=["POST"])
-@login_required
-def get_recommended_prices():
-    """Get recommended price for each shop"""
-    ratio_category = request.form["ratio_category"]
-    taxfree_price = request.form.get("taxfree_price", default=0, type=float)
-    tax = request.form.get("tax", default=0, type=float)
-
-    recommended_prices = {}
-    shops = mongo_db.get_shops()
-    for shop in shops:
-        margins = shop["margins"][ratio_category]
-        recommended_prices[shop["username"]] = calculate_recommended_price(
-            taxfree_price, tax, ratio_category, margins
-        )
-
-    return jsonify(recommended_prices)
-
-
-@app.route("/catalog/margins", methods=["POST"])
-@login_required
-def get_margins():
-    """Get profits and margins for each shop managed by current user"""
-    taxfree_price = request.form.get("taxfree_price", default=0, type=float)
-    tax = request.form.get("tax", default=0, type=float)
-    sell_prices = json.loads(request.form.get("sell_prices"))
-
-    profits = {}
-    margins = {}
-    for shop in current_user.shops:
-        sell_price = sell_prices[f"sell_price_{shop}"]
-        sell_price = float(sell_price) if sell_price else 0
-        article_profit = calculate_profit(taxfree_price, tax, sell_price)
-        profits[shop] = round(article_profit, 2)
-        article_margin = calculate_margin(tax, sell_price, article_profit)
-        margins[shop] = round(article_margin)
-
-    return jsonify({"profits": profits, "margins": margins})
 
 
 # =============================================================================
@@ -141,17 +85,15 @@ def get_tags():
 @login_required
 def create_tag(shop):
     if request.method == "GET":
-        articles = list(mongo_db.get_articles())
-        types_dict = mongo_db.get_types_dict()
-        articles_tag = vdo.format_articles_to_validate(articles, types_dict)
+        articles = mongo_db.get_articles()
         return render_template(
-            "article_list_glob.html", action="tag", articles=articles_tag, shop=shop
+            "article_list_glob.html", action="tag", articles=articles, shop=shop
         )
 
     if request.method == "POST":
-        tag_dict = request.form.to_dict(flat=True)
+        tag_dict = request.form.to_dict()
         tag_list = [
-            (mongo_db.get_article_by_id(k), int(v))
+            (mongo_db.get_article_by_id(k).model_dump(), int(v))
             for (k, v) in tag_dict.items()
             if v != ""
         ]
@@ -184,33 +126,31 @@ def print_tag(tag_file):
 @login_required
 def inventory():
     beer1 = list(
-        mongo_db.get_articles_by_filter(
+        mongo_db.get_articles(
             {"type": {"$in": ["Bière", "Cidre"]}, "deposit.unit": {"$ne": 0}}
         )
     )
     beer2 = list(
-        mongo_db.get_articles_by_filter(
+        mongo_db.get_articles(
             {"type": {"$in": ["Bière", "Cidre"]}, "deposit.unit": {"$eq": 0}}
         )
     )
-    keg = list(mongo_db.get_articles_by_filter({"type": {"$in": ["Fût", "Mini-fût"]}}))
+    keg = list(mongo_db.get_articles({"type": {"$in": ["Fût", "Mini-fût"]}}))
 
     spirit_types = mongo_db.get_types_by_list(["rhum", "whisky", "arranged", "spirit"])
-    spirit = list(mongo_db.get_articles_by_filter({"type": {"$in": spirit_types}}))
+    spirit = list(mongo_db.get_articles({"type": {"$in": spirit_types}}))
 
     wine_types = mongo_db.get_types_by_list(
         ["wine", "fortified_wine", "sparkling_wine"]
     )
-    wine = list(mongo_db.get_articles_by_filter({"type": {"$in": wine_types}}))
+    wine = list(mongo_db.get_articles({"type": {"$in": wine_types}}))
 
-    bib = list(mongo_db.get_articles_by_filter({"type": {"$in": ["BIB"]}}))
-    box = list(mongo_db.get_articles_by_filter({"type": {"$in": ["Coffret"]}}))
+    bib = list(mongo_db.get_articles({"type": {"$in": ["BIB"]}}))
+    box = list(mongo_db.get_articles({"type": {"$in": ["Coffret"]}}))
     misc = list(
-        mongo_db.get_articles_by_filter(
-            {"type": {"$in": ["Accessoire", "Emballage", "BSA"]}}
-        )
+        mongo_db.get_articles({"type": {"$in": ["Accessoire", "Emballage", "BSA"]}})
     )
-    food = list(mongo_db.get_articles_by_filter({"type": {"$in": ["Alimentation"]}}))
+    food = list(mongo_db.get_articles({"type": {"$in": ["Alimentation"]}}))
 
     articles_list = {
         "Bières C": beer1,
@@ -224,9 +164,4 @@ def inventory():
         "Alimentation": food,
     }
 
-    types_dict = mongo_db.get_types_dict()
-    articles_inventory = {}
-    for name, articles in articles_list.items():
-        articles_inventory[name] = vdo.format_articles_to_validate(articles, types_dict)
-
-    return render_template("inventory.html", articles_inventory=articles_inventory)
+    return render_template("inventory.html", articles_inventory=articles_list)

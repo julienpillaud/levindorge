@@ -1,13 +1,17 @@
 import os
-from collections import OrderedDict
+from typing import Any
 
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
 from pymongo import ASCENDING, MongoClient
+from pymongo.results import DeleteResult, InsertOneResult, UpdateResult
+
+from application.entities.article import Article, ArticleType, CreateOrUpdateArticle
+from application.entities.shop import Shop
 
 load_dotenv()
 mongo_uri = os.environ.get("MONGO_URI")
-client = MongoClient(mongo_uri, document_class=OrderedDict)
+client: MongoClient = MongoClient(mongo_uri)
 
 db = client.dashboard
 catalog = db.catalog
@@ -31,26 +35,96 @@ DROPDOWN_DICT = {
 }
 
 
-def get_shops():
-    """Get all shops"""
-    return shops.find().sort("id")
-
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# USERS
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def get_user_by_email(email):
-    """Retourne le DICT utilisateur à partir de son email"""
+def get_user_by_email(email: str):
+    """Retrieve a user by its email address."""
     return users.find_one({"email": email}, {"_id": 0})
 
 
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# SHOPS
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def get_shop_usernames():
-    return [x["username"] for x in shops.find({})]
+def get_ratio_category(list_category: str) -> str:
+    """Get the ratio category for a given list category."""
+    article_types = types.find({"list_category": list_category})
+    return article_types[0]["ratio_category"]
 
 
+def get_article_type(type_name: str) -> ArticleType:
+    """Get an ArticleType for a given name."""
+    article_type = types.find_one({"name": type_name})
+    return ArticleType(**article_type)
+
+
+def get_article_types_by_list(list_category: str) -> list[ArticleType]:
+    """Get a list of ArticleType filtered by the specified list category."""
+    article_types = types.find({"list_category": list_category})
+    return [ArticleType(**x) for x in article_types]
+
+
+def get_articles(
+    filter: dict[str, Any] | None = None, to_validate: bool = False
+) -> list[Article]:
+    if filter is None:
+        filter = {}
+    if to_validate:
+        filter.update({"validated": False})
+
+    articles = catalog.find(filter).sort([("type", ASCENDING)])
+    return [Article(**x) for x in articles]
+
+
+def get_articles_by_list(list_category: str) -> list[Article]:
+    """Retrieve a list of articles filtered by list category."""
+    article_types = get_article_types_by_list(list_category)
+    article_types_names = [x.name for x in article_types]
+    articles = catalog.find({"type": {"$in": article_types_names}}).sort(
+        [
+            ("type", ASCENDING),
+            ("region", ASCENDING),
+            ("name.name1", ASCENDING),
+            ("name.name2", ASCENDING),
+        ]
+    )
+    return [Article(**x) for x in articles]
+
+
+def get_article_by_id(article_id: str) -> Article:
+    """Retrieve an article by its unique id."""
+    article = catalog.find_one({"_id": ObjectId(article_id)})
+    return Article(**article)
+
+
+def create_article(article: CreateOrUpdateArticle) -> InsertOneResult:
+    """Create a new article."""
+    return catalog.insert_one(article.model_dump())
+
+
+def update_article(article_id: str, article: CreateOrUpdateArticle) -> UpdateResult:
+    """Update an existing article."""
+    return catalog.replace_one({"_id": ObjectId(article_id)}, article.model_dump())
+
+
+def delete_article(article_id: str) -> DeleteResult:
+    """Delete an article."""
+    return catalog.delete_one({"_id": ObjectId(article_id)})
+
+
+def validate_article(article_id):
+    """Set the 'validated' field to true."""
+    return catalog.update_one(
+        {"_id": ObjectId(article_id)}, {"$set": {"validated": True}}, upsert=False
+    )
+
+
+def get_shops() -> list[Shop]:
+    """Get the list of all shops"""
+    return [Shop(**shop) for shop in shops.find()]
+
+
+def get_shop_by_username(username: str) -> Shop:
+    """Retrieve a shop by its username."""
+    shop = shops.find_one({"username": username})
+    return Shop(**shop)
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def get_shops_margins(ratio_category=None):
     if ratio_category is None:
         return {
@@ -62,100 +136,6 @@ def get_shops_margins(ratio_category=None):
             x["username"]: {"name": x["name"], "margins": x["margins"][ratio_category]}
             for x in shops.find({})
         }
-
-
-def get_tactill_api_key(username):
-    return shops.find_one({"username": username})["tactill_api_key"]
-
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# CATALOG
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def get_articles():
-    """Retourne le CURSOR de tous les articles"""
-    return catalog.find({}).sort([("type", ASCENDING)])
-
-
-def get_articles_by_list(list_category):
-    """Retourne le CURSOR des articles triés correspondant au list_category"""
-    type_list = get_types_by_list([list_category])
-    return catalog.find({"type": {"$in": type_list}}).sort(
-        [
-            ("type", ASCENDING),
-            ("region", ASCENDING),
-            ("name.name1", ASCENDING),
-            ("name.name2", ASCENDING),
-        ]
-    )
-
-
-def get_article_by_id(article_id):
-    """Retourne le DICT article par son ID"""
-    return catalog.find_one({"_id": ObjectId(article_id)})
-
-
-def get_articles_by_filter(filter):
-    return catalog.find(filter)
-
-
-def create_article(article):
-    """Créer un article à partie du DICT"""
-    return catalog.insert_one(article)
-
-
-def update_article(article_id, article):
-    """Remplace l'article"""
-    return catalog.replace_one({"_id": ObjectId(article_id)}, article)
-
-
-def delete_article(article_id):
-    """Supprime l'article"""
-    return catalog.delete_one({"_id": ObjectId(article_id)})
-
-
-def get_articles_to_validate():
-    """Retourne le CURSOR des articles qui ne sont pas validés"""
-    return catalog.find({"validated": False})
-
-
-def validate_article(article_id):
-    """Valide l'article"""
-    return catalog.update_one(
-        {"_id": ObjectId(article_id)}, {"$set": {"validated": True}}, upsert=False
-    )
-
-
-def update_stock_quantity(article_id, shop, stock_quantity):
-    field = f"shops.{shop}.stock_quantity"
-    return catalog.update_one(
-        {"_id": ObjectId(article_id)}, {"$set": {field: stock_quantity}}
-    )
-
-
-def update_barcode(article_id, barcode):
-    return catalog.update_one(
-        {"_id": ObjectId(article_id)}, {"$set": {"barcode": barcode}}
-    )
-
-
-def update_article_shops(article_id, shop, article_shops):
-    field = f"shops.{shop}"
-    return catalog.update_one(
-        {"_id": ObjectId(article_id)}, {"$set": {field: article_shops}}
-    )
-
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# TYPES
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def get_types_dict():
-    return {
-        x["name"]: {
-            "list_category": x["list_category"],
-            "ratio_category": x["ratio_category"],
-        }
-        for x in types.find({})
-    }
 
 
 def get_types_by_list(list_categories):
@@ -173,9 +153,6 @@ def get_type(input_key, input_value, output):
     return types.find_one({input_key: input_value})[output]
 
 
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# DROPDOWN
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def get_demonym():
     return {x["name"]: x["demonym"] for x in countries.find({})}
 
@@ -214,17 +191,14 @@ def get_distributors():
 
 def get_volumes(list_category):
     types_ = types.find_one({"list_category": list_category})
-    volumes_ = types_.get("volumes", [])
-    return [str(x).rstrip("0").rstrip(".") for x in volumes_]
+    return types_.get("volumes", [])
 
 
-# -----------------------------------------------------------------------------------------------------------------------
 def get_dropdown_by_category(category):
     dropdown_collection = DROPDOWN_DICT[category]["collection"]
     return dropdown_collection.find({}).sort([("name", ASCENDING)])
 
 
-# -----------------------------------------------------------------------------------------------------------------------
 def create_dropdown(dropdown_category, dropdown):
     dropdown_collection = DROPDOWN_DICT[dropdown_category]["collection"]
     return dropdown_collection.insert_one(dropdown)

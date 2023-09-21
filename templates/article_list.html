@@ -118,33 +118,33 @@
                     {% endif %}
                     <!-- VOLUME -->
                     {% if list_category not in others_types_list %}
-                        <td class="text-center">{{ x.volume }}</td>
+                        <td class="text-center">{{ x.volume | strip_zeros }}</td>
                     {% endif %}
                     <!-- ALCOHOL_BY_VOLUME -->
                     {% if list_category not in ['wine', 'fortified_wine', 'sparkling_wine', 'bib', 'box', 'misc', 'food'] %}
-                        <td class="text-center">{{ x.alcohol_by_volume }}</td>
+                        <td class="text-center">{{ x.alcohol_by_volume | strip_zeros }}</td>
                     {% endif %}
                     <!-- PRICE -->
-                    <td class="text-center">{{ x.taxfree_price }}</td>
+                    <td class="text-center">{{ x.taxfree_price | strip_zeros }}</td>
                     {% if list_category not in ['misc', 'food'] %}
-                        <td class="text-center recommended_price">{{ x.recommended_price }}</td>
+                        <td class="text-center recommended_price">{{ x.recommended_price | strip_zeros }}</td>
                     {% endif %}
-                    <td class="text-center sell_price">{{ x.shops[shop]['sell_price'] }}</td>
-                    <td class="text-center">{{ x.margin['margin'] }}</td>
-                    <td class="text-center">{{ x.margin['markup'] }}</td>
+                    <td class="text-center sell_price">{{ x.shops[shop]['sell_price'] | strip_zeros }}</td>
+                    <td class="text-center">{{ x.margin.margin | strip_zeros }}</td>
+                    <td class="text-center">{{ x.margin.markup | strip_zeros }}</td>
                     <!-- STOCK -->
-                    <td class="text-center stock_quantity">{{ x.shops[shop]['stock_quantity'] }}</td>
+                    <td class="text-center stock_quantity">{{ x.shops[shop]['stock_quantity'] if x.shops[shop]['stock_quantity'] }}</td>
                     <!-- DISTRIBUTOR -->
                     <td class="text-center">{{ x.distributor }}</td>
                     <!-- PACKAGING / DEPOSIT -->
                     {% if list_category in ['beer'] %}
-                        <td class="text-center">{{ x.packaging }}</td>
+                        <td class="text-center">{{ x.packaging if x.packaging }}</td>
                     {% endif %}
                     {% if list_category in ['beer', 'keg', 'mini_keg'] %}
-                        <td class="text-center">{{ x.deposit.unit }}</td>
+                        <td class="text-center">{{ x.deposit.unit if x.deposit.unit }}</td>
                     {% endif %}
                     {% if list_category in ['beer'] %}
-                        <td class="text-center">{{ x.deposit.case }}</td>
+                        <td class="text-center">{{ x.deposit.case | strip_zeros  if x.deposit.case }}</td>
                     {% endif %}
                     <!-- TYPE -->
                     {% if list_category in ['spirit', 'fortified_wine', 'misc'] %}
@@ -153,13 +153,13 @@
 
                     <!-- BUTTON -->
                     <td class="text-center" style="width: 20px">
-                        <a href="{{ url_for('articles.update_article_get', article_id=x._id) }}">
+                        <a href="{{ url_for('articles.update_article_get', article_id=x.id) }}">
                             <i class="fas fa-pen" style="color:orange"></i>
                         </a>
                     </td>
                     {% if current_user.role in ['admin', 'superuser'] %}
                         <td class="text-center" style="width: 20px">
-                            <a href="{{ url_for('articles.delete_article', article_id=x._id) }}">
+                            <a href="{{ url_for('articles.delete_article', article_id=x.id) }}">
                                 <i class="fas fa-times" style="color:red"></i>
                             </a>
                         </td>

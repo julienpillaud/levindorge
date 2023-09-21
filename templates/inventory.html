@@ -89,17 +89,17 @@
                 <td class="text-center">{{ loop.index }}</td>
                 <td class="">{{ x.name.name1 }}</td>
                 <td class="">{{ x.name.name2 }}</td>
-                <td class="text-center text-nowrap">{{ x.volume }}</td>
+                <td class="text-center text-nowrap">{{ x.volume | strip_zeros if x.volume }}</td>
                 
                 {% if name == 'Fûts' %}
                 <td class="text-center text-nowrap" name="packaging">1</td>
-                <td class="text-center text-nowrap" name="deposit">{{ x.deposit.unit }}</td>
+                <td class="text-center text-nowrap" name="deposit">{{ x.deposit.unit | strip_zeros if x.deposit.unit }}</td>
                 {% else %}
-                <td class="text-center text-nowrap" name="packaging">{{ x.packaging }}</td>
-                <td class="text-center text-nowrap" name="deposit">{{ x.deposit.case }}</td>
+                <td class="text-center text-nowrap" name="packaging">{{ x.packaging if x.packaging }}</td>
+                <td class="text-center text-nowrap" name="deposit">{{ x.deposit.case | strip_zeros if x.deposit.case }}</td>
                 {% endif %}
 
-                <td class="text-center text-nowrap" name="buy_price">{{ x.taxfree_price }}</td>
+                <td class="text-center text-nowrap" name="buy_price">{{ x.taxfree_price | strip_zeros }}</td>
                 <td style="padding: 0">
                   <input class="form-control form-control-sm" type="number" step="1" min="0" name="quantity">
                 </td>

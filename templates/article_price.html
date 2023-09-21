@@ -1,9 +1,9 @@
 <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
 <!-- PRICE -->
 {% if list_category in ['food'] %}
-  {% set tax = 10 %}
+  {% set tax = 10.0 %}
 {% else %}
-  {% set tax = 20 %}
+  {% set tax = 20.0 %}
 {% endif %}
 
 {% set buy_price = '' %}
@@ -23,7 +23,7 @@
       <div class="input-group-prepend">
         <span class="input-group-text bg-dark-yellow text-dark">Tarif HT (€)</span>
       </div>
-        <input type="number" step="0.0001" min="0.0001" class="form-control" id="buy_price" name="buy_price" value="{{ buy_price }}" required>
+        <input type="number" step="0.0001" min="0.0001" class="form-control" id="buy_price" name="buy_price" value="{{ buy_price | strip_zeros }}" required>
     </div>
   </div>
   <div class="col-6">
@@ -31,7 +31,7 @@
       <div class="input-group-prepend">
         <span class="input-group-text bg-secondary text-white">TVA (%)</span>
       </div>
-        <input type="text" class="form-control text-center" id="tax" name="tax" value="{{ tax }}" readonly>
+        <input type="text" class="form-control text-center" id="tax" name="tax" value="{{ tax | strip_zeros }}" readonly>
     </div>
   </div>
 </div>
@@ -43,7 +43,7 @@
       <div class="input-group-prepend">
         <span class="input-group-text bg-dark-yellow text-dark">DA (€)</span>
       </div>
-        <input type="number" step="0.0001" min="0" class="form-control" id="excise_duty" name="excise_duty" value="{{ excise_duty }}">
+        <input type="number" step="0.0001" min="0" class="form-control" id="excise_duty" name="excise_duty" value="{{ excise_duty | strip_zeros }}">
     </div>
   </div>
   <div class="col-6">
@@ -51,7 +51,7 @@
       <div class="input-group-prepend">
         <span class="input-group-text bg-dark-yellow text-dark">CSS (€)</span>
       </div>
-        <input type="number" step="0.0001" min="0" class="form-control" id="social_security_levy" name="social_security_levy" value="{{ social_security_levy }}">
+        <input type="number" step="0.0001" min="0" class="form-control" id="social_security_levy" name="social_security_levy" value="{{ social_security_levy | strip_zeros }}">
     </div>
   </div>
 </div>
@@ -86,8 +86,8 @@
 {% for shop in current_user.shops %}
 
   {% set sell_price = '' %}
-  {% set bar_price = 0 %}
-  {% set stock_quantity = 0 %}
+  {% set bar_price = 0.0 %}
+  {% set stock_quantity = 0.0 %}
 
   {% if article is defined %}
     {% set sell_price = article.shops[shop]['sell_price'] %}
@@ -106,10 +106,10 @@
           <input type="text" class="form-control text-center" id="{{ 'recommended_price_' + shop }}" name="{{ 'recommended_price_' + shop }}" readonly>
         {% endif %}
 
-        <input type="number" step="0.01" min="0" class="form-control text-center" id="{{ 'sell_price_' + shop }}" name="{{ 'sell_price_' + shop }}" value="{{ sell_price }}" required>
+        <input type="number" step="0.01" min="0" class="form-control text-center" id="{{ 'sell_price_' + shop }}" name="{{ 'sell_price_' + shop }}" value="{{ sell_price | strip_zeros }}" required>
         <input type="text" class="form-control text-center" id="{{ 'profit_' + shop }}" name="{{ 'profit_' + shop }}" readonly>
         <input type="text" class="form-control text-center" id="{{ 'margin_' + shop }}" name="{{ 'margin_' + shop }}" readonly>
-        <input type="number" step="0.01" min="0" class="form-control text-center" id="{{ 'bar_price_' + shop }}" name="{{ 'bar_price_' + shop }}" value="{{ bar_price }}" required>
+        <input type="number" step="0.01" min="0" class="form-control text-center" id="{{ 'bar_price_' + shop }}" name="{{ 'bar_price_' + shop }}" value="{{ bar_price | strip_zeros }}" required>
         <input type="text" class="form-control text-center" id="{{ 'stock_quantity_' + shop }}" name="{{ 'stock_quantity_' + shop }}" value="{{ stock_quantity }}" readonly>
 
       </div>

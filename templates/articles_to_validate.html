@@ -30,23 +30,23 @@
                         <td class="">{{ x.name.name2 }}</td>
                         <td class="text-center">{{ x.region }}</td>
                         <td class="text-center">{{ x.color }}</td>
-                        <td class="text-center">{{ x.volume }}</td>
-                        <td class="text-center">{{ x.alcohol_by_volume }}</td>
+                        <td class="text-center">{{ x.volume | strip_zeros }}</td>
+                        <td class="text-center">{{ x.alcohol_by_volume | strip_zeros }}</td>
                         <td class="text-center font-weight-bold">{{ x.type }}</td>
                         <td class="text-center">{{ x.created_by }}</td>
-                        <td class="text-center">{{ x.created_at }}</td>
+                        <td class="text-center">{{ x.created_at.strftime('%d / %m / %Y') }}</td>
                         <td class="text-center">
-                            <a href="{{ url_for('articles.validate_article', article_id=x._id) }}">
+                            <a href="{{ url_for('articles.validate_article', article_id=x.id) }}">
                                 <i class="fas fa-check" style="color: green"></i>
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{{ url_for('articles.update_article', validate=True, article_id=x._id) }}">
+                            <a href="{{ url_for('articles.update_article', validate=True, article_id=x.id) }}">
                                 <i class="fas fa-pen" style="color:orange"></i>
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{{ url_for('articles.delete_article', article_id=x._id) }}">
+                            <a href="{{ url_for('articles.delete_article', article_id=x.id) }}">
                                 <i class="fas fa-times" style="color:red"></i>
                             </a>
                         </td>

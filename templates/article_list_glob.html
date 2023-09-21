@@ -31,12 +31,12 @@
                         <td class="">{{ x.name.name2 }}</td>
                         <td class="text-center">{{ x.region }}</td>
                         <td class="text-center">{{ x.color }}</td>
-                        <td class="text-center">{{ x.volume }}</td>
-                        <td class="text-center">{{ x.alcohol_by_volume }}</td>
-                        <td class="text-center">{{ x.shops[shop]['sell_price'] }}</td>
+                        <td class="text-center">{{ x.volume | strip_zeros }}</td>
+                        <td class="text-center">{{ x.alcohol_by_volume | strip_zeros }}</td>
+                        <td class="text-center">{{ x.shops[shop]['sell_price'] | strip_zeros }}</td>
                         <td class="text-center font-weight-bold">{{ x.type }}</td>
                         <td style="padding: 0; width: 3%;">
-                            <input style="height: 25px;" class="form-control form-control-sm _id" type="number" step="1" min="1" name="{{ x._id }}">
+                            <input style="height: 25px;" class="form-control form-control-sm _id" type="number" step="1" min="1" name="{{ x.id }}">
                         </td>
                     </tr>
                 {% endfor %}
