@@ -5,6 +5,7 @@ from flask_login import login_required
 
 from application.blueprints import articles as articles_blueprint
 from application.blueprints import auth as auth_blueprint
+from application.blueprints import inventory as inventory_blueprint
 from application.blueprints import items as items_blueprint
 from utils import mongo_db, tag, vdo
 
@@ -19,6 +20,7 @@ auth_blueprint.bcrypt.init_app(app)
 app.register_blueprint(auth_blueprint.blueprint)
 app.register_blueprint(articles_blueprint.blueprint)
 app.register_blueprint(items_blueprint.blueprint)
+app.register_blueprint(inventory_blueprint.blueprint)
 
 
 @app.errorhandler(401)
@@ -37,14 +39,12 @@ def strip_zeros(value):
     return str(value).rstrip("0").rstrip(".")
 
 
-# =============================================================================
 @app.route("/demo")
 def demo():
     articles = mongo_db.get_articles_by_list("beer")
     return render_template("demo_list.html", shop="pessac", articles=articles[:100])
 
 
-# =============================================================================
 @app.route("/tag")
 @login_required
 def get_tags():
@@ -96,49 +96,3 @@ def create_tag(shop):
 @login_required
 def print_tag(tag_file):
     return render_template(f"/tags/{tag_file}")
-
-
-# =============================================================================
-@app.route("/inventory")
-@login_required
-def inventory():
-    beer1 = list(
-        mongo_db.get_articles(
-            {"type": {"$in": ["Bière", "Cidre"]}, "deposit.unit": {"$ne": 0}}
-        )
-    )
-    beer2 = list(
-        mongo_db.get_articles(
-            {"type": {"$in": ["Bière", "Cidre"]}, "deposit.unit": {"$eq": 0}}
-        )
-    )
-    keg = list(mongo_db.get_articles({"type": {"$in": ["Fût", "Mini-fût"]}}))
-
-    spirit_types = mongo_db.get_types_by_list(["rhum", "whisky", "arranged", "spirit"])
-    spirit = list(mongo_db.get_articles({"type": {"$in": spirit_types}}))
-
-    wine_types = mongo_db.get_types_by_list(
-        ["wine", "fortified_wine", "sparkling_wine"]
-    )
-    wine = list(mongo_db.get_articles({"type": {"$in": wine_types}}))
-
-    bib = list(mongo_db.get_articles({"type": {"$in": ["BIB"]}}))
-    box = list(mongo_db.get_articles({"type": {"$in": ["Coffret"]}}))
-    misc = list(
-        mongo_db.get_articles({"type": {"$in": ["Accessoire", "Emballage", "BSA"]}})
-    )
-    food = list(mongo_db.get_articles({"type": {"$in": ["Alimentation"]}}))
-
-    articles_list = {
-        "Bières C": beer1,
-        "Bières NC": beer2,
-        "Fûts": keg,
-        "Spiritieux": spirit,
-        "Vins": wine,
-        "BIB": bib,
-        "Coffrets": box,
-        "Divers": misc,
-        "Alimentation": food,
-    }
-
-    return render_template("inventory.html", articles_inventory=articles_list)

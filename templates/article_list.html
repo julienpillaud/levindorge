@@ -5,7 +5,7 @@
     <div class="container-fluid padding-navbar">
         <!-- id="article_list" pour la fonction de coloration du prix -->
         <table class="table table-dark table-striped table-bordered table-hover table-sm" id="article_list">
-            <thead class="bg-light-purple">
+            <thead class="bg-light-purple table-sticky">
             <tr>
                 <th class="text-center align-middle">#</th>
                 <!-- NAME 1 -->
@@ -154,13 +154,13 @@
                     <!-- BUTTON -->
                     <td class="text-center" style="width: 20px">
                         <a href="{{ url_for('articles.update_article_get', article_id=x.id) }}">
-                            <i class="fas fa-pen" style="color:orange"></i>
+                            <i class="bi bi-pencil-square text-warning"></i>
                         </a>
                     </td>
                     {% if current_user.role in ['admin', 'superuser'] %}
                         <td class="text-center" style="width: 20px">
                             <a href="{{ url_for('articles.delete_article', article_id=x.id) }}">
-                                <i class="fas fa-times" style="color:red"></i>
+                                <i class="bi bi-x-square text-danger"></i>
                             </a>
                         </td>
                     {% endif %}

@@ -1,205 +1,73 @@
-<!doctype html>
-<html lang="en">
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
 
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <!-- Google font -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <div class="container-fluid padding-navbar">
 
-    <style>
-      body {font-family: 'Roboto', sans-serif;}
-    </style>
-
-    <title>Le Vin d'Orge - Inventaire</title>
-
-  </head>
-
-  <body class="bg-light">
-
-    <div class="sticky-top bg-light">
-      <ul class="nav nav-pills nav-justified" id="pills-tab" role="tablist">
-<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
-        {% for name, articles in articles_inventory.items() %}
-        {% if loop.index == 1 %}
-          <li class="nav-item">
-            <a class="nav-link active" id="pills-{{ loop.index }}-tab" data-toggle="pill" href="#pills-{{ loop.index }}" role="tab" aria-controls="pills-{{ loop.index }}" aria-selected="true">{{name}}</a>
-          </li>
-        {% else %}
-          <li class="nav-item">
-            <a class="nav-link" id="pills-{{ loop.index }}-tab" data-toggle="pill" href="#pills-{{ loop.index }}" role="tab" aria-controls="pills-{{ loop.index }}" aria-selected="false">{{name}}</a>
-          </li>
-        {% endif %}
-        {% endfor %}        
-<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
-      </ul>
-      <input class="form-control form-control-lg bg-white text-center" type="search" id="search" placeholder="Rechercher ..." aria-label="Search">
-    </div>
-
-    <div class="container-fluid">
-      <div class="tab-content" id="pills-tabContent">
-<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
-        {% for name, articles in articles_inventory.items() %}
-        <div class="tab-pane {% if loop.index == 1 %}show active{% endif %}" id="pills-{{ loop.index }}" role="tabpanel" aria-labelledby="pills-{{ loop.index }}-tab">
-
-          <div class="row justify-content-center">
-            <div class="col-4 mt-3 mb-3">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text font-weight-bold">Total quantité</span>
-                </div>
-                <input type="text" class="form-control bg-light font-weight-bold text-right" id="quantity_{{ loop.index }}" readonly>
-              </div>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text font-weight-bold">V. marchande</span>
-                </div>
-                <input type="text" class="form-control bg-light font-weight-bold text-right" id="sale_value_{{ loop.index }}" readonly>
-              </div>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text font-weight-bold">V. consigne</span>
-                </div>
-                <input type="text" class="form-control bg-light font-weight-bold text-right" id="deposit_value_{{ loop.index }}" readonly>
-              </div>
-            </div>
-          </div>
-
-          <table class="table table-striped table-bordered table-hover table-sm" name="{{ loop.index }}">
-            <thead class="bg-primary text-white font-weight-bold">
-              <tr>
-                <th style="width: 1rem" class="text-center align-middle text-nowrap">#</th>
-                <th class="text-center align-middle text-nowrap">Nom 1</th>
-                <th class="text-center align-middle text-nowrap">Nom 2</th>
-                <th class="text-center align-middle text-nowrap">Vol</th>
-                <th class="text-center align-middle text-nowrap">Cond</th>
-                <th class="text-center align-middle text-nowrap">Cons</th>
-                <th class="text-center align-middle text-nowrap">HT DI</th>
-                <th style="width: 5rem" class="text-center align-middle text-nowrap">Quantité</th>
-                <th style="width: 5rem" class="text-center align-middle text-nowrap">Val m</th>
-                <th style="width: 5rem" class="text-center align-middle text-nowrap">Val c</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for x in articles %}
-              <tr id="{{x._id}}">
-                <td class="text-center">{{ loop.index }}</td>
-                <td class="">{{ x.name.name1 }}</td>
-                <td class="">{{ x.name.name2 }}</td>
-                <td class="text-center text-nowrap">{{ x.volume | strip_zeros if x.volume }}</td>
-                
-                {% if name == 'Fûts' %}
-                <td class="text-center text-nowrap" name="packaging">1</td>
-                <td class="text-center text-nowrap" name="deposit">{{ x.deposit.unit | strip_zeros if x.deposit.unit }}</td>
+        <ul class="nav nav-pills nav-fill bg-light-purple" id="pills-tab" style="position: sticky; top: 56px" role="tablist">
+            {% for name, articles in articles_inventory.items() %}
+                {% if loop.index == 1 %}
+                    <li class="nav-item">
+                        <a class="nav-link active" id="pills-{{ loop.index }}-tab" data-toggle="pill" href="#pills-{{ loop.index }}" role="tab" aria-controls="pills-{{ loop.index }}" aria-selected="true">{{ name }}</a>
+                    </li>
                 {% else %}
-                <td class="text-center text-nowrap" name="packaging">{{ x.packaging if x.packaging }}</td>
-                <td class="text-center text-nowrap" name="deposit">{{ x.deposit.case | strip_zeros if x.deposit.case }}</td>
+                    <li class="nav-item">
+                        <a class="nav-link" id="pills-{{ loop.index }}-tab" data-toggle="pill" href="#pills-{{ loop.index }}" role="tab" aria-controls="pills-{{ loop.index }}" aria-selected="false">{{ name }}</a>
+                    </li>
                 {% endif %}
+            {% endfor %}
+        </ul>
 
-                <td class="text-center text-nowrap" name="buy_price">{{ x.taxfree_price | strip_zeros }}</td>
-                <td style="padding: 0">
-                  <input class="form-control form-control-sm" type="number" step="1" min="0" name="quantity">
-                </td>
-                <td class="text-center text-nowrap" name="sale_value"></td>
-                <td class="text-center text-nowrap" name="deposit_value"></td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+        <div class="tab-content" id="pills-tabContent">
+            {% for name, articles in articles_inventory.items() %}
+                <div class="tab-pane {% if loop.index == 1 %}show active{% endif %}" id="pills-{{ loop.index }}" role="tabpanel" aria-labelledby="pills-{{ loop.index }}-tab">
 
+                    <table class="table table-dark table-striped table-bordered table-hover table-sm" name="{{ loop.index }}" id="inventory">
+                        <thead class="bg-light-purple" style="position: sticky; top: 95px">
+                        <tr>
+                            <th style="width: 1rem" class="text-center align-middle text-nowrap">#</th>
+                            <th class="text-center align-middle text-nowrap"></th>
+                            <th class="text-center align-middle text-nowrap"></th>
+                            <th class="text-center align-middle text-nowrap">Vol</th>
+                            <th class="text-center align-middle text-nowrap">Cond</th>
+                            <th class="text-center align-middle text-nowrap">Cons</th>
+                            <th class="text-center align-middle text-nowrap">HT DI</th>
+                            <th style="width: 5rem" class="text-center align-middle text-nowrap">Quantité</th>
+                            <th style="width: 5rem" class="text-center align-middle text-nowrap">Val m</th>
+                            <th style="width: 5rem" class="text-center align-middle text-nowrap">Val c</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for x in articles %}
+                            <tr id="{{ x.id }}">
+                                <td class="text-center">{{ loop.index }}</td>
+                                <td class="">{{ x.name.name1 }}</td>
+                                <td class="">{{ x.name.name2 }}</td>
+                                <td class="text-center text-nowrap">{{ x.volume | strip_zeros if x.volume }}</td>
+
+                                {% if name == 'Fûts' %}
+                                    <td class="text-center text-nowrap" name="packaging">1</td>
+                                    <td class="text-center text-nowrap" name="deposit">{{ x.deposit.unit | strip_zeros if x.deposit.unit }}</td>
+                                {% else %}
+                                    <td class="text-center text-nowrap" name="packaging">{{ x.packaging if x.packaging }}</td>
+                                    <td class="text-center text-nowrap" name="deposit">{{ x.deposit.case | strip_zeros if x.deposit.case }}</td>
+                                {% endif %}
+
+                                <td class="text-center text-nowrap" name="buy_price">{{ x.taxfree_price | strip_zeros }}</td>
+                                <td style="padding: 0">
+                                    <input class="form-control form-control-sm" type="number" step="1" min="0" name="quantity" value="{{ x.inventory.stock_quantity }}">
+                                </td>
+                                <td class="text-center text-nowrap" id="sale_value">{{ x.inventory.sale_value }}</td>
+                                <td class="text-center text-nowrap" id="deposit_value">{{ x.inventory.deposit_value if x.inventory.deposit_value }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
-      </div>
+
     </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
-    <script>
-        // -------------------------------------------------------------------
-        // Get sessionStorage when reload page
-        window.onload = function() {
-          for (var i = 0; i < sessionStorage.length; i++) {
-            var key = sessionStorage.key(i);
-            var value = sessionStorage.getItem(key);
-
-            var row = $('#'+key);
-            var val = $.parseJSON(value)
-            row.find('[name="quantity"]').val(val.quantity);
-            row.find('[name="sale_value"]').html(val.sale_value);
-            row.find('[name="deposit_value"]').html(val.deposit_value);
-          }
-        };
-
-        // -------------------------------------------------------------------
-        $(document).ready(function() {
-          // -------------------------------------------------------------------
-          // SEARCH
-          $('#search').keyup(function() {
-            var search = $(this).val();
-            $('table tbody tr').hide();
-            $('table tbody tr td:contains("'+search+'")').each(function(){
-              $(this).closest('tr').show();
-            });
-          });
-
-          $.expr[":"].contains = $.expr.createPseudo(function(arg) {
-            return function( elem ) {
-              return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
-            };
-          });
-
-          // -------------------------------------------------------------------
-          // Calculate sale_value and deposit_value
-          $('input[name="quantity"]').on('keyup change blur', function() {
-            var row = $(this).closest('tr');
-            var id = row.attr('id');
-            var category = row.closest('table').attr('name')
-            var packaging = Number(row.find('[name="packaging"]').html());
-            var deposit = Number(row.find('[name="deposit"]').html());
-            var buy_price = Number(row.find('[name="buy_price"]').html());
-            var quantity = Number(row.find('[name="quantity"]').val());
-
-            var sale_value = buy_price * quantity;
-            sale_value = sale_value.toFixed(2);
-            row.find('[name="sale_value"]').html(sale_value);
-
-            if (packaging > 0) {
-              var deposit_value = (quantity / packaging) * deposit;
-              deposit_value = deposit_value.toFixed(2);
-              row.find('[name="deposit_value"]').html(deposit_value);
-            }
-
-            var dict = {'quantity': quantity, 'sale_value': sale_value, 'deposit_value': deposit_value}
-            sessionStorage.setItem(id, JSON.stringify(dict));
-
-            var sum_quantity = 0;
-            var sum_sale_value = 0;
-            var sum_deposit_value = 0;
-            $('table[name='+category+'] tbody tr').each(function() {
-              var x_quantity = Number($(this).find('[name="quantity"]').val());
-              var x_sale_value = Number($(this).find('[name="sale_value"]').html());
-              var x_deposit_value = Number($(this).find('[name="deposit_value"]').html());
-              sum_quantity += x_quantity
-              sum_sale_value += x_sale_value
-              sum_deposit_value += x_deposit_value
-            });
-            $('#quantity_'+category).val(sum_quantity)
-            $('#sale_value_'+category).val(sum_sale_value.toFixed(2))
-            $('#deposit_value_'+category).val(sum_deposit_value.toFixed(2))
-
-          });
-
-          // -------------------------------------------------------------------
-        });
-    </script>
-
-  </body>
-</html>
+{% endblock %}

@@ -21,9 +21,39 @@ $(function() {
       });
     });
 
+  let quantityArray = document.querySelectorAll("#inventory tbody tr td input[name='quantity']");
+  quantityArray.forEach(function(elem) {
+    elem.addEventListener("input", function() {
+      save_inventory(elem);
+    });
+  });
+
 });
 
 //=============================================================================
+function save_inventory(elem) {
+  let row = elem.closest("tr")
+  let sale_value = row.querySelector("#sale_value")
+  let deposit_value = row.querySelector("#deposit_value")
+
+  let options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      "articleId": row.id,
+      "stockQuantity": Number(elem.value),
+    }),
+  }
+  fetch("/inventory/save", options)
+    .then(response => response.json())
+    .then(body => {
+      sale_value.innerHTML = body["sale_value"];
+      deposit_value.innerHTML = body["deposit_value"]
+    });
+}
+
 function calculate_taxfree_price(on_load) {
   const buy_price = document.getElementById("buy_price");
   const buy_price_value = buy_price ? buy_price.value : 0;
@@ -192,46 +222,3 @@ $(document).ready(function() {
 
   })
 })
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Inventaire
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function inventory() {
-  var sum_sale_value = 0;
-  var sum_deposit_value = 0;
-
-  $('tr').each(function() {
-    var packaging = $('#packaging', this).html();
-    var deposit = $('#deposit', this).html();
-    var buy_price = $('#buy_price', this).html();
-    var quantity = $('#quantity', this).val();
-    
-    if (quantity != 0) {
-      var sale_value = buy_price * quantity;
-      sale_value = sale_value.toFixed(2);
-      $('#sale_value', this).html(sale_value);
-      if (!isNaN(sale_value) && sale_value.length != 0) {
-        sum_sale_value += parseFloat(sale_value);
-      };
-      
-      if (deposit > 0) {
-        var deposit_value = quantity / packaging * deposit;
-        deposit_value = deposit_value.toFixed(2);
-        $('#deposit_value', this).html(deposit_value);
-        if (!isNaN(deposit_value) && deposit_value.length != 0) {
-          sum_deposit_value += parseFloat(deposit_value);
-        };
-      };
-    };
-  });
-  sum_sale_value = sum_sale_value.toFixed(2);
-  $('#sum_sale_value').html(sum_sale_value);
-  sum_deposit_value = sum_deposit_value.toFixed(2);
-  $('#sum_deposit_value').html(sum_deposit_value);
-  sum = parseFloat(sum_sale_value) + parseFloat(sum_deposit_value)
-  $('#sum').html(sum);
-};
-
-$(document).ready(function() {
-  $('table').keyup(inventory)
-});
-

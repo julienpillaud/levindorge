@@ -3,6 +3,8 @@ from datetime import datetime
 from bson import ObjectId
 from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator
 
+from application.entities.inventory import Inventory
+
 
 class ArticleType(BaseModel):
     name: str
@@ -99,3 +101,7 @@ class AugmentedArticle(Article):
 
     recommended_price: float
     margin: ArticleMargin
+
+
+class InventoryArticle(Article):
+    inventory: Inventory | None = None
