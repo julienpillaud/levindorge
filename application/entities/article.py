@@ -105,3 +105,7 @@ class AugmentedArticle(Article):
 
 class InventoryArticle(Article):
     inventory: Inventory | None = None
+
+
+class TagArticle(Article):
+    ratio_category: str

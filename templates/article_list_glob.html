@@ -8,8 +8,8 @@
                 <thead class="bg-light-purple table-sticky">
                 <tr>
                     <th class="text-center align-middle">#</th>
-                    <th class="text-center align-middle">Produit</th>
-                    <th class="text-center align-middle">Produit</th>
+                    <th class="text-center align-middle"></th>
+                    <th class="text-center align-middle"></th>
                     <th class="text-center align-middle">Région</th>
                     <th class="text-center align-middle">Couleur</th>
                     <th class="text-center align-middle">Volume</th>
@@ -31,8 +31,8 @@
                         <td class="">{{ x.name.name2 }}</td>
                         <td class="text-center">{{ x.region }}</td>
                         <td class="text-center">{{ x.color }}</td>
-                        <td class="text-center">{{ x.volume | strip_zeros }}</td>
-                        <td class="text-center">{{ x.alcohol_by_volume | strip_zeros }}</td>
+                        <td class="text-center">{{ x.volume | strip_zeros if x.volume }}</td>
+                        <td class="text-center">{{ x.alcohol_by_volume | strip_zeros if x.alcohol_by_volume }}</td>
                         <td class="text-center">{{ x.shops[shop]['sell_price'] | strip_zeros }}</td>
                         <td class="text-center font-weight-bold">{{ x.type }}</td>
                         <td style="padding: 0; width: 3%;">

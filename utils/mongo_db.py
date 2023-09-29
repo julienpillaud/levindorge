@@ -55,6 +55,11 @@ def get_user_by_email(email: str):
 
 # ------------------------------------------------------------------------------
 # types
+def get_types() -> list[ArticleType]:
+    article_types = types.find()
+    return [ArticleType(**x) for x in article_types]
+
+
 def get_ratio_category(list_category: str) -> str:
     """Get the ratio category for a given list category."""
     article_types = types.find({"list_category": list_category})
@@ -177,11 +182,11 @@ def save_inventory_record(inventory_record: CreateOrUpdateInventory) -> InsertOn
     )
 
 
-def reset_inventory():
+def reset_inventory() -> None:
     db.inventory.delete_many({})
 
 
-def get_articles_inventory(match):
+def get_articles_inventory(match: dict[str, Any]) -> list[InventoryArticle]:
     articles = db.catalog.aggregate(
         [
             {"$match": match},
