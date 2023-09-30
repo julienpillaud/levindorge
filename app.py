@@ -28,8 +28,10 @@ def error_page(error):
 
 @app.context_processor
 def register_user_shops():
-    user_shops = mongo_db.get_user_shops(user_shops=current_user.shops)
-    return {"user_shops": user_shops}
+    if current_user.is_authenticated:
+        user_shops = mongo_db.get_user_shops(user_shops=current_user.shops)
+        return {"user_shops": user_shops}
+    return {}
 
 
 @app.template_filter()
