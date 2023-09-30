@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from flask import Blueprint, redirect, render_template, request, url_for
-from flask_login import login_required
+from flask_login import current_user, login_required
 
 from application.use_cases.tags import TagManager
 from utils import mongo_db
@@ -15,13 +15,15 @@ tags_path = application_path / "templates" / "tags"
 @blueprint.get("/create")
 @login_required
 def create_tags_view() -> str:
-    shop_username = request.args["shop"]
-    shop = mongo_db.get_shop_by_username(username=shop_username)
+    request_shop = request.args["shop"]
+    current_shop = mongo_db.get_shop_by_username(username=request_shop)
 
     articles = mongo_db.get_articles()
 
     return render_template(
-        "article_list_glob.html", articles=articles, shop=shop.username
+        "article_list_glob.html",
+        current_shop=current_shop,
+        articles=articles,
     )
 
 

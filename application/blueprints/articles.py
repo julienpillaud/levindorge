@@ -28,8 +28,8 @@ blueprint = Blueprint(name="articles", import_name=__name__, url_prefix="/articl
 @blueprint.get("/<list_category>")
 @login_required
 def get_articles(list_category: str):
-    shop_username = request.args["shop"]
-    shop = mongo_db.get_shop_by_username(username=shop_username)
+    request_shop = request.args["shop"]
+    current_shop = mongo_db.get_shop_by_username(username=request_shop)
 
     articles = mongo_db.get_articles_by_list(list_category)
     ratio_category = mongo_db.get_ratio_category(list_category)
@@ -39,13 +39,13 @@ def get_articles(list_category: str):
         recommended_price = compute_recommended_price(
             taxfree_price=article.taxfree_price,
             tax=article.tax,
-            shop_margins=shop.margins[ratio_category],
+            shop_margins=current_shop.margins[ratio_category],
             ratio_category=ratio_category,
         )
         margin = compute_article_margin(
             taxfree_price=article.taxfree_price,
             tax=article.tax,
-            sell_price=article.shops[shop.username].sell_price,
+            sell_price=article.shops[current_shop.username].sell_price,
         )
 
         augmented_article = AugmentedArticle(
@@ -57,7 +57,7 @@ def get_articles(list_category: str):
 
     return render_template(
         "article_list.html",
-        shop=shop.username,
+        current_shop=current_shop,
         list_category=list_category,
         articles=augmented_articles,
     )

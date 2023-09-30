@@ -1,23 +1,23 @@
-{% if shop is not defined %}
-    {% set shop = current_user.shops[0] %}
+{% if current_shop is not defined %}
+    {% set current_shop = user_shops[0] %}
 {% endif %}
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark-purple fixed-top">
 
     <a class="navbar-brand" href="#">{{ current_user.name }}</a>
 
-    <!-- {% if shop is defined %} -->
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ shops_margins[shop]['name'] }}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                {% for x in current_user.shops if x != shop %}
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=x, list_category='beer') }}">{{ shops_margins[x]['name'] }}</a>
-                {% endfor %}
-            </div>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ current_shop.name }}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {% for shop in user_shops if shop.username != current_shop.username %}
+                <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop.username, list_category='beer') }}">
+                    {{ shop.name }}
+                </a>
+            {% endfor %}
         </div>
-        <!-- {% endif %} -->
+    </div>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -31,8 +31,12 @@
                     BIERES
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='beer') }}">Bières</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='cider') }}">Cidres</a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='beer') }}">
+                        Bières
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='cider') }}">
+                        Cidres
+                    </a>
                 </div>
             </li>
 
@@ -41,8 +45,12 @@
                     FÛTS
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='keg') }}">Fûts</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='mini_keg') }}">Mini-fûts</a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='keg') }}">
+                        Fûts
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='mini_keg') }}">
+                        Mini-fûts
+                    </a>
                 </div>
             </li>
 
@@ -51,10 +59,18 @@
                     SPIRITUEUX
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='rhum') }}">Rhums</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='whisky') }}">Whiskys</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='arranged') }}">Arrangés</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='spirit') }}">Autres</a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='rhum') }}">
+                        Rhums
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='whisky') }}">
+                        Whiskys
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='arranged') }}">
+                        Arrangés
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='spirit') }}">
+                        Autres
+                    </a>
                 </div>
             </li>
 
@@ -63,10 +79,18 @@
                     VINS
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='wine') }}">Vins</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='fortified_wine') }}">Vins mutés</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='sparkling_wine') }}">Vins effervescents</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='bib') }}">BIB</a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='wine') }}">
+                        Vins
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='fortified_wine') }}">
+                        Vins mutés
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='sparkling_wine') }}">
+                        Vins effervescents
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='bib') }}">
+                        BIB
+                    </a>
                 </div>
             </li>
 
@@ -75,9 +99,15 @@
                     DIVERS
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='box') }}">Coffrets</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='food') }}">Alimentation / BSA</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop, list_category='misc') }}">Accessoire / Emballage</a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='box') }}">
+                        Coffrets
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='food') }}">
+                        Alimentation / BSA
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category='misc') }}">
+                        Accessoire / Emballage
+                    </a>
                 </div>
             </li>
 
@@ -94,7 +124,9 @@
                 Admin
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownAdmin">
-                <a class="dropdown-item" href="{{ url_for('articles.validate_articles') }}">Validation</a>
+                <a class="dropdown-item" href="{{ url_for('articles.validate_articles') }}">
+                    Validation
+                </a>
             </div>
         </div>
         <div class="nav-item dropdown ml-1">
@@ -102,11 +134,21 @@
                 Ajouter
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="{{ url_for('items.get_items', category='breweries') }}">Brasserie</a>
-                <a class="dropdown-item" href="{{ url_for('items.get_items', category='distilleries') }}">Distillerie</a>
-                <a class="dropdown-item" href="{{ url_for('items.get_items', category='distributors') }}">Fournisseur</a>
-                <a class="dropdown-item" href="{{ url_for('items.get_items', category='countries') }}">Pays</a>
-                <a class="dropdown-item" href="{{ url_for('items.get_items', category='regions') }}">Région</a>
+                <a class="dropdown-item" href="{{ url_for('items.get_items', category='breweries') }}">
+                    Brasserie
+                </a>
+                <a class="dropdown-item" href="{{ url_for('items.get_items', category='distilleries') }}">
+                    Distillerie
+                </a>
+                <a class="dropdown-item" href="{{ url_for('items.get_items', category='distributors') }}">
+                    Fournisseur
+                </a>
+                <a class="dropdown-item" href="{{ url_for('items.get_items', category='countries') }}">
+                    Pays
+                </a>
+                <a class="dropdown-item" href="{{ url_for('items.get_items', category='regions') }}">
+                    Région
+                </a>
             </div>
         </div>
     {% endif %}
@@ -116,8 +158,12 @@
             Inventaire
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="{{ url_for('inventory.get_inventory') }}">Inventaire</a>
-            <a class="dropdown-item" href="{{ url_for('inventory.reset_inventory') }}">Effacer</a>
+            <a class="dropdown-item" href="{{ url_for('inventory.get_inventory') }}">
+                Inventaire
+            </a>
+            <a class="dropdown-item" href="{{ url_for('inventory.reset_inventory') }}">
+                Effacer
+            </a>
         </div>
     </div>
 
@@ -126,10 +172,14 @@
             Etiquette
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="{{ url_for('tags.list_tag_files') }}">A imprimer</a>
+            <a class="dropdown-item" href="{{ url_for('tags.list_tag_files') }}">
+                A imprimer
+            </a>
             <div class="dropdown-divider"></div>
-            {% for x in current_user.shops %}
-                <a class="dropdown-item" href="{{ url_for('tags.create_tags_view', shop=x) }}">{{ shops_margins[x]['name'] }}</a>
+            {% for shop in user_shops %}
+                <a class="dropdown-item" href="{{ url_for('tags.create_tags_view', shop=shop.username) }}">
+                    {{ shop.name }}
+                </a>
             {% endfor %}
         </div>
     </div>
@@ -139,21 +189,51 @@
             Nouveau
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='beer') }}">Bière</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='cider') }}">Cidre</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='keg') }}">Fût</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='mini_keg') }}">Mini-fût</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='rhum') }}">Rhum</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='whisky') }}">Whisky</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='spirit') }}">Spiritueux</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='arranged') }}">Rhum arrangé</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='wine') }}">Vin</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='fortified_wine') }}">Vin muté</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='sparkling_wine') }}">Vin effervescent</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='bib') }}">BIB</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='box') }}">Coffret</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='food') }}">Alimentation / BSA</a>
-            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='misc') }}">Accessoire / Emballage</a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='beer') }}">
+                Bière
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='cider') }}">
+                Cidre
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='keg') }}">
+                Fût
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='mini_keg') }}">
+                Mini-fût
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='rhum') }}">
+                Rhum
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='whisky') }}">
+                Whisky
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='spirit') }}">
+                Spiritueux
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='arranged') }}">
+                Rhum arrangé
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='wine') }}">
+                Vin
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='fortified_wine') }}">
+                Vin muté
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='sparkling_wine') }}">
+                Vin effervescent
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='bib') }}">
+                BIB
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='box') }}">
+                Coffret
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='food') }}">
+                Alimentation / BSA
+            </a>
+            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='misc') }}">
+                Accessoire / Emballage
+            </a>
         </div>
     </div>
 

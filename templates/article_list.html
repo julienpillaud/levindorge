@@ -129,11 +129,15 @@
                     {% if list_category not in ['misc', 'food'] %}
                         <td class="text-center recommended_price">{{ x.recommended_price | strip_zeros }}</td>
                     {% endif %}
-                    <td class="text-center sell_price">{{ x.shops[shop]['sell_price'] | strip_zeros }}</td>
+                    <td class="text-center sell_price">
+                        {{ x.shops[current_shop.username]['sell_price'] | strip_zeros }}
+                    </td>
                     <td class="text-center">{{ x.margin.margin | strip_zeros }}</td>
                     <td class="text-center">{{ x.margin.markup | strip_zeros }}</td>
                     <!-- STOCK -->
-                    <td class="text-center stock_quantity">{{ x.shops[shop]['stock_quantity'] if x.shops[shop]['stock_quantity'] }}</td>
+                    <td class="text-center stock_quantity">
+                        {{ x.shops[current_shop.username]['stock_quantity'] if x.shops[current_shop.username]['stock_quantity'] }}
+                    </td>
                     <!-- DISTRIBUTOR -->
                     <td class="text-center">{{ x.distributor }}</td>
                     <!-- PACKAGING / DEPOSIT -->

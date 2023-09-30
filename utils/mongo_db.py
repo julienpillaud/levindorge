@@ -30,7 +30,6 @@ regions = db.regions
 volumes = db.volumes
 types = db.types
 users = db.users
-shops = db.shops
 
 DROPDOWN_DICT = {
     "breweries": {"name": "Brasserie", "collection": breweries},
@@ -144,12 +143,17 @@ def validate_article(article_id):
 # shops
 def get_shops() -> list[Shop]:
     """Get the list of all shops"""
-    return [Shop(**shop) for shop in shops.find()]
+    return [Shop(**shop) for shop in db.shops.find()]
+
+
+def get_user_shops(user_shops: list[str]) -> list[Shop]:
+    user_shops_db = db.shops.find({"username": {"$in": user_shops}})
+    return [Shop(**shop) for shop in user_shops_db]
 
 
 def get_shop_by_username(username: str) -> Shop:
     """Retrieve a shop by its username."""
-    shop = shops.find_one({"username": username})
+    shop = db.shops.find_one({"username": username})
     return Shop(**shop)
 
 
@@ -247,39 +251,6 @@ def get_articles_for_inventory():
         "Divers": misc,
         "Alimentation": food,
     }
-
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def get_shops_margins(ratio_category=None):
-    if ratio_category is None:
-        return {
-            x["username"]: {"name": x["name"], "margins": x["margins"]}
-            for x in shops.find({})
-        }
-    else:
-        return {
-            x["username"]: {"name": x["name"], "margins": x["margins"][ratio_category]}
-            for x in shops.find({})
-        }
-
-
-def get_types_by_list(list_categories):
-    """
-    Retourne la LIST des types correspondant à la LIST des list_category
-    -> Affiche le type ou la liste déroulante en tête de la fiche créaation
-    """
-    return sorted(
-        [x["name"] for x in types.find({"list_category": {"$in": list_categories}})]
-    )
-
-
-def get_type(input_key, input_value, output):
-    """Retourne l'output correspondant au couple input_key: input_value"""
-    return types.find_one({input_key: input_value})[output]
-
-
-def get_demonym():
-    return {x["name"]: x["demonym"] for x in countries.find({})}
 
 
 def get_dropdown(list_category):

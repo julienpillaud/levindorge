@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from flask_login import current_user
 
 from application.blueprints import articles as articles_blueprint
 from application.blueprints import auth as auth_blueprint
@@ -12,6 +13,7 @@ app.secret_key = "some_secret"
 
 auth_blueprint.login_manager.init_app(app)
 auth_blueprint.bcrypt.init_app(app)
+
 app.register_blueprint(auth_blueprint.blueprint)
 app.register_blueprint(articles_blueprint.blueprint)
 app.register_blueprint(items_blueprint.blueprint)
@@ -25,9 +27,9 @@ def error_page(error):
 
 
 @app.context_processor
-def post_shops_margins():
-    shops_margins = mongo_db.get_shops_margins()
-    return {"shops_margins": shops_margins}
+def register_user_shops():
+    user_shops = mongo_db.get_user_shops(user_shops=current_user.shops)
+    return {"user_shops": user_shops}
 
 
 @app.template_filter()

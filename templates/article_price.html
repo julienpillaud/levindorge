@@ -1,9 +1,9 @@
 <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
 <!-- PRICE -->
 {% if list_category in ['food'] %}
-  {% set tax = 10.0 %}
+    {% set tax = 10.0 %}
 {% else %}
-  {% set tax = 20.0 %}
+    {% set tax = 20.0 %}
 {% endif %}
 
 {% set buy_price = '' %}
@@ -11,106 +11,128 @@
 {% set social_security_levy = '' %}
 
 {% if article is defined %}
-  {% set buy_price = article.buy_price %}
-  {% set tax = article.tax %}
-  {% set excise_duty = article.excise_duty %}
-  {% set social_security_levy = article.social_security_levy %}
+    {% set buy_price = article.buy_price %}
+    {% set tax = article.tax %}
+    {% set excise_duty = article.excise_duty %}
+    {% set social_security_levy = article.social_security_levy %}
 {% endif %}
 
 <div class="form-row mb-2">
-  <div class="col-6">
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-dark-yellow text-dark">Tarif HT (€)</span>
-      </div>
-        <input type="number" step="0.0001" min="0.0001" class="form-control" id="buy_price" name="buy_price" value="{{ buy_price | strip_zeros }}" required>
+    <div class="col-6">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text bg-dark-yellow text-dark">
+                    Tarif HT (€)
+                </span>
+            </div>
+            <input type="number" step="0.0001" min="0.0001" class="form-control" id="buy_price" name="buy_price" value="{{ buy_price | strip_zeros }}" required>
+        </div>
     </div>
-  </div>
-  <div class="col-6">
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-secondary text-white">TVA (%)</span>
-      </div>
-        <input type="text" class="form-control text-center" id="tax" name="tax" value="{{ tax | strip_zeros }}" readonly>
+    <div class="col-6">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text bg-secondary text-white">
+                    TVA (%)
+                </span>
+            </div>
+            <input type="text" class="form-control text-center" id="tax" name="tax" value="{{ tax | strip_zeros }}" readonly>
+        </div>
     </div>
-  </div>
 </div>
 
 {% if list_category in beer_types_list + spirit_types_list + ['box'] %}
-<div class="form-row mb-2">
-  <div class="col-6">
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-dark-yellow text-dark">DA (€)</span>
-      </div>
-        <input type="number" step="0.0001" min="0" class="form-control" id="excise_duty" name="excise_duty" value="{{ excise_duty | strip_zeros }}">
+    <div class="form-row mb-2">
+        <div class="col-6">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-dark-yellow text-dark">
+                        DA (€)
+                    </span>
+                </div>
+                <input type="number" step="0.0001" min="0" class="form-control" id="excise_duty" name="excise_duty" value="{{ excise_duty | strip_zeros }}">
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-dark-yellow text-dark">
+                        CSS (€)
+                    </span>
+                </div>
+                <input type="number" step="0.0001" min="0" class="form-control" id="social_security_levy" name="social_security_levy" value="{{ social_security_levy | strip_zeros }}">
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="col-6">
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-dark-yellow text-dark">CSS (€)</span>
-      </div>
-        <input type="number" step="0.0001" min="0" class="form-control" id="social_security_levy" name="social_security_levy" value="{{ social_security_levy | strip_zeros }}">
-    </div>
-  </div>
-</div>
 {% endif %}
 
 <div class="form-row mb-2">
-  <div class="col-6">
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-secondary text-white">Tarif HT DI (€)</span>
-      </div>
-      <input type="text" class="form-control text-center" id="taxfree_price" readonly>
+    <div class="col-6">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text bg-secondary text-white">
+                    Tarif HT DI (€)
+                </span>
+            </div>
+            <input type="text" class="form-control text-center" id="taxfree_price" readonly>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="form-row mb-2">
-  <div class="col-12">
-    <div class="input-group">
-      <span class="" style="min-width: 20%"></span>
-      {% if list_category not in ['food', 'misc'] %}
-        <span class="form-control bg-secondary text-white text-center">PVC</span>
-      {% endif %}
-      <span class="form-control bg-dark-yellow text-dark text-center">Prix</span>
-      <span class="form-control bg-secondary text-white text-center">Marge</span>
-      <span class="form-control bg-secondary text-white text-center">Taux (%)</span>
-      <span class="form-control bg-dark-yellow text-dark text-center">Prix bar</span>
-    </div>
-  </div>
-</div>
-{% for shop in current_user.shops %}
-
-  {% set sell_price = '' %}
-  {% set bar_price = 0.0 %}
-  {% set stock_quantity = 0.0 %}
-
-  {% if article is defined %}
-    {% set sell_price = article.shops[shop]['sell_price'] %}
-    {% set bar_price = article.shops[shop]['bar_price'] %}
-    {% set stock_quantity = article.shops[shop]['stock_quantity'] %}
-  {% endif %}
-
-  <div class="form-row mb-2">
     <div class="col-12">
-      <div class="input-group">
-        <div class="input-group-prepend" style="min-width: 20%">
-          <span class="input-group-text text-white bg-light-purple w-100">{{ shops_margins[shop]['name'] }}</span>
+        <div class="input-group">
+            <span class="" style="min-width: 20%"></span>
+            {% if list_category not in ['food', 'misc'] %}
+                <span class="form-control bg-secondary text-white text-center">
+                    PVC
+                </span>
+            {% endif %}
+            <span class="form-control bg-dark-yellow text-dark text-center">
+                Prix
+            </span>
+            <span class="form-control bg-secondary text-white text-center">
+                Marge
+            </span>
+            <span class="form-control bg-secondary text-white text-center">
+                Taux (%)
+            </span>
+            <span class="form-control bg-dark-yellow text-dark text-center">
+                Prix bar
+            </span>
         </div>
-
-        {% if list_category not in ['food', 'misc'] %}
-          <input type="text" class="form-control text-center" id="{{ 'recommended_price_' + shop }}" name="{{ 'recommended_price_' + shop }}" readonly>
-        {% endif %}
-
-        <input type="number" step="0.01" min="0" class="form-control text-center" id="{{ 'sell_price_' + shop }}" name="{{ 'sell_price_' + shop }}" value="{{ sell_price | strip_zeros }}" required>
-        <input type="text" class="form-control text-center" id="{{ 'profit_' + shop }}" name="{{ 'profit_' + shop }}" readonly>
-        <input type="text" class="form-control text-center" id="{{ 'margin_' + shop }}" name="{{ 'margin_' + shop }}" readonly>
-        <input type="number" step="0.01" min="0" class="form-control text-center" id="{{ 'bar_price_' + shop }}" name="{{ 'bar_price_' + shop }}" value="{{ bar_price | strip_zeros }}" required>
-
-      </div>
     </div>
-  </div>
+</div>
+{% for shop in user_shops %}
+
+    {% set sell_price = '' %}
+    {% set bar_price = 0.0 %}
+    {% set stock_quantity = 0.0 %}
+
+    {% if article is defined %}
+        {% set sell_price = article.shops[shop.username]['sell_price'] %}
+        {% set bar_price = article.shops[shop.username]['bar_price'] %}
+        {% set stock_quantity = article.shops[shop.username]['stock_quantity'] %}
+    {% endif %}
+
+    <div class="form-row mb-2">
+        <div class="col-12">
+            <div class="input-group">
+                <div class="input-group-prepend" style="min-width: 20%">
+                    <span class="input-group-text text-white bg-light-purple w-100">
+                        {{ shop.name }}
+                    </span>
+                </div>
+
+                {% if list_category not in ['food', 'misc'] %}
+                    <input type="text" class="form-control text-center" id="{{ 'recommended_price_' + shop.username }}" name="{{ 'recommended_price_' + shop.username }}" readonly>
+                {% endif %}
+
+                <input type="number" step="0.01" min="0" class="form-control text-center" id="{{ 'sell_price_' + shop.username }}" name="{{ 'sell_price_' + shop.username }}" value="{{ sell_price | strip_zeros }}" required>
+                <input type="text" class="form-control text-center" id="{{ 'profit_' + shop.username }}" name="{{ 'profit_' + shop.username }}" readonly>
+                <input type="text" class="form-control text-center" id="{{ 'margin_' + shop.username }}" name="{{ 'margin_' + shop.username }}" readonly>
+                <input type="number" step="0.01" min="0" class="form-control text-center" id="{{ 'bar_price_' + shop.username }}" name="{{ 'bar_price_' + shop.username }}" value="{{ bar_price | strip_zeros }}" required>
+
+            </div>
+        </div>
+    </div>
 {% endfor %}

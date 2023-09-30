@@ -153,8 +153,8 @@ def test_update_article(
 def test_delete_article(
     client: FlaskClient,
     database: Database[Mapping[str, Any]],
-    inserted_article: InsertOneResult,
+    inserted_article: Article,
 ) -> None:
-    article_id = str(inserted_article.inserted_id)
+    article_id = inserted_article.id
     response = client.get(f"/articles/delete/{article_id}")
     assert response.status_code == http.HTTPStatus.UNAUTHORIZED
