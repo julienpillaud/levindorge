@@ -13,7 +13,7 @@ from application.entities.article import (
     CreateOrUpdateArticle,
     InventoryArticle,
 )
-from application.entities.inventory import CreateOrUpdateInventory
+from application.entities.inventory import CreateOrUpdateInventory, Inventory
 from application.entities.item import Item, RequestItem
 from application.entities.shop import Shop
 
@@ -173,6 +173,11 @@ def delete_item(category: str, item_id: str) -> DeleteResult:
 
 # ------------------------------------------------------------------------------
 # inventory
+def get_inventory_record(article_id: str) -> Inventory:
+    inventory_record = db.inventory.find_one({"article_id": article_id})
+    return Inventory(**inventory_record)
+
+
 def save_inventory_record(inventory_record: CreateOrUpdateInventory) -> UpdateResult:
     return db.inventory.replace_one(
         {"article_id": inventory_record.article_id},
