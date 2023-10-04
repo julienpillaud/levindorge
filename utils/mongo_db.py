@@ -158,6 +158,12 @@ def get_items(category: str) -> list[Item]:
     return [Item(**item) for item in collection.find().sort("name")]
 
 
+def get_item_by_id(category: str, item_id: str) -> Item:
+    collection = get_collection(category)
+    item = collection.find_one({"_id": ObjectId(item_id)})
+    return Item(**item)
+
+
 def create_item(category: str, item: RequestItem) -> InsertOneResult:
     collection = get_collection(category)
     item_data = item.model_dump()

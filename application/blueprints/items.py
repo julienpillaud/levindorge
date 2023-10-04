@@ -2,7 +2,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_required
 
 from application.entities.item import RequestItem
-from utils import mongo_db
+from application.use_cases.items import ItemManager
 
 blueprint = Blueprint(name="items", import_name=__name__, url_prefix="/items")
 
@@ -17,9 +17,11 @@ item_titles = {
 
 @blueprint.get("/<category>")
 @login_required
-def get_items(category: str):
-    items = mongo_db.get_items(category=category)
+def get_items(category: str) -> str:
     title = item_titles.get(category, "Item")
+
+    items = ItemManager.list(category=category)
+
     return render_template(
         "item_list.html", title=title, category=category, items=items
     )
@@ -28,14 +30,16 @@ def get_items(category: str):
 @blueprint.post("/<category>")
 @login_required
 def create_item(category: str):
-    request_form = request.form.to_dict()
-    item = RequestItem(**request_form)
-    mongo_db.create_item(category=category, item=item)
+    request_item = RequestItem(**request.form)
+
+    ItemManager.create(category=category, request_item=request_item)
+
     return redirect(url_for("items.get_items", category=category))
 
 
 @blueprint.get("/<category>/<item_id>")
 @login_required
 def delete_item(category: str, item_id: str):
-    mongo_db.delete_item(category=category, item_id=item_id)
+    ItemManager.delete(category=category, item_id=item_id)
+
     return redirect(request.referrer)
