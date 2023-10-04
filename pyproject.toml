@@ -22,3 +22,10 @@ strict = true
 exclude = [
     "venv",
 ]
+
+[tool.pylint]
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+]

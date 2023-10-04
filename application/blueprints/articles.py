@@ -1,21 +1,27 @@
 from collections import defaultdict
-from datetime import datetime, timezone
 from typing import Any
 
-from flask import Blueprint, jsonify, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    Response,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_login import current_user, login_required
 
-from application.blueprints.auth import Role, admin_required
+from application.blueprints.auth import admin_required
 from application.entities.article import (
     Article,
     ArticleShops,
     ArticleType,
-    AugmentedArticle,
-    CreateOrUpdateArticle,
     RequestArticle,
 )
 from application.entities.shop import Shop
 from application.use_cases.articles import (
+    ArticleManager,
     compute_article_margin,
     compute_recommended_price,
 )
@@ -27,33 +33,13 @@ blueprint = Blueprint(name="articles", import_name=__name__, url_prefix="/articl
 
 @blueprint.get("/<list_category>")
 @login_required
-def get_articles(list_category: str):
+def get_articles(list_category: str) -> str:
     request_shop = request.args["shop"]
     current_shop = mongo_db.get_shop_by_username(username=request_shop)
 
-    articles = mongo_db.get_articles_by_list(list_category)
-    ratio_category = mongo_db.get_ratio_category(list_category)
-
-    augmented_articles = []
-    for article in articles:
-        recommended_price = compute_recommended_price(
-            taxfree_price=article.taxfree_price,
-            tax=article.tax,
-            shop_margins=current_shop.margins[ratio_category],
-            ratio_category=ratio_category,
-        )
-        margin = compute_article_margin(
-            taxfree_price=article.taxfree_price,
-            tax=article.tax,
-            sell_price=article.shops[current_shop.username].sell_price,
-        )
-
-        augmented_article = AugmentedArticle(
-            **article.model_dump(by_alias=True),
-            recommended_price=recommended_price,
-            margin=margin,
-        )
-        augmented_articles.append(augmented_article)
+    augmented_articles = ArticleManager.list(
+        list_category=list_category, current_shop=current_shop
+    )
 
     return render_template(
         "article_list.html",
@@ -65,17 +51,17 @@ def get_articles(list_category: str):
 
 @blueprint.get("/create/<list_category>")
 @login_required
-def create_article_get(list_category: str):
+def create_article_get(list_category: str) -> str:
     ratio_category = mongo_db.get_ratio_category(list_category)
     article_types = mongo_db.get_article_types_by_list(list_category)
-    dropdown = mongo_db.get_dropdown(list_category)
+    items = mongo_db.get_items_dict(list_category)
 
     return render_template(
         "article_create.html",
         list_category=list_category,
         ratio_category=ratio_category,
         type_list=[x.name for x in article_types],
-        **dropdown,
+        **items,
     )
 
 
@@ -96,24 +82,19 @@ def create_article(list_category: str):
             article_type=article_type,
         )
 
-        validated = current_user.role == Role.ADMIN
-        date = datetime.now(timezone.utc)
-        article_create = CreateOrUpdateArticle(
-            validated=validated,
-            created_by=current_user.name,
-            created_at=date,
-            updated_at=date,
-            shops=article_shops,
-            **request_article.model_dump(),
+        # create article
+        inserted_article = ArticleManager.create(
+            current_user=current_user,
+            request_article=request_article,
+            article_shops=article_shops,
         )
-        insert_result = mongo_db.create_article(article_create)
 
+        # create Tactill article for each shop
         for shop in shops:
             result = TactillManager.create(
                 shop=shop,
-                article=article_create,
+                article=inserted_article,
                 article_type=article_type,
-                article_id=str(insert_result.inserted_id),
             )
             print(result)
 
@@ -131,14 +112,14 @@ def create_article(list_category: str):
 def update_article_get(article_id: str):
     article = mongo_db.get_article_by_id(article_id)
     article_type = mongo_db.get_article_type(article.type)
-    dropdown = mongo_db.get_dropdown(article_type.list_category)
+    items = mongo_db.get_items_dict(article_type.list_category)
 
     return render_template(
         "article_update.html",
         article=article,
         list_category=article_type.list_category,
         ratio_category=article_type.ratio_category,
-        **dropdown,
+        **items,
     )
 
 
@@ -162,24 +143,20 @@ def update_article(article_id: str):
             shops=shops,
         )
 
-        validated = True if current_user.role == Role.ADMIN else article.validated
-        date = datetime.now(timezone.utc)
-        article_update = CreateOrUpdateArticle(
-            validated=validated,
-            created_by=article.created_by,
-            created_at=article.created_at,
-            updated_at=date,
-            shops=article_shops,
-            **request_article.model_dump(),
+        # update article
+        updated_article = ArticleManager.update(
+            current_user=current_user,
+            request_article=request_article,
+            article_shops=article_shops,
+            article=article,
         )
-        mongo_db.update_article(article_id, article_update)
 
+        # update Tactill article for each shop
         for shop in shops:
             result = TactillManager.update(
                 shop=shop,
-                article=article_update,
+                article=updated_article,
                 article_type=article_type,
-                article_id=article_id,
             )
             print(result)
 
@@ -199,7 +176,7 @@ def update_article(article_id: str):
 @admin_required
 @login_required
 def delete_article(article_id: str):
-    mongo_db.delete_article(article_id)
+    ArticleManager.delete(article_id=article_id)
 
     for shop in mongo_db.get_shops():
         result = TactillManager.delete(shop=shop, article_id=article_id)
@@ -211,7 +188,7 @@ def delete_article(article_id: str):
 @blueprint.get("/validate")
 @admin_required
 @login_required
-def validate_articles():
+def validate_articles() -> str:
     articles = mongo_db.get_articles(to_validate=True)
     return render_template("articles_to_validate.html", articles=articles)
 
@@ -219,14 +196,14 @@ def validate_articles():
 @blueprint.get("/validate/<article_id>")
 @admin_required
 @login_required
-def validate_article(article_id):
+def validate_article(article_id: str):
     mongo_db.validate_article(article_id)
     return redirect(request.referrer)
 
 
 @blueprint.post("/recommended_prices")
 @login_required
-def get_recommended_prices():
+def get_recommended_prices() -> Response:
     ratio_category = request.form["ratio_category"]
     taxfree_price = request.form.get("taxfree_price", default=0, type=float)
     tax = request.form.get("tax", default=0, type=float)
@@ -246,7 +223,7 @@ def get_recommended_prices():
 
 @blueprint.post("/margins")
 @login_required
-def get_margins():
+def get_margins() -> Response:
     taxfree_price = request.form.get("taxfree_price", default=0, type=float)
     tax = request.form.get("tax", default=0, type=float)
     sell_price = request.form.get("sell_price", default=0, type=float)
@@ -351,7 +328,7 @@ def update_sell_price(
     shop: Shop,
     price_updated: bool,
 ) -> float:
-    sell_price = request_form.get(f"sell_price_{shop.username}")
+    sell_price: float | None = request_form.get(f"sell_price_{shop.username}")
 
     # sell price is in the request form
     if sell_price is not None:
@@ -373,7 +350,7 @@ def update_sell_price(
 def update_bar_price(
     article: Article, request_form: dict[str, Any], shop: Shop
 ) -> float:
-    bar_price = request_form.get(f"bar_price_{shop.username}")
+    bar_price: float | None = request_form.get(f"bar_price_{shop.username}")
     if bar_price is not None:
         return bar_price
     return article.shops[shop.username].bar_price
@@ -382,7 +359,7 @@ def update_bar_price(
 def update_stock_quantity(
     article: Article, request_form: dict[str, Any], shop: Shop
 ) -> int:
-    stock_quantity = request_form.get(f"stock_quantity_{shop.username}")
+    stock_quantity: int | None = request_form.get(f"stock_quantity_{shop.username}")
     if stock_quantity is not None:
         return stock_quantity
     return article.shops[shop.username].stock_quantity

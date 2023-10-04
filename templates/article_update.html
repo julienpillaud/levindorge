@@ -48,19 +48,19 @@
                                             <select class="custom-select" name="name1">
                                                 <option selected></option>
                                                 {% if list_category in beer_types_list %}
-                                                    {% for x in brewery_list %}
-                                                        {% if x == article.name.name1 %}
-                                                            <option selected>{{ x }}</option>
+                                                    {% for brewery in brewery_list %}
+                                                        {% if brewery.name == article.name.name1 %}
+                                                            <option selected>{{ brewery.name }}</option>
                                                         {% else %}
-                                                            <option>{{ x }}</option>
+                                                            <option>{{ brewery.name }}</option>
                                                         {% endif %}
                                                     {% endfor %}
                                                 {% else %}
-                                                    {% for x in distillery_list %}
-                                                        {% if x == article.name.name1 %}
-                                                            <option selected>{{ x }}</option>
+                                                    {% for distillery in distillery_list %}
+                                                        {% if distillery.name == article.name.name1 %}
+                                                            <option selected>{{ distillery.name }}</option>
                                                         {% else %}
-                                                            <option>{{ x }}</option>
+                                                            <option>{{ distillery.name }}</option>
                                                         {% endif %}
                                                     {% endfor %}
                                                 {% endif %}
@@ -112,19 +112,19 @@
                                             <select class="custom-select" name="region" required>
                                                 <option selected></option>
                                                 {% if list_category in wine_types_list %}
-                                                    {% for x in region_list %}
-                                                        {% if x == article.region %}
-                                                            <option selected>{{ x }}</option>
+                                                    {% for region in region_list %}
+                                                        {% if region.name == article.region %}
+                                                            <option selected>{{ region.name }}</option>
                                                         {% else %}
-                                                            <option>{{ x }}</option>
+                                                            <option>{{ region.name }}</option>
                                                         {% endif %}
                                                     {% endfor %}
                                                 {% else %}
-                                                    {% for x in country_list %}
-                                                        {% if x == article.region %}
-                                                            <option selected>{{ x }}</option>
+                                                    {% for country in country_list %}
+                                                        {% if country.name == article.region %}
+                                                            <option selected>{{ country.name }}</option>
                                                         {% else %}
-                                                            <option>{{ x }}</option>
+                                                            <option>{{ country.name }}</option>
                                                         {% endif %}
                                                     {% endfor %}
                                                 {% endif %}
@@ -310,11 +310,11 @@
                                     {% if current_user.role in ['admin', 'superuser'] %}
                                         <select class="custom-select" name="distributor" required>
                                             <option selected></option>
-                                            {% for x in distributor_list %}
-                                                {% if x == article.distributor %}
-                                                    <option selected>{{ x }}</option>
+                                            {% for distributor in distributor_list %}
+                                                {% if distributor.name == article.distributor %}
+                                                    <option selected>{{ distributor.name }}</option>
                                                 {% else %}
-                                                    <option>{{ x }}</option>
+                                                    <option>{{ distributor.name }}</option>
                                                 {% endif %}
                                             {% endfor %}
                                         </select>

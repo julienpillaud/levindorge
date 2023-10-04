@@ -6,7 +6,6 @@ import pytest
 from bson import ObjectId
 from flask.testing import FlaskClient
 from pymongo.database import Database
-from pymongo.results import InsertOneResult
 
 from application.entities.article import Article
 from tests.integration.data import article_data

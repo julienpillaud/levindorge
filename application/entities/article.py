@@ -10,6 +10,7 @@ class ArticleType(BaseModel):
     name: str
     category: str
     tax: float
+    volumes: list[float] = []
     ratio_category: str
     list_category: str
     tactill_category: str

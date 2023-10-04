@@ -1,9 +1,10 @@
 import os
-from typing import Any
+from typing import Any, Mapping
 
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
 from pymongo import ASCENDING, MongoClient
+from pymongo.collection import Collection
 from pymongo.results import DeleteResult, InsertOneResult, UpdateResult
 
 from application.entities.article import (
@@ -18,67 +19,48 @@ from application.entities.shop import Shop
 
 load_dotenv()
 mongo_uri = os.environ.get("MONGO_URI")
-client: MongoClient = MongoClient(mongo_uri)
-
+client: MongoClient[Mapping[str, Any]] = MongoClient(mongo_uri)
 db = client.dashboard
-catalog = db.catalog
-breweries = db.breweries
-countries = db.countries
-distilleries = db.distilleries
-distributors = db.distributors
-regions = db.regions
-volumes = db.volumes
-types = db.types
-users = db.users
-
-DROPDOWN_DICT = {
-    "breweries": {"name": "Brasserie", "collection": breweries},
-    "countries": {"name": "Pays", "collection": countries},
-    "distilleries": {"name": "Distillerie", "collection": distilleries},
-    "distributors": {"name": "Fournisseur", "collection": distributors},
-    "regions": {"name": "Région", "collection": regions},
-    "volumes": {"name": "Volume", "collection": volumes},
-}
 
 
-def get_collection(name: str):
+def get_collection(name: str) -> Collection[Mapping[str, Any]]:
     return db.get_collection(name)
 
 
 # ------------------------------------------------------------------------------
 # users
-def get_user_by_email(email: str):
+def get_user_by_email(email: str) -> Mapping[str, Any] | None:
     """Retrieve a user by its email address."""
-    return users.find_one({"email": email}, {"_id": 0})
+    return db.users.find_one({"email": email}, {"_id": 0})
 
 
 # ------------------------------------------------------------------------------
 # types
 def get_types() -> list[ArticleType]:
-    article_types = types.find()
+    article_types = db.types.find()
     return [ArticleType(**x) for x in article_types]
 
 
 def get_ratio_category(list_category: str) -> str:
     """Get the ratio category for a given list category."""
-    article_types = types.find({"list_category": list_category})
+    article_types = db.types.find({"list_category": list_category})
     return article_types[0]["ratio_category"]
 
 
 def get_article_type(type_name: str) -> ArticleType:
     """Get an ArticleType for a given name."""
-    article_type = types.find_one({"name": type_name})
+    article_type = db.types.find_one({"name": type_name})
     return ArticleType(**article_type)
 
 
 def get_article_types_by_list(list_category: str) -> list[ArticleType]:
     """Get a list of ArticleType filtered by the specified list category."""
-    article_types = types.find({"list_category": list_category})
+    article_types = db.types.find({"list_category": list_category})
     return [ArticleType(**x) for x in article_types]
 
 
 def get_article_types_by_lists(lists_category: list[str]) -> list[ArticleType]:
-    article_types = types.find({"list_category": {"$in": lists_category}})
+    article_types = db.types.find({"list_category": {"$in": lists_category}})
     return [ArticleType(**x) for x in article_types]
 
 
@@ -92,7 +74,7 @@ def get_articles(
     if to_validate:
         filter.update({"validated": False})
 
-    articles = catalog.find(filter).sort([("type", ASCENDING)])
+    articles = db.catalog.find(filter).sort([("type", ASCENDING)])
     return [Article(**x) for x in articles]
 
 
@@ -100,7 +82,7 @@ def get_articles_by_list(list_category: str) -> list[Article]:
     """Retrieve a list of articles filtered by list category."""
     article_types = get_article_types_by_list(list_category)
     article_types_names = [x.name for x in article_types]
-    articles = catalog.find({"type": {"$in": article_types_names}}).sort(
+    articles = db.catalog.find({"type": {"$in": article_types_names}}).sort(
         [
             ("type", ASCENDING),
             ("region", ASCENDING),
@@ -113,28 +95,28 @@ def get_articles_by_list(list_category: str) -> list[Article]:
 
 def get_article_by_id(article_id: str) -> Article:
     """Retrieve an article by its unique id."""
-    article = catalog.find_one({"_id": ObjectId(article_id)})
+    article = db.catalog.find_one({"_id": ObjectId(article_id)})
     return Article(**article)
 
 
 def create_article(article: CreateOrUpdateArticle) -> InsertOneResult:
     """Create a new article."""
-    return catalog.insert_one(article.model_dump())
+    return db.catalog.insert_one(article.model_dump())
 
 
 def update_article(article_id: str, article: CreateOrUpdateArticle) -> UpdateResult:
     """Update an existing article."""
-    return catalog.replace_one({"_id": ObjectId(article_id)}, article.model_dump())
+    return db.catalog.replace_one({"_id": ObjectId(article_id)}, article.model_dump())
 
 
 def delete_article(article_id: str) -> DeleteResult:
     """Delete an article."""
-    return catalog.delete_one({"_id": ObjectId(article_id)})
+    return db.catalog.delete_one({"_id": ObjectId(article_id)})
 
 
-def validate_article(article_id):
+def validate_article(article_id: str) -> UpdateResult:
     """Set the 'validated' field to true."""
-    return catalog.update_one(
+    return db.catalog.update_one(
         {"_id": ObjectId(article_id)}, {"$set": {"validated": True}}, upsert=False
     )
 
@@ -158,6 +140,19 @@ def get_shop_by_username(username: str) -> Shop:
 
 
 # ------------------------------------------------------------------------------
+# items
+def get_items_dict(list_category: str) -> dict[str, Any]:
+    article_types = get_article_types_by_list(list_category)
+    return {
+        "country_list": get_items("countries"),
+        "region_list": get_items("regions"),
+        "brewery_list": get_items("breweries"),
+        "distillery_list": get_items("distilleries"),
+        "distributor_list": get_items("distributors"),
+        "volume_list": article_types[0].volumes,
+    }
+
+
 def get_items(category: str) -> list[Item]:
     collection = get_collection(category)
     return [Item(**item) for item in collection.find().sort("name")]
@@ -165,10 +160,10 @@ def get_items(category: str) -> list[Item]:
 
 def create_item(category: str, item: RequestItem) -> InsertOneResult:
     collection = get_collection(category)
-    item = item.model_dump()
+    item_data = item.model_dump()
     if category != "countries":
-        item.pop("demonym")
-    return collection.insert_one(item)
+        item_data.pop("demonym")
+    return collection.insert_one(item_data)
 
 
 def delete_item(category: str, item_id: str) -> DeleteResult:
@@ -178,7 +173,7 @@ def delete_item(category: str, item_id: str) -> DeleteResult:
 
 # ------------------------------------------------------------------------------
 # inventory
-def save_inventory_record(inventory_record: CreateOrUpdateInventory) -> InsertOneResult:
+def save_inventory_record(inventory_record: CreateOrUpdateInventory) -> UpdateResult:
     return db.inventory.replace_one(
         {"article_id": inventory_record.article_id},
         inventory_record.model_dump(),
@@ -186,8 +181,8 @@ def save_inventory_record(inventory_record: CreateOrUpdateInventory) -> InsertOn
     )
 
 
-def reset_inventory() -> None:
-    db.inventory.delete_many({})
+def reset_inventory() -> DeleteResult:
+    return db.inventory.delete_many({})
 
 
 def get_articles_inventory(match: dict[str, Any]) -> list[InventoryArticle]:
@@ -219,7 +214,7 @@ def get_articles_inventory(match: dict[str, Any]) -> list[InventoryArticle]:
     return [InventoryArticle(**x) for x in articles]
 
 
-def get_articles_for_inventory():
+def get_articles_for_inventory() -> dict[str, list[InventoryArticle]]:
     beer1 = get_articles_inventory(
         {"type": {"$in": ["Bière", "Cidre"]}, "deposit.unit": {"$ne": 0}}
     )
@@ -251,40 +246,3 @@ def get_articles_for_inventory():
         "Divers": misc,
         "Alimentation": food,
     }
-
-
-def get_dropdown(list_category):
-    """Retourn un DICT des LIST pour les listes déroulantes de la fiche création"""
-    return {
-        "country_list": get_countries(),
-        "region_list": get_regions(),
-        "brewery_list": get_breweries(),
-        "distillery_list": get_distilleries(),
-        "distributor_list": get_distributors(),
-        "volume_list": get_volumes(list_category),
-    }
-
-
-def get_countries():
-    return sorted([x["name"] for x in countries.find({})])
-
-
-def get_regions():
-    return sorted([x["name"] for x in regions.find({})])
-
-
-def get_breweries():
-    return sorted([x["name"] for x in breweries.find({})])
-
-
-def get_distilleries():
-    return sorted([x["name"] for x in distilleries.find({})])
-
-
-def get_distributors():
-    return sorted([x["name"] for x in distributors.find({})])
-
-
-def get_volumes(list_category):
-    types_ = types.find_one({"list_category": list_category})
-    return types_.get("volumes", [])

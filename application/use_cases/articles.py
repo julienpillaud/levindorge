@@ -1,7 +1,88 @@
 import math
+from datetime import datetime, timezone
 
-from application.entities.article import ArticleMargin
-from application.entities.shop import ShopMargin
+from application.blueprints.auth import Role, User
+from application.entities.article import (
+    Article,
+    ArticleMargin,
+    ArticleShops,
+    AugmentedArticle,
+    CreateOrUpdateArticle,
+    RequestArticle,
+)
+from application.entities.shop import Shop, ShopMargin
+from utils import mongo_db
+
+
+class ArticleManager:
+    @staticmethod
+    def list(list_category: str, current_shop: Shop) -> list[AugmentedArticle]:
+        articles = mongo_db.get_articles_by_list(list_category)
+        ratio_category = mongo_db.get_ratio_category(list_category)
+
+        augmented_articles = []
+        for article in articles:
+            recommended_price = compute_recommended_price(
+                taxfree_price=article.taxfree_price,
+                tax=article.tax,
+                shop_margins=current_shop.margins[ratio_category],
+                ratio_category=ratio_category,
+            )
+            margin = compute_article_margin(
+                taxfree_price=article.taxfree_price,
+                tax=article.tax,
+                sell_price=article.shops[current_shop.username].sell_price,
+            )
+
+            augmented_article = AugmentedArticle(
+                **article.model_dump(by_alias=True),
+                recommended_price=recommended_price,
+                margin=margin,
+            )
+            augmented_articles.append(augmented_article)
+
+        return augmented_articles
+
+    @staticmethod
+    def create(
+        current_user: User, request_article: RequestArticle, article_shops: ArticleShops
+    ) -> Article:
+        validated = current_user.role == Role.ADMIN
+        date = datetime.now(timezone.utc)
+        article_create = CreateOrUpdateArticle(
+            validated=validated,
+            created_by=current_user.name,
+            created_at=date,
+            updated_at=date,
+            shops=article_shops,
+            **request_article.model_dump(),
+        )
+        insert_result = mongo_db.create_article(article_create)
+        return mongo_db.get_article_by_id(article_id=insert_result.inserted_id)
+
+    @staticmethod
+    def update(
+        current_user: User,
+        request_article: RequestArticle,
+        article_shops: ArticleShops,
+        article: Article,
+    ) -> Article:
+        validated = True if current_user.role == Role.ADMIN else article.validated
+        date = datetime.now(timezone.utc)
+        article_update = CreateOrUpdateArticle(
+            validated=validated,
+            created_by=article.created_by,
+            created_at=article.created_at,
+            updated_at=date,
+            shops=article_shops,
+            **request_article.model_dump(),
+        )
+        mongo_db.update_article(article.id, article_update)
+        return mongo_db.get_article_by_id(article_id=article.id)
+
+    @staticmethod
+    def delete(article_id: str) -> None:
+        mongo_db.delete_article(article_id)
 
 
 def compute_recommended_price(

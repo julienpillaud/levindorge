@@ -1,4 +1,4 @@
-from application.entities.article import ArticleType, CreateOrUpdateArticle
+from application.entities.article import Article, ArticleType
 from application.entities.shop import Shop
 from utils.tactill import Tactill
 
@@ -7,9 +7,8 @@ class TactillManager:
     @staticmethod
     def create(
         shop: Shop,
-        article: CreateOrUpdateArticle,
+        article: Article,
         article_type: ArticleType,
-        article_id: str,
     ):
         api_key = shop.tactill_api_key
         session = Tactill(api_key=api_key)
@@ -23,21 +22,20 @@ class TactillManager:
                 list_category=article_type.list_category, article=article
             ),
             barcode=article.barcode,
-            reference=article_id,
+            reference=article.id,
             in_stock="true",
         )
 
     @staticmethod
     def update(
         shop: Shop,
-        article: CreateOrUpdateArticle,
+        article: Article,
         article_type: ArticleType,
-        article_id: str,
     ):
         api_key = shop.tactill_api_key
         session = Tactill(api_key=api_key)
         return session.update_article(
-            reference=article_id,
+            reference=article.id,
             name=define_name(list_category=article_type.list_category, article=article),
             full_price=article.shops[shop.username].sell_price,
             icon_text=define_icon_text(article=article),
@@ -54,7 +52,7 @@ class TactillManager:
         return session.delete_article(reference=article_id)
 
 
-def format_volume(article: CreateOrUpdateArticle) -> str:
+def format_volume(article: Article) -> str:
     if article.volume > 100:
         volume = str(article.volume / 100).rstrip("0").rstrip(".")
         unit = "L"
@@ -64,7 +62,7 @@ def format_volume(article: CreateOrUpdateArticle) -> str:
     return f"{volume}{unit}"
 
 
-def define_name(list_category: str, article: CreateOrUpdateArticle) -> str:
+def define_name(list_category: str, article: Article) -> str:
     name1 = article.name.name1
     name2 = article.name.name2
     volume = format_volume(article)
@@ -92,7 +90,7 @@ def define_name(list_category: str, article: CreateOrUpdateArticle) -> str:
         return f"{name1}"
 
 
-def define_icon_text(article: CreateOrUpdateArticle) -> str:
+def define_icon_text(article: Article) -> str:
     if article.volume == 0:
         return "    "
 
@@ -102,7 +100,7 @@ def define_icon_text(article: CreateOrUpdateArticle) -> str:
     return str(article.volume).rstrip("0").rstrip(".").ljust(4)
 
 
-def define_color(list_category: str, article: CreateOrUpdateArticle) -> str:
+def define_color(list_category: str, article: Article) -> str:
     if list_category in {"beer", "cider", "keg", "mini_keg"}:
         beer_colors = {
             "Ambrée": "#FF6347",

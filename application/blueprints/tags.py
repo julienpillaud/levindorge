@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from flask import Blueprint, redirect, render_template, request, url_for
-from flask_login import current_user, login_required
+from flask_login import login_required
 
 from application.use_cases.tags import TagManager
 from utils import mongo_db

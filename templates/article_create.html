@@ -56,12 +56,12 @@
                                         <select class="custom-select" name="name1">
                                             <option selected></option>
                                             {% if list_category in beer_types_list %}
-                                                {% for x in brewery_list %}
-                                                    <option>{{ x }}</option>
+                                                {% for brewery in brewery_list %}
+                                                    <option>{{ brewery.name }}</option>
                                                 {% endfor %}
                                             {% else %}
-                                                {% for x in distillery_list %}
-                                                    <option>{{ x }}</option>
+                                                {% for distillery in distillery_list %}
+                                                    <option>{{ distillery.name }}</option>
                                                 {% endfor %}
                                             {% endif %}
                                         </select>
@@ -108,12 +108,12 @@
                                         <select class="custom-select" name="region" required>
                                             <option selected></option>
                                             {% if list_category in wine_types_list %}
-                                                {% for x in region_list %}
-                                                    <option>{{ x }}</option>
+                                                {% for region in region_list %}
+                                                    <option>{{ region.name }}</option>
                                                 {% endfor %}
                                             {% else %}
-                                                {% for x in country_list %}
-                                                    <option>{{ x }}</option>
+                                                {% for country in country_list %}
+                                                    <option>{{ country.name }}</option>
                                                 {% endfor %}
                                             {% endif %}
                                         </select>
@@ -249,8 +249,8 @@
                                     </div>
                                     <select class="custom-select" name="distributor" required>
                                         <option selected></option>
-                                        {% for x in distributor_list %}
-                                            <option>{{ x }}</option>
+                                        {% for distributor in distributor_list %}
+                                            <option>{{ distributor.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
