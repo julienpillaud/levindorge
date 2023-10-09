@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 
 from application.entities.article import TagArticle
@@ -22,10 +23,12 @@ small_tag_category = {"spirit", "arranged"}
 
 class TagManager:
     @staticmethod
-    def create(request_form: dict[str, Any], shop: Shop) -> None:
+    def create(
+        request_form: dict[str, Any], shop: Shop, tags_path: Path, fonts_path: Path
+    ) -> None:
         large_tags, small_tags = build_tag_lists(request_form)
         if large_tags:
-            tag_writer = PriceTag()
+            tag_writer = PriceTag(tags_path=tags_path, fonts_path=fonts_path)
             countries = {
                 region.name: region for region in mongo_db.get_items("countries")
             }

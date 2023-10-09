@@ -19,6 +19,7 @@ select = [
 
 [tool.mypy]
 strict = true
+ignore_missing_imports = true
 exclude = [
     "venv",
 ]

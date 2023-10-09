@@ -8,7 +8,7 @@ from flask.testing import FlaskClient
 from pymongo.database import Database
 
 from application.entities.article import Article
-from tests.integration.data import article_data
+from tests.integration.data import article_data, categories_for_list_view
 
 
 @pytest.mark.parametrize("shop", ["angouleme", "sainte-eulalie", "pessac"])
@@ -17,12 +17,29 @@ def test_get_articles(
     templates: list[tuple[Any, Any]],
     shop: str,
 ) -> None:
-    response = client.get(f"/articles/beer?shop={shop}")
+    list_category = "beer"
+    response = client.get(f"/articles/{list_category}?shop={shop}")
     assert response.status_code == http.HTTPStatus.OK
 
     assert len(templates) == 1
     template, context = templates[0]
-    assert len(context["articles"]) >= 1
+    assert context["current_shop"]
+    assert context["list_category"] == list_category
+    assert context["articles"]
+
+
+@pytest.mark.parametrize("list_category", categories_for_list_view)
+def test_create_article_view(
+    client: FlaskClient, templates: list[tuple[Any, Any]], list_category: str
+) -> None:
+    response = client.get(f"/articles/create/{list_category}")
+    assert response.status_code == http.HTTPStatus.OK
+
+    assert len(templates) == 1
+    template, context = templates[0]
+    assert context["list_category"] == list_category
+    assert context["ratio_category"]
+    assert context["type_list"]
 
 
 @pytest.mark.parametrize("data", [article_data])
@@ -77,6 +94,20 @@ def test_create_article(
     assert article["shops"]["angouleme"]["stock_quantity"] == 0
     assert article["shops"]["sainte-eulalie"]["stock_quantity"] == 0
     assert article["shops"]["pessac"]["stock_quantity"] == 0
+
+
+def test_update_article_view(
+    client: FlaskClient, inserted_article: Article, templates: list[tuple[Any, Any]]
+) -> None:
+    article_id = inserted_article.id
+    response = client.get(f"/articles/update/{article_id}")
+    assert response.status_code == http.HTTPStatus.OK
+
+    assert len(templates) == 1
+    template, context = templates[0]
+    assert context["article"]
+    assert context["list_category"]
+    assert context["ratio_category"]
 
 
 @pytest.mark.parametrize("data", [article_data])
@@ -156,4 +187,9 @@ def test_delete_article(
 ) -> None:
     article_id = inserted_article.id
     response = client.get(f"/articles/delete/{article_id}")
+    assert response.status_code == http.HTTPStatus.UNAUTHORIZED
+
+
+def test_validate_articles(client: FlaskClient):
+    response = client.get("/articles/validate")
     assert response.status_code == http.HTTPStatus.UNAUTHORIZED

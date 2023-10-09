@@ -10,6 +10,24 @@ from application.entities.article import (
 
 date = datetime.now(timezone.utc)
 
+categories_for_list_view = [
+    "beer",
+    "cider",
+    "keg",
+    "mini_keg",
+    "rhum",
+    "whisky",
+    "spirit",
+    "arranged",
+    "wine",
+    "fortified_wine",
+    "sparkling_wine",
+    "bib",
+    "box",
+    "food",
+    "misc",
+]
+
 article_to_insert = CreateOrUpdateArticle(
     type="Bière",
     name=ArticleName(name1="", name2="TEST"),

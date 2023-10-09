@@ -8,8 +8,9 @@ from utils import mongo_db
 
 blueprint = Blueprint(name="tags", import_name=__name__, url_prefix="/tags")
 
-application_path = Path(__file__).resolve().parent.parent.parent
+application_path = Path(__file__).resolve().parent.parent
 tags_path = application_path / "templates" / "tags"
+fonts_path = application_path / "static" / "fonts"
 
 
 @blueprint.get("/create")
@@ -34,7 +35,9 @@ def create_tags():
     shop = mongo_db.get_shop_by_username(username=shop_username)
     request_form = request.form.to_dict()
 
-    TagManager.create(request_form=request_form, shop=shop)
+    TagManager.create(
+        request_form=request_form, shop=shop, tags_path=tags_path, fonts_path=fonts_path
+    )
 
     return redirect(url_for("tags.create_tags_view", shop=shop.username))
 

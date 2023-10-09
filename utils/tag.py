@@ -1,16 +1,13 @@
 import datetime
-import os
 from collections.abc import Iterator
+from pathlib import Path
 
 import unidecode
 from PIL import ImageFont
+from PIL.ImageFont import FreeTypeFont
 
 from application.entities.article import TagArticle
 from application.entities.item import Item
-
-APP_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TAGS_PATH = os.path.join(APP_PATH, "templates", "tags")
-FONTS_PATH = os.path.join(APP_PATH, "static", "fonts")
 
 MAX_BEER_TAGS = 9
 MAX_SPIRIT_TAGS = 40
@@ -38,7 +35,11 @@ TASTES = {
 
 
 class PriceTag:
-    def __init__(self) -> None:
+    def __init__(self, tags_path: Path, fonts_path: Path) -> None:
+        self.tags_path = tags_path
+        self.fonts_path = fonts_path
+        self.font_file = fonts_path / "localbrewerytwo-bold.otf"
+        self.font = ImageFont.truetype(str(self.font_file), 23)
         self.date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     @staticmethod
@@ -47,6 +48,8 @@ class PriceTag:
             return BEER_COLORS[color]
         elif product in {"wine", "sparkling_wine", "bib"}:
             return WINE_COLORS[color]
+        else:
+            raise ValueError
 
     @staticmethod
     def define_taste(taste: str) -> str:
@@ -67,32 +70,27 @@ class PriceTag:
 
     @staticmethod
     def define_beer_name(
-        article: TagArticle,
+        article: TagArticle, font: FreeTypeFont
     ) -> tuple[str | None, str | None, str | None]:
-        font_file = os.path.join(FONTS_PATH, "localbrewerytwo-bold.otf")
-        font = ImageFont.truetype(font_file, 23)
-        name1 = article.name.name1
         name2 = article.name.name2
-        if name1 == "":
-            length = font.getsize(name2)[0]
-            if length > 300:
-                i = 1
-                test_length = length
-                while test_length > length / 2:
-                    test_name = name2.rsplit(" ", i)[0]
-                    test_length = font.getsize(test_name)[0]
-                    i += 1
-                name_beer = None
-                name_sup_beer = test_name
-                name_inf_beer = name2.split(test_name)[1][1:]
-            else:
-                name_beer = name2
-                name_sup_beer = None
-                name_inf_beer = None
-        else:
-            name_beer = None
-            name_sup_beer = name1
-            name_inf_beer = name2
+
+        if name1 := article.name.name1:
+            return None, name1, name2
+
+        length = font.getlength(name2)
+        if length <= 300:
+            return name2, None, None
+
+        i = 1
+        test_length = length
+        test_name = name2
+        while test_length > length / 2:
+            test_name = name2.rsplit(" ", i)[0]
+            test_length = font.getlength(test_name)
+            i += 1
+        name_beer = None
+        name_sup_beer = test_name
+        name_inf_beer = name2.split(test_name)[1][1:]
 
         return name_beer, name_sup_beer, name_inf_beer
 
@@ -134,7 +132,7 @@ class PriceTag:
         ):
             date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             file_name = f"etiquette_biere-vin_{file_index + 1}_{shop_code}_{date}.html"
-            file = os.path.join(TAGS_PATH, file_name)
+            file = self.tags_path / file_name
 
             with open(file, "w", encoding="utf-8") as f:
                 f.write('{% extends "/tags/base_lg.html" %}\n')
@@ -166,15 +164,13 @@ class PriceTag:
                     elif article.ratio_category in {"wine", "sparkling_wine", "bib"}:
                         if article.type in {"Vin", "Vin effervescent", "BIB"}:
                             top_line = f"{color} - {article.region}"
-                            f.write(f'<div class="toplinewineClass">{top_line}</div>\n')
                         else:
                             top_line = f"{color} - {article.type}"
-                            f.write(f'<div class="toplinewineClass">{top_line}</div>\n')
-
+                        f.write(f'<div class="toplinewineClass">{top_line}</div>\n')
                     # ----------------------------------------------------------
                     if article.ratio_category in {"beer", "mini_keg"}:
                         name_beer, name_sup_beer, name_inf_beer = self.define_beer_name(
-                            article
+                            article, self.font
                         )
                         if name_beer:
                             f.write(f'<div class="nameClass">{name_beer}</div>\n')
@@ -238,7 +234,7 @@ class PriceTag:
         ):
             date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             file_name = f"etiquette_spirit_{file_index + 1}_{shop_code}_{date}.html"
-            file = os.path.join(TAGS_PATH, file_name)
+            file = self.tags_path / file_name
 
             with open(file, "w", encoding="utf-8") as f:
                 f.write('{% extends "/tags/base_sm.html" %}\n')
