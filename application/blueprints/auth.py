@@ -2,11 +2,17 @@ import functools
 from enum import Enum
 from typing import Any, Callable, ParamSpec, TypeVar
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user
-
-from utils import mongo_db
 
 login_manager = LoginManager()
 bcrypt = Bcrypt()
@@ -49,7 +55,9 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(email: str) -> User:
-    user = mongo_db.get_user_by_email(email)
+    repository = current_app.config["repository_provider"]()
+    user = repository.get_user_by_email(email)
+
     return User(**user)
 
 
@@ -78,7 +86,8 @@ def login_get():
 
 @blueprint.post("/")
 def login_post():
-    user_db = mongo_db.get_user_by_email(request.form["email"])
+    repository = current_app.config["repository_provider"]()
+    user_db = repository.get_user_by_email(request.form["email"])
     if user_db is not None:
         user = User(**user_db)
         if not user.check_password(request.form["password"]):

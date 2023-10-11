@@ -1,3 +1,5 @@
+from typing import Any
+
 from flask import Flask, render_template
 from flask_login import current_user
 
@@ -6,10 +8,12 @@ from application.blueprints import auth as auth_blueprint
 from application.blueprints import inventory as inventory_blueprint
 from application.blueprints import items as items_blueprint
 from application.blueprints import tags as tags_blueprint
-from utils import mongo_db
+from application.config import settings
+from application.repository.dependencies import repository_provider
 
 app = Flask(__name__)
-app.secret_key = "some_secret"
+app.secret_key = settings.SECRET_KEY
+app.config["repository_provider"] = repository_provider
 
 auth_blueprint.login_manager.init_app(app)
 auth_blueprint.bcrypt.init_app(app)
@@ -27,19 +31,24 @@ def error_page(error):
 
 
 @app.context_processor
-def register_user_shops():
+def register_user_shops() -> dict[str, Any]:
     if current_user.is_authenticated:
-        user_shops = mongo_db.get_user_shops(user_shops=current_user.shops)
+        repository = repository_provider()
+        user_shops = repository.get_user_shops(user_shops=current_user.shops)
+
         return {"user_shops": user_shops}
+
     return {}
 
 
 @app.template_filter()
-def strip_zeros(value):
+def strip_zeros(value: float) -> str:
     return str(value).rstrip("0").rstrip(".")
 
 
 @app.route("/demo")
-def demo():
-    articles = mongo_db.get_articles_by_list("beer")
+def demo() -> str:
+    repository = repository_provider()
+    articles = repository.get_articles_by_list("beer")
+
     return render_template("demo_list.html", shop="pessac", articles=articles[:100])

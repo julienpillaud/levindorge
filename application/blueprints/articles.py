@@ -4,6 +4,7 @@ from typing import Any
 from flask import (
     Blueprint,
     Response,
+    current_app,
     jsonify,
     redirect,
     render_template,
@@ -26,7 +27,6 @@ from application.use_cases.articles import (
     compute_recommended_price,
 )
 from application.use_cases.tactill import TactillManager
-from utils import mongo_db
 
 blueprint = Blueprint(name="articles", import_name=__name__, url_prefix="/articles")
 
@@ -34,11 +34,13 @@ blueprint = Blueprint(name="articles", import_name=__name__, url_prefix="/articl
 @blueprint.get("/<list_category>")
 @login_required
 def get_articles(list_category: str) -> str:
+    repository = current_app.config["repository_provider"]()
+
     request_shop = request.args["shop"]
-    current_shop = mongo_db.get_shop_by_username(username=request_shop)
+    current_shop = repository.get_shop_by_username(username=request_shop)
 
     augmented_articles = ArticleManager.list(
-        list_category=list_category, current_shop=current_shop
+        repository=repository, list_category=list_category, current_shop=current_shop
     )
 
     return render_template(
@@ -52,9 +54,11 @@ def get_articles(list_category: str) -> str:
 @blueprint.get("/create/<list_category>")
 @login_required
 def create_article_get(list_category: str) -> str:
-    ratio_category = mongo_db.get_ratio_category(list_category)
-    article_types = mongo_db.get_article_types_by_list(list_category)
-    items = mongo_db.get_items_dict(list_category)
+    repository = current_app.config["repository_provider"]()
+
+    ratio_category = repository.get_ratio_category(list_category)
+    article_types = repository.get_article_types_by_list(list_category)
+    items = repository.get_items_dict(list_category)
 
     return render_template(
         "article_create.html",
@@ -73,8 +77,10 @@ def create_article(list_category: str):
         format_request_form(request_form)
         request_article = RequestArticle(**request_form)
 
-        shops = mongo_db.get_shops()
-        article_type = mongo_db.get_article_type(request_article.type)
+        repository = current_app.config["repository_provider"]()
+
+        shops = repository.get_shops()
+        article_type = repository.get_article_type(request_article.type)
         article_shops = create_article_shops(
             request_form=request_form,
             request_article=request_article,
@@ -82,8 +88,11 @@ def create_article(list_category: str):
             article_type=article_type,
         )
 
+        repository = current_app.config["repository_provider"]()
+
         # create article
         inserted_article = ArticleManager.create(
+            repository=repository,
             current_user=current_user,
             request_article=request_article,
             article_shops=article_shops,
@@ -110,9 +119,11 @@ def create_article(list_category: str):
 @blueprint.get("/update/<article_id>")
 @login_required
 def update_article_get(article_id: str):
-    article = mongo_db.get_article_by_id(article_id)
-    article_type = mongo_db.get_article_type(article.type)
-    items = mongo_db.get_items_dict(article_type.list_category)
+    repository = current_app.config["repository_provider"]()
+
+    article = repository.get_article_by_id(article_id)
+    article_type = repository.get_article_type(article.type)
+    items = repository.get_items_dict(article_type.list_category)
 
     return render_template(
         "article_update.html",
@@ -126,15 +137,17 @@ def update_article_get(article_id: str):
 @blueprint.post("/update/<article_id>")
 @login_required
 def update_article(article_id: str):
-    article = mongo_db.get_article_by_id(article_id)
-    article_type = mongo_db.get_article_type(article.type)
+    repository = current_app.config["repository_provider"]()
+
+    article = repository.get_article_by_id(article_id)
+    article_type = repository.get_article_type(article.type)
 
     if "cancel" not in request.form:
         request_form = request.form.to_dict()
         format_request_form(request_form)
         request_article = RequestArticle(**request_form)
 
-        shops = mongo_db.get_shops()
+        shops = repository.get_shops()
         article_shops = update_article_shops(
             article=article,
             article_type=article_type,
@@ -145,6 +158,7 @@ def update_article(article_id: str):
 
         # update article
         updated_article = ArticleManager.update(
+            repository=repository,
             current_user=current_user,
             request_article=request_article,
             article_shops=article_shops,
@@ -176,9 +190,11 @@ def update_article(article_id: str):
 @admin_required
 @login_required
 def delete_article(article_id: str):
-    ArticleManager.delete(article_id=article_id)
+    repository = current_app.config["repository_provider"]()
 
-    for shop in mongo_db.get_shops():
+    ArticleManager.delete(repository=repository, article_id=article_id)
+
+    for shop in repository.get_shops():
         result = TactillManager.delete(shop=shop, article_id=article_id)
         print(result)
 
@@ -189,7 +205,9 @@ def delete_article(article_id: str):
 @admin_required
 @login_required
 def validate_articles() -> str:
-    articles = mongo_db.get_articles(to_validate=True)
+    repository = current_app.config["repository_provider"]()
+    articles = repository.get_articles(to_validate=True)
+
     return render_template("articles_to_validate.html", articles=articles)
 
 
@@ -197,7 +215,9 @@ def validate_articles() -> str:
 @admin_required
 @login_required
 def validate_article(article_id: str):
-    mongo_db.validate_article(article_id)
+    repository = current_app.config["repository_provider"]()
+    repository.validate_article(article_id)
+
     return redirect(request.referrer)
 
 
@@ -208,7 +228,8 @@ def get_recommended_prices() -> Response:
     taxfree_price = request.form.get("taxfree_price", default=0, type=float)
     tax = request.form.get("tax", default=0, type=float)
 
-    shops = mongo_db.get_shops()
+    repository = current_app.config["repository_provider"]()
+    shops = repository.get_shops()
     recommended_prices = {
         shop.username: compute_recommended_price(
             taxfree_price=taxfree_price,
@@ -218,6 +239,7 @@ def get_recommended_prices() -> Response:
         )
         for shop in shops
     }
+
     return jsonify(recommended_prices)
 
 

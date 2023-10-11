@@ -14,7 +14,7 @@ from pymongo.database import Database
 from application.blueprints.auth import Role, User
 from application.entities.article import Article
 from application.main import app
-from tests.integration.data import article_to_insert
+from tests.data import article_to_insert
 
 load_dotenv()
 
@@ -56,9 +56,10 @@ def templates(flask_app: Flask) -> Iterator[list[tuple[Any, Any]]]:
 
 @pytest.fixture
 def database() -> Iterator[Database[Mapping[str, Any]]]:
-    mongo_uri = os.environ.get("MONGO_URI")
-    client: MongoClient[Mapping[str, Any]] = MongoClient(mongo_uri)
-    yield client.dashboard
+    uri = os.environ.get("MONGODB_URI")
+    database = os.environ.get("MONGODB_DATABASE")
+    client: MongoClient[Mapping[str, Any]] = MongoClient(uri)
+    yield client[database]
     client.close()
 
 

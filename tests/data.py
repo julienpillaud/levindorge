@@ -53,13 +53,13 @@ article_to_insert = CreateOrUpdateArticle(
     shops=ArticleShops(
         root={
             "angouleme": ArticleShopDetail(
-                sell_price=3.5, bar_price=5.0, stock_quantity=0
+                sell_price=3.5, bar_price=0.0, stock_quantity=0
             ),
             "sainte-eulalie": ArticleShopDetail(
                 sell_price=3.5, bar_price=0.0, stock_quantity=0
             ),
             "pessac": ArticleShopDetail(
-                sell_price=3.6, bar_price=0.0, stock_quantity=0
+                sell_price=3.5, bar_price=5.0, stock_quantity=0
             ),
         }
     ),

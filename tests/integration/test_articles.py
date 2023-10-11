@@ -8,7 +8,7 @@ from flask.testing import FlaskClient
 from pymongo.database import Database
 
 from application.entities.article import Article
-from tests.integration.data import article_data, categories_for_list_view
+from tests.data import article_data, categories_for_list_view
 
 
 @pytest.mark.parametrize("shop", ["angouleme", "sainte-eulalie", "pessac"])
@@ -87,9 +87,9 @@ def test_create_article(
     assert article["shops"]["pessac"]["sell_price"] == sell_price
 
     bar_price = article_data["bar_price_pessac"]
-    assert article["shops"]["angouleme"]["bar_price"] == bar_price
+    assert article["shops"]["angouleme"]["bar_price"] == 0.0
     assert article["shops"]["sainte-eulalie"]["bar_price"] == 0.0
-    assert article["shops"]["pessac"]["bar_price"] == 0.0
+    assert article["shops"]["pessac"]["bar_price"] == bar_price
 
     assert article["shops"]["angouleme"]["stock_quantity"] == 0
     assert article["shops"]["sainte-eulalie"]["stock_quantity"] == 0
@@ -153,6 +153,7 @@ def test_update_article(
     assert article["shops"]["angouleme"]["sell_price"] == new_recommended_price
     assert article["shops"]["sainte-eulalie"]["sell_price"] == new_recommended_price
     assert article["shops"]["pessac"]["sell_price"] == data["sell_price_pessac"]
+
     assert (
         article["shops"]["angouleme"]["bar_price"]
         == inserted_article.shops["angouleme"].bar_price

@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, redirect, render_template, request, url_for
 from flask_login import login_required
 
 from application.entities.item import RequestItem
@@ -20,7 +20,8 @@ item_titles = {
 def get_items(category: str) -> str:
     title = item_titles.get(category, "Item")
 
-    items = ItemManager.list(category=category)
+    repository = current_app.config["repository_provider"]()
+    items = ItemManager.list(repository=repository, category=category)
 
     return render_template(
         "item_list.html", title=title, category=category, items=items
@@ -32,7 +33,10 @@ def get_items(category: str) -> str:
 def create_item(category: str):
     request_item = RequestItem(**request.form)
 
-    ItemManager.create(category=category, request_item=request_item)
+    repository = current_app.config["repository_provider"]()
+    ItemManager.create(
+        repository=repository, category=category, request_item=request_item
+    )
 
     return redirect(url_for("items.get_items", category=category))
 
@@ -40,6 +44,7 @@ def create_item(category: str):
 @blueprint.get("/<category>/<item_id>")
 @login_required
 def delete_item(category: str, item_id: str):
-    ItemManager.delete(category=category, item_id=item_id)
+    repository = current_app.config["repository_provider"]()
+    ItemManager.delete(repository=repository, category=category, item_id=item_id)
 
     return redirect(request.referrer)

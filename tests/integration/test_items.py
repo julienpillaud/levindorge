@@ -19,6 +19,7 @@ def test_get_items(
 
     assert len(templates) == 1
     template, context = templates[0]
+    assert context["title"]
     assert context["category"] == category
     assert len(context["items"]) >= 1
 
@@ -34,7 +35,6 @@ def test_create_items(
     assert response.status_code == http.HTTPStatus.FOUND
 
     collection = database.get_collection(name=category)
-
     item = collection.find_one(data)
     assert item
     assert item["name"] == "TEST"

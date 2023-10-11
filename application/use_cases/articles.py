@@ -11,14 +11,16 @@ from application.entities.article import (
     RequestArticle,
 )
 from application.entities.shop import Shop, ShopMargin
-from utils import mongo_db
+from application.interfaces.repository import IRepository
 
 
 class ArticleManager:
     @staticmethod
-    def list(list_category: str, current_shop: Shop) -> list[AugmentedArticle]:
-        articles = mongo_db.get_articles_by_list(list_category)
-        ratio_category = mongo_db.get_ratio_category(list_category)
+    def list(
+        repository: IRepository, list_category: str, current_shop: Shop
+    ) -> list[AugmentedArticle]:
+        articles = repository.get_articles_by_list(list_category)
+        ratio_category = repository.get_ratio_category(list_category)
 
         augmented_articles = []
         for article in articles:
@@ -45,7 +47,10 @@ class ArticleManager:
 
     @staticmethod
     def create(
-        current_user: User, request_article: RequestArticle, article_shops: ArticleShops
+        repository: IRepository,
+        current_user: User,
+        request_article: RequestArticle,
+        article_shops: ArticleShops,
     ) -> Article:
         validated = current_user.role == Role.ADMIN
         date = datetime.now(timezone.utc)
@@ -57,11 +62,12 @@ class ArticleManager:
             shops=article_shops,
             **request_article.model_dump(),
         )
-        insert_result = mongo_db.create_article(article_create)
-        return mongo_db.get_article_by_id(article_id=insert_result.inserted_id)
+        insert_result = repository.create_article(article_create)
+        return repository.get_article_by_id(article_id=insert_result.inserted_id)
 
     @staticmethod
     def update(
+        repository: IRepository,
         current_user: User,
         request_article: RequestArticle,
         article_shops: ArticleShops,
@@ -77,12 +83,12 @@ class ArticleManager:
             shops=article_shops,
             **request_article.model_dump(),
         )
-        mongo_db.update_article(article.id, article_update)
-        return mongo_db.get_article_by_id(article_id=article.id)
+        repository.update_article(article.id, article_update)
+        return repository.get_article_by_id(article_id=article.id)
 
     @staticmethod
-    def delete(article_id: str) -> None:
-        mongo_db.delete_article(article_id)
+    def delete(repository: IRepository, article_id: str) -> None:
+        repository.delete_article(article_id)
 
 
 def compute_recommended_price(

@@ -1,19 +1,21 @@
 from application.entities.item import Item, RequestItem
-from utils import mongo_db
+from application.interfaces.repository import IRepository
 
 
 class ItemManager:
     @staticmethod
-    def list(category: str) -> list[Item]:
-        return mongo_db.get_items(category=category)
+    def list(repository: IRepository, category: str) -> list[Item]:
+        return repository.get_items(category=category)
 
     @staticmethod
-    def create(category: str, request_item: RequestItem) -> Item:
-        insert_result = mongo_db.create_item(category=category, item=request_item)
-        return mongo_db.get_item_by_id(
+    def create(
+        repository: IRepository, category: str, request_item: RequestItem
+    ) -> Item:
+        insert_result = repository.create_item(category=category, item=request_item)
+        return repository.get_item_by_id(
             category=category, item_id=insert_result.inserted_id
         )
 
     @staticmethod
-    def delete(category: str, item_id: str) -> None:
-        mongo_db.delete_item(category=category, item_id=item_id)
+    def delete(repository: IRepository, category: str, item_id: str) -> None:
+        repository.delete_item(category=category, item_id=item_id)

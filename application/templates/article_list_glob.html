@@ -16,7 +16,7 @@
                     <th class="text-center align-middle">Degré</th>
                     <th class="text-center align-middle">TTC</th>
                     <th class="text-center align-middle">Catégorie</th>
-                    <th style="width: 1%">
+                    <th class="text-center align-middle">
                         <button type="submit" class="btn btn-outline-light btn-sm" style="border: 0; padding-bottom: 0; padding-top: 0">
                             <i class="bi bi-tags-fill" style="color: #f9c637"></i>
                         </button>
@@ -35,7 +35,7 @@
                         <td class="text-center">{{ x.alcohol_by_volume | strip_zeros if x.alcohol_by_volume }}</td>
                         <td class="text-center">{{ x.shops[current_shop.username]['sell_price'] | strip_zeros }}</td>
                         <td class="text-center font-weight-bold">{{ x.type }}</td>
-                        <td style="padding: 0; width: 3%;">
+                        <td style="padding: 0; width: 4%;">
                             <input style="height: 25px;" class="form-control form-control-sm _id" type="number" step="1" min="1" name="{{ x.id }}">
                         </td>
                     </tr>

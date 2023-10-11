@@ -3,7 +3,7 @@ from typing import Any
 
 from application.entities.article import TagArticle
 from application.entities.shop import Shop
-from utils import mongo_db
+from application.interfaces.repository import IRepository
 from utils.tag import PriceTag
 
 large_tag_category = {
@@ -24,25 +24,30 @@ small_tag_category = {"spirit", "arranged"}
 class TagManager:
     @staticmethod
     def create(
-        request_form: dict[str, Any], shop: Shop, tags_path: Path, fonts_path: Path
+        repository: IRepository,
+        request_form: dict[str, Any],
+        shop: Shop,
+        tags_path: Path,
+        fonts_path: Path,
     ) -> None:
-        large_tags, small_tags = build_tag_lists(request_form)
+        large_tags, small_tags = build_tag_lists(repository, request_form)
         if large_tags:
             tag_writer = PriceTag(tags_path=tags_path, fonts_path=fonts_path)
             countries = {
-                region.name: region for region in mongo_db.get_items("countries")
+                region.name: region for region in repository.get_items("countries")
             }
             tag_writer.write_large_tags(large_tags, shop.username, countries)
         if small_tags:
-            tag_writer = PriceTag()
+            tag_writer = PriceTag(tags_path=tags_path, fonts_path=fonts_path)
             tag_writer.write_small_tag(small_tags, shop.username)
 
 
 def build_tag_lists(
+    repository: IRepository,
     request_form: dict[str, Any],
 ) -> tuple[list[tuple[TagArticle, int]], list[tuple[TagArticle, int]]]:
     article_types = {
-        article_type.name: article_type for article_type in mongo_db.get_types()
+        article_type.name: article_type for article_type in repository.get_types()
     }
 
     large_tags = []
@@ -51,7 +56,7 @@ def build_tag_lists(
         if number_of_tag == "":
             continue
 
-        article = mongo_db.get_article_by_id(article_id)
+        article = repository.get_article_by_id(article_id)
         ratio_category = article_types[article.type].ratio_category
         tag_article = TagArticle(
             **article.model_dump(by_alias=True),
