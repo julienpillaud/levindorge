@@ -88,8 +88,6 @@ def create_article(list_category: str):
             article_type=article_type,
         )
 
-        repository = current_app.config["repository_provider"]()
-
         # create article
         inserted_article = ArticleManager.create(
             repository=repository,
