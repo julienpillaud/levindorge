@@ -14,6 +14,8 @@ select = [
     "RUF",
 ]
 
+ignore = ["PLR0913"]  # Too many arguments to function call
+
 [tool.ruff.per-file-ignores]
 "test*.py" = ["S101"]  # Use of `assert` detected
 

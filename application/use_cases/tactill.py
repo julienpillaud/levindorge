@@ -1,6 +1,14 @@
+from tactill import TactillClient
+from tactill.entities.article import Article as TactillArticle
+from tactill.entities.article import ArticleCreation, ArticleModification
+from tactill.entities.base import TactillColor, TactillResponse
+
 from application.entities.article import Article, ArticleType
 from application.entities.shop import Shop
-from utils.tactill import Tactill
+
+
+class TactillManagerError(Exception):
+    pass
 
 
 class TactillManager:
@@ -9,47 +17,74 @@ class TactillManager:
         shop: Shop,
         article: Article,
         article_type: ArticleType,
-    ):
-        api_key = shop.tactill_api_key
-        session = Tactill(api_key=api_key)
-        return session.create_article(
-            category=article_type.tactill_category,
-            tax_rate=article.tax,
+    ) -> TactillArticle:
+        client = TactillClient(api_key=shop.tactill_api_key)
+
+        tactill_categories = client.get_categories(
+            filter=f"name={article_type.tactill_category}"
+        )
+        tactill_category = next(iter(tactill_categories), None)
+        if not tactill_category:
+            raise TactillManagerError("Category not found")
+
+        tactill_taxes = client.get_taxes(filter=f"rate={article.tax}")
+        tactill_tax = next(iter(tactill_taxes), None)
+        if not tactill_tax:
+            raise TactillManagerError("Tax not found")
+
+        article_creation = ArticleCreation(
+            category_id=tactill_category.id,
+            taxes=[tactill_tax.id],
             name=define_name(list_category=article_type.list_category, article=article),
-            full_price=article.shops[shop.username].sell_price,
             icon_text=define_icon_text(article=article),
             color=define_color(
                 list_category=article_type.list_category, article=article
             ),
+            full_price=article.shops[shop.username].sell_price,
             barcode=article.barcode,
             reference=article.id,
-            in_stock="true",
+            in_stock=True,
         )
+        return client.create_article(article_creation=article_creation)
 
     @staticmethod
     def update(
         shop: Shop,
         article: Article,
         article_type: ArticleType,
-    ):
-        api_key = shop.tactill_api_key
-        session = Tactill(api_key=api_key)
-        return session.update_article(
-            reference=article.id,
+    ) -> TactillResponse:
+        client = TactillClient(api_key=shop.tactill_api_key)
+
+        tactill_articles = client.get_articles(filter=f"reference={article.id}")
+        tactill_article = next(iter(tactill_articles), None)
+        if not tactill_article:
+            raise TactillManagerError("Article not found")
+
+        article_modification = ArticleModification(
+            taxes=tactill_article.taxes,
             name=define_name(list_category=article_type.list_category, article=article),
-            full_price=article.shops[shop.username].sell_price,
             icon_text=define_icon_text(article=article),
             color=define_color(
                 list_category=article_type.list_category, article=article
             ),
+            full_price=article.shops[shop.username].sell_price,
             barcode=article.barcode,
+            in_stock=tactill_article.in_stock,
+        )
+
+        return client.update_article(
+            article_id=tactill_article.id, article_modification=article_modification
         )
 
     @staticmethod
-    def delete(shop: Shop, article_id: str):
-        api_key = shop.tactill_api_key
-        session = Tactill(api_key=api_key)
-        return session.delete_article(reference=article_id)
+    def delete(shop: Shop, article_id: str) -> TactillResponse:
+        client = TactillClient(api_key=shop.tactill_api_key)
+        tactill_articles = client.get_articles(filter=f"reference={article_id}")
+
+        if tactill_article := next(iter(tactill_articles), None):
+            return client.delete_article(article_id=tactill_article.id)
+
+        raise TactillManagerError("Article not found")
 
 
 def format_volume(article: Article) -> str:
@@ -86,8 +121,10 @@ def define_name(list_category: str, article: Article) -> str:
         else:
             return f"{name1} {color} {volume}"
 
-    elif list_category in {"box", "misc", "food"}:
+    if list_category in {"box", "misc", "food"}:
         return f"{name1}"
+
+    raise ValueError
 
 
 def define_icon_text(article: Article) -> str:
@@ -100,7 +137,7 @@ def define_icon_text(article: Article) -> str:
     return str(article.volume).rstrip("0").rstrip(".").ljust(4)
 
 
-def define_color(list_category: str, article: Article) -> str:
+def define_color(list_category: str, article: Article) -> TactillColor:
     if list_category in {"beer", "cider", "keg", "mini_keg"}:
         beer_colors = {
             "Ambrée": "#FF6347",
@@ -133,3 +170,5 @@ def define_color(list_category: str, article: Article) -> str:
 
     if list_category in {"misc", "food"}:
         return "#57DB47"
+
+    raise ValueError
