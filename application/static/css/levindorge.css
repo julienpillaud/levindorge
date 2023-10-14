@@ -31,17 +31,22 @@ body,html {
   background-color: rgb(32, 36, 41);
 }
 
-a.disabled {
-    pointer-events: none;
+.btn-dark-yellow {
+    color: black;
+    background-color: #f9c637;
+}
+.btn-dark-yellow:hover, .btn-dark-yellow:focus, .btn-dark-yellow:active {
+    color: black;
+    background-color: #f9c637;
 }
 
-.nav-pills > li > a {
-  color: white !important;
+.btn-light-purple {
+    color: white;
+    background-color: #9d78a3;
 }
-
-.nav-pills > li > a.active {
-  color: black !important;
-  background-color: #f9c637 !important;
+.btn-light-purple:hover, .btn-light-purple:focus, .btn-light-purple:active {
+    color: white;
+    background-color: #9d78a3;
 }
 
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */

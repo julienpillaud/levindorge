@@ -123,7 +123,9 @@ class MongoRepository(IRepository):
         return [Shop(**shop) for shop in self.database.shops.find()]
 
     def get_user_shops(self, user_shops: list[str]) -> list[Shop]:
-        user_shops_db = self.database.shops.find({"username": {"$in": user_shops}})
+        user_shops_db = self.database.shops.find(
+            {"username": {"$in": user_shops}}
+        ).sort("name")
         return [Shop(**shop) for shop in user_shops_db]
 
     def get_shop_by_username(self, username: str) -> Shop:

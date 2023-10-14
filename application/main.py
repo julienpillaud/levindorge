@@ -9,6 +9,7 @@ from application.blueprints import inventory as inventory_blueprint
 from application.blueprints import items as items_blueprint
 from application.blueprints import tags as tags_blueprint
 from application.config import settings
+from application.data import navbar_categories
 from application.repository.dependencies import repository_provider
 
 app = Flask(__name__)
@@ -31,14 +32,15 @@ def error_page(error):
 
 
 @app.context_processor
-def register_user_shops() -> dict[str, Any]:
+def register_context() -> dict[str, Any]:
+    context: dict[str, Any] = {"navbar_categories": navbar_categories}
+
     if current_user.is_authenticated:
         repository = repository_provider()
         user_shops = repository.get_user_shops(user_shops=current_user.shops)
+        context["user_shops"] = user_shops
 
-        return {"user_shops": user_shops}
-
-    return {}
+    return context
 
 
 @app.template_filter()
@@ -46,9 +48,25 @@ def strip_zeros(value: float) -> str:
     return str(value).rstrip("0").rstrip(".")
 
 
+@app.template_filter()
+def get_navbar_category_title(list_category: str) -> str:
+    for _, categories in navbar_categories.items():
+        for category in categories:
+            if category.name == list_category:
+                return category.title
+    return list_category
+
+
 @app.route("/demo")
 def demo() -> str:
+    list_category = "beer"
     repository = repository_provider()
-    articles = repository.get_articles_by_list("beer")
+    current_shop = repository.get_shop_by_username(username="pessac")
+    articles = repository.get_articles_by_list(list_category)
 
-    return render_template("demo_list.html", shop="pessac", articles=articles[:100])
+    return render_template(
+        "demo_list.html",
+        current_shop=current_shop,
+        list_category=list_category,
+        articles=articles[:100],
+    )
