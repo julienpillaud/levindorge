@@ -35,10 +35,9 @@ def error_page(error):
 def register_context() -> dict[str, Any]:
     context: dict[str, Any] = {"navbar_categories": navbar_categories}
 
-    if current_user.is_authenticated:
-        repository = repository_provider()
-        user_shops = repository.get_user_shops(user_shops=current_user.shops)
-        context["user_shops"] = user_shops
+    repository = repository_provider()
+    user_shops = repository.get_user_shops(user_shops=current_user.shops)
+    context["user_shops"] = user_shops
 
     return context
 
@@ -52,8 +51,8 @@ def strip_zeros(value: float) -> str:
 def get_navbar_category_title(list_category: str) -> str:
     for _, categories in navbar_categories.items():
         for category in categories:
-            if category.name == list_category:
-                return category.title
+            if category.code == list_category:
+                return category.plural_name
     return list_category
 
 
@@ -61,6 +60,7 @@ def get_navbar_category_title(list_category: str) -> str:
 def demo() -> str:
     list_category = "beer"
     repository = repository_provider()
+
     current_shop = repository.get_shop_by_username(username="pessac")
     articles = repository.get_articles_by_list(list_category)
 
@@ -68,5 +68,5 @@ def demo() -> str:
         "demo_list.html",
         current_shop=current_shop,
         list_category=list_category,
-        articles=articles[:100],
+        articles=articles,
     )

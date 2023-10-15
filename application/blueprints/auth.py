@@ -12,9 +12,15 @@ from flask import (
     url_for,
 )
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user
+from flask_login import (
+    AnonymousUserMixin,
+    LoginManager,
+    UserMixin,
+    current_user,
+    login_user,
+    logout_user,
+)
 
-login_manager = LoginManager()
 bcrypt = Bcrypt()
 blueprint = Blueprint(name="auth", import_name=__name__)
 
@@ -51,6 +57,16 @@ class User(UserMixin):
 
     def check_password(self, password: str) -> str:
         return bcrypt.check_password_hash(self.password_hash, password)
+
+
+class AnonymousUser(AnonymousUserMixin):
+    def __init__(self):
+        self.name = "Demo"
+        self.shops = ["angouleme", "pessac", "sainte-eulalie"]
+
+
+login_manager = LoginManager()
+login_manager.anonymous_user = AnonymousUser
 
 
 @login_manager.user_loader

@@ -30,9 +30,7 @@
             <div class="dropdown-menu">
                 {% for _, categories in navbar_categories.items() %}
                     {% for category in categories %}
-                        {% if category.name != list_category %}
-                            <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category=category.name) }}">{{ category.title }}</a>
-                        {% endif %}
+                        <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category=category.code) }}">{{ category.plural_name }}</a>
                     {% endfor %}
                     {% if not loop.last %}
                         <div class="dropdown-divider"></div>
@@ -78,21 +76,14 @@
             <li class="nav-item dropdown ml-2">
                 <a class="btn btn-light-purple dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Nouveau</a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='beer') }}">Bière</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='cider') }}">Cidre</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='keg') }}">Fût</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='mini_keg') }}">Mini-fût</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='rhum') }}">Rhum</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='whisky') }}">Whisky</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='spirit') }}">Spiritueux</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='arranged') }}">Rhum arrangé</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='wine') }}">Vin</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='fortified_wine') }}">Vin muté</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='sparkling_wine') }}">Vin effervescent</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='bib') }}">BIB</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='box') }}">Coffret</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='food') }}">Alimentation / BSA</a>
-                    <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category='misc') }}">Accessoire / Emballage</a>
+                    {% for _, categories in navbar_categories.items() %}
+                        {% for category in categories %}
+                            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category=category.code) }}">{{ category.singular_name }}</a>
+                        {% endfor %}
+                        {% if not loop.last %}
+                            <div class="dropdown-divider"></div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </li>
             <li class="nav-item ml-2">
