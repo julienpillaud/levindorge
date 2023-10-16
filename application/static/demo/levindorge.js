@@ -8,9 +8,10 @@ $(function () {
         });
     });
 
+    // Sort table columns
     $("th").on("click", function () {
-        let table = $(this).parents('table').eq(0)
-        let rows = table.find('tr:gt(0)').toArray().sort(compare($(this).index()))
+        let table = $(this).parents("table").eq(0)
+        let rows = table.find("tr:gt(0)").toArray().sort(compare($(this).index()))
         this.asc = !this.asc
         if (!this.asc) {
             rows = rows.reverse()
@@ -20,15 +21,45 @@ $(function () {
         }
     })
 
+    // Color sell price
+    $("table tbody tr").each(function () {
+        let $recommended_price = $("td:nth-child(9)", this);
+        let recommended_price = Number($recommended_price.html());
+        let $sell_price = $("td:nth-child(10)", this);
+        let sell_price = Number($sell_price.html());
+
+        if (sell_price > recommended_price) {
+            $sell_price.css("background-color", "darkgreen");
+        } else if (sell_price < recommended_price) {
+            $sell_price.css("background-color", "darkred");
+        }
+    });
+
+    // Color stock quantity
+    $("table tbody tr td:nth-child(13)").each(function () {
+        let $elem = $(this);
+        let value = Number($elem.html());
+
+        if (value > 0) {
+            $elem.css("background-color", "darkgreen");
+        } else if (value < 0) {
+            $elem.css("background-color", "darkred");
+        }
+    });
+
 });
+
+function isNumeric(value) {
+    return !isNaN(parseFloat(value)) && isFinite(value);
+}
+
+function getCellValue(row, index) {
+    return $(row).children("td").eq(index).text()
+}
 
 function compare(index) {
     return function (a, b) {
         let valA = getCellValue(a, index), valB = getCellValue(b, index)
-        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+        return isNumeric(valA) && isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
     }
-}
-
-function getCellValue(row, index) {
-    return $(row).children('td').eq(index).text()
 }
