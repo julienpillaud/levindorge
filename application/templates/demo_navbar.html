@@ -1,3 +1,11 @@
+{% if current_shop is not defined %}
+    {% set current_shop = user_shops[0] %}
+{% endif %}
+
+{% if list_category is not defined %}
+    {% set list_category = "beer" %}
+{% endif %}
+
 <nav class="navbar navbar-expand-lg fixed-top bg-dark-purple">
     <div class="container-fluid">
 

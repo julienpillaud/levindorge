@@ -1,67 +1,62 @@
-{% extends 'base.html' %}
+{% extends "demo_base.html" %}
 {% block content %}
-    {% include 'navbar.html' %}
+    {% include "demo_navbar.html" %}
 
-    <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
     <div class="container padding-navbar">
+        <div class="row justify-content-center">
 
-        <form method="post">
-            <div class="row justify-content-center py-3">
-                <div class="col-4">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-dark-purple text-white">{{ title }}</span>
-                        </div>
+            {% if category == 'countries' %}
+                {% set col_width = 6 %}
+            {% else %}
+                {% set col_width = 4 %}
+            {% endif %}
+
+            <div class="col col-lg-{{ col_width }}">
+
+                <form method="post">
+                    <div class="input-group mb-2">
+                        <span class="input-group-text w-25 bg-light-purple">{{ title }}</span>
                         <input type="text" class="form-control" name="name" required>
                     </div>
-                </div>
-                {% if category == 'countries' %}
-                    <div class="col-4">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text bg-dark-purple text-white">Gentilé</span>
-                            </div>
+
+                    {% if category == 'countries' %}
+                        <div class="input-group mb-2">
+                            <span class="input-group-text w-25 bg-light-purple">Gentilé</span>
                             <input type="text" class="form-control" name="demonym">
                         </div>
+                    {% endif %}
+
+                    <div class="d-grid mb-2">
+                        <button class="btn btn-outline-primary btn-sm" type="submit">Ajouter</button>
                     </div>
-                {% endif %}
-                <div class="col-1">
-                    <button type="submit" class="btn btn-outline-primary">Ajouter</button>
-                </div>
-            </div>
-        </form>
+                </form>
 
-        <div class="row justify-content-center py-3">
-            {% if dropdown_category == 'countries' %}
-                <div class="col-7">{% else %}
-                <div class="col-4">{% endif %}
-            <table class="table table-dark table-striped table-bordered table-hover table-sm">
-                <thead class="bg-light-purple table-sticky">
-                <tr>
-                    <th class="text-center text-nowrap">{{ title }}</th>
-                    {% if category == 'countries' %}
-                        <th class="text-center text-nowrap">Gentilé</th>{% endif %}
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in items %}
+                <table class="table table-striped table-bordered table-hover table-sm">
+                    <thead class="table-sticky">
                     <tr>
-                        <td class="text-center text-nowrap">{{ item.name }}</td>
+                        <th class="text-center text-nowrap bg-light-purple" role="button">{{ title }}</th>
                         {% if category == 'countries' %}
-                            <td class="text-center text-nowrap">{{ item.demonym }}</td>{% endif %}
-                        <td class="text-center" style="width: 20px">
-                            <a href="{{ url_for('items.delete_item', category=category, item_id=item.id) }}">
-                                <i class="bi bi-x-square text-danger"></i>
-                            </a>
-                        </td>
+                            <th class="text-center text-nowrap bg-light-purple" role="button">Gentilé</th>{% endif %}
+                        <th class="bg-light-purple not-sortable"></th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            </div>
-            </div>
+                    </thead>
+                    <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td class="text-center text-nowrap">{{ item.name }}</td>
+                            {% if category == 'countries' %}
+                                <td class="text-center text-nowrap">{{ item.demonym }}</td>{% endif %}
+                            <td class="text-center" style="width: 20px">
+                                <a href="{{ url_for('items.delete_item', category=category, item_id=item.id) }}">
+                                    <i class="bi bi-x-square text-danger"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
 
+            </div>
         </div>
     </div>
 

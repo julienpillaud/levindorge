@@ -1,17 +1,17 @@
-{% extends 'demo_base.html' %}
+{% extends "demo_base.html" %}
 {% block content %}
-    {% include 'demo_navbar.html' %}
+    {% include "demo_navbar.html" %}
 
     <div class="container-fluid padding-navbar">
-        <table class="table table-striped table-bordered table-hover table-sm" id="article_list">
+        <table class="table table-striped table-bordered table-hover table-sm" id="articlesList">
             <thead class="table-sticky">
             <tr>
                 <th class="text-center align-middle bg-light-purple" role="button">#</th>
 
                 <!-- NAME 1 -->
-                {% if list_category in ['beer', 'keg', 'mini_keg'] %}
+                {% if list_category in ["beer", "keg", "mini_keg"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">Brasserie</th>
-                {% elif list_category in ['cider'] %}
+                {% elif list_category in ["cider"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">Cidrerie</th>
                 {% elif list_category in spirit_types_list %}
                     <th class="text-center align-middle bg-light-purple" role="button">Distillerie</th>
@@ -23,9 +23,9 @@
 
                 <!-- NAME 2 -->
                 {% if list_category not in others_types_list %}
-                    {% if list_category in ['beer', 'keg', 'mini_keg'] %}
+                    {% if list_category in ["beer", "keg", "mini_keg"] %}
                         <th class="text-center align-middle bg-light-purple" role="button">Bière</th>
-                    {% elif list_category in ['cider'] %}
+                    {% elif list_category in ["cider"] %}
                         <th class="text-center align-middle bg-light-purple" role="button">Cidre</th>
                     {% elif list_category in spirit_types_list %}
                         <th class="text-center align-middle bg-light-purple" role="button">Spiritueux</th>
@@ -44,8 +44,8 @@
                 {% endif %}
 
                 <!-- COLOR / TASTE -->
-                {% if list_category not in ['arranged', 'box', 'misc', 'food'] %}
-                    {% if list_category in ['rhum', 'whisky', 'spirit'] %}
+                {% if list_category not in ["arranged", "box", "misc", "food"] %}
+                    {% if list_category in ["rhum", "whisky", "spirit"] %}
                         <th class="text-center align-middle bg-light-purple" role="button">Saveur</th>
                     {% else %}
                         <th class="text-center align-middle bg-light-purple" role="button">Couleur</th>
@@ -58,13 +58,13 @@
                 {% endif %}
 
                 <!-- ALCOHOL_BY_VOLUME -->
-                {% if list_category not in ['wine', 'fortified_wine', 'sparkling_wine', 'bib', 'box', 'misc', 'food'] %}
+                {% if list_category not in ["wine", "fortified_wine", "sparkling_wine", "bib", "box", "misc", "food"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">Deg</th>
                 {% endif %}
 
                 <!-- PRICE -->
                 <th class="text-center align-middle bg-light-purple text-nowrap" role="button">HT DI</th>
-                {% if list_category not in ['misc', 'food'] %}
+                {% if list_category not in ["misc", "food"] %}
                     <th class="text-center align-middle bg-light-purple text-nowrap" role="button">PVC</th>
                 {% endif %}
                 <th class="text-center align-middle bg-light-purple text-nowrap" role="button">TTC</th>
@@ -78,28 +78,28 @@
                 <th class="text-center align-middle bg-light-purple" role="button">Fournisseur</th>
 
                 <!-- PACKAGING / DEPOSIT -->
-                {% if list_category in ['beer'] %}
+                {% if list_category in ["beer"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">Cond</th>
                 {% endif %}
-                {% if list_category in ['beer'] %}
+                {% if list_category in ["beer"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">C.Btle</th>
                 {% endif %}
-                {% if list_category in ['keg', 'mini_keg'] %}
+                {% if list_category in ["keg", "mini_keg"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">Cons</th>
                 {% endif %}
-                {% if list_category in ['beer'] %}
+                {% if list_category in ["beer"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">C.Cai</th>
                 {% endif %}
                 <!-- TYPE -->
-                {% if list_category in ['spirit', 'fortified_wine',  'misc'] %}
+                {% if list_category in ["spirit", "fortified_wine",  "misc"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">Type</th>
                 {% endif %}
 
                 <!-- BUTTON -->
-                {% if current_user.role in ['admin', 'superuser'] %}
-                    <th class="bg-light-purple"></th>
+                {% if current_user.role in ["admin", "superuser"] %}
+                    <th class="bg-light-purple not-sortable"></th>
                 {% endif %}
-                <th class="bg-light-purple"></th>
+                <th class="bg-light-purple not-sortable"></th>
 
             </tr>
             </thead>
@@ -122,8 +122,8 @@
                     {% endif %}
 
                     <!-- COLOR / TASTE -->
-                    {% if list_category not in ['arranged', 'box', 'misc', 'food'] %}
-                        {% if list_category in ['rhum', 'whisky', 'spirit'] %}
+                    {% if list_category not in ["arranged", "box", "misc", "food"] %}
+                        {% if list_category in ["rhum", "whisky", "spirit"] %}
                             <td class="text-center">{{ x.taste }}</td>
                         {% else %}
                             <td class="text-center">{{ x.color }}</td>
@@ -136,42 +136,42 @@
                     {% endif %}
 
                     <!-- ALCOHOL_BY_VOLUME -->
-                    {% if list_category not in ['wine', 'fortified_wine', 'sparkling_wine', 'bib', 'box', 'misc', 'food'] %}
+                    {% if list_category not in ["wine", "fortified_wine", "sparkling_wine", "bib", "box", "misc", "food"] %}
                         <td class="text-center">{{ x.alcohol_by_volume | strip_zeros }}</td>
                     {% endif %}
 
                     <!-- PRICE -->
                     <td class="text-center">{{ x.taxfree_price | strip_zeros }}</td>
-                    {% if list_category not in ['misc', 'food'] %}
+                    {% if list_category not in ["misc", "food"] %}
                         <td class="text-center recommended_price">{{ x.recommended_price | strip_zeros }}</td>
                     {% endif %}
                     <td class="text-center sell_price">
-                        {{ x.shops[current_shop.username]['sell_price'] | strip_zeros }}
+                        {{ x.shops[current_shop.username]["sell_price"] | strip_zeros }}
                     </td>
                     <td class="text-center">{{ x.margin.margin | strip_zeros }}</td>
                     <td class="text-center">{{ x.margin.markup | strip_zeros }}</td>
 
                     <!-- STOCK -->
                     <td class="text-center stock_quantity">
-                        {{ x.shops[current_shop.username]['stock_quantity'] if x.shops[current_shop.username]['stock_quantity'] }}
+                        {{ x.shops[current_shop.username]["stock_quantity"] if x.shops[current_shop.username]["stock_quantity"] }}
                     </td>
 
                     <!-- DISTRIBUTOR -->
                     <td class="text-center">{{ x.distributor }}</td>
 
                     <!-- PACKAGING / DEPOSIT -->
-                    {% if list_category in ['beer'] %}
+                    {% if list_category in ["beer"] %}
                         <td class="text-center">{{ x.packaging if x.packaging }}</td>
                     {% endif %}
-                    {% if list_category in ['beer', 'keg', 'mini_keg'] %}
+                    {% if list_category in ["beer", "keg", "mini_keg"] %}
                         <td class="text-center">{{ x.deposit.unit if x.deposit.unit }}</td>
                     {% endif %}
-                    {% if list_category in ['beer'] %}
+                    {% if list_category in ["beer"] %}
                         <td class="text-center">{{ x.deposit.case | strip_zeros  if x.deposit.case }}</td>
                     {% endif %}
 
                     <!-- TYPE -->
-                    {% if list_category in ['spirit', 'fortified_wine', 'misc'] %}
+                    {% if list_category in ["spirit", "fortified_wine", "misc"] %}
                         <td class="text-center">{{ x.type }}</td>
                     {% endif %}
 
@@ -181,7 +181,7 @@
                             <i class="bi bi-pencil-square text-warning"></i>
                         </a>
                     </td>
-                    {% if current_user.role in ['admin', 'superuser'] %}
+                    {% if current_user.role in ["admin", "superuser"] %}
                         <td class="text-center" style="width: 20px">
                             <a href="{{ url_for('articles.delete_article', article_id=x.id) }}">
                                 <i class="bi bi-x-square text-danger"></i>

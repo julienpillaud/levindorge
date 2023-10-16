@@ -9,7 +9,7 @@ $(function () {
     });
 
     // Sort table columns
-    $("th").on("click", function () {
+    $("th:not(.not-sortable)").on("click", function () {
         let table = $(this).parents("table").eq(0)
         let rows = table.find("tr:gt(0)").toArray().sort(compare($(this).index()))
         this.asc = !this.asc
@@ -22,7 +22,7 @@ $(function () {
     })
 
     // Color sell price
-    $("table tbody tr").each(function () {
+    $("table#articlesList tbody tr").each(function () {
         let $recommended_price = $("td:nth-child(9)", this);
         let recommended_price = Number($recommended_price.html());
         let $sell_price = $("td:nth-child(10)", this);
@@ -36,7 +36,7 @@ $(function () {
     });
 
     // Color stock quantity
-    $("table tbody tr td:nth-child(13)").each(function () {
+    $("table#articlesList tbody tr td:nth-child(13)").each(function () {
         let $elem = $(this);
         let value = Number($elem.html());
 
