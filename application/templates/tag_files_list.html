@@ -1,26 +1,32 @@
-{% extends 'base.html' %}
+{% extends "demo_base.html" %}
 {% block content %}
-    {% include 'navbar.html' %}
+    {% include "navbar.html" %}
 
     <div class="container padding-navbar">
-        <table class="table table-dark table-striped table-bordered table-hover table-sm">
-            <thead class="bg-light-purple table-sticky">
-            <tr>
-                <th class="text-center align-middle">Etiquette</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for file in files %}
-                <tr>
-                    <td class="text-center">
-                        <a target="_blank" rel="noopener noreferrer" href="{{ url_for('tags.get_tag_file', file=file) }}">
-                            {{ file }}
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <div class="row justify-content-center">
+            <div class="col col col-lg-8">
+
+                <table class="table table-striped table-bordered table-hover table-sm">
+                    <thead class="sticky" style="--sticky-top: 53px">
+                    <tr>
+                        <th class="text-center align-middle bg-light-purple">Etiquette</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for file in files %}
+                        <tr>
+                            <td class="text-center">
+                                <a target="_blank" rel="noopener noreferrer" href="{{ url_for('tags.get_tag_file', file=file) }}">
+                                    {{ file }}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
     </div>
 
 {% endblock %}

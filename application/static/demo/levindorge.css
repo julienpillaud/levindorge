@@ -2,9 +2,9 @@
     padding-top: 71px;
 }
 
-.table-sticky {
+.sticky {
     position: sticky;
-    top: 53px;
+    top: var(--sticky-top);
 }
 
 .bg-dark-purple {

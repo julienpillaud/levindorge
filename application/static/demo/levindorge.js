@@ -10,7 +10,7 @@ $(function () {
 
     // Sort table columns
     $("th:not(.not-sortable)").on("click", function () {
-        let table = $(this).parents("table").eq(0)
+        let table = $(this).parents("table.sortable").eq(0)
         let rows = table.find("tr:gt(0)").toArray().sort(compare($(this).index()))
         this.asc = !this.asc
         if (!this.asc) {
@@ -19,7 +19,7 @@ $(function () {
         for (let i = 0; i < rows.length; i++) {
             table.append(rows[i])
         }
-    })
+    });
 
     // Color sell price
     $("table#articlesList tbody tr").each(function () {
@@ -61,5 +61,18 @@ function compare(index) {
     return function (a, b) {
         let valA = getCellValue(a, index), valB = getCellValue(b, index)
         return isNumeric(valA) && isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+    }
+}
+
+function toggleEmptyRows() {
+    let $rows = $("table tbody tr")
+    let rows = document.querySelectorAll("table tbody tr")
+    let noEmptyRows = Array.from(rows).filter(row => row.cells[row.cells.length - 1].children[0].value)
+
+    if ($rows.is(":hidden")) {
+        $rows.show()
+    } else {
+        $(rows).hide()
+        $(noEmptyRows).show()
     }
 }

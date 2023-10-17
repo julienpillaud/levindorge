@@ -6,90 +6,94 @@
     {% set list_category = "beer" %}
 {% endif %}
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark-purple fixed-top">
+<nav class="navbar navbar-expand-lg fixed-top bg-dark-purple">
+    <div class="container-fluid">
 
-    <span class="navbar-brand mb-0 h1">{{ current_user.name }}</span>
+        <span class="navbar-brand mb-0 h1">{{ current_user.name }}</span>
 
-    <div class="d-flex mr-auto">
-        <div class="dropdown">
-            <button class="btn btn-dark-yellow dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                {{ current_shop.name }}
-            </button>
-            {% if user_shops | length >= 2 %}
-                <div class="dropdown-menu">
-                    {% for shop in user_shops if shop.username != current_shop.username %}
-                        <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop.username, list_category=list_category) }}">{{ shop.name }}</a>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-        <div class="dropdown ml-2">
-            <button class="btn btn-dark-yellow dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                {{ list_category | get_navbar_category_title }}
-            </button>
-            <div class="dropdown-menu">
-                {% for _, categories in navbar_categories.items() %}
-                    {% for category in categories %}
-                        <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category=category.code) }}">{{ category.plural_name }}</a>
-                    {% endfor %}
-                    {% if not loop.last %}
-                        <div class="dropdown-divider"></div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <li class="nav-item dropdown mt-1 mt-lg-0">
+                    <a class="btn btn-dark-yellow nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ current_shop.name }}</a>
+                    {% if user_shops | length >= 2 %}
+                        <div class="dropdown-menu">
+                            {% for shop in user_shops %}
+                                <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=shop.username, list_category=list_category) }}">{{ shop.name }}</a>
+                            {% endfor %}
+                        </div>
                     {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-    </div>
+                </li>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <form class="form-inline ml-auto">
-            <input class="form-control" type="search" id="search" placeholder="Rechercher" aria-label="Search">
-        </form>
-        <ul class="navbar-nav ml-auto">
-            {% if current_user.role in ['admin', 'superuser'] %}
-                <li class="nav-item dropdown ml-2">
-                    <a class="btn btn-light-purple dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
+                <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+                    <a class="btn btn-dark-yellow nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ list_category | get_navbar_category_title }}</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ url_for('articles.validate_articles') }}">Validation</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url_for('items.get_items', category='breweries') }}">Brasserie</a>
-                        <a class="dropdown-item" href="{{ url_for('items.get_items', category='distilleries') }}">Distillerie</a>
-                        <a class="dropdown-item" href="{{ url_for('items.get_items', category='distributors') }}">Fournisseur</a>
-                        <a class="dropdown-item" href="{{ url_for('items.get_items', category='countries') }}">Pays</a>
-                        <a class="dropdown-item" href="{{ url_for('items.get_items', category='regions') }}">Région</a>
+                        {% for _, categories in navbar_categories.items() %}
+                            {% for category in categories %}
+                                <a class="dropdown-item" href="{{ url_for('articles.get_articles', shop=current_shop.username, list_category=category.code) }}">{{ category.plural_name }}</a>
+                            {% endfor %}
+                            {% if not loop.last %}
+                                <div class="dropdown-divider"></div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </li>
-            {% endif %}
-            <li class="nav-item dropdown ml-2">
-                <a class="btn btn-light-purple dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Etiquette</a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{{ url_for('tags.list_tag_files') }}">A imprimer</a>
-                    <div class="dropdown-divider"></div>
-                    {% for shop in user_shops %}
-                        <a class="dropdown-item" href="{{ url_for('tags.create_tags_view', shop=shop.username) }}">{{ shop.name }}</a>
-                    {% endfor %}
-                </div>
-            </li>
-            <li class="nav-item dropdown ml-2">
-                <a class="btn btn-light-purple dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Nouveau</a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    {% for _, categories in navbar_categories.items() %}
-                        {% for category in categories %}
-                            <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category=category.code) }}">{{ category.singular_name }}</a>
-                        {% endfor %}
-                        {% if not loop.last %}
-                            <div class="dropdown-divider"></div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </li>
-            <li class="nav-item ml-2">
-                <a class="btn btn-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i></a>
-            </li>
-        </ul>
-    </div>
 
+                <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+                    <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Etiquette</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ url_for('tags.list_tag_files') }}">A imprimer</a>
+                        <hr class="dropdown-divider">
+                        {% for shop in user_shops %}
+                            <a class="dropdown-item" href="{{ url_for('tags.create_tags_view', shop=shop.username) }}">{{ shop.name }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+                    <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Nouveau</a>
+                    <div class="dropdown-menu">
+                        {% for _, categories in navbar_categories.items() %}
+                            {% for category in categories %}
+                                <a class="dropdown-item" href="{{ url_for('articles.create_article_get', list_category=category.code) }}">{{ category.singular_name }}</a>
+                            {% endfor %}
+                            {% if not loop.last %}
+                                <div class="dropdown-divider"></div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </li>
+
+                {% if current_user.role in ['admin', 'superuser'] %}
+                    <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+                        <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{ url_for('articles.validate_articles') }}">Validation</a>
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item" href="{{ url_for('items.get_items', category='breweries') }}">Brasserie</a>
+                            <a class="dropdown-item" href="{{ url_for('items.get_items', category='distilleries') }}">Distillerie</a>
+                            <a class="dropdown-item" href="{{ url_for('items.get_items', category='distributors') }}">Fournisseur</a>
+                            <a class="dropdown-item" href="{{ url_for('items.get_items', category='countries') }}">Pays</a>
+                            <a class="dropdown-item" href="{{ url_for('items.get_items', category='regions') }}">Région</a>
+                        </div>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item mt-1 mt-lg-0 ms-lg-2">
+                    <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </a>
+                </li>
+
+            </ul>
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" id="search" placeholder="Rechercher" aria-label="Search">
+            </form>
+        </div>
+
+    </div>
 </nav>
