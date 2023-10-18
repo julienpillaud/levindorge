@@ -23,9 +23,9 @@ $(function () {
 
     // Color sell price
     $("table#articlesList tbody tr").each(function () {
-        let $recommended_price = $("td:nth-child(9)", this);
+        let $recommended_price = $(this).find(".recommended_price");
         let recommended_price = Number($recommended_price.html());
-        let $sell_price = $("td:nth-child(10)", this);
+        let $sell_price = $(this).find(".sell_price");
         let sell_price = Number($sell_price.html());
 
         if (sell_price > recommended_price) {
@@ -36,7 +36,7 @@ $(function () {
     });
 
     // Color stock quantity
-    $("table#articlesList tbody tr td:nth-child(13)").each(function () {
+    $("table#articlesList tbody tr td.stock_quantity").each(function () {
         let $elem = $(this);
         let value = Number($elem.html());
 

@@ -13,30 +13,30 @@
                     <th class="text-center align-middle bg-light-purple" role="button">Brasserie</th>
                 {% elif list_category in ["cider"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">Cidrerie</th>
-                {% elif list_category in spirit_types_list %}
+                {% elif list_category in ["rhum", "whisky", "arranged", "spirit"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">Distillerie</th>
-                {% elif list_category in wine_types_list %}
+                {% elif list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">Appellation</th>
                 {% else %}
                     <th class="text-center align-middle bg-light-purple" role="button">Désignation</th>
                 {% endif %}
 
                 <!-- NAME 2 -->
-                {% if list_category not in others_types_list %}
+                {% if list_category not in ["box", "misc", "food"] %}
                     {% if list_category in ["beer", "keg", "mini_keg"] %}
                         <th class="text-center align-middle bg-light-purple" role="button">Bière</th>
                     {% elif list_category in ["cider"] %}
                         <th class="text-center align-middle bg-light-purple" role="button">Cidre</th>
-                    {% elif list_category in spirit_types_list %}
+                    {% elif list_category in ["rhum", "whisky", "arranged", "spirit"] %}
                         <th class="text-center align-middle bg-light-purple" role="button">Spiritueux</th>
-                    {% elif list_category in wine_types_list %}
+                    {% elif list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}
                         <th class="text-center align-middle bg-light-purple" role="button">Produit</th>
                     {% endif %}
                 {% endif %}
 
                 <!-- REGION -->
-                {% if list_category not in others_types_list %}
-                    {% if list_category in wine_types_list %}
+                {% if list_category not in ["box", "misc", "food"] %}
+                    {% if list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}
                         <th class="text-center align-middle bg-light-purple" role="button">Région</th>
                     {% else %}
                         <th class="text-center align-middle bg-light-purple" role="button">Pays</th>
@@ -53,7 +53,7 @@
                 {% endif %}
 
                 <!-- VOLUME -->
-                {% if list_category not in others_types_list %}
+                {% if list_category not in ["box", "misc", "food"] %}
                     <th class="text-center align-middle bg-light-purple" role="button">Vol</th>
                 {% endif %}
 
@@ -112,12 +112,12 @@
                     <td class="">{{ x.name.name1 }}</td>
 
                     <!-- NAME 2 -->
-                    {% if list_category not in others_types_list %}
+                    {% if list_category not in ["box", "misc", "food"] %}
                         <td class="">{{ x.name.name2 }}</td>
                     {% endif %}
 
                     <!-- REGION -->
-                    {% if list_category not in others_types_list %}
+                    {% if list_category not in ["box", "misc", "food"] %}
                         <td class="text-center">{{ x.region }}</td>
                     {% endif %}
 
@@ -131,7 +131,7 @@
                     {% endif %}
 
                     <!-- VOLUME -->
-                    {% if list_category not in others_types_list %}
+                    {% if list_category not in ["box", "misc", "food"] %}
                         <td class="text-center">{{ x.volume | strip_zeros }}</td>
                     {% endif %}
 

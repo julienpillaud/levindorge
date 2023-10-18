@@ -35,19 +35,19 @@
                                             <span class="input-group-text bg-dark-purple text-white">Brasserie</span>
                                         {% elif list_category in ['cider'] %}
                                             <span class="input-group-text bg-dark-purple text-white">Cidrerie</span>
-                                        {% elif list_category in spirit_types_list %}
+                                        {% elif list_category in ["rhum", "whisky", "arranged", "spirit"] %}
                                             <span class="input-group-text bg-dark-purple text-white">Distillerie</span>
-                                        {% elif list_category in wine_types_list %}
+                                        {% elif list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}
                                             <span class="input-group-text bg-dark-purple text-white">Appellation</span>
                                         {% else %}
                                             <span class="input-group-text bg-dark-purple text-white">Désignation</span>
                                         {% endif %}
                                     </div>
-                                    {% if list_category not in wine_types_list + others_types_list %}
+                                    {% if list_category not in ["wine", "fortified_wine", "sparkling_wine", "bib"] + ["box", "misc", "food"] %}
                                         {% if current_user.role in ['admin', 'superuser'] %}
                                             <select class="custom-select" name="name1">
                                                 <option selected></option>
-                                                {% if list_category in beer_types_list %}
+                                                {% if list_category in ["beer", "cider", "keg", "mini_keg"] %}
                                                     {% for brewery in brewery_list %}
                                                         {% if brewery.name == article.name.name1 %}
                                                             <option selected>{{ brewery.name }}</option>
@@ -74,7 +74,7 @@
                                 </div>
                             </div>
                             <!-- ----------------------------------------------------------------------- -->
-                            {% if list_category not in others_types_list %}
+                            {% if list_category not in ["box", "misc", "food"] %}
                                 <div class="col-6">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -82,9 +82,9 @@
                                                 <span class="input-group-text bg-dark-purple text-white">Bière</span>
                                             {% elif list_category in ['cider'] %}
                                                 <span class="input-group-text bg-dark-purple text-white">Cidre</span>
-                                            {% elif list_category in spirit_types_list %}
+                                            {% elif list_category in ["rhum", "whisky", "arranged", "spirit"] %}
                                                 <span class="input-group-text bg-dark-purple text-white">Spiritueux</span>
-                                            {% elif list_category in wine_types_list %}
+                                            {% elif list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}
                                                 <span class="input-group-text bg-dark-purple text-white">Produit</span>
                                             {% endif %}
                                         </div>
@@ -100,18 +100,18 @@
                         {% set wine_color_list = ['Blanc', 'Rosé', 'Rouge'] %}
                         {% set taste_list = ['Boisé', 'Epicé', 'Floral', 'Fruité', 'Iodé', 'Toasté', 'Tourbé', 'Végétal'] %}
 
-                        {% if list_category not in others_types_list %}
+                        {% if list_category not in ["box", "misc", "food"] %}
                             <div class="form-row mb-2">
                                 <!-- ----------------------------------------------------------------------- -->
                                 <div class="col-6">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text bg-dark-purple text-white">{% if list_category in wine_types_list %}Région{% else %}Pays{% endif %}</span>
+                                            <span class="input-group-text bg-dark-purple text-white">{% if list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}Région{% else %}Pays{% endif %}</span>
                                         </div>
                                         {% if current_user.role in ['admin', 'superuser'] %}
                                             <select class="custom-select" name="region" required>
                                                 <option selected></option>
-                                                {% if list_category in wine_types_list %}
+                                                {% if list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}
                                                     {% for region in region_list %}
                                                         {% if region.name == article.region %}
                                                             <option selected>{{ region.name }}</option>
@@ -163,7 +163,7 @@
                                                 {% if current_user.role in ['admin', 'superuser'] %}
                                                     <select class="custom-select" name="color" required>
                                                         <option selected></option>
-                                                        {% if list_category in beer_types_list %}
+                                                        {% if list_category in ["beer", "cider", "keg", "mini_keg"] %}
                                                             {% for x in beer_color_list %}
                                                                 {% if x == article.color %}
                                                                     <option selected>{{ x }}</option>
@@ -195,7 +195,7 @@
                         <!-- VOLUME / ALCOHOL_BY_VOLUME / BIODYNAMIC-->
                         {% set bio_list = ['Bio', 'Biodynamique'] %}
 
-                        {% if list_category not in others_types_list %}
+                        {% if list_category not in ["box", "misc", "food"] %}
                             <div class="form-row mb-2">
                                 <!-- ----------------------------------------------------------------------- -->
                                 <div class="col-6">
@@ -224,7 +224,7 @@
                                     </div>
                                 </div>
                                 <!-- ----------------------------------------------------------------------- -->
-                                {% if list_category not in wine_types_list + others_types_list %}
+                                {% if list_category not in ["wine", "fortified_wine", "sparkling_wine", "bib"] + ["box", "misc", "food"] %}
                                     <div class="col-6">
                                         <div class="input-group">
                                             <div class="input-group-prepend">

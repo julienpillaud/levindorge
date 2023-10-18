@@ -40,7 +40,7 @@
     </div>
 </div>
 
-{% if list_category in beer_types_list + spirit_types_list + ['box'] %}
+{% if list_category in ["beer", "cider", "keg", "mini_keg"] + ["rhum", "whisky", "arranged", "spirit"] + ["box"] %}
     <div class="form-row mb-2">
         <div class="col-6">
             <div class="input-group">
