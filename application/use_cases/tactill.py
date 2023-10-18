@@ -1,6 +1,6 @@
 from tactill import TactillClient
-from tactill.entities.article import Article as TactillArticle
-from tactill.entities.article import ArticleCreation, ArticleModification
+from tactill.entities.catalog.article import Article as TactillArticle
+from tactill.entities.catalog.article import ArticleCreation, ArticleModification
 from tactill.entities.base import TactillColor, TactillResponse
 
 from application.entities.article import Article, ArticleType
