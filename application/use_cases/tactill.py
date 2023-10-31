@@ -21,13 +21,13 @@ class TactillManager:
         client = TactillClient(api_key=shop.tactill_api_key)
 
         tactill_categories = client.get_categories(
-            filter=f"name={article_type.tactill_category}"
+            filter=f"deprecated=false&name={article_type.tactill_category}"
         )
         tactill_category = next(iter(tactill_categories), None)
         if not tactill_category:
             raise TactillManagerError("Category not found")
 
-        tactill_taxes = client.get_taxes(filter=f"rate={article.tax}")
+        tactill_taxes = client.get_taxes(filter=f"deprecated=false&rate={article.tax}")
         tactill_tax = next(iter(tactill_taxes), None)
         if not tactill_tax:
             raise TactillManagerError("Tax not found")

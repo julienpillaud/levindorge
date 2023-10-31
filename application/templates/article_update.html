@@ -143,7 +143,7 @@
                                                     <span class="input-group-text bg-dark-purple text-white">Saveur</span>
                                                 </div>
                                                 {% if current_user.role in ['admin', 'superuser'] %}
-                                                    <select class="custom-select" name="taste" required>
+                                                    <select class="custom-select" name="taste">
                                                         <option selected></option>
                                                         {% for x in taste_list %}
                                                             {% if x == article.taste %}
@@ -241,7 +241,7 @@
                                                 <span class="input-group-text bg-dark-purple text-white">Bio</span>
                                             </div>
                                             {% if current_user.role in ['admin', 'superuser'] %}
-                                                <select class="custom-select" name="biodynamic" required>
+                                                <select class="custom-select" name="biodynamic">
                                                     <option selected></option>
                                                     {% for x in bio_list %}
                                                         {% if x == article.biodynamic %}
