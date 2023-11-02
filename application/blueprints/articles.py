@@ -12,6 +12,7 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
+from tactill import ResponseError
 
 from application.blueprints.auth import admin_required
 from application.entities.article import (
@@ -98,12 +99,19 @@ def create_article(list_category: str):
 
         # create Tactill article for each shop
         for shop in shops:
-            result = TactillManager.create(
-                shop=shop,
-                article=inserted_article,
-                article_type=article_type,
-            )
-            print(result)
+            try:
+                article = TactillManager.create(
+                    shop=shop,
+                    article=inserted_article,
+                    article_type=article_type,
+                )
+                current_app.logger.info(
+                    "%s - Article %s created", shop.name, article.id
+                )
+            except ResponseError as err:
+                current_app.logger.error(
+                    "%s - Article not created : %s", shop.name, err
+                )
 
     return redirect(
         url_for(
@@ -165,12 +173,15 @@ def update_article(article_id: str):
 
         # update Tactill article for each shop
         for shop in shops:
-            result = TactillManager.update(
-                shop=shop,
-                article=updated_article,
-                article_type=article_type,
-            )
-            print(result)
+            try:
+                result = TactillManager.update(
+                    shop=shop,
+                    article=updated_article,
+                    article_type=article_type,
+                )
+                current_app.logger.info("%s - %s", shop.name, result)
+            except ResponseError as err:
+                current_app.logger.error("%s - %s", shop.name, err)
 
     if _ := request.args.get("validate"):
         return redirect(url_for("articles.validate_articles"))
@@ -193,8 +204,11 @@ def delete_article(article_id: str):
     ArticleManager.delete(repository=repository, article_id=article_id)
 
     for shop in repository.get_shops():
-        result = TactillManager.delete(shop=shop, article_id=article_id)
-        print(result)
+        try:
+            result = TactillManager.delete(shop=shop, article_id=article_id)
+            current_app.logger.info("%s - %s", shop.name, result)
+        except ResponseError as err:
+            current_app.logger.error("%s - %s", shop.name, err)
 
     return redirect(request.referrer)
 
