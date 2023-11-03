@@ -1,6 +1,7 @@
 from collections import defaultdict
 from typing import Any
 
+import rollbar
 from flask import (
     Blueprint,
     Response,
@@ -105,12 +106,12 @@ def create_article(list_category: str):
                     article=inserted_article,
                     article_type=article_type,
                 )
-                current_app.logger.info(
-                    "%s - Article %s created", shop.name, article.id
+                rollbar.report_message(
+                    f"{shop.name} - Tactill article created: {article.id}", "info"
                 )
             except ResponseError as err:
-                current_app.logger.error(
-                    "%s - Article not created : %s", shop.name, err
+                rollbar.report_message(
+                    f"{shop.name} - Tactill article not created: {err}", "error"
                 )
 
     return redirect(
@@ -174,14 +175,19 @@ def update_article(article_id: str):
         # update Tactill article for each shop
         for shop in shops:
             try:
-                result = TactillManager.update(
+                TactillManager.update(
                     shop=shop,
                     article=updated_article,
                     article_type=article_type,
                 )
-                current_app.logger.info("%s - %s", shop.name, result)
+                rollbar.report_message(
+                    f"{shop.name} - Tactill article updated: {updated_article.id}",
+                    "info",
+                )
             except ResponseError as err:
-                current_app.logger.error("%s - %s", shop.name, err)
+                rollbar.report_message(
+                    f"{shop.name} - Tactill article not updated: {err}", "error"
+                )
 
     if _ := request.args.get("validate"):
         return redirect(url_for("articles.validate_articles"))
@@ -205,10 +211,15 @@ def delete_article(article_id: str):
 
     for shop in repository.get_shops():
         try:
-            result = TactillManager.delete(shop=shop, article_id=article_id)
-            current_app.logger.info("%s - %s", shop.name, result)
+            TactillManager.delete(shop=shop, article_id=article_id)
+            rollbar.report_message(
+                f"{shop.name} - Tactill article deleted: {article_id}",
+                "info",
+            )
         except ResponseError as err:
-            current_app.logger.error("%s - %s", shop.name, err)
+            rollbar.report_message(
+                f"{shop.name} - Tactill article not deleted: {err}", "error"
+            )
 
     return redirect(request.referrer)
 

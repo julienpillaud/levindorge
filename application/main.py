@@ -1,6 +1,9 @@
+import os
 from typing import Any
 
-from flask import Flask, render_template
+import rollbar
+import rollbar.contrib.flask
+from flask import Flask, render_template, got_request_exception
 from flask_login import current_user
 
 from application.blueprints import articles as articles_blueprint
@@ -24,6 +27,20 @@ app.register_blueprint(articles_blueprint.blueprint)
 app.register_blueprint(items_blueprint.blueprint)
 app.register_blueprint(inventory_blueprint.blueprint)
 app.register_blueprint(tags_blueprint.blueprint)
+
+
+with app.app_context():
+    rollbar.init(
+        access_token=settings.ROLLBAR_ACCESS_TOKEN,
+        environment=settings.ENVIRONMENT,
+        # server root directory, makes tracebacks prettier
+        root=os.path.dirname(os.path.realpath(__file__)),
+        # flask already sets up logging
+        allow_logging_basic_config=False,
+    )
+
+    # send exceptions from `app` to rollbar, using flask's signal system.
+    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 
 @app.errorhandler(401)
