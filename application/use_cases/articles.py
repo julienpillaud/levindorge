@@ -9,12 +9,17 @@ from application.entities.article import (
     AugmentedArticle,
     CreateOrUpdateArticle,
     RequestArticle,
+    ExtendedArticle,
 )
 from application.entities.shop import Shop, ShopMargin
 from application.interfaces.repository import IRepository
 
 
 class ArticleManager:
+    @staticmethod
+    def get(repository: IRepository) -> list[ExtendedArticle]:
+        return repository.get_extended_articles()
+
     @staticmethod
     def list(
         repository: IRepository, list_category: str, current_shop: Shop
@@ -97,13 +102,14 @@ def compute_recommended_price(
     shop_margins: ShopMargin,
     ratio_category: str,
 ) -> float:
+    ratio = shop_margins.ratio
     if ratio_category == "spirit" and taxfree_price >= 100:
-        shop_margins.ratio += 10
+        ratio += 10
 
     if shop_margins.operator == "+":
-        price = (taxfree_price + shop_margins.ratio) * (1 + tax / 100)
+        price = (taxfree_price + ratio) * (1 + tax / 100)
     else:
-        price = (taxfree_price * shop_margins.ratio) * (1 + tax / 100)
+        price = (taxfree_price * ratio) * (1 + tax / 100)
 
     if shop_margins.decimal_round < 0.1:
         return math.ceil(price * (1 / shop_margins.decimal_round)) / (

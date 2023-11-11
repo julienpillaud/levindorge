@@ -4,15 +4,26 @@ from bson import ObjectId
 from pymongo import ASCENDING
 from pymongo.collection import Collection
 from pymongo.database import Database
-from pymongo.results import DeleteResult, InsertOneResult, UpdateResult
+from pymongo.results import (
+    DeleteResult,
+    InsertOneResult,
+    UpdateResult,
+    InsertManyResult,
+)
 
 from application.entities.article import (
     Article,
     ArticleType,
     CreateOrUpdateArticle,
-    InventoryArticle,
+    ExtendedArticle,
 )
-from application.entities.inventory import CreateOrUpdateInventory, Inventory
+from application.entities.inventory import (
+    CreateInventoryRecord,
+    InventoryRecord,
+    CreateInventory,
+    Inventory,
+    UpdateInventory,
+)
 from application.entities.item import Item, RequestItem
 from application.entities.shop import Shop
 from application.interfaces.repository import IRepository
@@ -35,7 +46,9 @@ class MongoRepository(IRepository):
     # types
     def get_types(self) -> list[ArticleType]:
         article_types = self.database.types.find()
-        return [ArticleType(**x) for x in article_types]
+        return [
+            ArticleType.model_validate(article_type) for article_type in article_types
+        ]
 
     def get_ratio_category(self, list_category: str) -> str:
         """Get the ratio category for a given list category."""
@@ -45,12 +58,14 @@ class MongoRepository(IRepository):
     def get_article_type(self, type_name: str) -> ArticleType:
         """Get an ArticleType for a given name."""
         article_type = self.database.types.find_one({"name": type_name})
-        return ArticleType(**article_type)
+        return ArticleType.model_validate(article_type)
 
     def get_article_types_by_list(self, list_category: str) -> list[ArticleType]:
         """Get a list of ArticleType filtered by the specified list category."""
         article_types = self.database.types.find({"list_category": list_category})
-        return [ArticleType(**x) for x in article_types]
+        return [
+            ArticleType.model_validate(article_type) for article_type in article_types
+        ]
 
     def get_article_types_by_lists(
         self, lists_category: list[str]
@@ -58,7 +73,9 @@ class MongoRepository(IRepository):
         article_types = self.database.types.find(
             {"list_category": {"$in": lists_category}}
         )
-        return [ArticleType(**x) for x in article_types]
+        return [
+            ArticleType.model_validate(article_type) for article_type in article_types
+        ]
 
     # --------------------------------------------------------------------------
     # catalog
@@ -71,7 +88,23 @@ class MongoRepository(IRepository):
             filter.update({"validated": False})
 
         articles = self.database.catalog.find(filter).sort([("type", ASCENDING)])
-        return [Article(**x) for x in articles]
+        return [Article.model_validate(article) for article in articles]
+
+    def get_extended_articles(self) -> list[ExtendedArticle]:
+        articles = self.database.catalog.aggregate(
+            [
+                {
+                    "$lookup": {
+                        "from": "types",
+                        "localField": "type",
+                        "foreignField": "name",
+                        "as": "article_type",
+                    }
+                },
+                {"$unwind": "$article_type"},
+            ]
+        )
+        return [ExtendedArticle.model_validate(article) for article in articles]
 
     def get_articles_by_list(self, list_category: str) -> list[Article]:
         """Retrieve a list of articles filtered by list category."""
@@ -87,12 +120,12 @@ class MongoRepository(IRepository):
                 ("name.name2", ASCENDING),
             ]
         )
-        return [Article(**x) for x in articles]
+        return [Article.model_validate(article) for article in articles]
 
     def get_article_by_id(self, article_id: str) -> Article:
         """Retrieve an article by its unique id."""
         article = self.database.catalog.find_one({"_id": ObjectId(article_id)})
-        return Article(**article)
+        return Article.model_validate(article)
 
     def create_article(self, article: CreateOrUpdateArticle) -> InsertOneResult:
         """Create a new article."""
@@ -120,18 +153,18 @@ class MongoRepository(IRepository):
     # shops
     def get_shops(self) -> list[Shop]:
         """Get the list of all shops"""
-        return [Shop(**shop) for shop in self.database.shops.find()]
+        return [Shop.model_validate(shop) for shop in self.database.shops.find()]
 
     def get_user_shops(self, user_shops: list[str]) -> list[Shop]:
         user_shops_db = self.database.shops.find(
             {"username": {"$in": user_shops}}
         ).sort("name")
-        return [Shop(**shop) for shop in user_shops_db]
+        return [Shop.model_validate(shop) for shop in user_shops_db]
 
     def get_shop_by_username(self, username: str) -> Shop:
         """Retrieve a shop by its username."""
         shop = self.database.shops.find_one({"username": username})
-        return Shop(**shop)
+        return Shop.model_validate(shop)
 
     # ------------------------------------------------------------------------------
     # items
@@ -148,12 +181,12 @@ class MongoRepository(IRepository):
 
     def get_items(self, category: str) -> list[Item]:
         collection = self.get_collection(category)
-        return [Item(**item) for item in collection.find().sort("name")]
+        return [Item.model_validate(item) for item in collection.find().sort("name")]
 
     def get_item_by_id(self, category: str, item_id: str) -> Item:
         collection = self.get_collection(category)
         item = collection.find_one({"_id": ObjectId(item_id)})
-        return Item(**item)
+        return Item.model_validate(item)
 
     def create_item(self, category: str, item: RequestItem) -> InsertOneResult:
         collection = self.get_collection(category)
@@ -168,88 +201,58 @@ class MongoRepository(IRepository):
 
     # --------------------------------------------------------------------------
     # inventory
-    def get_inventory_record(self, article_id: str) -> Inventory:
-        inventory_record = self.database.inventory.find_one({"article_id": article_id})
-        return Inventory(**inventory_record)
+    def get_inventories(self) -> list[Inventory]:
+        inventories = self.database.inventory.find()
+        return [Inventory.model_validate(inventory) for inventory in inventories]
 
-    def save_inventory_record(
-        self,
-        inventory_record: CreateOrUpdateInventory,
+    def get_inventory(self, inventory_id: str) -> Inventory:
+        inventory = self.database.inventory.find_one({"_id": ObjectId(inventory_id)})
+        return Inventory.model_validate(inventory)
+
+    def create_inventory(self, inventory: CreateInventory) -> InsertOneResult:
+        return self.database.inventory.insert_one(inventory.model_dump())
+
+    def update_inventory(
+        self, inventory_id: str, inventory: UpdateInventory
     ) -> UpdateResult:
-        return self.database.inventory.replace_one(
-            {"article_id": inventory_record.article_id},
-            inventory_record.model_dump(),
-            upsert=True,
+        return self.database.inventory.update_one(
+            {"_id": ObjectId(inventory_id)},
+            {
+                "$set": {
+                    "inventory": inventory.inventory.model_dump(),
+                    "sale_value": inventory.sale_value,
+                    "deposit_value": inventory.deposit_value,
+                }
+            },
         )
 
-    def reset_inventory(self) -> DeleteResult:
-        return self.database.inventory.delete_many({})
+    def delete_inventory(self, inventory_id: str) -> DeleteResult:
+        return self.database.inventory.delete_one({"_id": ObjectId(inventory_id)})
 
-    def get_articles_inventory(self, match: dict[str, Any]) -> list[InventoryArticle]:
-        articles = self.database.catalog.aggregate(
+    def get_inventory_records(self, inventory_id: str) -> list[InventoryRecord]:
+        inventory_records = self.database.inventory_records.find(
+            {"inventory_id": inventory_id}
+        ).sort(
             [
-                {"$match": match},
-                {"$addFields": {"articleId": {"$toString": "$_id"}}},
-                {
-                    "$lookup": {
-                        "from": "inventory",
-                        "localField": "articleId",
-                        "foreignField": "article_id",
-                        "as": "inventoryList",
-                    }
-                },
-                {
-                    "$replaceRoot": {
-                        "newRoot": {
-                            "$mergeObjects": [
-                                "$$ROOT",
-                                {"inventory": {"$arrayElemAt": ["$inventoryList", 0]}},
-                            ]
-                        }
-                    }
-                },
-                {"$project": {"inventoryList": 0, "articleId": 0}},
+                ("article_type", ASCENDING),
+                ("article_name.name1", ASCENDING),
+                ("article_name.name2", ASCENDING),
             ]
         )
-        return [InventoryArticle(**x) for x in articles]
+        return [
+            InventoryRecord.model_validate(inventory_record)
+            for inventory_record in inventory_records
+        ]
 
-    def get_articles_for_inventory(self) -> dict[str, list[InventoryArticle]]:
-        beer1 = self.get_articles_inventory(
-            {"type": {"$in": ["Bière", "Cidre"]}, "deposit.unit": {"$ne": 0}}
+    def save_inventory_records(
+        self,
+        inventory_records: list[CreateInventoryRecord],
+    ) -> InsertManyResult:
+        return self.database.inventory_records.insert_many(
+            [inventory_record.model_dump() for inventory_record in inventory_records]
         )
-        beer2 = list(
-            self.get_articles_inventory(
-                {"type": {"$in": ["Bière", "Cidre"]}, "deposit.unit": {"$eq": 0}}
-            )
-        )
-        keg = self.get_articles_inventory({"type": {"$in": ["Fût", "Mini-fût"]}})
-        spirit_types = self.get_article_types_by_lists(
-            ["rhum", "whisky", "arranged", "spirit"]
-        )
-        spirit = self.get_articles_inventory(
-            {"type": {"$in": [x.name for x in spirit_types]}}
-        )
-        wine_types = self.get_article_types_by_lists(
-            ["wine", "fortified_wine", "sparkling_wine"]
-        )
-        wine = self.get_articles_inventory(
-            {"type": {"$in": [x.name for x in wine_types]}}
-        )
-        bib = self.get_articles_inventory({"type": {"$in": ["BIB"]}})
-        box = self.get_articles_inventory({"type": {"$in": ["Coffret"]}})
-        misc = self.get_articles_inventory(
-            {"type": {"$in": ["Accessoire", "Emballage", "BSA"]}}
-        )
-        food = self.get_articles_inventory({"type": {"$in": ["Alimentation"]}})
 
-        return {
-            "Bières C": beer1,
-            "Bières NC": beer2,
-            "Fûts": keg,
-            "Spiritieux": spirit,
-            "Vins": wine,
-            "BIB": bib,
-            "Coffrets": box,
-            "Divers": misc,
-            "Alimentation": food,
-        }
+    def delete_inventory_records(self, inventory_id: str) -> DeleteResult:
+        return self.database.inventory_records.delete_many(
+            {"inventory_id": inventory_id}
+        )

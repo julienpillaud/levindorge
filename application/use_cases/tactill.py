@@ -2,9 +2,34 @@ from tactill import TactillClient
 from tactill.entities.catalog.article import Article as TactillArticle
 from tactill.entities.catalog.article import ArticleCreation, ArticleModification
 from tactill.entities.base import TactillColor, TactillResponse
+from tactill.entities.stock.movement import ArticleMovement, MovementCreation
+from tactill.utils import get_query_filter
 
 from application.entities.article import Article, ArticleType
 from application.entities.shop import Shop
+
+filter_prefix = "deprecated=false&is_default=false"
+excluded_categories = ["AUTRE", "BAR", "CONSIGNE", "STREETFOOD", "VDO"]
+categories_mapping = {
+    "beer": ["BIÈRE", "CIDRE"],
+    "keg": ["FÛT", "MINI-FÛT"],
+    "spirit": [
+        "ABSINTHE",
+        "ANISÉ",
+        "ARMAGNAC",
+        "CACHAÇA",
+        "COGNAC",
+        "GIN",
+        "LIQUEUR",
+        "MEZCAL",
+        "RHUM",
+        "RHUM ARRANGÉ",
+        "VODKA",
+        "WHISKY",
+    ],
+    "wine": ["BIB", "VIN", "VIN EFFERVESCENT", "VIN MUTÉ"],
+    "other": ["ACCESSOIRE", "ALIMENTATION", "BSA", "COFFRET", "EMBALLAGE"],
+}
 
 
 class TactillManagerError(Exception):
@@ -12,6 +37,21 @@ class TactillManagerError(Exception):
 
 
 class TactillManager:
+    @staticmethod
+    def get(shop: Shop) -> list[TactillArticle]:
+        client = TactillClient(api_key=shop.tactill_api_key)
+
+        query_filter = get_query_filter(
+            field="name", values=excluded_categories, query_operator="nin"
+        )
+        categories = client.get_categories(filter=f"{filter_prefix}&{query_filter}")
+        category_ids = [category.id for category in categories]
+
+        query_filter = get_query_filter(
+            field="category_id", values=category_ids, query_operator="in"
+        )
+        return client.get_articles(limit=5000, filter=f"{filter_prefix}&{query_filter}")
+
     @staticmethod
     def create(
         shop: Shop,
@@ -85,6 +125,71 @@ class TactillManager:
             return client.delete_article(article_id=tactill_article.id)
 
         raise TactillManagerError("Article not found")
+
+    @staticmethod
+    def reset_stock(shop: Shop, request_category: str):
+        category_names = categories_mapping.get(request_category)
+        if not category_names:
+            raise TactillManagerError("Request category not found")
+
+        client = TactillClient(api_key=shop.tactill_api_key)
+
+        query_filter = get_query_filter(
+            field="name", values=category_names, query_operator="in"
+        )
+        categories = client.get_categories(filter=f"{filter_prefix}&{query_filter}")
+        category_mapping = {category.id: category.name for category in categories}
+
+        query_filter = get_query_filter(
+            field="category_id",
+            values=list(category_mapping.keys()),
+            query_operator="in",
+        )
+        articles = client.get_articles(
+            limit=5000, filter=f"{filter_prefix}&{query_filter}"
+        )
+
+        article_movements_out = []
+        article_movements_in = []
+        for article in articles:
+            if article.stock_quantity > 0:
+                article_movements_out.append(
+                    ArticleMovement(
+                        article_id=article.id,
+                        article_name=article.name,
+                        category_name=category_mapping[article.category_id],
+                        state="done",
+                        units=article.stock_quantity,
+                    )
+                )
+            if article.stock_quantity < 0:
+                article_movements_in.append(
+                    ArticleMovement(
+                        article_id=article.id,
+                        article_name=article.name,
+                        category_name=category_mapping[article.category_id],
+                        state="done",
+                        units=article.stock_quantity,
+                    )
+                )
+
+        if article_movements_out:
+            movement_creation_out = MovementCreation(
+                validated_by=[],
+                type="out",
+                state="done",
+                movements=article_movements_out,
+            )
+            client.create_movement(movement_creation=movement_creation_out)
+
+        if article_movements_in:
+            movement_creation_in = MovementCreation(
+                validated_by=[],
+                type="in",
+                state="done",
+                movements=article_movements_in,
+            )
+            client.create_movement(movement_creation=movement_creation_in)
 
 
 def format_volume(article: Article) -> str:

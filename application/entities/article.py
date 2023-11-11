@@ -3,8 +3,6 @@ from datetime import datetime
 from bson import ObjectId
 from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator
 
-from application.entities.inventory import Inventory
-
 
 class ArticleType(BaseModel):
     name: str
@@ -104,9 +102,9 @@ class AugmentedArticle(Article):
     margin: ArticleMargin
 
 
-class InventoryArticle(Article):
-    inventory: Inventory | None = None
-
-
 class TagArticle(Article):
     ratio_category: str
+
+
+class ExtendedArticle(Article):
+    article_type: ArticleType

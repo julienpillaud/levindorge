@@ -206,7 +206,7 @@ class PriceTag:
 
                     # ----------------------------------------------------------
                     sell_price = article.shops[shop_code].sell_price
-                    sell_price_tag = "{:.2f}".format(sell_price).replace(".", ", ")
+                    sell_price_tag = f"{sell_price:.2f}".replace(".", ", ")
                     f.write(f'<div class="priceClass">{sell_price_tag} €</div>\n')
 
                     # ----------------------------------------------------------
@@ -286,7 +286,7 @@ class PriceTag:
                     f.write(f'<div class="bottleClass">{volume}</div>')
                     # ----------------------------------------------------------
                     sell_price = article.shops[shop_code].sell_price
-                    sell_price_tag = "{:.0f}".format(sell_price).replace(".", ", ")
+                    sell_price_tag = f"{sell_price:.0f}".replace(".", ", ")
                     f.write(f'<div class="priceClass">{sell_price_tag} €</div>')
                     # ----------------------------------------------------------
                     flag_class = unidecode.unidecode(article.region.replace(" ", "_"))

@@ -1,5 +1,13 @@
 $(function () {
 
+    $(".show-overlay").on("click", function () {
+        $(".overlay").show();
+    });
+
+    setTimeout(() => {
+        $(".alert").fadeOut();
+    }, 3000);
+
     // Search and filter table rows
     $("#search").on("keyup", function () {
         let value = $(this).val().toLowerCase();

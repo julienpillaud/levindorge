@@ -18,6 +18,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
+                {# Shops #}
                 <li class="nav-item dropdown mt-1 mt-lg-0">
                     <a class="btn btn-dark-yellow nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ current_shop.name }}</a>
                     {% if user_shops | length >= 2 %}
@@ -29,6 +30,7 @@
                     {% endif %}
                 </li>
 
+                {# Categories #}
                 <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
                     <a class="btn btn-dark-yellow nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ list_category | get_navbar_category_title }}</a>
                     <div class="dropdown-menu">
@@ -43,6 +45,7 @@
                     </div>
                 </li>
 
+                {# Tag #}
                 <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
                     <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Etiquette</a>
                     <div class="dropdown-menu">
@@ -54,6 +57,7 @@
                     </div>
                 </li>
 
+                {# Article creation #}
                 <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
                     <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Nouveau</a>
                     <div class="dropdown-menu">
@@ -68,6 +72,12 @@
                     </div>
                 </li>
 
+                {# Inventory #}
+                <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+                    <a class="btn btn-light-purple nav-link" href="{{ url_for('inventory.get_inventories') }}">Inventaire</a>
+                </li>
+
+                {# Admin #}
                 {% if current_user.role in ['admin', 'superuser'] %}
                     <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
                         <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>

@@ -1,15 +1,26 @@
 from abc import ABC, abstractmethod
 from typing import Any, Mapping
 
-from pymongo.results import DeleteResult, InsertOneResult, UpdateResult
+from pymongo.results import (
+    DeleteResult,
+    InsertOneResult,
+    UpdateResult,
+    InsertManyResult,
+)
 
 from application.entities.article import (
     Article,
     ArticleType,
     CreateOrUpdateArticle,
-    InventoryArticle,
+    ExtendedArticle,
 )
-from application.entities.inventory import CreateOrUpdateInventory, Inventory
+from application.entities.inventory import (
+    CreateInventoryRecord,
+    InventoryRecord,
+    CreateInventory,
+    Inventory,
+    UpdateInventory,
+)
 from application.entities.item import Item, RequestItem
 from application.entities.shop import Shop
 
@@ -51,6 +62,10 @@ class IRepository(ABC):
     def get_articles(
         self, filter: dict[str, Any] | None = None, to_validate: bool = False
     ) -> list[Article]:
+        pass
+
+    @abstractmethod
+    def get_extended_articles(self) -> list[ExtendedArticle]:
         pass
 
     @abstractmethod
@@ -118,24 +133,38 @@ class IRepository(ABC):
     # --------------------------------------------------------------------------
     # inventory
     @abstractmethod
-    def get_inventory_record(self, article_id: str) -> Inventory:
+    def get_inventories(self) -> list[Inventory]:
         pass
 
     @abstractmethod
-    def save_inventory_record(
-        self,
-        inventory_record: CreateOrUpdateInventory,
+    def get_inventory(self, inventory_id: str) -> Inventory:
+        pass
+
+    @abstractmethod
+    def create_inventory(self, inventory: CreateInventory) -> InsertOneResult:
+        pass
+
+    @abstractmethod
+    def update_inventory(
+        self, inventory_id: str, inventory: UpdateInventory
     ) -> UpdateResult:
         pass
 
     @abstractmethod
-    def reset_inventory(self) -> DeleteResult:
+    def delete_inventory(self, inventory_id: str) -> DeleteResult:
         pass
 
     @abstractmethod
-    def get_articles_inventory(self, match: dict[str, Any]) -> list[InventoryArticle]:
+    def get_inventory_records(self, inventory_id: str) -> list[InventoryRecord]:
         pass
 
     @abstractmethod
-    def get_articles_for_inventory(self) -> dict[str, list[InventoryArticle]]:
+    def save_inventory_records(
+        self,
+        inventory_records: list[CreateInventoryRecord],
+    ) -> InsertManyResult:
+        pass
+
+    @abstractmethod
+    def delete_inventory_records(self, inventory_id: str) -> DeleteResult:
         pass

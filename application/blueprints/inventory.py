@@ -1,44 +1,89 @@
-from typing import Any
-
-from flask import Blueprint, current_app, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    current_app,
+    request,
+    redirect,
+    url_for,
+    render_template,
+    flash,
+)
 from flask_login import login_required
+from pydantic import ValidationError
 
-from application.entities.inventory import RequestInventory
+from application.entities.inventory import RequestResetStocks
+from application.use_cases.articles import ArticleManager
 from application.use_cases.inventory import InventoryManager
+from application.use_cases.tactill import TactillManager
 
 blueprint = Blueprint(name="inventory", import_name=__name__, url_prefix="/inventory")
 
 
 @blueprint.get("/")
 @login_required
-def get_inventory() -> str:
+def get_inventories() -> str:
     repository = current_app.config["repository_provider"]()
-    articles = repository.get_articles_for_inventory()
+    inventories = InventoryManager.get_inventories(repository=repository)
+    return render_template("inventory_list.html", inventories=inventories)
 
-    return render_template("inventory.html", articles_inventory=articles)
 
-
-@blueprint.post("/save")
+@blueprint.post("/")
 @login_required
-def save_inventory() -> dict[str, Any]:
-    article_id = request.json.get("articleId")
-    stock_quantity = request.json.get("stockQuantity")
-    request_inventory = RequestInventory(
-        article_id=article_id, stock_quantity=stock_quantity
+def save_inventory():
+    repository = current_app.config["repository_provider"]()
+
+    request_shop = request.form["shop"]
+    current_shop = repository.get_shop_by_username(username=request_shop)
+
+    articles = ArticleManager.get(repository=repository)
+    tactill_articles = TactillManager.get(shop=current_shop)
+    InventoryManager.save(
+        repository=repository,
+        shop=current_shop,
+        articles=articles,
+        tactill_articles=tactill_articles,
     )
 
+    return redirect(url_for("inventory.get_inventories"))
+
+
+@blueprint.get("/<inventory_id>")
+@login_required
+def get_inventory(inventory_id: str) -> str:
     repository = current_app.config["repository_provider"]()
-    inventory_record = InventoryManager.save(
-        repository=repository, request_inventory=request_inventory
+    inventory = InventoryManager.get_inventory(
+        repository=repository, inventory_id=inventory_id
+    )
+    inventory_records = InventoryManager.get_inventory_records(
+        repository=repository, inventory_id=inventory_id
+    )
+    return render_template(
+        "inventory.html", inventory=inventory, inventory_records=inventory_records
     )
 
-    return inventory_record.model_dump()
 
-
-@blueprint.get("/reset")
+@blueprint.get("/delete/<inventory_id>")
 @login_required
-def reset_inventory():
+def delete_inventory(inventory_id: str):
     repository = current_app.config["repository_provider"]()
-    InventoryManager.reset(repository=repository)
+    InventoryManager.delete(repository=repository, inventory_id=inventory_id)
+    return redirect(url_for("inventory.get_inventories"))
 
-    return redirect(url_for("inventory.get_inventory"))
+
+@blueprint.post("/stocks/reset")
+@login_required
+def reset_tactill_stocks():
+    try:
+        request_data = RequestResetStocks.model_validate(request.form.to_dict())
+    except ValidationError:
+        flash("Tu dois sélectionner un magasin !", "warning")
+        return redirect(url_for("inventory.get_inventories"))
+
+    repository = current_app.config["repository_provider"]()
+
+    current_shop = repository.get_shop_by_username(username=request_data.shop)
+    TactillManager.reset_stock(
+        shop=current_shop, request_category=request_data.category
+    )
+
+    flash("Les stocks ont bien été remis à zéro !", "success")
+    return redirect(url_for("inventory.get_inventories"))
