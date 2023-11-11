@@ -8,7 +8,7 @@
             <div class="col col-lg-6">
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">Inventaire</span>
-                    <input type="text" class="form-control text-center" aria-label="date" value="{{ inventory.date.strftime('%d / %m / %Y - %H:%M') }}" readonly>
+                    <input type="text" class="form-control text-center" aria-label="date" value="{{ (inventory.date | astimezone).strftime('%d / %m / %Y - %H:%M') }}" readonly>
                     <input type="text" class="form-control text-center" aria-label="shop" value="{{ inventory.shop }}" readonly>
                 </div>
             </div>

@@ -77,7 +77,7 @@
                         <tbody>
                         {% for inventory in inventories %}
                             <tr>
-                                <td class="text-center">{{ inventory.date.strftime('%d / %m / %Y - %H:%M') }}</td>
+                                <td class="text-center">{{ (inventory.date | astimezone).strftime('%d / %m / %Y - %H:%M') }}</td>
                                 <td class="text-center">{{ inventory.shop }}</td>
                                 <td class="text-center">{{ inventory.sale_value }}</td>
                                 <td class="text-center">{{ inventory.deposit_value }}</td>

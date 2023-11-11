@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 from typing import Any
 
 import rollbar
@@ -62,6 +63,11 @@ def register_context() -> dict[str, Any]:
 @app.template_filter()
 def strip_zeros(value: float) -> str:
     return str(value).rstrip("0").rstrip(".")
+
+
+@app.template_filter()
+def astimezone(value: datetime) -> datetime:
+    return value.replace(tzinfo=timezone.utc).astimezone()
 
 
 @app.template_filter()

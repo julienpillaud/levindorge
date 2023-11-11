@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 
 from tactill.entities.catalog.article import Article as TactillArticle
 
@@ -46,7 +46,7 @@ class InventoryManager:
         }
 
         inventory_create = CreateInventory(
-            date=datetime.now(),
+            date=datetime.now(timezone.utc),
             shop=shop.name,
         )
         inventory = repository.create_inventory(inventory=inventory_create)
