@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timezone
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import rollbar
 import rollbar.contrib.flask
@@ -66,8 +67,8 @@ def strip_zeros(value: float) -> str:
 
 
 @app.template_filter()
-def astimezone(value: datetime) -> datetime:
-    return value.replace(tzinfo=timezone.utc).astimezone()
+def local_timezone(value: datetime) -> datetime:
+    return value.replace(tzinfo=timezone.utc).astimezone(tz=ZoneInfo("Europe/Paris"))
 
 
 @app.template_filter()
