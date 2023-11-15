@@ -22,7 +22,7 @@
             <div class="col-md">
                 <div class="input-group">
                     <span class="input-group-text bg-dark-purple">Degré</span>
-                    <input type="text" class="form-control text-center" aria-label="" name="alcohol_by_volume" {% if article %}value="{{ article.alcohol_by_volume | strip_zeros }}"{% endif %} required>
+                    <input type="number" step="0.1" min="0.5" class="form-control text-center" aria-label="" name="alcohol_by_volume" {% if article %}value="{{ article.alcohol_by_volume | strip_zeros }}"{% endif %} required>
                 </div>
             </div>
 
