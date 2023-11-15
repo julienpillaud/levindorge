@@ -1,0 +1,54 @@
+{% if list_category == 'beer' %}
+    {% set unit_deposit = [0, 0.08, 0.1, 0.12, 0.15, 0.2, 0.3, 0.4, 0.5] %}
+{% elif list_category == 'keg' %}
+    {% set unit_deposit = [0, 30, 45, 48] %}
+{% elif list_category == 'mini_keg' %}
+    {% set unit_deposit = [0, 7.1] %}
+{% endif %}
+
+{% set case_deposit = [0, 3.1, 3.42, 3.9, 4.2, 4.5, 6, 6.9, 7, 8, 8.6, 9.5, 11.8, 12, 14,2] %}
+
+{% if list_category in ["beer", "keg", "mini_keg"] %}
+
+    <div class="row mt-3">
+        <div class="col-md">
+
+            <div class="input-group">
+                <label class="input-group-text bg-dark-purple" for="unit-deposit">Consigne</label>
+                <select class="form-select text-center" id="unit-deposit" name="deposit" required>
+                    <option selected></option>
+                    {% for x in unit_deposit %}
+                        {% if article and x == article.deposit.unit %}
+                            <option selected>{{ x }}</option>
+                        {% else %}
+                            <option>{{ x }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+        <div class="col-md">
+
+            {% if list_category == "beer" %}
+
+                <div class="input-group">
+                    <label class="input-group-text bg-dark-purple" for="case-deposit">Consigne caisse</label>
+                    <select class="form-select text-center" id="case-deposit" name="case" required>
+                        <option selected></option>
+                        {% for x in case_deposit %}
+                            {% if article and x == article.deposit.case %}
+                                <option selected>{{ x }}</option>
+                            {% else %}
+                                <option>{{ x }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endif %}

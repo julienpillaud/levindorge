@@ -164,7 +164,7 @@
                         <td class="text-center">{{ x.packaging if x.packaging }}</td>
                     {% endif %}
                     {% if list_category in ["beer", "keg", "mini_keg"] %}
-                        <td class="text-center">{{ x.deposit.unit if x.deposit.unit }}</td>
+                        <td class="text-center">{{ x.deposit.unit | strip_zeros  if x.deposit.unit }}</td>
                     {% endif %}
                     {% if list_category in ["beer"] %}
                         <td class="text-center">{{ x.deposit.case | strip_zeros  if x.deposit.case }}</td>

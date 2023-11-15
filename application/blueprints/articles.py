@@ -63,7 +63,7 @@ def create_article_get(list_category: str) -> str:
     items = repository.get_items_dict(list_category)
 
     return render_template(
-        "article_create.html",
+        "article/article.html",
         list_category=list_category,
         ratio_category=ratio_category,
         type_list=[x.name for x in article_types],
@@ -75,7 +75,9 @@ def create_article_get(list_category: str) -> str:
 @login_required
 def create_article(list_category: str):
     if "cancel" not in request.form.keys():
-        request_form = request.form.to_dict()
+        food_pairing = request.form.getlist("food_pairing")
+        request_form: dict[str, Any] = request.form.to_dict()
+        request_form["food_pairing"] = food_pairing
         format_request_form(request_form)
         request_article = RequestArticle(**request_form)
 
@@ -125,7 +127,7 @@ def create_article(list_category: str):
 
 @blueprint.get("/update/<article_id>")
 @login_required
-def update_article_get(article_id: str):
+def update_article_get(article_id: str) -> str:
     repository = current_app.config["repository_provider"]()
 
     article = repository.get_article_by_id(article_id)
@@ -133,7 +135,7 @@ def update_article_get(article_id: str):
     items = repository.get_items_dict(article_type.list_category)
 
     return render_template(
-        "article_update.html",
+        "article/article.html",
         article=article,
         list_category=article_type.list_category,
         ratio_category=article_type.ratio_category,
@@ -150,7 +152,9 @@ def update_article(article_id: str):
     article_type = repository.get_article_type(article.type)
 
     if "cancel" not in request.form:
-        request_form = request.form.to_dict()
+        food_pairing = request.form.getlist("food_pairing")
+        request_form: dict[str, Any] = request.form.to_dict()
+        request_form["food_pairing"] = food_pairing
         format_request_form(request_form)
         request_article = RequestArticle(**request_form)
 
@@ -247,9 +251,9 @@ def validate_article(article_id: str):
 @blueprint.post("/recommended_prices")
 @login_required
 def get_recommended_prices() -> Response:
-    ratio_category = request.form["ratio_category"]
-    taxfree_price = request.form.get("taxfree_price", default=0, type=float)
-    tax = request.form.get("tax", default=0, type=float)
+    ratio_category = request.json.get("ratio_category")
+    taxfree_price = request.json.get("taxfree_price")
+    tax = request.json.get("tax")
 
     repository = current_app.config["repository_provider"]()
     shops = repository.get_shops()
@@ -269,9 +273,9 @@ def get_recommended_prices() -> Response:
 @blueprint.post("/margins")
 @login_required
 def get_margins() -> Response:
-    taxfree_price = request.form.get("taxfree_price", default=0, type=float)
-    tax = request.form.get("tax", default=0, type=float)
-    sell_price = request.form.get("sell_price", default=0, type=float)
+    taxfree_price = request.json.get("taxfree_price")
+    tax = request.json.get("tax")
+    sell_price = request.json.get("sell_price")
 
     article_margin = compute_article_margin(
         taxfree_price=taxfree_price, tax=tax, sell_price=sell_price
@@ -283,7 +287,6 @@ def get_margins() -> Response:
 def format_request_form(request_form: dict[str, Any]) -> None:
     format_request_name(request_form)
     format_request_deposit(request_form)
-    format_request_food_pairing(request_form)
 
 
 def format_request_name(request_form: dict[str, Any]) -> None:
@@ -298,13 +301,6 @@ def format_request_deposit(request_form: dict[str, Any]) -> None:
         "unit": request_form.pop("unit", 0),
         "case": request_form.pop("case", 0),
     }
-
-
-def format_request_food_pairing(request_form: dict[str, Any]) -> None:
-    request_form["food_pairing"] = []
-    for index in range(6):
-        if food_pairing := request_form.pop(f"food_pairing_{index}", None):
-            request_form["food_pairing"].append(food_pairing)
 
 
 def create_article_shops(
@@ -359,10 +355,11 @@ def update_article_shops(
         article_shops[shop.username]["bar_price"] = update_bar_price(
             article=article, request_form=request_form, shop=shop
         )
-        article_shops[shop.username]["stock_quantity"] = update_stock_quantity(
-            article=article, request_form=request_form, shop=shop
-        )
-    return ArticleShops(**article_shops)
+        article_shops[shop.username]["stock_quantity"] = article.shops[
+            shop.username
+        ].stock_quantity
+
+    return ArticleShops.model_validate(article_shops)
 
 
 def update_sell_price(
@@ -399,12 +396,3 @@ def update_bar_price(
     if bar_price is not None:
         return bar_price
     return article.shops[shop.username].bar_price
-
-
-def update_stock_quantity(
-    article: Article, request_form: dict[str, Any], shop: Shop
-) -> int:
-    stock_quantity: int | None = request_form.get(f"stock_quantity_{shop.username}")
-    if stock_quantity is not None:
-        return stock_quantity
-    return article.shops[shop.username].stock_quantity
