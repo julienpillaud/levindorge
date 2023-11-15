@@ -107,7 +107,7 @@ def login_post():
     if user_db is not None:
         user = User(**user_db)
         if not user.check_password(request.form["password"]):
-            flash("Email ou mot de passe incorrect")
+            flash("Email ou mot de passe incorrect", "warning")
             return redirect(url_for("auth.login_get"))
 
         login_user(user)
@@ -119,7 +119,7 @@ def login_post():
             )
         )
 
-    flash("Email ou mot de passe incorrect")
+    flash("Email ou mot de passe incorrect", "warning")
     return redirect(url_for("auth.login_get"))
 
 

@@ -1,26 +1,29 @@
-{% extends 'base.html' %}
-
+{% extends "demo_base.html" %}
 {% block content %}
 
-    <div class="container h-100">
-        <div class="row h-100 justify-content-center align-items-center">
-            <div class="col-8">
+    <div class="container vh-100">
+        <div class="row vh-100 justify-content-center align-items-center">
+            <div class="col-10 col-md-6 col-lg-4">
 
-                {% if current_user.is_authenticated %}
-                    <div class="text-center">
-                        <h1 class="text-white">TU N'AS PAS ACCES A CETTE PAGE ! &#x1F606</h1>
-                    </div>
-                    <div class="text-center">
-                        <a class="btn bg-dark-purple text-white btn-lg" href="{{ url_for('articles.get_articles', shop=current_user.shops[0], list_category='beer') }}"><i class="fas fa-angle-left"></i> Retour</a>
-                    </div>
-                {% else %}
-                    <div class="text-center">
-                        <h1 class="text-white">TU N'EST PAS CONNECTE ! &#x1F632</h1>
-                    </div>
-                    <div class="text-center">
-                        <a class="btn bg-dark-purple text-white btn-lg" href="{{ url_for('auth.login_get') }}"><i class="fas fa-angle-left"></i> Connexion</a>
-                    </div>
-                {% endif %}
+                <div class="card">
+                    {% if current_user.is_authenticated %}
+                        <div class="card-body text-center">
+                            <h3>TU N'AS PAS ACCÈS À CETTE PAGE ! &#x1F632</h3>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a class="btn btn-outline-light-purple btn-lg" href="{{ url_for('auth.login_get') }}">Retour</a>
+                        </div>
+                    {% else %}
+                        <div class="card-body text-center">
+                            <h3>TU N'EST PAS CONNECTÉ ! &#x1F632</h3>
+                        </div>
+                        <div class="card-footer text-center">
+                            <div class="d-grid">
+                                <a class="btn btn-outline-light-purple btn-lg" href="{{ url_for('auth.login_get') }}">Connexion</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
 
             </div>
         </div>
