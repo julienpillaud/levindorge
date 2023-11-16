@@ -111,7 +111,7 @@ table.responsive td {
         display: none;
     }
 
-    table tr {
+    table.responsive tr {
         display: block;
         margin-bottom: 0.7rem;
     }
