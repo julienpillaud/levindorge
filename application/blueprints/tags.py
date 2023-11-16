@@ -1,4 +1,5 @@
 from datetime import datetime
+from operator import itemgetter
 from pathlib import Path
 
 from flask import Blueprint, current_app, redirect, render_template, request, url_for
@@ -70,6 +71,7 @@ def list_tag_files() -> str:
             }
         )
 
+    files = sorted(files, key=itemgetter("date", "time", "id"))
     return render_template("tag_files_list.html", files=files)
 
 
