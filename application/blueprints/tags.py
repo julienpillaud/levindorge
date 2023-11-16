@@ -1,10 +1,11 @@
 from datetime import datetime
-from operator import itemgetter
+from operator import itemgetter, attrgetter
 from pathlib import Path
 
 from flask import Blueprint, current_app, redirect, render_template, request, url_for
 from flask_login import login_required
 
+from application.entities.tag import TagFile
 from application.use_cases.tags import TagManager
 
 blueprint = Blueprint(name="tags", import_name=__name__, url_prefix="/tags")
@@ -56,22 +57,21 @@ def create_tags():
 def list_tag_files() -> str:
     files_path = tags_path.glob("etiquette*.html")
 
-    type_mapping = {"biere-vin": "Bière / Vin", "spirit": "Spiritueux"}
     files = []
     for file in files_path:
         file_split = file.name.split("_")
+        time = file_split[5].replace(".html", "").replace("-", ":")
         files.append(
-            {
-                "file": file.name,
-                "id": file_split[2],
-                "type": type_mapping.get(file_split[1], ""),
-                "shop": file_split[3],
-                "date": datetime.fromisoformat(file_split[4]).strftime("%d / %m / %Y"),
-                "time": file_split[5].replace(".html", "").replace("-", ":"),
-            }
+            TagFile(
+                id=file_split[2],
+                type=file_split[1],
+                shop=file_split[3],
+                date=datetime.fromisoformat(f"{file_split[4]} {time}"),
+                file=file.name,
+            )
         )
 
-    files = sorted(files, key=itemgetter("date", "time", "id"))
+    files = sorted(files, key=attrgetter("date", "id"))
     return render_template("tag_files_list.html", files=files)
 
 
