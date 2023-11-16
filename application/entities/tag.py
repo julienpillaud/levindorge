@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, field_validator
 
-type_mapping = {"biere-vin": "Bière / Vin", "spirit": "Spiritueux"}
+type_mapping = {"biere-vin": "Bières / Vins", "spirit": "Spiritueux"}
 shop_mapping = {
     "angouleme": "Angoulême",
     "sainte-eulalie": "Sainte-Eulalie",
