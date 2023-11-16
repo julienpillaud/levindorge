@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 
 from flask import Blueprint, current_app, redirect, render_template, request, url_for
@@ -53,8 +54,30 @@ def create_tags():
 @login_required
 def list_tag_files() -> str:
     files_path = tags_path.glob("etiquette*.html")
-    files = [x.name for x in files_path]
+
+    type_mapping = {"biere-vin": "Bière / Vin", "spirit": "Spiritueux"}
+    files = []
+    for file in files_path:
+        file_split = file.name.split("_")
+        files.append(
+            {
+                "file": file.name,
+                "id": file_split[2],
+                "type": type_mapping.get(file_split[1], ""),
+                "shop": file_split[3],
+                "date": datetime.fromisoformat(file_split[4]).strftime("%d / %m / %Y"),
+                "time": file_split[5].replace(".html", "").replace("-", ":"),
+            }
+        )
+
     return render_template("tag_files_list.html", files=files)
+
+
+@blueprint.get("/files/delete/<file>")
+@login_required
+def delete_tag_file(file: str):
+    Path.unlink(tags_path / file)
+    return redirect(request.referrer)
 
 
 @blueprint.get("/files/<file>")

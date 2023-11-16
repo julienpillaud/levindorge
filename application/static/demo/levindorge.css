@@ -79,3 +79,68 @@
     background-color: #9d78a3 !important;
     border-color: #9d78a3 !important;
 }
+
+/* -------------------------------------------------------------------------- */
+table.responsive {
+    width: 100%;
+    caption-side: top;
+}
+
+table.responsive caption {
+    font-weight: bold;
+    text-align: center;
+}
+
+table.responsive tr {
+    background-color: rgb(255, 255, 255, 0.05);
+    border: 1px solid rgb(255, 255, 255, 0.2);
+}
+
+table.responsive td {
+    border: 1px solid rgb(255, 255, 255, 0.15);
+}
+
+table.responsive th,
+table.responsive td {
+    padding: 0.25rem 0.25rem 0.25rem 0.25rem;
+    text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+    table.responsive thead {
+        display: none;
+    }
+
+    table tr {
+        display: block;
+        margin-bottom: 0.7rem;
+    }
+
+    table.responsive td {
+        display: block;
+        text-align: right;
+        padding: 0.25rem 0.75rem 0.25rem 0.75rem;
+        border: 0;
+        border-bottom: 1px solid rgb(255, 255, 255, 0.15);
+    }
+
+    table.responsive td:last-child {
+        border-bottom: 0;
+    }
+
+    table.responsive td.button {
+        text-align: center;
+    }
+
+    table.responsive td a {
+        display: block;
+        border: 1px solid #9d78a3;
+        border-radius: 0.25rem;
+    }
+
+    table.responsive td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        float: left;
+    }
+}
