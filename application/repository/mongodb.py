@@ -82,12 +82,14 @@ class MongoRepository(IRepository):
     def get_articles(
         self, filter: dict[str, Any] | None = None, to_validate: bool = False
     ) -> list[Article]:
+        sort_key = "type"
         if filter is None:
             filter = {}
         if to_validate:
+            sort_key = "created_at"
             filter.update({"validated": False})
 
-        articles = self.database.catalog.find(filter).sort([("type", ASCENDING)])
+        articles = self.database.catalog.find(filter).sort(sort_key)
         return [Article.model_validate(article) for article in articles]
 
     def get_extended_articles(self) -> list[ExtendedArticle]:

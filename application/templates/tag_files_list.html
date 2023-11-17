@@ -2,14 +2,14 @@
 {% block content %}
     {% include "navbar.html" %}
 
-    {% if files %}
+    <div class="container-fluid padding-navbar">
+        <div class="row justify-content-center">
+            <div class="col col-lg-8">
 
-        <div class="container padding-navbar">
-            <div class="row justify-content-center">
-                <div class="col col-lg-8">
+                {% if files %}
 
                     <table class="responsive mb-3">
-                    <caption>Etiquettes à imprimer</caption>
+                        <caption>Etiquettes à imprimer</caption>
                         <thead class="sticky" style="--sticky-top: 53px">
                         <tr>
                             <th class="text-center bg-light-purple">ID</th>
@@ -44,10 +44,10 @@
                         </tbody>
                     </table>
 
-                </div>
+                {% endif %}
+
             </div>
         </div>
-
-    {% endif %}
+    </div>
 
 {% endblock %}
