@@ -1,7 +1,7 @@
 from tactill import TactillClient
+from tactill.entities.base import TactillColor, TactillResponse
 from tactill.entities.catalog.article import Article as TactillArticle
 from tactill.entities.catalog.article import ArticleCreation, ArticleModification
-from tactill.entities.base import TactillColor, TactillResponse
 from tactill.entities.stock.movement import ArticleMovement, MovementCreation
 from tactill.utils import get_query_filter
 

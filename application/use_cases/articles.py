@@ -8,8 +8,8 @@ from application.entities.article import (
     ArticleShops,
     AugmentedArticle,
     CreateOrUpdateArticle,
-    RequestArticle,
     ExtendedArticle,
+    RequestArticle,
 )
 from application.entities.shop import Shop, ShopMargin
 from application.interfaces.repository import IRepository

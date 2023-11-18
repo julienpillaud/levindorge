@@ -1,11 +1,11 @@
 from flask import (
     Blueprint,
     current_app,
-    request,
-    redirect,
-    url_for,
-    render_template,
     flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
 )
 from flask_login import login_required
 from pydantic import ValidationError

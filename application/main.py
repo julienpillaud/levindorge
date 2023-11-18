@@ -1,12 +1,12 @@
 import os
 from datetime import datetime, timezone
 from typing import Any
-from zoneinfo import ZoneInfo
 
 import rollbar
 import rollbar.contrib.flask
-from flask import Flask, render_template, got_request_exception
+from flask import Flask, got_request_exception, render_template
 from flask_login import current_user
+from zoneinfo import ZoneInfo
 
 from application.blueprints import articles as articles_blueprint
 from application.blueprints import auth as auth_blueprint

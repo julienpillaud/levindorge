@@ -3,9 +3,9 @@ from typing import Any, Mapping
 
 from pymongo.results import (
     DeleteResult,
+    InsertManyResult,
     InsertOneResult,
     UpdateResult,
-    InsertManyResult,
 )
 
 from application.entities.article import (
@@ -15,10 +15,10 @@ from application.entities.article import (
     ExtendedArticle,
 )
 from application.entities.inventory import (
-    CreateInventoryRecord,
-    InventoryRecord,
     CreateInventory,
+    CreateInventoryRecord,
     Inventory,
+    InventoryRecord,
     UpdateInventory,
 )
 from application.entities.item import Item, RequestItem

@@ -5,12 +5,12 @@ from tactill.entities.catalog.article import Article as TactillArticle
 
 from application.entities.article import ExtendedArticle
 from application.entities.inventory import (
-    CreateInventoryRecord,
     CreateInventory,
+    CreateInventoryRecord,
     Inventory,
+    InventoryDetail,
     InventoryRecord,
     InventoryValues,
-    InventoryDetail,
     UpdateInventory,
 )
 from application.entities.shop import Shop

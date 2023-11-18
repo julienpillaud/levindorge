@@ -1,5 +1,5 @@
 from datetime import datetime
-from operator import itemgetter, attrgetter
+from operator import attrgetter
 from pathlib import Path
 
 from flask import Blueprint, current_app, redirect, render_template, request, url_for

@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from bson import ObjectId
-from pydantic import BaseModel, ConfigDict, Field, field_validator, RootModel
+from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator
 
-from application.entities.article import ArticleName, ArticleDeposit
+from application.entities.article import ArticleDeposit, ArticleName
 
 
 class RequestResetStocks(BaseModel):
