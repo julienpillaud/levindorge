@@ -11,7 +11,7 @@ shop_mapping = {
 
 
 class TagFile(BaseModel):
-    id: str
+    id: int
     type: str
     shop: str
     date: datetime

@@ -1,5 +1,5 @@
 from collections.abc import Iterator
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import unidecode
@@ -129,7 +129,7 @@ class PriceTag:
         for file_index, chunk in enumerate(
             self.chunk_tag_list(tag_list, MAX_BEER_TAGS)
         ):
-            date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            date = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S")
             file_name = f"etiquette_biere-vin_{file_index + 1}_{shop_code}_{date}.html"
             file = self.tags_path / file_name
 

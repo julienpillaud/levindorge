@@ -28,7 +28,7 @@
                                 <td data-label="Type">{{ file.type }}</td>
                                 <td data-label="Magasin">{{ file.shop }}</td>
                                 <td data-label="Date">{{ (file.date | local_timezone).strftime("%d / %m / %Y") }}</td>
-                                <td data-label="Heure">{{ (file.date | local_timezone).strftime("%H:%m:%S") }}</td>
+                                <td data-label="Heure">{{ (file.date | local_timezone).strftime("%H:%M:%S") }}</td>
                                 <td class="button">
                                     <a target="_blank" rel="noopener noreferrer" href="{{ url_for('tags.get_tag_file', file=file.file) }}">
                                         <i class="bi bi-file-earmark text-primary"></i>

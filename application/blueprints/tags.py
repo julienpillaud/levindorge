@@ -63,7 +63,7 @@ def list_tag_files() -> str:
         time = file_split[5].replace(".html", "").replace("-", ":")
         files.append(
             TagFile(
-                id=file_split[2],
+                id=int(file_split[2]),
                 type=file_split[1],
                 shop=file_split[3],
                 date=datetime.fromisoformat(f"{file_split[4]} {time}"),
