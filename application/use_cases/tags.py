@@ -39,7 +39,7 @@ class TagManager:
             tag_writer.write_large_tags(large_tags, shop.username, countries)
         if small_tags:
             tag_writer = PriceTag(tags_path=tags_path, fonts_path=fonts_path)
-            tag_writer.write_small_tag(small_tags, shop.username)
+            tag_writer.write_small_tags(small_tags, shop.username)
 
 
 def build_tag_lists(
