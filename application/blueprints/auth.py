@@ -63,6 +63,7 @@ class AnonymousUser(AnonymousUserMixin):
     def __init__(self):
         self.name = "Demo"
         self.shops = ["angouleme", "pessac", "sainte-eulalie"]
+        self.role = Role.USER
 
 
 login_manager = LoginManager()
