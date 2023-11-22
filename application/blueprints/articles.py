@@ -13,7 +13,7 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
-from tactill import ResponseError
+from tactill import TactillError
 
 from application.blueprints.auth import admin_required
 from application.entities.article import (
@@ -111,9 +111,9 @@ def create_article(list_category: str):
                 rollbar.report_message(
                     f"{shop.name} - Tactill article created: {article.id}", "info"
                 )
-            except ResponseError as err:
+            except TactillError as err:
                 rollbar.report_message(
-                    f"{shop.name} - Tactill article not created: {err}", "error"
+                    f"{shop.name} - Tactill article not created: {err.error}", "error"
                 )
 
     return redirect(
@@ -188,9 +188,9 @@ def update_article(article_id: str):
                     f"{shop.name} - Tactill article updated: {updated_article.id}",
                     "info",
                 )
-            except ResponseError as err:
+            except TactillError as err:
                 rollbar.report_message(
-                    f"{shop.name} - Tactill article not updated: {err}", "error"
+                    f"{shop.name} - Tactill article not updated: {err.error}", "error"
                 )
 
     if _ := request.args.get("validate"):
@@ -220,9 +220,9 @@ def delete_article(article_id: str):
                 f"{shop.name} - Tactill article deleted: {article_id}",
                 "info",
             )
-        except ResponseError as err:
+        except TactillError as err:
             rollbar.report_message(
-                f"{shop.name} - Tactill article not deleted: {err}", "error"
+                f"{shop.name} - Tactill article not deleted: {err.error}", "error"
             )
 
     return redirect(request.referrer)
