@@ -1,0 +1,10 @@
+services:
+
+  app:
+    container_name: "app"
+    build: ./
+    restart: "always"
+    env_file:
+      - ".env"
+    ports:
+      - "80:8000"
