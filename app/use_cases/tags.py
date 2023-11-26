@@ -1,10 +1,10 @@
 from pathlib import Path
 from typing import Any
 
-from application.entities.article import TagArticle
-from application.entities.shop import Shop
-from application.interfaces.repository import IRepository
-from utils.tag import PriceTag
+from app.entities.article import TagArticle
+from app.entities.shop import Shop
+from app.interfaces.repository import IRepository
+from app.utils.tag import PriceTag
 
 large_tag_category = {
     "beer",

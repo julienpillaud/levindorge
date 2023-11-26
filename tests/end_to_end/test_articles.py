@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
-from application.entities.article import Article, CreateOrUpdateArticle
+from app.entities.article import Article, CreateOrUpdateArticle
 from tests.data import article_to_insert
 
 

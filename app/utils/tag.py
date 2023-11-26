@@ -6,8 +6,8 @@ import unidecode
 from PIL import ImageFont
 from PIL.ImageFont import FreeTypeFont
 
-from application.entities.article import TagArticle
-from application.entities.item import Item
+from app.entities.article import TagArticle
+from app.entities.item import Item
 
 MAX_BEER_TAGS = 9
 MAX_SPIRIT_TAGS = 40

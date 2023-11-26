@@ -1,8 +1,8 @@
 from flask import Blueprint, current_app, redirect, render_template, request, url_for
 from flask_login import login_required
 
-from application.entities.item import RequestItem
-from application.use_cases.items import ItemManager
+from app.entities.item import RequestItem
+from app.use_cases.items import ItemManager
 
 blueprint = Blueprint(name="items", import_name=__name__, url_prefix="/items")
 

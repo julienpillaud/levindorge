@@ -11,22 +11,22 @@ from pymongo.results import (
     UpdateResult,
 )
 
-from application.entities.article import (
+from app.entities.article import (
     Article,
     ArticleType,
     CreateOrUpdateArticle,
     ExtendedArticle,
 )
-from application.entities.inventory import (
+from app.entities.inventory import (
     CreateInventory,
     CreateInventoryRecord,
     Inventory,
     InventoryRecord,
     UpdateInventory,
 )
-from application.entities.item import Item, RequestItem
-from application.entities.shop import Shop
-from application.interfaces.repository import IRepository
+from app.entities.item import Item, RequestItem
+from app.entities.shop import Shop
+from app.interfaces.repository import IRepository
 
 
 class MongoRepository(IRepository):

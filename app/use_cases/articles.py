@@ -1,8 +1,8 @@
 import math
 from datetime import datetime, timezone
 
-from application.blueprints.auth import Role, User
-from application.entities.article import (
+from app.blueprints.auth import Role, User
+from app.entities.article import (
     Article,
     ArticleMargin,
     ArticleShops,
@@ -11,8 +11,8 @@ from application.entities.article import (
     ExtendedArticle,
     RequestArticle,
 )
-from application.entities.shop import Shop, ShopMargin
-from application.interfaces.repository import IRepository
+from app.entities.shop import Shop, ShopMargin
+from app.interfaces.repository import IRepository
 
 
 class ArticleManager:

@@ -8,14 +8,14 @@ from flask import Flask, got_request_exception, render_template
 from flask_login import current_user
 from zoneinfo import ZoneInfo
 
-from application.blueprints import articles as articles_blueprint
-from application.blueprints import auth as auth_blueprint
-from application.blueprints import inventory as inventory_blueprint
-from application.blueprints import items as items_blueprint
-from application.blueprints import tags as tags_blueprint
-from application.config import settings
-from application.data import navbar_categories
-from application.repository.dependencies import repository_provider
+from app.blueprints import articles as articles_blueprint
+from app.blueprints import auth as auth_blueprint
+from app.blueprints import inventory as inventory_blueprint
+from app.blueprints import items as items_blueprint
+from app.blueprints import tags as tags_blueprint
+from app.config import settings
+from app.data import navbar_categories
+from app.repository.dependencies import repository_provider
 
 app = Flask(__name__)
 app.secret_key = settings.SECRET_KEY

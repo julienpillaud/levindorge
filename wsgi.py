@@ -1,6 +1,6 @@
 import logging
 
-from application.main import app
+from app.main import app
 
 gunicorn_logger = logging.getLogger("gunicorn.error")
 app.logger.handlers = gunicorn_logger.handlers

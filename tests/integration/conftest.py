@@ -11,9 +11,9 @@ from flask_login import FlaskLoginClient
 from pymongo import MongoClient
 from pymongo.database import Database
 
-from application.blueprints.auth import Role, User
-from application.entities.article import Article
-from application.main import app
+from app.blueprints.auth import Role, User
+from app.entities.article import Article
+from app.main import app
 from tests.data import article_to_insert
 
 load_dotenv()

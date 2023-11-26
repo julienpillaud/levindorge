@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from application.entities.article import (
+from app.entities.article import (
     ArticleDeposit,
     ArticleName,
     ArticleShopDetail,

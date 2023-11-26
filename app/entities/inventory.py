@@ -3,7 +3,7 @@ from datetime import datetime
 from bson import ObjectId
 from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator
 
-from application.entities.article import ArticleDeposit, ArticleName
+from app.entities.article import ArticleDeposit, ArticleName
 
 
 class RequestResetStocks(BaseModel):

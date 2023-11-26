@@ -7,7 +7,7 @@ from bson import ObjectId
 from flask.testing import FlaskClient
 from pymongo.database import Database
 
-from application.entities.article import Article
+from app.entities.article import Article
 from tests.data import article_data, categories_for_list_view
 
 
@@ -43,7 +43,7 @@ def test_create_article_view(
 
 
 @pytest.mark.parametrize("data", [article_data])
-@mock.patch("application.blueprints.articles.TactillManager", mock.MagicMock())
+@mock.patch("app.blueprints.articles.TactillManager", mock.MagicMock())
 def test_create_article(
     client: FlaskClient,
     database: Database[Mapping[str, Any]],
@@ -111,7 +111,7 @@ def test_update_article_view(
 
 
 @pytest.mark.parametrize("data", [article_data])
-@mock.patch("application.blueprints.articles.TactillManager", mock.MagicMock())
+@mock.patch("app.blueprints.articles.TactillManager", mock.MagicMock())
 def test_update_article(
     client: FlaskClient,
     database: Database[Mapping[str, Any]],
@@ -180,7 +180,7 @@ def test_update_article(
     )
 
 
-@mock.patch("application.blueprints.articles.TactillManager", mock.MagicMock())
+@mock.patch("app.blueprints.articles.TactillManager", mock.MagicMock())
 def test_delete_article(
     client: FlaskClient,
     database: Database[Mapping[str, Any]],

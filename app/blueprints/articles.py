@@ -15,20 +15,20 @@ from flask import (
 from flask_login import current_user, login_required
 from tactill import TactillError
 
-from application.blueprints.auth import admin_required
-from application.entities.article import (
+from app.blueprints.auth import admin_required
+from app.entities.article import (
     Article,
     ArticleShops,
     ArticleType,
     RequestArticle,
 )
-from application.entities.shop import Shop
-from application.use_cases.articles import (
+from app.entities.shop import Shop
+from app.use_cases.articles import (
     ArticleManager,
     compute_article_margin,
     compute_recommended_price,
 )
-from application.use_cases.tactill import TactillManager
+from app.use_cases.tactill import TactillManager
 
 blueprint = Blueprint(name="articles", import_name=__name__, url_prefix="/articles")
 

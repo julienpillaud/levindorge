@@ -10,10 +10,10 @@ from flask import (
 from flask_login import login_required
 from pydantic import ValidationError
 
-from application.entities.inventory import RequestResetStocks
-from application.use_cases.articles import ArticleManager
-from application.use_cases.inventory import InventoryManager
-from application.use_cases.tactill import TactillManager
+from app.entities.inventory import RequestResetStocks
+from app.use_cases.articles import ArticleManager
+from app.use_cases.inventory import InventoryManager
+from app.use_cases.tactill import TactillManager
 
 blueprint = Blueprint(name="inventory", import_name=__name__, url_prefix="/inventory")
 

@@ -1,5 +1,5 @@
-from application.repository.client import database
-from application.repository.mongodb import MongoRepository
+from app.repository.client import database
+from app.repository.mongodb import MongoRepository
 
 
 class RepositoryProvider:

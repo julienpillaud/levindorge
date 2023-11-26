@@ -1,5 +1,5 @@
-from application.entities.item import Item, RequestItem
-from application.interfaces.repository import IRepository
+from app.entities.item import Item, RequestItem
+from app.interfaces.repository import IRepository
 
 
 class ItemManager:

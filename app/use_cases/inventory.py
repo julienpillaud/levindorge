@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 
 from tactill.entities.catalog.article import Article as TactillArticle
 
-from application.entities.article import ExtendedArticle
-from application.entities.inventory import (
+from app.entities.article import ExtendedArticle
+from app.entities.inventory import (
     CreateInventory,
     CreateInventoryRecord,
     Inventory,
@@ -13,8 +13,8 @@ from application.entities.inventory import (
     InventoryValues,
     UpdateInventory,
 )
-from application.entities.shop import Shop
-from application.interfaces.repository import IRepository
+from app.entities.shop import Shop
+from app.interfaces.repository import IRepository
 
 
 class InventoryManager:

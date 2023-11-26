@@ -10,7 +10,7 @@ from pymongo.database import Database
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-from application.entities.article import Article
+from app.entities.article import Article
 from tests.data import article_to_insert
 
 load_dotenv()

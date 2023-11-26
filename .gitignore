@@ -1,10 +1,11 @@
 .DS_Store
-__pycache__
-.idea
-.mypy_cache
-.pytest_cache
-.ruff_cache
+.idea/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
 .env
-venv
+.venv/
+venv/
 
-application/templates/tags/etiquette*
+app/templates/tags/etiquette*

@@ -5,8 +5,8 @@ from pathlib import Path
 from flask import Blueprint, current_app, redirect, render_template, request, url_for
 from flask_login import login_required
 
-from application.entities.tag import TagFile
-from application.use_cases.tags import TagManager
+from app.entities.tag import TagFile
+from app.use_cases.tags import TagManager
 
 blueprint = Blueprint(name="tags", import_name=__name__, url_prefix="/tags")
 
