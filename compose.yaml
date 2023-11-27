@@ -5,14 +5,24 @@ services:
     container_name: "traefik"
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "certificates:/certificates"
     command:
       - "--accesslog"
       - "--log"
       - "--providers.docker"
       - "--providers.docker.exposedbydefault=false"
+
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${LETS_ENCRYPT_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/certificates/acme.json"
 
   app:
     container_name: "app"
@@ -24,4 +34,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.app.loadbalancer.server.port=8000"
       - "traefik.http.routers.app.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.app.entrypoints=web"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls.certresolver=myresolver"
+
+volumes:
+  certificates:
