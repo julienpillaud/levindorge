@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY ./app /code/app
 
-CMD ["gunicorn", "-b", "0.0.0.0:8000","-w", "4", "--log-level", "debug", "app.main:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:8000","-w", "4", "--log-level", "debug", "--reload", "app.main:app"]
