@@ -19,9 +19,7 @@ services:
   app:
     container_name: "app"
     build: .
-    restart: always
-    env_file:
-      - ".env"
+    restart: "always"
     volumes:
       - .:/code
     labels:

@@ -28,9 +28,7 @@ services:
   app:
     container_name: "app"
     build: .
-    restart: always
-    env_file:
-      - ".env"
+    restart: "always"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.app.loadbalancer.server.port=8000"
