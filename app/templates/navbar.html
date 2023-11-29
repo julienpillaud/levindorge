@@ -77,21 +77,20 @@
                     <a class="btn btn-light-purple nav-link" href="{{ url_for('inventory.get_inventories') }}">Inventaire</a>
                 </li>
 
-                {# Admin #}
-                {% if current_user.role in ['admin', 'superuser'] %}
-                    <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
-                        <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{ url_for('articles.validate_articles') }}">Validation</a>
-                            <hr class="dropdown-divider">
+                {# Gestion #}
+                <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+                    <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gestion</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ url_for('items.get_deposits') }}">Consigne</a>
+                        {% if current_user.role in ['admin', 'superuser'] %}
                             <a class="dropdown-item" href="{{ url_for('items.get_items', category='breweries') }}">Brasserie</a>
                             <a class="dropdown-item" href="{{ url_for('items.get_items', category='distilleries') }}">Distillerie</a>
                             <a class="dropdown-item" href="{{ url_for('items.get_items', category='distributors') }}">Fournisseur</a>
                             <a class="dropdown-item" href="{{ url_for('items.get_items', category='countries') }}">Pays</a>
                             <a class="dropdown-item" href="{{ url_for('items.get_items', category='regions') }}">Région</a>
-                        </div>
-                    </li>
-                {% endif %}
+                        {% endif %}
+                    </div>
+                </li>
 
                 <li class="nav-item mt-1 mt-lg-0 ms-lg-2">
                     <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">

@@ -14,6 +14,7 @@ from app.entities.article import (
     CreateOrUpdateArticle,
     ExtendedArticle,
 )
+from app.entities.deposit import Deposit, RequestDeposit
 from app.entities.inventory import (
     CreateInventory,
     CreateInventoryRecord,
@@ -128,6 +129,22 @@ class IRepository(ABC):
 
     @abstractmethod
     def delete_item(self, category: str, item_id: str) -> DeleteResult:
+        pass
+
+    @abstractmethod
+    def get_deposits(self) -> list[Deposit]:
+        pass
+
+    @abstractmethod
+    def get_deposit_by_id(self, deposit_id: str) -> Deposit:
+        pass
+
+    @abstractmethod
+    def create_deposit(self, deposit: RequestDeposit) -> InsertOneResult:
+        pass
+
+    @abstractmethod
+    def delete_deposit(self, deposit_id: str) -> DeleteResult | None:
         pass
 
     # --------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 from typing import Any, Mapping
 
 from bson import ObjectId
-from pymongo import ASCENDING
+from pymongo import ASCENDING, DESCENDING
 from pymongo.collection import Collection
 from pymongo.database import Database
 from pymongo.results import (
@@ -17,6 +17,7 @@ from app.entities.article import (
     CreateOrUpdateArticle,
     ExtendedArticle,
 )
+from app.entities.deposit import Deposit, RequestDeposit
 from app.entities.inventory import (
     CreateInventory,
     CreateInventoryRecord,
@@ -179,6 +180,7 @@ class MongoRepository(IRepository):
             "distillery_list": self.get_items("distilleries"),
             "distributor_list": self.get_items("distributors"),
             "volume_list": article_types[0].volumes,
+            "deposits": self.get_deposits(),
         }
 
     def get_items(self, category: str) -> list[Item]:
@@ -200,6 +202,38 @@ class MongoRepository(IRepository):
     def delete_item(self, category: str, item_id: str) -> DeleteResult:
         collection = self.get_collection(category)
         return collection.delete_one({"_id": ObjectId(item_id)})
+
+    def get_deposits(self) -> list[Deposit]:
+        return [
+            Deposit.model_validate(item)
+            for item in self.database.deposits.find().sort(
+                [
+                    ("category", ASCENDING),
+                    ("deposit_type", DESCENDING),
+                    ("value", ASCENDING),
+                ]
+            )
+        ]
+
+    def get_deposit_by_id(self, deposit_id: str) -> Deposit:
+        deposit = self.database.deposits.find_one({"_id": ObjectId(deposit_id)})
+        return Deposit.model_validate(deposit)
+
+    def create_deposit(self, deposit: RequestDeposit) -> InsertOneResult:
+        return self.database.deposits.insert_one(deposit.model_dump())
+
+    def delete_deposit(self, deposit_id: str) -> DeleteResult | None:
+        deposit = self.get_deposit_by_id(deposit_id=deposit_id)
+        if self.deposit_is_used(deposit=deposit):
+            return None
+        return self.database.deposits.delete_one({"_id": ObjectId(deposit_id)})
+
+    def deposit_is_used(self, deposit: Deposit):
+        deposit_type_mapping = {"Unitaire": "unit", "Caisse": "case"}
+        deposit_key = deposit_type_mapping[deposit.deposit_type]
+        return bool(
+            self.database.catalog.find_one({f"deposit.{deposit_key}": deposit.value})
+        )
 
     # --------------------------------------------------------------------------
     # inventory
