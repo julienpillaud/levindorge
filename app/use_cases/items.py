@@ -20,8 +20,10 @@ class ItemManager:
         )
 
     @staticmethod
-    def delete_item(repository: IRepository, category: str, item_id: str) -> None:
-        repository.delete_item(category=category, item_id=item_id)
+    def delete_item(
+        repository: IRepository, category: str, item_id: str
+    ) -> DeleteResult | None:
+        return repository.delete_item(category=category, item_id=item_id)
 
     @staticmethod
     def create_deposit(

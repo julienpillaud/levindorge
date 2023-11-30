@@ -81,14 +81,12 @@
                 <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
                     <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gestion</a>
                     <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ url_for('items.get_items', category='breweries') }}">Brasserie</a>
+                        <a class="dropdown-item" href="{{ url_for('items.get_items', category='distilleries') }}">Distillerie</a>
+                        <a class="dropdown-item" href="{{ url_for('items.get_items', category='distributors') }}">Fournisseur</a>
+                        <a class="dropdown-item" href="{{ url_for('items.get_items', category='countries') }}">Pays</a>
+                        <a class="dropdown-item" href="{{ url_for('items.get_items', category='regions') }}">Région</a>
                         <a class="dropdown-item" href="{{ url_for('items.get_deposits') }}">Consigne</a>
-                        {% if current_user.role in ['admin', 'superuser'] %}
-                            <a class="dropdown-item" href="{{ url_for('items.get_items', category='breweries') }}">Brasserie</a>
-                            <a class="dropdown-item" href="{{ url_for('items.get_items', category='distilleries') }}">Distillerie</a>
-                            <a class="dropdown-item" href="{{ url_for('items.get_items', category='distributors') }}">Fournisseur</a>
-                            <a class="dropdown-item" href="{{ url_for('items.get_items', category='countries') }}">Pays</a>
-                            <a class="dropdown-item" href="{{ url_for('items.get_items', category='regions') }}">Région</a>
-                        {% endif %}
                     </div>
                 </li>
 

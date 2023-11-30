@@ -199,9 +199,22 @@ class MongoRepository(IRepository):
             item_data.pop("demonym")
         return collection.insert_one(item_data)
 
-    def delete_item(self, category: str, item_id: str) -> DeleteResult:
+    def delete_item(self, category: str, item_id: str) -> DeleteResult | None:
         collection = self.get_collection(category)
+        item = self.get_item_by_id(category=category, item_id=item_id)
+        if self.item_is_used(category=category, item=item):
+            return None
         return collection.delete_one({"_id": ObjectId(item_id)})
+
+    def item_is_used(self, category: str, item: Item) -> bool:
+        if category == "distributors":
+            return bool(self.database.catalog.find_one({"distributor": item.name}))
+        elif category in {"breweries", "distilleries"}:
+            return bool(self.database.catalog.find_one({"name.name1": item.name}))
+        elif category in {"countries", "regions"}:
+            return bool(self.database.catalog.find_one({"region": item.name}))
+        else:
+            return False
 
     def get_deposits(self) -> list[Deposit]:
         return [

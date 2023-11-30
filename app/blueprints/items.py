@@ -40,7 +40,7 @@ def get_items(category: str) -> str:
 @blueprint.post("/<category>")
 @login_required
 def create_item(category: str):
-    request_item = RequestItem(**request.form)
+    request_item = RequestItem.model_validate(request.form.to_dict())
 
     repository = current_app.config["repository_provider"]()
     ItemManager.create_item(
@@ -54,7 +54,14 @@ def create_item(category: str):
 @login_required
 def delete_item(category: str, item_id: str):
     repository = current_app.config["repository_provider"]()
-    ItemManager.delete_item(repository=repository, category=category, item_id=item_id)
+    result = ItemManager.delete_item(
+        repository=repository, category=category, item_id=item_id
+    )
+    if not result:
+        flash(
+            "Ne peut pas être supprimé",
+            "danger",
+        )
 
     return redirect(request.referrer)
 
@@ -86,7 +93,7 @@ def delete_deposit(deposit_id: str):
     if not result:
         flash(
             "La consigne ne peut pas être supprimée",
-            "warning",
+            "danger",
         )
 
     return redirect(request.referrer)

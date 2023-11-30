@@ -128,7 +128,7 @@ class IRepository(ABC):
         pass
 
     @abstractmethod
-    def delete_item(self, category: str, item_id: str) -> DeleteResult:
+    def delete_item(self, category: str, item_id: str) -> DeleteResult | None:
         pass
 
     @abstractmethod
