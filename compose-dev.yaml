@@ -29,3 +29,16 @@ services:
       - "traefik.http.services.app.loadbalancer.server.port=8000"
       - "traefik.http.routers.app.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.app.entrypoints=web"
+
+  queue:
+    container_name: "queue"
+    image: rabbitmq:3
+
+  worker:
+    container_name: "worker"
+    depends_on:
+      - "queue"
+    build: .
+    env_file:
+      - ".env"
+    command: "celery -A app.worker worker -B --loglevel=info"

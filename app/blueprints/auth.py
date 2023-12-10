@@ -19,6 +19,7 @@ from flask_login import (
     current_user,
     login_user,
     logout_user,
+    login_required,
 )
 
 bcrypt = Bcrypt()
@@ -128,3 +129,9 @@ def login_post():
 def logout():
     logout_user()
     return redirect(url_for("auth.login_get"))
+
+
+@blueprint.get("/home")
+@login_required
+def home():
+    return render_template("home.html")

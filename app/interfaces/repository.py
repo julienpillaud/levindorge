@@ -88,6 +88,12 @@ class IRepository(ABC):
         pass
 
     @abstractmethod
+    def update_article_stock_quantity(
+        self, article_id: str, stock_quantity: int, shop: Shop
+    ) -> UpdateResult:
+        pass
+
+    @abstractmethod
     def delete_article(self, article_id: str) -> DeleteResult:
         pass
 
