@@ -16,6 +16,7 @@ from app.use_cases.wizishop import WiziShopManager
 # guest is the default user
 # queue is the container name
 celery_app = Celery("worker", broker="amqp://guest@queue//")
+celery_app.conf.timezone = "Europe/Paris"
 
 logger = get_task_logger(__name__)
 
@@ -25,7 +26,7 @@ def setup_periodic_tasks(sender, **kwargs) -> None:
     sender.add_periodic_task(
         crontab(
             minute="*/30",
-            hour="12,23",
+            hour="11,23",
             day_of_week="1-6",
         ),
         task_update_dashboard_stocks.s(),
@@ -34,7 +35,7 @@ def setup_periodic_tasks(sender, **kwargs) -> None:
     sender.add_periodic_task(
         crontab(
             minute="*/30",
-            hour="12,23",
+            hour="11,23",
             day_of_week="1-6",
         ),
         task_update_wizishop_stocks.s(),
