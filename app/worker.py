@@ -26,7 +26,7 @@ def setup_periodic_tasks(sender, **kwargs) -> None:
     sender.add_periodic_task(
         crontab(
             minute="*/30",
-            hour="11,23",
+            hour="11-23",
             day_of_week="1-6",
         ),
         task_update_dashboard_stocks.s(),
@@ -35,7 +35,7 @@ def setup_periodic_tasks(sender, **kwargs) -> None:
     sender.add_periodic_task(
         crontab(
             minute="*/30",
-            hour="11,23",
+            hour="11-23",
             day_of_week="1-6",
         ),
         task_update_wizishop_stocks.s(),
