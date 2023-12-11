@@ -5,18 +5,15 @@ from wizishop.entities.response import WiziShopResponse
 from app.config import settings
 
 
-class WizishopManager:
-    @staticmethod
-    def get_products() -> list[Product]:
-        client = WiziShopClient(
+class WiziShopManager:
+    def __init__(self) -> None:
+        self.client = WiziShopClient(
             username=settings.WIZISHOP_EMAIL, password=settings.WIZISHOP_PASSWORD
         )
-        products = client.get_products(limit=5000)
+
+    def get_products(self) -> list[Product]:
+        products = self.client.get_products(limit=5000)
         return products.results
 
-    @staticmethod
-    def update_sku_stock(sku: str, stock: int) -> WiziShopResponse:
-        client = WiziShopClient(
-            username=settings.WIZISHOP_EMAIL, password=settings.WIZISHOP_PASSWORD
-        )
-        return client.update_sku_stock(sku=sku, stock=stock)
+    def update_sku_stock(self, sku: str, stock: int) -> WiziShopResponse:
+        return self.client.update_sku_stock(sku=sku, stock=stock)

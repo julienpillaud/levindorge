@@ -11,7 +11,7 @@ from app.entities.shop import Shop
 from app.use_cases.articles import ArticleManager
 from app.use_cases.tactill import TactillManager
 from app.repository.dependencies import repository_provider
-from app.use_cases.wizishop import WizishopManager
+from app.use_cases.wizishop import WiziShopManager
 
 # guest is the default user
 # queue is the container name
@@ -21,7 +21,7 @@ logger = get_task_logger(__name__)
 
 
 @celery_app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
+def setup_periodic_tasks(sender, **kwargs) -> None:
     sender.add_periodic_task(
         crontab(
             minute="*/30",
@@ -63,13 +63,14 @@ def task_update_dashboard_stocks():
 @celery_app.task(autoretry_for=(TactillError, WiziShopError), retry_backoff=True)
 def task_update_wizishop_stocks():
     repository = repository_provider()
+    client = WiziShopManager()
 
     shop = repository.get_shop_by_username("pessac")
     tactill_stocks = get_tactill_stocks(shop=shop)
-    wizishop_stocks = get_wizishop_stocks()
+    wizishop_stocks = get_wizishop_stocks(client=client)
 
     update_wizishop_stocks(
-        wizishop_stocks=wizishop_stocks, tactill_stocks=tactill_stocks
+        client=client, wizishop_stocks=wizishop_stocks, tactill_stocks=tactill_stocks
     )
 
 
@@ -103,8 +104,8 @@ def update_dashboard_stocks(
         )
 
 
-def get_wizishop_stocks():
-    articles = WizishopManager.get_products()
+def get_wizishop_stocks(client: WiziShopManager):
+    articles = client.get_products()
 
     return {
         article.sku: article.stock
@@ -114,6 +115,7 @@ def get_wizishop_stocks():
 
 
 def update_wizishop_stocks(
+    client: WiziShopManager,
     wizishop_stocks: dict[str, int],
     tactill_stocks: dict[str, int],
 ):
@@ -125,4 +127,4 @@ def update_wizishop_stocks(
     logger.info(f"WiziShop : {stocks_to_update}")
 
     for article_id, stock_quantity in stocks_to_update.items():
-        WizishopManager.update_sku_stock(sku=article_id, stock=stock_quantity)
+        client.update_sku_stock(sku=article_id, stock=stock_quantity)
