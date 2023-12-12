@@ -3,14 +3,14 @@
     <div class="row mt-3">
         <div class="col-md-6">
             <div class="input-group">
-                <label class="input-group-text bg-dark-purple" for="volume">Volume</label>
+                <label class="input-group-text bg-dark-purple" for="volume">Volume ({{ volumes[0].unit }})</label>
                 <select class="form-select text-center" id="volume" name="volume" required>
                     <option selected></option>
-                    {% for x in volume_list %}
-                        {% if article and x == article.volume %}
-                            <option selected>{{ x | strip_zeros }}</option>
+                    {% for volume in volumes %}
+                        {% if article and volume.value == article.volume %}
+                            <option selected>{{ volume.value | strip_zeros }}</option>
                         {% else %}
-                            <option>{{ x | strip_zeros }}</option>
+                            <option>{{ volume.value | strip_zeros }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>

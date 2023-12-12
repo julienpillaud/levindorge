@@ -11,6 +11,7 @@ from flask_login import login_required
 
 from app.entities.deposit import RequestDeposit
 from app.entities.item import RequestItem
+from app.entities.volume import RequestVolume
 from app.use_cases.items import ItemManager
 
 blueprint = Blueprint(name="items", import_name=__name__, url_prefix="/items")
@@ -64,6 +65,36 @@ def delete_item(category: str, item_id: str):
         )
 
     return redirect(request.referrer)
+
+
+@blueprint.get("/volume")
+@login_required
+def get_volumes() -> str:
+    repository = current_app.config["repository_provider"]()
+    volumes = ItemManager.get_volumes(repository=repository)
+    return render_template("volumes.html", volumes=volumes)
+
+
+@blueprint.post("/volume")
+@login_required
+def create_volumes():
+    request_volume = RequestVolume.model_validate(request.form.to_dict())
+    repository = current_app.config["repository_provider"]()
+    ItemManager.create_volume(repository=repository, request_volume=request_volume)
+    return redirect(url_for("items.get_volumes"))
+
+
+@blueprint.get("/volume/<volume_id>")
+@login_required
+def delete_volume(volume_id: str):
+    repository = current_app.config["repository_provider"]()
+    result = ItemManager.delete_volume(repository=repository, volume_id=volume_id)
+    if not result:
+        flash(
+            "Le volume ne peut pas être supprimé",
+            "danger",
+        )
+    return redirect(url_for("items.get_volumes"))
 
 
 @blueprint.get("/deposit")

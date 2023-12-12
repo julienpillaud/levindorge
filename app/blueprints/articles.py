@@ -58,9 +58,10 @@ def get_articles(list_category: str) -> str:
 def create_article_get(list_category: str) -> str:
     repository = current_app.config["repository_provider"]()
 
-    ratio_category = repository.get_ratio_category(list_category)
     article_types = repository.get_article_types_by_list(list_category)
-    items = repository.get_items_dict(list_category)
+    ratio_category = article_types[0].ratio_category
+    volume_category = article_types[0].volume_category
+    items = repository.get_items_dict(volume_category)
 
     return render_template(
         "article/article.html",
@@ -132,7 +133,7 @@ def update_article_get(article_id: str) -> str:
 
     article = repository.get_article_by_id(article_id)
     article_type = repository.get_article_type(article.type)
-    items = repository.get_items_dict(article_type.list_category)
+    items = repository.get_items_dict(article_type.volume_category)
 
     return render_template(
         "article/article.html",

@@ -27,6 +27,7 @@ from app.entities.inventory import (
 )
 from app.entities.item import Item, RequestItem
 from app.entities.shop import Shop
+from app.entities.volume import Volume, RequestVolume
 from app.interfaces.repository import IRepository
 
 
@@ -179,15 +180,14 @@ class MongoRepository(IRepository):
 
     # ------------------------------------------------------------------------------
     # items
-    def get_items_dict(self, list_category: str) -> dict[str, Any]:
-        article_types = self.get_article_types_by_list(list_category)
+    def get_items_dict(self, volume_category: str) -> dict[str, Any]:
         return {
             "country_list": self.get_items("countries"),
             "region_list": self.get_items("regions"),
             "brewery_list": self.get_items("breweries"),
             "distillery_list": self.get_items("distilleries"),
             "distributor_list": self.get_items("distributors"),
-            "volume_list": article_types[0].volumes,
+            "volumes": self.get_volumes_by_category(volume_category),
             "deposits": self.get_deposits(),
         }
 
@@ -223,6 +223,41 @@ class MongoRepository(IRepository):
             return bool(self.database.catalog.find_one({"region": item.name}))
         else:
             return False
+
+    def get_volumes_by_category(self, volume_category: str) -> list[Volume]:
+        return [
+            Volume.model_validate(volume)
+            for volume in self.database.volumes.find({"category": volume_category})
+        ]
+
+    def get_volumes(self) -> list[Volume]:
+        return [
+            Volume.model_validate(volume)
+            for volume in self.database.volumes.find().sort(
+                [("category", ASCENDING), ("value", ASCENDING)]
+            )
+        ]
+
+    def create_volume(self, volume: RequestVolume) -> InsertOneResult:
+        return self.database.volumes.insert_one(volume.model_dump())
+
+    def get_volume_by_id(self, volume_id: str) -> Volume:
+        volume = self.database.volumes.find_one({"_id": ObjectId(volume_id)})
+        return Volume.model_validate(volume)
+
+    def delete_volume(self, volume_id: str) -> DeleteResult | None:
+        volume = self.get_volume_by_id(volume_id=volume_id)
+        if self.volume_is_used(volume=volume):
+            return None
+        return self.database.volumes.delete_one({"_id": ObjectId(volume_id)})
+
+    def volume_is_used(self, volume) -> bool:
+        types = self.database.types.find({"volume_category": volume.category})
+        return bool(
+            self.database.catalog.find_one(
+                {"volume": volume.value, "type": {"$in": [x["name"] for x in types]}}
+            )
+        )
 
     def get_deposits(self) -> list[Deposit]:
         return [

@@ -8,9 +8,9 @@ class ArticleType(BaseModel):
     name: str
     category: str
     tax: float
-    volumes: list[float] = []
     ratio_category: str
     list_category: str
+    volume_category: str | None = None
     tactill_category: str
 
 

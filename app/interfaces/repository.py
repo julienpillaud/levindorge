@@ -24,6 +24,7 @@ from app.entities.inventory import (
 )
 from app.entities.item import Item, RequestItem
 from app.entities.shop import Shop
+from app.entities.volume import Volume, RequestVolume
 
 
 class IRepository(ABC):
@@ -118,7 +119,7 @@ class IRepository(ABC):
     # ------------------------------------------------------------------------------
     # items
     @abstractmethod
-    def get_items_dict(self, list_category: str) -> dict[str, Any]:
+    def get_items_dict(self, volume_category: str) -> dict[str, Any]:
         pass
 
     @abstractmethod
@@ -135,6 +136,26 @@ class IRepository(ABC):
 
     @abstractmethod
     def delete_item(self, category: str, item_id: str) -> DeleteResult | None:
+        pass
+
+    @abstractmethod
+    def get_volumes_by_category(self, volume_category: str) -> list[Volume]:
+        pass
+
+    @abstractmethod
+    def get_volumes(self) -> list[Volume]:
+        pass
+
+    @abstractmethod
+    def create_volume(self, volume: RequestVolume) -> InsertOneResult:
+        pass
+
+    @abstractmethod
+    def get_volume_by_id(self, volume_id: str) -> Volume:
+        pass
+
+    @abstractmethod
+    def delete_volume(self, volume_id: str) -> DeleteResult | None:
         pass
 
     @abstractmethod
