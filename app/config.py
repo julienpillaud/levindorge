@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     WIZISHOP_EMAIL: str
     WIZISHOP_PASSWORD: str
     ROLLBAR_ACCESS_TOKEN: str
+    CELERY_BROKER_URL: str
+    CELERY_RESULT_BACKEND: str
 
 
 settings = Settings()

@@ -38,15 +38,17 @@ services:
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.routers.app.tls.certresolver=myresolver"
 
-  queue:
-    container_name: "queue"
-    image: rabbitmq:3
+  redis:
+    container_name: "redis"
+    image: "redis:7.2"
+    restart: "always"
 
   worker:
     container_name: "worker"
     depends_on:
-      - "queue"
+      - "redis"
     build: .
+    restart: "always"
     env_file:
       - ".env"
     command: "celery -A app.worker worker -B --loglevel=info"

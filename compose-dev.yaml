@@ -30,15 +30,33 @@ services:
       - "traefik.http.routers.app.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.app.entrypoints=web"
 
-  queue:
-    container_name: "queue"
-    image: rabbitmq:3
+  redis:
+    container_name: "redis"
+    image: "redis:7.2"
+    restart: "always"
 
   worker:
     container_name: "worker"
     depends_on:
-      - "queue"
+      - "redis"
     build: .
+    restart: "always"
     env_file:
       - ".env"
     command: "celery -A app.worker worker -B --loglevel=info"
+
+  flower:
+    container_name: "flower"
+    depends_on:
+      - "redis"
+    image: "mher/flower:latest"
+    restart: "always"
+    env_file:
+      - ".env"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.flower.loadbalancer.server.port=5555"
+      - "traefik.http.routers.flower.rule=Host(`flower.localhost`)"
+      - "traefik.http.routers.flower.entrypoints=web"
+      - "traefik.http.routers.flower.middlewares=flower_auth"
+      - "traefik.http.middlewares.flower_auth.basicauth.users=${FLOWER_BASICAUTH}"

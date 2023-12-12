@@ -18,6 +18,7 @@ pillow = "^10.1.0"
 rollbar = "^1.0.0"
 gunicorn = "^21.2.0"
 celery = "^5.3.6"
+redis = "^5.0.1"
 tactill = {git = "https://github.com/julienpillaud/tactill", rev = "v0.2.1"}
 wizishop = {git = "https://github.com/julienpillaud/wizishop", rev = "v0.1.1"}
 

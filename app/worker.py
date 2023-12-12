@@ -6,6 +6,7 @@ from celery.utils.log import get_task_logger
 from tactill import TactillError
 from wizishop import WiziShopError
 
+from app.config import settings
 from app.entities.article import Article
 from app.entities.shop import Shop
 from app.use_cases.articles import ArticleManager
@@ -13,9 +14,9 @@ from app.use_cases.tactill import TactillManager
 from app.repository.dependencies import repository_provider
 from app.use_cases.wizishop import WiziShopManager
 
-# guest is the default user
-# queue is the container name
-celery_app = Celery("worker", broker="amqp://guest@queue//")
+celery_app = Celery(
+    "worker", broker=settings.CELERY_BROKER_URL, backend=settings.CELERY_RESULT_BACKEND
+)
 celery_app.conf.timezone = "Europe/Paris"
 
 logger = get_task_logger(__name__)
@@ -23,24 +24,30 @@ logger = get_task_logger(__name__)
 
 @celery_app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs) -> None:
-    sender.add_periodic_task(
-        crontab(
-            minute="*/30",
-            hour="11-23",
-            day_of_week="1-6",
-        ),
-        task_update_dashboard_stocks.s(),
-        name="update dashboard stocks",
-    )
-    sender.add_periodic_task(
-        crontab(
-            minute="*/30",
-            hour="11-23",
-            day_of_week="1-6",
-        ),
-        task_update_wizishop_stocks.s(),
-        name="update wizishop stocks",
-    )
+    if settings.ENVIRONMENT == "production":
+        sender.add_periodic_task(
+            crontab(
+                minute="*/30",
+                hour="11-23",
+                day_of_week="1-6",
+            ),
+            task_update_dashboard_stocks.s(),
+            name="update dashboard stocks",
+        )
+        sender.add_periodic_task(
+            crontab(
+                minute="*/30",
+                hour="11-23",
+                day_of_week="1-6",
+            ),
+            task_update_wizishop_stocks.s(),
+            name="update wizishop stocks",
+        )
+
+
+@celery_app.task
+def do_nothing():
+    return "OK"
 
 
 @celery_app.task(autoretry_for=(TactillError,), retry_backoff=True)
@@ -91,7 +98,7 @@ def update_dashboard_stocks(
     shop: Shop,
     dashboard_stocks: dict[str, int],
     tactill_stocks: dict[str, int],
-):
+) -> None:
     stocks_to_update = {}
     for article_id, dashboard_stock in dashboard_stocks.items():
         tactill_stock = tactill_stocks.get(article_id)
@@ -105,7 +112,7 @@ def update_dashboard_stocks(
         )
 
 
-def get_wizishop_stocks(client: WiziShopManager):
+def get_wizishop_stocks(client: WiziShopManager) -> dict[str, int]:
     articles = client.get_products()
 
     return {
@@ -119,7 +126,7 @@ def update_wizishop_stocks(
     client: WiziShopManager,
     wizishop_stocks: dict[str, int],
     tactill_stocks: dict[str, int],
-):
+) -> None:
     stocks_to_update = {}
     for article_id, wizishop_stock in wizishop_stocks.items():
         tactill_stock = tactill_stocks.get(article_id)
