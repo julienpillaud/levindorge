@@ -1,7 +1,6 @@
 from collections import defaultdict
 from typing import Any
 
-import rollbar
 from flask import (
     Blueprint,
     Response,
@@ -13,7 +12,6 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
-from tactill import TactillError
 
 from app.blueprints.auth import admin_required
 from app.entities.article import (
@@ -28,7 +26,11 @@ from app.use_cases.articles import (
     compute_article_margin,
     compute_recommended_price,
 )
-from app.use_cases.tactill import TactillManager
+from app.worker import (
+    create_tactill_articles,
+    update_tactill_articles,
+    delete_tactill_articles,
+)
 
 blueprint = Blueprint(name="articles", import_name=__name__, url_prefix="/articles")
 
@@ -93,7 +95,6 @@ def create_article(list_category: str):
             article_type=article_type,
         )
 
-        # create article
         inserted_article = ArticleManager.create(
             repository=repository,
             current_user=current_user,
@@ -101,21 +102,7 @@ def create_article(list_category: str):
             article_shops=article_shops,
         )
 
-        # create Tactill article for each shop
-        for shop in shops:
-            try:
-                article = TactillManager.create(
-                    shop=shop,
-                    article=inserted_article,
-                    article_type=article_type,
-                )
-                rollbar.report_message(
-                    f"{shop.name} - Tactill article created: {article.id}", "info"
-                )
-            except TactillError as err:
-                rollbar.report_message(
-                    f"{shop.name} - Tactill article not created: {err.error}", "error"
-                )
+        create_tactill_articles.delay(inserted_article.id)
 
     return redirect(
         url_for(
@@ -168,7 +155,6 @@ def update_article(article_id: str):
             shops=shops,
         )
 
-        # update article
         updated_article = ArticleManager.update(
             repository=repository,
             current_user=current_user,
@@ -177,22 +163,7 @@ def update_article(article_id: str):
             article=article,
         )
 
-        # update Tactill article for each shop
-        for shop in shops:
-            try:
-                TactillManager.update(
-                    shop=shop,
-                    article=updated_article,
-                    article_type=article_type,
-                )
-                rollbar.report_message(
-                    f"{shop.name} - Tactill article updated: {updated_article.id}",
-                    "info",
-                )
-            except TactillError as err:
-                rollbar.report_message(
-                    f"{shop.name} - Tactill article not updated: {err.error}", "error"
-                )
+        update_tactill_articles.delay(updated_article.id)
 
     if _ := request.args.get("validate"):
         return redirect(url_for("articles.validate_articles"))
@@ -211,21 +182,8 @@ def update_article(article_id: str):
 @login_required
 def delete_article(article_id: str):
     repository = current_app.config["repository_provider"]()
-
     ArticleManager.delete(repository=repository, article_id=article_id)
-
-    for shop in repository.get_shops():
-        try:
-            TactillManager.delete(shop=shop, article_id=article_id)
-            rollbar.report_message(
-                f"{shop.name} - Tactill article deleted: {article_id}",
-                "info",
-            )
-        except TactillError as err:
-            rollbar.report_message(
-                f"{shop.name} - Tactill article not deleted: {err.error}", "error"
-            )
-
+    delete_tactill_articles.delay(article_id)
     return redirect(request.referrer)
 
 

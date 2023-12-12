@@ -10,7 +10,7 @@ from app.config import settings
 from app.entities.article import Article
 from app.entities.shop import Shop
 from app.use_cases.articles import ArticleManager
-from app.use_cases.tactill import TactillManager
+from app.use_cases.tactill import TactillManager, TactillManagerError
 from app.repository.dependencies import repository_provider
 from app.use_cases.wizishop import WiziShopManager
 
@@ -46,12 +46,12 @@ def setup_periodic_tasks(sender, **kwargs) -> None:
 
 
 @celery_app.task
-def do_nothing():
+def do_nothing() -> str:
     return "OK"
 
 
 @celery_app.task(autoretry_for=(TactillError,), retry_backoff=True)
-def task_update_dashboard_stocks():
+def task_update_dashboard_stocks() -> None:
     repository = repository_provider()
 
     shops = repository.get_shops()
@@ -69,7 +69,7 @@ def task_update_dashboard_stocks():
 
 
 @celery_app.task(autoretry_for=(TactillError, WiziShopError), retry_backoff=True)
-def task_update_wizishop_stocks():
+def task_update_wizishop_stocks() -> None:
     repository = repository_provider()
     client = WiziShopManager()
 
@@ -80,6 +80,50 @@ def task_update_wizishop_stocks():
     update_wizishop_stocks(
         client=client, wizishop_stocks=wizishop_stocks, tactill_stocks=tactill_stocks
     )
+
+
+@celery_app.task(autoretry_for=(TactillError, TactillManagerError), retry_backoff=True)
+def create_tactill_articles(article_id: str) -> None:
+    repository = repository_provider()
+
+    shops = repository.get_shops()
+    article = repository.get_article_by_id(article_id=article_id)
+    article_type = repository.get_article_type(article.type)
+
+    for shop in shops:
+        TactillManager.create(
+            shop=shop,
+            article=article,
+            article_type=article_type,
+        )
+
+
+@celery_app.task(autoretry_for=(TactillError, TactillManagerError), retry_backoff=True)
+def update_tactill_articles(article_id: str) -> None:
+    repository = repository_provider()
+
+    shops = repository.get_shops()
+    article = repository.get_article_by_id(article_id=article_id)
+    article_type = repository.get_article_type(article.type)
+
+    for shop in shops:
+        TactillManager.update(
+            shop=shop,
+            article=article,
+            article_type=article_type,
+        )
+
+
+@celery_app.task(autoretry_for=(TactillError, TactillManagerError), retry_backoff=True)
+def delete_tactill_articles(article_id: str) -> None:
+    repository = repository_provider()
+
+    shops = repository.get_shops()
+    for shop in shops:
+        TactillManager.delete(
+            shop=shop,
+            article_id=article_id,
+        )
 
 
 def get_tactill_stocks(shop: Shop) -> dict[str, int]:
