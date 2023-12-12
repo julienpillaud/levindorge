@@ -38,5 +38,20 @@ services:
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.routers.app.tls.certresolver=myresolver"
 
+  redis:
+    container_name: "redis"
+    image: "redis:7.2"
+    restart: "always"
+
+  worker:
+    container_name: "worker"
+    depends_on:
+      - "redis"
+    build: .
+    restart: "always"
+    env_file:
+      - ".env"
+    command: "celery -A app.worker worker -B --loglevel=info"
+
 volumes:
   certificates:

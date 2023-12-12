@@ -14,6 +14,7 @@ from app.blueprints import auth as auth_blueprint
 from app.blueprints import inventory as inventory_blueprint
 from app.blueprints import items as items_blueprint
 from app.blueprints import tags as tags_blueprint
+from app.blueprints import tasks as tasks_blueprint
 from app.config import settings
 from app.data import navbar_categories
 from app.repository.dependencies import repository_provider
@@ -30,6 +31,7 @@ app.register_blueprint(articles_blueprint.blueprint)
 app.register_blueprint(items_blueprint.blueprint)
 app.register_blueprint(inventory_blueprint.blueprint)
 app.register_blueprint(tags_blueprint.blueprint)
+app.register_blueprint(tasks_blueprint.blueprint)
 
 
 with app.app_context():

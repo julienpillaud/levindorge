@@ -142,6 +142,14 @@ class MongoRepository(IRepository):
             {"_id": ObjectId(article_id)}, article.model_dump()
         )
 
+    def update_article_stock_quantity(
+        self, article_id: str, stock_quantity: int, shop: Shop
+    ) -> UpdateResult:
+        return self.database.catalog.update_one(
+            {"_id": ObjectId(article_id)},
+            {"$set": {f"shops.{shop.username}.stock_quantity": stock_quantity}},
+        )
+
     def delete_article(self, article_id: str) -> DeleteResult:
         """Delete an article."""
         return self.database.catalog.delete_one({"_id": ObjectId(article_id)})
