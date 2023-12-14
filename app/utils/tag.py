@@ -146,7 +146,7 @@ class PriceTag:
         color = article.color
 
         # ----------------------------------------------------------
-        if article.ratio_category in {"box", "food", "misc"}:
+        if article.ratio_category in {"box", "food", "misc", "others"}:
             background = "coffret"
         else:
             background = self.define_color(article.ratio_category, color)
@@ -184,7 +184,7 @@ class PriceTag:
                 f.write(f'<div class="nameSupClass">{name_sup_wine}</div>\n')
             if name_inf_wine:
                 f.write(f'<div class="nameInfClass">{name_inf_wine}</div>\n')
-        elif article.ratio_category in ["box", "food", "misc"]:
+        elif article.ratio_category in ["box", "food", "misc", "others"]:
             name_tag = article.name.name1
             f.write('<div class="nameBoxContainer">\n')
             f.write(f'<div class="nameBoxClass brandonClass">{name_tag}</div>\n')

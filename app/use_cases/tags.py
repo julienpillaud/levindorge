@@ -17,6 +17,7 @@ large_tag_category = {
     "box",
     "food",
     "misc",
+    "others",
 }
 small_tag_category = {"spirit", "arranged"}
 
