@@ -169,7 +169,7 @@ class TactillManager:
                         article_name=article.name,
                         category_name=category_mapping[article.category_id],
                         state="done",
-                        units=article.stock_quantity,
+                        units=-article.stock_quantity,
                     )
                 )
 
