@@ -61,7 +61,7 @@ class TactillManager:
         client = TactillClient(api_key=shop.tactill_api_key)
 
         tactill_categories = client.get_categories(
-            filter=f"deprecated=false&name={article_type.tactill_category}"
+            filter=f"{filter_prefix}&name={article_type.tactill_category}"
         )
         tactill_category = next(iter(tactill_categories), None)
         if not tactill_category:
@@ -88,17 +88,21 @@ class TactillManager:
         return client.create_article(article_creation=article_creation)
 
     @staticmethod
-    def update(
+    def update_or_create(
         shop: Shop,
         article: Article,
         article_type: ArticleType,
-    ) -> TactillResponse:
+    ) -> TactillResponse | TactillArticle:
         client = TactillClient(api_key=shop.tactill_api_key)
 
-        tactill_articles = client.get_articles(filter=f"reference={article.id}")
+        tactill_articles = client.get_articles(
+            filter=f"{filter_prefix}&reference={article.id}"
+        )
         tactill_article = next(iter(tactill_articles), None)
         if not tactill_article:
-            raise TactillManagerError("Article not found")
+            return TactillManager.create(
+                shop=shop, article=article, article_type=article_type
+            )
 
         article_modification = ArticleModification(
             taxes=tactill_article.taxes,
@@ -119,7 +123,9 @@ class TactillManager:
     @staticmethod
     def delete(shop: Shop, article_id: str) -> TactillResponse:
         client = TactillClient(api_key=shop.tactill_api_key)
-        tactill_articles = client.get_articles(filter=f"reference={article_id}")
+        tactill_articles = client.get_articles(
+            filter=f"{filter_prefix}&reference={article_id}"
+        )
 
         if tactill_article := next(iter(tactill_articles), None):
             return client.delete_article(article_id=tactill_article.id)

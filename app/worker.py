@@ -107,7 +107,7 @@ def update_tactill_articles(article_id: str) -> None:
     article_type = repository.get_article_type(article.type)
 
     for shop in shops:
-        TactillManager.update(
+        TactillManager.update_or_create(
             shop=shop,
             article=article,
             article_type=article_type,
