@@ -2,6 +2,8 @@ from tactill import TactillClient
 from tactill.entities.base import TactillColor, TactillResponse
 from tactill.entities.catalog.article import Article as TactillArticle
 from tactill.entities.catalog.article import ArticleCreation, ArticleModification
+from tactill.entities.catalog.category import Category
+from tactill.entities.catalog.tax import Tax
 from tactill.entities.stock.movement import ArticleMovement, MovementCreation
 from tactill.utils import get_query_filter
 
@@ -53,6 +55,24 @@ class TactillManager:
         return client.get_articles(limit=5000, filter=f"{filter_prefix}&{query_filter}")
 
     @staticmethod
+    def get_category(client: TactillClient, article_type: ArticleType) -> Category:
+        categories = client.get_categories(
+            filter=f"{filter_prefix}&name={article_type.tactill_category}"
+        )
+        category = next(iter(categories), None)
+        if not category:
+            raise TactillManagerError("Category not found")
+        return category
+
+    @staticmethod
+    def get_tax(client: TactillClient, article: Article) -> Tax:
+        taxes = client.get_taxes(filter=f"deprecated=false&rate={article.tax}")
+        tax = next(iter(taxes), None)
+        if not tax:
+            raise TactillManagerError("Tax not found")
+        return tax
+
+    @staticmethod
     def create(
         shop: Shop,
         article: Article,
@@ -60,17 +80,10 @@ class TactillManager:
     ) -> TactillArticle:
         client = TactillClient(api_key=shop.tactill_api_key)
 
-        tactill_categories = client.get_categories(
-            filter=f"{filter_prefix}&name={article_type.tactill_category}"
+        tactill_category = TactillManager.get_category(
+            client=client, article_type=article_type
         )
-        tactill_category = next(iter(tactill_categories), None)
-        if not tactill_category:
-            raise TactillManagerError("Category not found")
-
-        tactill_taxes = client.get_taxes(filter=f"deprecated=false&rate={article.tax}")
-        tactill_tax = next(iter(tactill_taxes), None)
-        if not tactill_tax:
-            raise TactillManagerError("Tax not found")
+        tactill_tax = TactillManager.get_tax(client=client, article=article)
 
         article_creation = ArticleCreation(
             category_id=tactill_category.id,
@@ -104,8 +117,14 @@ class TactillManager:
                 shop=shop, article=article, article_type=article_type
             )
 
+        tactill_category = TactillManager.get_category(
+            client=client, article_type=article_type
+        )
+        tactill_tax = TactillManager.get_tax(client=client, article=article)
+
         article_modification = ArticleModification(
-            taxes=tactill_article.taxes,
+            category_id=tactill_category.id,
+            taxes=[tactill_tax.id],
             name=define_name(list_category=article_type.list_category, article=article),
             icon_text=define_icon_text(article=article),
             color=define_color(
@@ -113,7 +132,7 @@ class TactillManager:
             ),
             full_price=article.shops[shop.username].sell_price,
             barcode=article.barcode,
-            in_stock=tactill_article.in_stock,
+            in_stock=True,
         )
 
         return client.update_article(
