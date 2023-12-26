@@ -53,31 +53,18 @@ services:
       - ".env"
     command: "celery -A app.worker worker -B --loglevel=info"
 
-  flower:
-    container_name: "flower"
-    image: "mher/flower"
-    env_file:
-      - ".env"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.flower.loadbalancer.server.port=5555"
-      - "traefik.http.routers.flower.rule=Host(`flower.${DOMAIN}`)"
-      - "traefik.http.routers.flower.entrypoints=websecure"
-      - "traefik.http.routers.flower.tls.certresolver=myresolver"
-      - "traefik.http.routers.flower.middlewares=flower_auth"
-      - "traefik.http.middlewares.flower_auth.basicauth.users=${FLOWER_BASICAUTH}"
-
   dozzle:
     container_name: "dozzle"
     image: "amir20/dozzle"
-    env_file:
-      - ".env"
+    restart: "always"
+    environment:
+      - "DOZZLE_BASE=/logs"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
-      - "traefik.http.routers.dozzle.rule=Host(`dozzle.${DOMAIN}`)"
+      - "traefik.http.routers.dozzle.rule=Host(`${DOMAIN}`) && PathPrefix(`/logs`)"
       - "traefik.http.routers.dozzle.entrypoints=websecure"
       - "traefik.http.routers.dozzle.tls.certresolver=myresolver"
       - "traefik.http.routers.dozzle.middlewares=dozzle_auth"
