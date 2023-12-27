@@ -53,6 +53,22 @@ services:
       - ".env"
     command: "celery -A app.worker worker -B --loglevel=info"
 
+  flower:
+    container_name: "flower"
+    image: "mher/flower"
+    depends_on:
+      - "redis"
+    environment:
+      - "FLOWER_URL_PREFIX=flower"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.flower.loadbalancer.server.port=5555"
+      - "traefik.http.routers.flower.rule=Host(`${DOMAIN}`) && PathPrefix(`/flower`)"
+      - "traefik.http.routers.flower.entrypoints=websecure"
+      - "traefik.http.routers.flower.tls.certresolver=myresolver"
+      - "traefik.http.routers.flower.middlewares=flower_auth"
+      - "traefik.http.middlewares.flower_auth.basicauth.users=${FLOWER_BASICAUTH}"
+
   dozzle:
     container_name: "dozzle"
     image: "amir20/dozzle"

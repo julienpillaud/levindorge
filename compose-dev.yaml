@@ -39,17 +39,20 @@ services:
       - ".env"
     command: "celery -A app.worker worker -B --loglevel=info"
 
-#  flower:
-#    container_name: "flower"
-#    image: "mher/flower"
-#    command: "--url_prefix=flower"
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.services.flower.loadbalancer.server.port=5555"
-#      - "traefik.http.routers.flower.rule=Host(`flower.localhost`)"
-#      - "traefik.http.routers.flower.entrypoints=web"
-#      - "traefik.http.routers.flower.middlewares=flower_auth"
-#      - "traefik.http.middlewares.flower_auth.basicauth.users=${FLOWER_BASICAUTH}"
+  flower:
+    container_name: "flower"
+    image: "mher/flower"
+    depends_on:
+      - "redis"
+    environment:
+      - "FLOWER_URL_PREFIX=flower"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.flower.loadbalancer.server.port=5555"
+      - "traefik.http.routers.flower.rule=Host(`localhost`) && PathPrefix(`/flower`)"
+      - "traefik.http.routers.flower.entrypoints=web"
+      - "traefik.http.routers.flower.middlewares=flower_auth"
+      - "traefik.http.middlewares.flower_auth.basicauth.users=${FLOWER_BASICAUTH}"
 
   dozzle:
     container_name: "dozzle"
