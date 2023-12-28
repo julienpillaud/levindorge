@@ -2,7 +2,8 @@ services:
 
   traefik:
     container_name: "traefik"
-    image: "traefik"
+    image: "traefik:v2.10"
+    restart: "always"
     ports:
       - "80:80"
     volumes:
@@ -18,6 +19,7 @@ services:
   app:
     container_name: "app"
     build: .
+    restart: "always"
     env_file:
       - ".env"
     volumes:
@@ -25,16 +27,20 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.app.loadbalancer.server.port=8000"
-      - "traefik.http.routers.app.rule=Host(`localhost`)"
+      - "traefik.http.routers.app.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.app.entrypoints=web"
 
   redis:
     container_name: "redis"
-    image: "redis"
+    image: "redis:7.2"
+    restart: "always"
 
   worker:
     container_name: "worker"
+    depends_on:
+      - "redis"
     build: .
+    restart: "always"
     env_file:
       - ".env"
     command: "celery -A app.worker worker -B --loglevel=info"
@@ -42,14 +48,16 @@ services:
   flower:
     container_name: "flower"
     image: "mher/flower"
+    restart: "always"
     depends_on:
       - "redis"
     environment:
       - "FLOWER_URL_PREFIX=flower"
+    command: "celery --broker=redis://redis:6379 flower"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.flower.loadbalancer.server.port=5555"
-      - "traefik.http.routers.flower.rule=Host(`localhost`) && PathPrefix(`/flower`)"
+      - "traefik.http.routers.flower.rule=Host(`${DOMAIN}`) && PathPrefix(`/flower`)"
       - "traefik.http.routers.flower.entrypoints=web"
       - "traefik.http.routers.flower.middlewares=flower_auth"
       - "traefik.http.middlewares.flower_auth.basicauth.users=${FLOWER_BASICAUTH}"
@@ -57,6 +65,7 @@ services:
   dozzle:
     container_name: "dozzle"
     image: "amir20/dozzle"
+    restart: "always"
     environment:
       - "DOZZLE_BASE=/logs"
     volumes:
@@ -64,7 +73,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
-      - "traefik.http.routers.dozzle.rule=Host(`localhost`) && PathPrefix(`/logs`)"
+      - "traefik.http.routers.dozzle.rule=Host(`${DOMAIN}`) && PathPrefix(`/logs`)"
       - "traefik.http.routers.dozzle.entrypoints=web"
       - "traefik.http.routers.dozzle.middlewares=dozzle_auth"
       - "traefik.http.middlewares.dozzle_auth.basicauth.users=${DOZZLE_BASICAUTH}"

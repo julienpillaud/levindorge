@@ -56,10 +56,12 @@ services:
   flower:
     container_name: "flower"
     image: "mher/flower"
+    restart: "always"
     depends_on:
       - "redis"
     environment:
       - "FLOWER_URL_PREFIX=flower"
+    command: "celery --broker=redis://redis:6379 flower"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.flower.loadbalancer.server.port=5555"
