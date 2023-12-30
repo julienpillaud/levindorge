@@ -47,6 +47,8 @@ services:
     container_name: "worker"
     depends_on:
       - "redis"
+    environment:
+      - "CELERY_RESULT_PERSISTENT=true"
     build: .
     restart: "always"
     env_file:
