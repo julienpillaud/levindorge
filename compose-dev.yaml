@@ -55,6 +55,7 @@ services:
       - "redis"
     environment:
       - "FLOWER_URL_PREFIX=flower"
+      - "FLOWER_PURGE_OFFLINE_WORKERS=1"
     command: "celery --broker=redis://redis:6379 flower"
     labels:
       - "traefik.enable=true"
