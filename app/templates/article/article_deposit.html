@@ -13,7 +13,7 @@
 
             <div class="input-group">
                 <label class="input-group-text bg-dark-purple" for="unit-deposit">Consigne</label>
-                <select class="form-select text-center" id="unit-deposit" name="deposit" required>
+                <select class="form-select text-center" id="unit-deposit" name="unit" required>
                     <option selected></option>
                     {% for deposit in deposits %}
                         {% if deposit.deposit_type == "Unitaire" and deposit.category == deposit_category %}
