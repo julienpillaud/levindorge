@@ -63,10 +63,13 @@ class InventoryManager:
 
             sale_value = round(stock_quantity * article.taxfree_price, 2)
             deposit_value = 0
-            if article.packaging > 0:
-                deposit_value = round(
-                    (stock_quantity / article.packaging) * article.deposit.case, 2
-                )
+            if article.deposit.unit > 0:
+                if article.packaging > 0:
+                    deposit_value = round(
+                        (stock_quantity / article.packaging) * article.deposit.case, 2
+                    )
+                else:
+                    deposit_value = stock_quantity * article.deposit.unit
 
             inventory_values_data[
                 article.article_type.list_category

@@ -75,7 +75,7 @@
                             <td class="text-center">{{ record.article_packaging if record.article_packaging }}</td>
                             <td class="text-center">{{ record.article_deposit.unit | strip_zeros if record.article_deposit.unit }}</td>
                             <td class="text-center">{{ record.article_deposit.case | strip_zeros if record.article_deposit.case }}</td>
-                            <td class="text-center">{{ record.deposit_value if record.deposit_value }}</td>
+                            <td class="text-center">{{ record.deposit_value | strip_zeros if record.deposit_value }}</td>
                             <td class="text-center">{{ record.article_type }}</td>
                         </tr>
                     {% endfor %}
