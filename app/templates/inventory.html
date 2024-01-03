@@ -31,8 +31,8 @@
                             {% set values = inventory.inventory.get(category.code) %}
                             <tr>
                                 <td class="fw-bold">{{ category.plural_name }}</td>
-                                <td class="text-center">{{ values.sale_value if values }}</td>
-                                <td class="text-center">{{ values.deposit_value if values and values.deposit_value }}</td>
+                                <td class="text-center">{{ values.sale_value | strip_zeros if values }}</td>
+                                <td class="text-center">{{ values.deposit_value | strip_zeros if values and values.deposit_value }}</td>
                             </tr>
                         {% endfor %}
                     {% endfor %}
