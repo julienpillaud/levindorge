@@ -53,7 +53,9 @@ class InventoryManager:
         inventory_id = str(inventory.inserted_id)
 
         inventory_records = []
-        inventory_values_data = defaultdict(InventoryDetail)
+        inventory_values_data: defaultdict[str, InventoryDetail] = defaultdict(
+            InventoryDetail
+        )
         global_sale_value = 0
         global_deposit_value = 0
         for article in articles:

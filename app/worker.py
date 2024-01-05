@@ -7,7 +7,7 @@ from tactill import TactillError
 from wizishop import WiziShopError
 
 from app.config import settings
-from app.entities.article import Article
+from app.entities.article import ExtendedArticle
 from app.entities.shop import Shop
 from app.use_cases.articles import ArticleManager
 from app.use_cases.tactill import TactillManager, TactillManagerError
@@ -153,7 +153,7 @@ def get_tactill_stocks(shop: Shop) -> dict[str, int]:
     return {article.reference: article.stock_quantity for article in articles}
 
 
-def get_dashboard_stocks(shop: Shop, articles: list[Article]) -> dict[str, int]:
+def get_dashboard_stocks(shop: Shop, articles: list[ExtendedArticle]) -> dict[str, int]:
     return {
         article.id: article.shops[shop.username].stock_quantity for article in articles
     }

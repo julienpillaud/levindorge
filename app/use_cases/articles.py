@@ -135,7 +135,4 @@ def compute_margin(taxfree_price: float, tax: float, sell_price: float) -> float
 
 
 def compute_markup(tax: float, sell_price: float, margin: float) -> float:
-    if sell_price == 0:
-        return 0
-    tax_factor = 1 + (tax / 100)
-    return margin / (sell_price / tax_factor) * 100
+    return 0 if sell_price == 0 else margin / (sell_price / (1 + (tax / 100))) * 100

@@ -10,6 +10,7 @@ from tactill.utils import get_query_filter
 from app.entities.article import Article, ArticleType
 from app.entities.shop import Shop
 
+
 filter_prefix = "deprecated=false&is_default=false"
 excluded_categories = ["AUTRE", "BAR", "CONSIGNE", "STREETFOOD", "VDO"]
 categories_mapping = {
@@ -262,7 +263,7 @@ def define_icon_text(article: Article) -> str:
 
 def define_color(list_category: str, article: Article) -> TactillColor:
     if list_category in {"beer", "cider", "keg", "mini_keg"}:
-        beer_colors = {
+        beer_colors: dict[str, TactillColor] = {
             "Ambrée": "#FF6347",
             "Blanche": "#9EA09E",
             "Blonde": "#F2BA43",
@@ -281,7 +282,7 @@ def define_color(list_category: str, article: Article) -> TactillColor:
         return "#9EA09E"
 
     if list_category in {"wine", "fortified_wine", "sparkling_wine", "bib"}:
-        wine_colors = {
+        wine_colors: dict[str, TactillColor] = {
             "Blanc": "#F2BA43",
             "Rosé": "#B455C8",
             "Rouge": "#F44F60",

@@ -268,7 +268,7 @@ def create_article_shops(
     shops: list[Shop],
     article_type: ArticleType,
 ) -> ArticleShops:
-    article_shops = defaultdict(dict)
+    article_shops: defaultdict[str, dict[str, Any]] = defaultdict(dict)
     for shop in shops:
         sell_price = request_form.get(
             f"sell_price_{shop.username}"
@@ -301,7 +301,7 @@ def update_article_shops(
         or request_article.buy_price != article.social_security_levy
     )
 
-    article_shops = defaultdict(dict)
+    article_shops: defaultdict[str, dict[str, Any]] = defaultdict(dict)
     for shop in shops:
         article_shops[shop.username]["sell_price"] = update_sell_price(
             article=article,
