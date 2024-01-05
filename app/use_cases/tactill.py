@@ -39,51 +39,49 @@ class TactillManagerError(Exception):
 
 
 class TactillManager:
-    @staticmethod
-    def get(shop: Shop) -> list[TactillArticle]:
-        client = TactillClient(api_key=shop.tactill_api_key)
+    def __init__(self, shop: Shop) -> None:
+        self.shop = shop
+        self.client = TactillClient(api_key=shop.tactill_api_key)
 
+    def get(self) -> list[TactillArticle]:
         query_filter = get_query_filter(
             field="name", values=excluded_categories, query_operator="nin"
         )
-        categories = client.get_categories(filter=f"{filter_prefix}&{query_filter}")
+        categories = self.client.get_categories(
+            filter=f"{filter_prefix}&{query_filter}"
+        )
         category_ids = [category.id for category in categories]
 
         query_filter = get_query_filter(
             field="category_id", values=category_ids, query_operator="in"
         )
-        return client.get_articles(limit=5000, filter=f"{filter_prefix}&{query_filter}")
+        return self.client.get_articles(
+            limit=5000, filter=f"{filter_prefix}&{query_filter}"
+        )
 
-    @staticmethod
-    def get_category(client: TactillClient, article_type: ArticleType) -> Category:
-        categories = client.get_categories(
+    def get_category(self, article_type: ArticleType) -> Category:
+        categories = self.client.get_categories(
             filter=f"{filter_prefix}&name={article_type.tactill_category}"
         )
-        category = next(iter(categories), None)
-        if not category:
-            raise TactillManagerError("Category not found")
-        return category
+        if category := next(iter(categories), None):
+            return category
 
-    @staticmethod
-    def get_tax(client: TactillClient, article: Article) -> Tax:
-        taxes = client.get_taxes(filter=f"deprecated=false&rate={article.tax}")
-        tax = next(iter(taxes), None)
-        if not tax:
-            raise TactillManagerError("Tax not found")
-        return tax
+        raise TactillManagerError("Category not found")
 
-    @staticmethod
+    def get_tax(self, article: Article) -> Tax:
+        taxes = self.client.get_taxes(filter=f"deprecated=false&rate={article.tax}")
+        if tax := next(iter(taxes), None):
+            return tax
+
+        raise TactillManagerError("Tax not found")
+
     def create(
-        shop: Shop,
+        self,
         article: Article,
         article_type: ArticleType,
     ) -> TactillArticle:
-        client = TactillClient(api_key=shop.tactill_api_key)
-
-        tactill_category = TactillManager.get_category(
-            client=client, article_type=article_type
-        )
-        tactill_tax = TactillManager.get_tax(client=client, article=article)
+        tactill_category = self.get_category(article_type=article_type)
+        tactill_tax = self.get_tax(article=article)
 
         article_creation = ArticleCreation(
             category_id=tactill_category.id,
@@ -93,34 +91,27 @@ class TactillManager:
             color=define_color(
                 list_category=article_type.list_category, article=article
             ),
-            full_price=article.shops[shop.username].sell_price,
+            full_price=article.shops[self.shop.username].sell_price,
             barcode=article.barcode,
             reference=article.id,
             in_stock=True,
         )
-        return client.create_article(article_creation=article_creation)
+        return self.client.create_article(article_creation=article_creation)
 
-    @staticmethod
     def update_or_create(
-        shop: Shop,
+        self,
         article: Article,
         article_type: ArticleType,
     ) -> TactillResponse | TactillArticle:
-        client = TactillClient(api_key=shop.tactill_api_key)
-
-        tactill_articles = client.get_articles(
+        tactill_articles = self.client.get_articles(
             filter=f"{filter_prefix}&reference={article.id}"
         )
         tactill_article = next(iter(tactill_articles), None)
         if not tactill_article:
-            return TactillManager.create(
-                shop=shop, article=article, article_type=article_type
-            )
+            return self.create(article=article, article_type=article_type)
 
-        tactill_category = TactillManager.get_category(
-            client=client, article_type=article_type
-        )
-        tactill_tax = TactillManager.get_tax(client=client, article=article)
+        tactill_category = self.get_category(article_type=article_type)
+        tactill_tax = self.get_tax(article=article)
 
         article_modification = ArticleModification(
             category_id=tactill_category.id,
@@ -130,39 +121,41 @@ class TactillManager:
             color=define_color(
                 list_category=article_type.list_category, article=article
             ),
-            full_price=article.shops[shop.username].sell_price,
+            full_price=article.shops[self.shop.username].sell_price,
             barcode=article.barcode,
             in_stock=True,
         )
 
-        return client.update_article(
+        return self.client.update_article(
             article_id=tactill_article.id, article_modification=article_modification
         )
 
-    @staticmethod
-    def delete(shop: Shop, article_id: str) -> TactillResponse:
-        client = TactillClient(api_key=shop.tactill_api_key)
-        tactill_articles = client.get_articles(
+    def delete_by_id(self, article_id: str) -> TactillResponse:
+        if tactill_article := self.client.get_article(article_id=article_id):
+            return self.client.delete_article(article_id=tactill_article.id)
+        raise TactillManagerError("Article not found")
+
+    def delete_by_reference(self, article_id: str) -> TactillResponse:
+        tactill_articles = self.client.get_articles(
             filter=f"{filter_prefix}&reference={article_id}"
         )
 
         if tactill_article := next(iter(tactill_articles), None):
-            return client.delete_article(article_id=tactill_article.id)
+            return self.client.delete_article(article_id=tactill_article.id)
 
         raise TactillManagerError("Article not found")
 
-    @staticmethod
-    def reset_stock(shop: Shop, request_category: str):
+    def reset_stock(self, request_category: str):
         category_names = categories_mapping.get(request_category)
         if not category_names:
             raise TactillManagerError("Request category not found")
 
-        client = TactillClient(api_key=shop.tactill_api_key)
-
         query_filter = get_query_filter(
             field="name", values=category_names, query_operator="in"
         )
-        categories = client.get_categories(filter=f"{filter_prefix}&{query_filter}")
+        categories = self.client.get_categories(
+            filter=f"{filter_prefix}&{query_filter}"
+        )
         category_mapping = {category.id: category.name for category in categories}
 
         query_filter = get_query_filter(
@@ -170,7 +163,7 @@ class TactillManager:
             values=list(category_mapping.keys()),
             query_operator="in",
         )
-        articles = client.get_articles(
+        articles = self.client.get_articles(
             limit=5000, filter=f"{filter_prefix}&{query_filter}"
         )
 
@@ -205,7 +198,7 @@ class TactillManager:
                 state="done",
                 movements=article_movements_out,
             )
-            client.create_movement(movement_creation=movement_creation_out)
+            self.client.create_movement(movement_creation=movement_creation_out)
 
         if article_movements_in:
             movement_creation_in = MovementCreation(
@@ -214,7 +207,7 @@ class TactillManager:
                 state="done",
                 movements=article_movements_in,
             )
-            client.create_movement(movement_creation=movement_creation_in)
+            self.client.create_movement(movement_creation=movement_creation_in)
 
 
 def format_volume(article: Article) -> str:

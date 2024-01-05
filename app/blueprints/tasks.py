@@ -5,6 +5,7 @@ from app.worker import (
     task_update_dashboard_stocks,
     task_update_wizishop_stocks,
     do_nothing,
+    clean_tactill_articles,
 )
 
 
@@ -29,4 +30,11 @@ def update_dashboard_stocks():
 @login_required
 def update_wizishop_stocks():
     task_update_wizishop_stocks.delay()
+    return redirect(url_for("auth.home"))
+
+
+@blueprint.get("/clean")
+@login_required
+def clean():
+    clean_tactill_articles.delay()
     return redirect(url_for("auth.home"))

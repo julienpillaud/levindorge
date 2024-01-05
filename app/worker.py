@@ -43,6 +43,15 @@ def setup_periodic_tasks(sender, **kwargs) -> None:
             task_update_wizishop_stocks.s(),
             name="update wizishop stocks",
         )
+        sender.add_periodic_task(
+            crontab(
+                minute="0",
+                hour="18",
+                day_of_week="1-6",
+            ),
+            clean_tactill_articles.s(),
+            name="clean tactill articles",
+        )
 
 
 @celery_app.task
@@ -91,8 +100,8 @@ def create_tactill_articles(article_id: str) -> None:
     article_type = repository.get_article_type(article.type)
 
     for shop in shops:
-        TactillManager.create(
-            shop=shop,
+        manager = TactillManager(shop=shop)
+        manager.create(
             article=article,
             article_type=article_type,
         )
@@ -107,8 +116,8 @@ def update_tactill_articles(article_id: str) -> None:
     article_type = repository.get_article_type(article.type)
 
     for shop in shops:
-        TactillManager.update_or_create(
-            shop=shop,
+        manager = TactillManager(shop=shop)
+        manager.update_or_create(
             article=article,
             article_type=article_type,
         )
@@ -120,14 +129,27 @@ def delete_tactill_articles(article_id: str) -> None:
 
     shops = repository.get_shops()
     for shop in shops:
-        TactillManager.delete(
-            shop=shop,
-            article_id=article_id,
-        )
+        manager = TactillManager(shop=shop)
+        manager.delete_by_reference(article_id=article_id)
+
+
+@celery_app.task(autoretry_for=(TactillError, TactillManagerError), retry_backoff=True)
+def clean_tactill_articles() -> None:
+    repository = repository_provider()
+
+    shops = repository.get_shops()
+    for shop in shops:
+        manager = TactillManager(shop=shop)
+        articles = manager.get()
+        bad_articles = [article for article in articles if not article.reference]
+        logger.info(f"{shop.name} clean : {bad_articles}")
+        for article in bad_articles:
+            manager.delete_by_id(article_id=article.id)
 
 
 def get_tactill_stocks(shop: Shop) -> dict[str, int]:
-    articles = TactillManager.get(shop=shop)
+    manager = TactillManager(shop=shop)
+    articles = manager.get()
     return {article.reference: article.stock_quantity for article in articles}
 
 
