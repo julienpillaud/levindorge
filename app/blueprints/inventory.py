@@ -35,7 +35,8 @@ def save_inventory():
     current_shop = repository.get_shop_by_username(username=request_shop)
 
     articles = ArticleManager.get(repository=repository)
-    tactill_articles = TactillManager.get(shop=current_shop)
+    manager = TactillManager(shop=current_shop)
+    tactill_articles = manager.get()
     InventoryManager.save(
         repository=repository,
         shop=current_shop,
@@ -81,9 +82,8 @@ def reset_tactill_stocks():
     repository = current_app.config["repository_provider"]()
 
     current_shop = repository.get_shop_by_username(username=request_data.shop)
-    TactillManager.reset_stock(
-        shop=current_shop, request_category=request_data.category
-    )
+    manager = TactillManager(shop=current_shop)
+    manager.reset_stock(request_category=request_data.category)
 
     flash("Les stocks ont bien été remis à zéro !", "success")
     return redirect(url_for("inventory.get_inventories"))
