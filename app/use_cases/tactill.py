@@ -211,8 +211,11 @@ class TactillManager:
             self.client.create_movement(movement_creation=movement_creation_in)
 
 
-def format_volume(article: Article) -> str:
-    if article.volume > 100:
+def format_volume(list_category: str, article: Article) -> str:
+    if list_category in {"keg", "mini_keg", "bib"}:
+        volume = str(article.volume).rstrip("0").rstrip(".")
+        unit = "L"
+    elif article.volume > 100:
         volume = str(article.volume / 100).rstrip("0").rstrip(".")
         unit = "L"
     else:
@@ -224,7 +227,7 @@ def format_volume(article: Article) -> str:
 def define_name(list_category: str, article: Article) -> str:
     name1 = article.name.name1
     name2 = article.name.name2
-    volume = format_volume(article)
+    volume = format_volume(list_category=list_category, article=article)
     color = article.color
 
     if list_category in {"beer", "cider"}:
