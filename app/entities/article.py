@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 from bson import ObjectId
 from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator
@@ -17,6 +18,11 @@ class ArticleType(BaseModel):
 class ArticleName(BaseModel):
     name1: str
     name2: str
+
+
+class ArticleVolume(BaseModel):
+    value: float
+    unit: Literal["cL", "L"]
 
 
 class ArticleDeposit(BaseModel):
@@ -49,7 +55,7 @@ class RequestArticle(BaseModel):
     region: str = ""
     color: str = ""
     taste: str = ""
-    volume: float = 0.0
+    volume: ArticleVolume | None
     alcohol_by_volume: float = 0.0
     packaging: int = 0
     deposit: ArticleDeposit

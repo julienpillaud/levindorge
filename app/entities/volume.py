@@ -1,13 +1,11 @@
-from typing import Literal
-
 from bson import ObjectId
-from pydantic import BaseModel, Field, field_validator
+from pydantic import Field, field_validator
+
+from app.entities.article import ArticleVolume
 
 
-class RequestVolume(BaseModel):
+class RequestVolume(ArticleVolume):
     category: str
-    unit: Literal["cL", "L"]
-    value: float
 
 
 class Volume(RequestVolume):

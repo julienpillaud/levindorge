@@ -1,3 +1,4 @@
+import ast
 from collections import defaultdict
 from typing import Any
 
@@ -245,6 +246,7 @@ def get_margins() -> Response:
 
 def format_request_form(request_form: dict[str, Any]) -> None:
     format_request_name(request_form)
+    format_request_volume(request_form)
     format_request_deposit(request_form)
 
 
@@ -253,6 +255,14 @@ def format_request_name(request_form: dict[str, Any]) -> None:
         "name1": request_form.pop("name1", ""),
         "name2": request_form.pop("name2", ""),
     }
+
+
+def format_request_volume(request_form: dict[str, Any]) -> None:
+    if request_volume := request_form.pop("volume", None):
+        volume = ast.literal_eval(request_volume)
+        request_form["volume"] = {"value": volume["value"], "unit": volume["unit"]}
+    else:
+        request_form["volume"] = None
 
 
 def format_request_deposit(request_form: dict[str, Any]) -> None:

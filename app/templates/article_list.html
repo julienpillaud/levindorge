@@ -132,7 +132,7 @@
 
                     <!-- VOLUME -->
                     {% if list_category not in ["box", "misc", "food"] %}
-                        <td class="text-center">{{ x.volume | strip_zeros }}</td>
+                        <td class="text-center">{{ x.volume.value | strip_zeros }}</td>
                     {% endif %}
 
                     <!-- ALCOHOL_BY_VOLUME -->

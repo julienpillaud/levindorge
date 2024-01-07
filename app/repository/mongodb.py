@@ -227,7 +227,9 @@ class MongoRepository(IRepository):
     def get_volumes_by_category(self, volume_category: str) -> list[Volume]:
         return [
             Volume.model_validate(volume)
-            for volume in self.database.volumes.find({"category": volume_category})
+            for volume in self.database.volumes.find(
+                {"category": volume_category}
+            ).sort("value")
         ]
 
     def get_volumes(self) -> list[Volume]:

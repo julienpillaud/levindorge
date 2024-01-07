@@ -211,23 +211,24 @@ class TactillManager:
             self.client.create_movement(movement_creation=movement_creation_in)
 
 
-def format_volume(list_category: str, article: Article) -> str:
-    if list_category in {"keg", "mini_keg", "bib"}:
-        volume = str(article.volume).rstrip("0").rstrip(".")
+def format_volume(article: Article) -> str:
+    if not article.volume:
+        return ""
+
+    volume = article.volume.value
+    unit = article.volume.unit
+    if article.volume.unit == "cL" and article.volume.value > 100:
+        volume = article.volume.value / 100
         unit = "L"
-    elif article.volume > 100:
-        volume = str(article.volume / 100).rstrip("0").rstrip(".")
-        unit = "L"
-    else:
-        volume = str(article.volume).rstrip("0").rstrip(".")
-        unit = "cl"
-    return f"{volume}{unit}"
+
+    volume_str = str(volume).rstrip("0").rstrip(".")
+    return f"{volume_str}{unit}"
 
 
 def define_name(list_category: str, article: Article) -> str:
     name1 = article.name.name1
     name2 = article.name.name2
-    volume = format_volume(list_category=list_category, article=article)
+    volume = format_volume(article=article)
     color = article.color
 
     if list_category in {"beer", "cider"}:
@@ -255,13 +256,14 @@ def define_name(list_category: str, article: Article) -> str:
 
 
 def define_icon_text(article: Article) -> str:
-    if article.volume == 0:
+    if not article.volume:
         return "    "
 
-    if article.volume > 100:
-        return str(article.volume / 100).rstrip("0").rstrip(".").ljust(4)
+    volume = article.volume.value
+    if article.volume.unit == "cL" and article.volume.value > 100:
+        volume = article.volume.value / 100
 
-    return str(article.volume).rstrip("0").rstrip(".").ljust(4)
+    return str(volume).rstrip("0").rstrip(".").ljust(4)
 
 
 def define_color(list_category: str, article: Article) -> TactillColor:
