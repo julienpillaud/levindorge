@@ -60,6 +60,9 @@ class TactillManager:
             limit=5000, filter=f"{filter_prefix}&{query_filter}"
         )
 
+    def get_categories(self) -> list[Category]:
+        return self.client.get_categories(filter=filter_prefix)
+
     def get_category(self, article_type: ArticleType) -> Category:
         categories = self.client.get_categories(
             filter=f"{filter_prefix}&name={article_type.tactill_category}"
@@ -68,6 +71,9 @@ class TactillManager:
             return category
 
         raise TactillManagerError("Category not found")
+
+    def get_taxes(self) -> list[Tax]:
+        return self.client.get_taxes(filter="deprecated=false")
 
     def get_tax(self, article: Article) -> Tax:
         taxes = self.client.get_taxes(filter=f"deprecated=false&rate={article.tax}")
@@ -136,9 +142,9 @@ class TactillManager:
             return self.client.delete_article(article_id=tactill_article.id)
         raise TactillManagerError("Article not found")
 
-    def delete_by_reference(self, article_id: str) -> TactillResponse:
+    def delete_by_reference(self, reference: str) -> TactillResponse:
         tactill_articles = self.client.get_articles(
-            filter=f"{filter_prefix}&reference={article_id}"
+            filter=f"{filter_prefix}&reference={reference}"
         )
 
         if tactill_article := next(iter(tactill_articles), None):

@@ -2,10 +2,10 @@ from flask import Blueprint, redirect, url_for
 from flask_login import login_required
 
 from app.worker import (
-    task_update_dashboard_stocks,
-    task_update_wizishop_stocks,
+    update_stocks,
     do_nothing,
-    clean_tactill_articles,
+    clean_tactill,
+    update_tactill,
 )
 
 
@@ -19,22 +19,22 @@ def task_do_nothing():
     return redirect(url_for("auth.home"))
 
 
-@blueprint.get("/update_dashboard_stocks")
+@blueprint.get("/update_stocks")
 @login_required
-def update_dashboard_stocks():
-    task_update_dashboard_stocks.delay()
+def task_update_stocks():
+    update_stocks.delay()
     return redirect(url_for("auth.home"))
 
 
-@blueprint.get("/update_wizishop_stocks")
+@blueprint.get("/clean_tactill")
 @login_required
-def update_wizishop_stocks():
-    task_update_wizishop_stocks.delay()
+def task_clean_tactill():
+    clean_tactill.delay()
     return redirect(url_for("auth.home"))
 
 
-@blueprint.get("/clean")
+@blueprint.get("/update_tactill")
 @login_required
-def clean():
-    clean_tactill_articles.delay()
+def task_update_tactill():
+    update_tactill.delay()
     return redirect(url_for("auth.home"))
