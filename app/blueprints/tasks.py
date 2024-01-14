@@ -3,20 +3,12 @@ from flask_login import login_required
 
 from app.worker import (
     update_stocks,
-    do_nothing,
     clean_tactill,
     update_tactill,
 )
 
 
 blueprint = Blueprint(name="tasks", import_name=__name__, url_prefix="/tasks")
-
-
-@blueprint.get("/")
-@login_required
-def task_do_nothing():
-    do_nothing.delay()
-    return redirect(url_for("auth.home"))
 
 
 @blueprint.get("/update_stocks")

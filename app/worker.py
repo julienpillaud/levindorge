@@ -65,11 +65,6 @@ def setup_periodic_tasks(sender, **kwargs) -> None:
 
 
 @celery_app.task
-def do_nothing() -> str:
-    return "OK"
-
-
-@celery_app.task
 def update_stocks() -> None:
     repository = repository_provider()
     for shop in repository.get_shops():
@@ -125,7 +120,11 @@ def create_tactill_article(shop_username: str, article_id: str) -> None:
         article=article,
         article_type=article_type,
     )
-    logger.info(format_log(f"Article {created_article.id} successfully created"))
+    logger.info(
+        format_log(
+            f"{shop.name}: {created_article.name} - article successfully created"
+        )
+    )
 
 
 @celery_app.task
@@ -150,9 +149,14 @@ def update_tactill_article(shop_username: str, article_id: str) -> None:
     )
 
     if isinstance(result, TactillResponse):
-        logger.info(format_log(result.model_dump_json()))
+        tactill_name = define_name(
+            list_category=article_type.list_category, article=article
+        )
+        logger.info(format_log(f"{shop.name}: {tactill_name} - {result.message}"))
     if isinstance(result, TactillArticle):
-        logger.info(format_log(f"Article {result.id} missing created"))
+        logger.info(
+            format_log(f"{shop.name}: {result.name} - article successfully created")
+        )
 
 
 @celery_app.task
@@ -170,7 +174,7 @@ def delete_tactill_article_by_reference(shop_username: str, article_id: str) -> 
     manager = TactillManager(shop=shop)
     result = manager.delete_by_reference(reference=article_id)
 
-    logger.info(format_log(result.model_dump_json()))
+    logger.info(format_log(f"{shop.name}: {result.message}"))
 
 
 @celery_app.task(autoretry_for=(TactillError, TactillManagerError), retry_backoff=True)
@@ -181,7 +185,7 @@ def delete_tactill_article_by_id(shop_username: str, article_id: str) -> None:
     manager = TactillManager(shop=shop)
     result = manager.delete_by_id(article_id=article_id)
 
-    logger.info(format_log(result.model_dump_json()))
+    logger.info(format_log(f"{shop.name}: {result.message}"))
 
 
 # ==============================================================================
