@@ -9,6 +9,7 @@ from app.utils.tag import PriceTag
 large_tag_category = {
     "beer",
     "cider",
+    "keg",
     "mini_keg",
     "wine",
     "fortified_wine",

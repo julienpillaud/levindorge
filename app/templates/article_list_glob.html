@@ -27,7 +27,7 @@
                             <th class="text-center align-middle bg-light-purple">Volume</th>
                             <th class="text-center align-middle bg-light-purple">Degré</th>
                             <th class="text-center align-middle bg-light-purple">TTC</th>
-                            <th class="text-center align-middle bg-light-purple"Catégorie</th>
+                            <th class="text-center align-middle bg-light-purple">Catégorie</th>
                             <th class="text-center align-middle bg-light-purple"></th>
                         </tr>
                         </thead>
@@ -39,7 +39,7 @@
                                 <td class="">{{ x.name.name2 }}</td>
                                 <td class="text-center">{{ x.region }}</td>
                                 <td class="text-center">{{ x.color }}</td>
-                                <td class="text-center">{{ x.volume | strip_zeros if x.volume }}</td>
+                                <td class="text-center">{{ x.volume.value | strip_zeros if x.volume }} {{ x.volume.unit if x.volume }}</td>
                                 <td class="text-center">{{ x.alcohol_by_volume | strip_zeros if x.alcohol_by_volume }}</td>
                                 <td class="text-center">{{ x.shops[current_shop.username]['sell_price'] | strip_zeros }}</td>
                                 <td class="text-center font-weight-bold">{{ x.type }}</td>

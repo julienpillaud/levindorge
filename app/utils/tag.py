@@ -43,7 +43,7 @@ class PriceTag:
 
     @staticmethod
     def define_color(product: str, color: str) -> str:
-        if product in {"beer", "mini_keg"}:
+        if product in {"beer", "keg", "mini_keg"}:
             return BEER_COLORS[color]
         elif product in {"wine", "sparkling_wine", "bib"}:
             return WINE_COLORS[color]
@@ -55,17 +55,14 @@ class PriceTag:
         return TASTES[taste]
 
     @staticmethod
-    def convert_volume(category: str, volume: float) -> str:
-        if category in {"bib", "keg", "mini_keg"}:
-            volume_tag = volume
-            unit = "L"
-        elif volume > 100:
-            volume_tag = volume / 100
+    def convert_volume(article: TagArticle) -> str:
+        if article.volume.value > 100 and article.volume.unit == "cL":
+            volume = article.volume.value / 100
             unit = "L"
         else:
-            volume_tag = volume
-            unit = "cl"
-        return str(volume_tag).rstrip("0").rstrip(".").replace(".", ",") + unit
+            volume = article.volume.value
+            unit = article.volume.unit
+        return str(volume).rstrip("0").rstrip(".").replace(".", ",") + unit
 
     @staticmethod
     def define_beer_name(
@@ -153,8 +150,8 @@ class PriceTag:
         f.write(f'<div class="bgClass bgClass{tag_index + 1} {background}">\n')
 
         # ----------------------------------------------------------
-        if article.ratio_category in {"beer", "mini_keg"}:
-            volume = self.convert_volume(article.ratio_category, article.volume)
+        if article.ratio_category in {"beer", "keg", "mini_keg"}:
+            volume = self.convert_volume(article=article)
             demonym = regions[article.region].demonym
             top_line = f"{color} - {volume} - {demonym}"
             f.write(f'<div class="toplinebeerClass brandonClass">{top_line}</div>\n')
@@ -166,7 +163,7 @@ class PriceTag:
                 top_line = f"{color} - {article.type}"
             f.write(f'<div class="toplinewineClass">{top_line}</div>\n')
         # ----------------------------------------------------------
-        if article.ratio_category in {"beer", "mini_keg"}:
+        if article.ratio_category in {"beer", "keg", "mini_keg"}:
             name_beer, name_sup_beer, name_inf_beer = self.define_beer_name(
                 article, self.font
             )
@@ -203,7 +200,7 @@ class PriceTag:
         elif article.ratio_category == "mini_keg":
             f.write('<div class="consigneClass">Consigne : 7, 50 €</div>\n')
         elif article.ratio_category in {"wine", "sparkling_wine", "bib"}:
-            volume = self.convert_volume(article.ratio_category, article.volume)
+            volume = self.convert_volume(article=article)
             f.write(f'<div class="volumeClass">{volume}</div>\n')
 
         f.write("</div>\n")
@@ -254,7 +251,7 @@ class PriceTag:
         # ----------------------------------------------------------
         f.write('<div class="bottomlineClass">\n')
         # ----------------------------------------------------------
-        volume = self.convert_volume(article.ratio_category, article.volume)
+        volume = self.convert_volume(article=article)
         f.write(f'<div class="bottleClass">{volume}</div>')
         # ----------------------------------------------------------
         sell_price = article.shops[shop_code].sell_price
