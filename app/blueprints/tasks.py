@@ -2,11 +2,10 @@ from flask import Blueprint, redirect, url_for
 from flask_login import login_required
 
 from app.worker import (
-    update_stocks,
     clean_tactill,
+    update_stocks,
     update_tactill,
 )
-
 
 blueprint = Blueprint(name="tasks", import_name=__name__, url_prefix="/tasks")
 

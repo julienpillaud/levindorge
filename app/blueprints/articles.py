@@ -29,8 +29,8 @@ from app.use_cases.articles import (
 )
 from app.worker import (
     create_tactill_articles,
-    update_tactill_articles,
     delete_tactill_articles,
+    update_tactill_articles,
 )
 
 blueprint = Blueprint(name="articles", import_name=__name__, url_prefix="/articles")
@@ -78,7 +78,7 @@ def create_article_get(list_category: str) -> str:
 @blueprint.post("/create/<list_category>")
 @login_required
 def create_article(list_category: str):
-    if "cancel" not in request.form.keys():
+    if "cancel" not in request.form:
         food_pairing = request.form.getlist("food_pairing")
         request_form: dict[str, Any] = request.form.to_dict()
         request_form["food_pairing"] = food_pairing

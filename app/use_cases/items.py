@@ -1,6 +1,6 @@
 from pymongo.results import DeleteResult
 
-from app.entities.deposit import RequestDeposit, Deposit
+from app.entities.deposit import Deposit, RequestDeposit
 from app.entities.item import Item, RequestItem
 from app.entities.volume import RequestVolume, Volume
 from app.interfaces.repository import IRepository

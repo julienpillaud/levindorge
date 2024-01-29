@@ -27,7 +27,7 @@ from app.entities.inventory import (
 )
 from app.entities.item import Item, RequestItem
 from app.entities.shop import Shop
-from app.entities.volume import Volume, RequestVolume
+from app.entities.volume import RequestVolume, Volume
 from app.interfaces.repository import IRepository
 
 

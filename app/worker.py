@@ -11,15 +11,15 @@ from wizishop import WiziShopError
 from app.config import settings
 from app.entities.article import ExtendedArticle
 from app.entities.shop import Shop
+from app.repository.dependencies import repository_provider
 from app.use_cases.articles import ArticleManager
 from app.use_cases.tactill import (
     TactillManager,
     TactillManagerError,
-    define_name,
-    define_icon_text,
     define_color,
+    define_icon_text,
+    define_name,
 )
-from app.repository.dependencies import repository_provider
 from app.use_cases.wizishop import WiziShopManager
 
 celery_app = Celery(

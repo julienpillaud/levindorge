@@ -23,14 +23,30 @@ tactill = {git = "https://github.com/julienpillaud/tactill", rev = "v0.2.1"}
 wizishop = {git = "https://github.com/julienpillaud/wizishop", rev = "v0.1.1"}
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.1.6"
-mypy = "^1.7.1"
+ruff = "^0.1.14"
+mypy = "^1.8.0"
 pytest = "^7.4.3"
 types-pillow = "^10.1.0.2"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
 
 [[tool.mypy.overrides]]
 module = "flask_bcrypt,flask_login,celery.*,selenium.*,rollbar.*,tactill.*,wizishop.*"

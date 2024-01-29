@@ -10,7 +10,6 @@ from tactill.utils import get_query_filter
 from app.entities.article import Article, ArticleType
 from app.entities.shop import Shop
 
-
 filter_prefix = "deprecated=false&is_default=false"
 excluded_categories = ["AUTRE", "BAR", "CONSIGNE", "STREETFOOD", "VDO"]
 categories_mapping = {

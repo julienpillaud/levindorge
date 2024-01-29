@@ -17,9 +17,9 @@ from flask_login import (
     LoginManager,
     UserMixin,
     current_user,
+    login_required,
     login_user,
     logout_user,
-    login_required,
 )
 
 bcrypt = Bcrypt()
