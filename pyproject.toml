@@ -23,7 +23,7 @@ tactill = {git = "https://github.com/julienpillaud/tactill", rev = "v0.2.1"}
 wizishop = {git = "https://github.com/julienpillaud/wizishop", rev = "v0.1.1"}
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.1.14"
+ruff = "^0.3.0"
 mypy = "^1.8.0"
 pytest = "^7.4.3"
 types-pillow = "^10.1.0.2"
