@@ -1,12 +1,11 @@
 import logging
-import os
 from datetime import datetime, timezone
 from typing import Any
 
-import rollbar
-import rollbar.contrib.flask
-from flask import Flask, got_request_exception, render_template
+import logfire
+from flask import Flask, render_template
 from flask_login import current_user
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from zoneinfo import ZoneInfo
 
 from app.blueprints import articles as articles_blueprint
@@ -18,6 +17,8 @@ from app.blueprints import tasks as tasks_blueprint
 from app.config import settings
 from app.data import navbar_categories
 from app.repository.dependencies import repository_provider
+
+logfire.configure()
 
 app = Flask(__name__)
 app.secret_key = settings.SECRET_KEY
@@ -33,20 +34,7 @@ app.register_blueprint(inventory_blueprint.blueprint)
 app.register_blueprint(tags_blueprint.blueprint)
 app.register_blueprint(tasks_blueprint.blueprint)
 
-
-with app.app_context():
-    rollbar.init(
-        access_token=settings.ROLLBAR_ACCESS_TOKEN,
-        environment=settings.ENVIRONMENT,
-        # server root directory, makes tracebacks prettier
-        root=os.path.dirname(os.path.realpath(__file__)),
-        # flask already sets up logging
-        allow_logging_basic_config=False,
-    )
-
-    # send exceptions from `app` to rollbar, using flask's signal system.
-    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
-
+FlaskInstrumentor().instrument_app(app)
 
 if settings.ENVIRONMENT == "production":
     gunicorn_logger = logging.getLogger("gunicorn.error")
