@@ -1,8 +1,10 @@
 import re
 
+import logfire
 from celery import Celery
 from celery.schedules import crontab
-from celery.utils.log import get_task_logger
+from celery.signals import worker_process_init
+from opentelemetry.instrumentation.celery import CeleryInstrumentor
 from tactill import TactillError
 from tactill.entities.base import TactillResponse
 from tactill.entities.catalog.article import Article as TactillArticle
@@ -22,17 +24,18 @@ from app.use_cases.tactill import (
 )
 from app.use_cases.wizishop import WiziShopManager
 
+logfire.configure()
+
+
+@worker_process_init.connect(weak=False)
+def init_celery_tracing(*args, **kwargs):
+    CeleryInstrumentor().instrument()
+
+
 celery_app = Celery(
     "worker", broker=settings.CELERY_BROKER_URL, backend=settings.CELERY_RESULT_BACKEND
 )
 celery_app.conf.timezone = "Europe/Paris"
-
-logger = get_task_logger(__name__)
-
-
-def format_log(message: str) -> str:
-    log_divider = "\n" + "*" * 80
-    return f"{log_divider}\n{message}{log_divider}"
 
 
 @celery_app.on_after_configure.connect
@@ -120,11 +123,7 @@ def create_tactill_article(shop_username: str, article_id: str) -> None:
         article=article,
         article_type=article_type,
     )
-    logger.info(
-        format_log(
-            f"{shop.name}: {created_article.name} - article successfully created"
-        )
-    )
+    logfire.info(f"{shop.name}: {created_article.name} - article successfully created")
 
 
 @celery_app.task
@@ -152,11 +151,9 @@ def update_tactill_article(shop_username: str, article_id: str) -> None:
         tactill_name = define_name(
             list_category=article_type.list_category, article=article
         )
-        logger.info(format_log(f"{shop.name}: {tactill_name} - {result.message}"))
+        logfire.info(f"{shop.name}: {tactill_name} - {result.message}")
     if isinstance(result, TactillArticle):
-        logger.info(
-            format_log(f"{shop.name}: {result.name} - article successfully created")
-        )
+        logfire.info(f"{shop.name}: {result.name} - article successfully created")
 
 
 @celery_app.task
@@ -174,7 +171,7 @@ def delete_tactill_article_by_reference(shop_username: str, article_id: str) -> 
     manager = TactillManager(shop=shop)
     result = manager.delete_by_reference(reference=article_id)
 
-    logger.info(format_log(f"{shop.name}: {result.message}"))
+    logfire.info(f"{shop.name} - {result.message}")
 
 
 @celery_app.task(autoretry_for=(TactillError, TactillManagerError), retry_backoff=True)
@@ -185,7 +182,7 @@ def delete_tactill_article_by_id(shop_username: str, article_id: str) -> None:
     manager = TactillManager(shop=shop)
     result = manager.delete_by_id(article_id=article_id)
 
-    logger.info(format_log(f"{shop.name}: {result.message}"))
+    logfire.info(f"{shop.name} - {result.message}")
 
 
 # ==============================================================================
@@ -206,7 +203,7 @@ def clean_tactill_shop(shop_username: str) -> None:
     tactill_articles = manager.get()
     bad_articles = [article for article in tactill_articles if not article.reference]
     if not bad_articles:
-        logger.info(format_log(f"{shop.name}: no article to clean"))
+        logfire.info(f"{shop.name}: no article to clean")
     for article in bad_articles:
         delete_tactill_article_by_id.delay(shop.username, article.id)
 
@@ -249,7 +246,7 @@ def update_tactill_shop(shop_username: str) -> None:
             update_tactill_article.delay(shop.username, article.id)
 
     if not updated:
-        logger.info(format_log(f"{shop.name}: no article to update"))
+        logfire.info(f"{shop.name}: no article to update")
 
 
 # ==============================================================================
@@ -307,7 +304,7 @@ def update_dashboard_stocks(
         tactill_stock = tactill_stocks.get(article_id)
         if tactill_stock is not None and tactill_stock != dashboard_stock:
             stocks_to_update[article_id] = tactill_stock
-    logger.info(format_log(f"{shop.name} dashboard : {stocks_to_update}"))
+    logfire.info(f"{shop.name} updated : {stocks_to_update}")
 
     for article_id, stock_quantity in stocks_to_update.items():
         repository.update_article_stock_quantity(
@@ -335,7 +332,7 @@ def update_wizishop_stocks(
         tactill_stock = tactill_stocks.get(article_id)
         if tactill_stock is not None and tactill_stock != wizishop_stock:
             stocks_to_update[article_id] = tactill_stock
-    logger.info(format_log(f"Pessac WiziShop : {stocks_to_update}"))
+    logfire.info(f"Pessac WiziShop : {stocks_to_update}")
 
     for article_id, stock_quantity in stocks_to_update.items():
         client.update_sku_stock(sku=article_id, stock=stock_quantity)
