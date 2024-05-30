@@ -87,7 +87,7 @@ class InventoryManager:
                     inventory_id=inventory_id,
                     article_id=article.id,
                     article_name=article.name,
-                    article_volume=article.volume,
+                    article_volume=article.volume.value if article.volume else 0.0,
                     article_packaging=article.packaging,
                     article_deposit=article.deposit,
                     article_type=article.type,

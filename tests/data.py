@@ -5,6 +5,7 @@ from app.entities.article import (
     ArticleName,
     ArticleShopDetail,
     ArticleShops,
+    ArticleVolume,
     CreateOrUpdateArticle,
 )
 
@@ -40,7 +41,7 @@ article_to_insert = CreateOrUpdateArticle(
     region="France",
     color="Blonde",
     taste="",
-    volume=33.0,
+    volume=ArticleVolume(value=33.0, unit="cL"),
     alcohol_by_volume=8.0,
     packaging=0,
     deposit=ArticleDeposit(unit=0.0, case=0.0),

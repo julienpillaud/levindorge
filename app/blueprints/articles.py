@@ -20,6 +20,8 @@ from app.entities.article import (
     ArticleShops,
     ArticleType,
     RequestArticle,
+    RequestMargins,
+    RequestRecommendedPrices,
 )
 from app.entities.shop import Shop
 from app.use_cases.articles import (
@@ -211,18 +213,20 @@ def validate_article(article_id: str):
 @blueprint.post("/recommended_prices")
 @login_required
 def get_recommended_prices() -> Response:
-    ratio_category = request.json.get("ratio_category")
-    taxfree_price = request.json.get("taxfree_price")
-    tax = request.json.get("tax")
+    data = request.json
+    if not data:
+        return jsonify({})
+
+    request_data = RequestRecommendedPrices.model_validate(data)
 
     repository = current_app.config["repository_provider"]()
     shops = repository.get_shops()
     recommended_prices = {
         shop.username: compute_recommended_price(
-            taxfree_price=taxfree_price,
-            tax=tax,
-            shop_margins=shop.margins[ratio_category],
-            ratio_category=ratio_category,
+            taxfree_price=request_data.taxfree_price,
+            tax=request_data.tax,
+            shop_margins=shop.margins[request_data.ratio_category],
+            ratio_category=request_data.ratio_category,
         )
         for shop in shops
     }
@@ -233,12 +237,16 @@ def get_recommended_prices() -> Response:
 @blueprint.post("/margins")
 @login_required
 def get_margins() -> Response:
-    taxfree_price = request.json.get("taxfree_price")
-    tax = request.json.get("tax")
-    sell_price = request.json.get("sell_price")
+    data = request.json
+    if not data:
+        return jsonify({})
+
+    request_data = RequestMargins.model_validate(data)
 
     article_margin = compute_article_margin(
-        taxfree_price=taxfree_price, tax=tax, sell_price=sell_price
+        taxfree_price=request_data.taxfree_price,
+        tax=request_data.tax,
+        sell_price=request_data.sell_price,
     )
 
     return jsonify(article_margin.model_dump())
@@ -258,7 +266,8 @@ def format_request_name(request_form: dict[str, Any]) -> None:
 
 
 def format_request_volume(request_form: dict[str, Any]) -> None:
-    if request_volume := request_form.pop("volume", None):
+    request_volume = request_form.pop("volume", None)
+    if request_volume is not None:
         volume = ast.literal_eval(request_volume)
         request_form["volume"] = {"value": volume["value"], "unit": volume["unit"]}
     else:

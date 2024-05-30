@@ -56,8 +56,8 @@ def templates(flask_app: Flask) -> Iterator[list[tuple[Any, Any]]]:
 
 @pytest.fixture
 def database() -> Iterator[Database[Mapping[str, Any]]]:
-    uri = os.environ.get("MONGODB_URI")
-    database = os.environ.get("MONGODB_DATABASE")
+    uri = os.environ["MONGODB_URI"]
+    database = os.environ["MONGODB_DATABASE"]
     client: MongoClient[Mapping[str, Any]] = MongoClient(uri)
     yield client[database]
     client.close()
@@ -67,7 +67,7 @@ def database() -> Iterator[Database[Mapping[str, Any]]]:
 def inserted_article(database: Database[Mapping[str, Any]]) -> Iterator[Article]:
     result = database.catalog.insert_one(article_to_insert.model_dump())
     article_id = result.inserted_id
-    yield Article(id=article_id, **article_to_insert.model_dump())
+    yield Article(id=article_id, **article_to_insert.model_dump())  # type: ignore
     database.catalog.delete_one({"_id": ObjectId(article_id)})
 
 

@@ -64,7 +64,7 @@ class RequestArticle(BaseModel):
 
     @field_validator("excise_duty", "social_security_levy", mode="before")
     def empty_to_zero(cls, value: float | str) -> float:
-        return 0.0 if value == "" else value
+        return 0.0 if value == "" else float(value)
 
     @property
     def taxfree_price(self) -> float:
@@ -114,3 +114,15 @@ class TagArticle(Article):
 
 class ExtendedArticle(Article):
     article_type: ArticleType
+
+
+class RequestRecommendedPrices(BaseModel):
+    ratio_category: str
+    taxfree_price: float
+    tax: float
+
+
+class RequestMargins(BaseModel):
+    taxfree_price: float
+    tax: float
+    sell_price: float

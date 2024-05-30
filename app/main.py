@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime, timezone
 from typing import Any
 
@@ -34,12 +33,9 @@ app.register_blueprint(inventory_blueprint.blueprint)
 app.register_blueprint(tags_blueprint.blueprint)
 app.register_blueprint(tasks_blueprint.blueprint)
 
-FlaskInstrumentor().instrument_app(app)
-
-if settings.ENVIRONMENT == "production":
-    gunicorn_logger = logging.getLogger("gunicorn.error")
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
+FlaskInstrumentor().instrument_app(
+    app, excluded_urls="articles/margins,articles/recommended_prices,static/*"
+)
 
 
 @app.errorhandler(401)

@@ -56,12 +56,16 @@ class PriceTag:
 
     @staticmethod
     def convert_volume(article: TagArticle) -> str:
+        if not article.volume:
+            return ""
+
         if article.volume.value > 100 and article.volume.unit == "cL":
             volume = article.volume.value / 100
             unit = "L"
         else:
             volume = article.volume.value
             unit = article.volume.unit
+
         return str(volume).rstrip("0").rstrip(".").replace(".", ",") + unit
 
     @staticmethod
