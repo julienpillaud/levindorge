@@ -1,59 +1,59 @@
 services:
 
   traefik:
-    container_name: "traefik"
-    image: "traefik:v2.10"
-    restart: "always"
+    container_name: traefik
+    image: traefik:v2.10
+    restart: always
     ports:
-      - "80:80"
-      - "443:443"
+      - 80:80
+      - 443:443
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "certificates:/certificates"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - certificates:/certificates
     command:
-      - "--accesslog"
-      - "--log"
-      - "--providers.docker"
-      - "--providers.docker.exposedbydefault=false"
+      - --accesslog
+      - --log
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
 
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      - "--entrypoints.websecure.address=:443"
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
 
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=${LETS_ENCRYPT_EMAIL}"
-      - "--certificatesresolvers.myresolver.acme.storage=/certificates/acme.json"
+      - --certificatesresolvers.myresolver.acme.tlschallenge=true
+      - --certificatesresolvers.myresolver.acme.email=${LETS_ENCRYPT_EMAIL}
+      - --certificatesresolvers.myresolver.acme.storage=/certificates/acme.json
 
   app:
-    container_name: "app"
+    container_name: app
     build: .
-    restart: "always"
+    restart: always
     env_file:
-      - ".env"
+      - .env
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.app.loadbalancer.server.port=8000"
-      - "traefik.http.routers.app.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.app.entrypoints=websecure"
-      - "traefik.http.routers.app.tls.certresolver=myresolver"
+      - traefik.enable=true
+      - traefik.http.services.app.loadbalancer.server.port=8000
+      - traefik.http.routers.app.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.app.entrypoints=websecure
+      - traefik.http.routers.app.tls.certresolver=myresolver
 
   redis:
-    container_name: "redis"
-    image: "redis:7.2"
-    restart: "always"
+    container_name: redis
+    image: redis:7.2
+    restart: always
 
   worker:
-    container_name: "worker"
+    container_name: worker
     depends_on:
-      - "redis"
+      - redis
     environment:
-      - "CELERY_RESULT_PERSISTENT=true"
+      - CELERY_RESULT_PERSISTENT=true
     build: .
-    restart: "always"
+    restart: always
     env_file:
-      - ".env"
-    command: "celery -A app.worker worker -B --loglevel=info"
+      - .env
+    command: celery -A app.worker worker -B --loglevel=info
 
 volumes:
   certificates:
