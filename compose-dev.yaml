@@ -1,82 +1,59 @@
 services:
 
   traefik:
-    container_name: "traefik"
-    image: "traefik:v2.10"
-    restart: "always"
+    container_name: traefik
+    image: traefik:v2.10
+    restart: always
     ports:
-      - "80:80"
+      - 80:80
+      - 8080:8080
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
     command:
-      - "--accesslog"
-      - "--log"
-      - "--providers.docker"
-      - "--providers.docker.exposedbydefault=false"
-
-      - "--entrypoints.web.address=:80"
+      # Tells Traefik to listen to docker
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+      # Enables the web UI
+      - --api.insecure=true
+      # Enables logs
+      - --accesslog
+      - --log
+      - --log.level=DEBUG
+      #
+      - --entrypoints.web.address=:80
 
   app:
-    container_name: "app"
+    container_name: app
     build: .
-    restart: "always"
+    restart: always
     env_file:
-      - ".env"
+      - .env
     volumes:
-      - ".:/code"
+      - .:/code
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.app.loadbalancer.server.port=8000"
-      - "traefik.http.routers.app.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.app.entrypoints=web"
+      # Explicitly tell Traefik to expose this container
+      - traefik.enable=true
+      # The domain the service will respond to
+      - traefik.http.routers.app.rule=Host(`${DOMAIN}`)
+      # Allow request only from the predefined entry point named "web"
+      - traefik.http.routers.app.entrypoints=web
+      #
+      - traefik.http.services.app.loadbalancer.server.port=8000
 
   redis:
-    container_name: "redis"
-    image: "redis:7.2"
-    restart: "always"
+    container_name: redis
+    image: redis:7.2
+    restart: always
 
   worker:
-    container_name: "worker"
+    container_name: worker
     depends_on:
-      - "redis"
+      - redis
     environment:
-      - "CELERY_RESULT_PERSISTENT=true"
+      - CELERY_RESULT_PERSISTENT=true
     build: .
-    restart: "always"
+    restart: always
     env_file:
-      - ".env"
-    command: "celery -A app.worker worker -B --loglevel=info"
-
-  flower:
-    container_name: "flower"
-    image: "mher/flower"
-    restart: "always"
-    depends_on:
-      - "redis"
-    environment:
-      - "FLOWER_URL_PREFIX=flower"
-      - "FLOWER_PURGE_OFFLINE_WORKERS=1"
-    command: "celery --broker=redis://redis:6379 flower"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.flower.loadbalancer.server.port=5555"
-      - "traefik.http.routers.flower.rule=Host(`${DOMAIN}`) && PathPrefix(`/flower`)"
-      - "traefik.http.routers.flower.entrypoints=web"
-      - "traefik.http.routers.flower.middlewares=flower_auth"
-      - "traefik.http.middlewares.flower_auth.basicauth.users=${FLOWER_BASICAUTH}"
-
-  dozzle:
-    container_name: "dozzle"
-    image: "amir20/dozzle"
-    restart: "always"
-    environment:
-      - "DOZZLE_BASE=/logs"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
-      - "traefik.http.routers.dozzle.rule=Host(`${DOMAIN}`) && PathPrefix(`/logs`)"
-      - "traefik.http.routers.dozzle.entrypoints=web"
-      - "traefik.http.routers.dozzle.middlewares=dozzle_auth"
-      - "traefik.http.middlewares.dozzle_auth.basicauth.users=${DOZZLE_BASICAUTH}"
+      - .env
+    command: celery -A app.worker worker -B --loglevel=info

@@ -8,19 +8,26 @@ services:
       - 80:80
       - 443:443
     volumes:
+      # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
+      #
       - certificates:/certificates
     command:
-      - --accesslog
-      - --log
+      # Tells Traefik to listen to docker
       - --providers.docker
       - --providers.docker.exposedbydefault=false
+      # Enables logs
+      - --accesslog
+      - --log
+      - --log.level=DEBUG
 
+      # https://doc.traefik.io/traefik/routing/entrypoints/#redirection
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
       - --entrypoints.websecure.address=:443
 
+      # https://doc.traefik.io/traefik/user-guides/docker-compose/acme-tls/
       - --certificatesresolvers.myresolver.acme.tlschallenge=true
       - --certificatesresolvers.myresolver.acme.email=${LETS_ENCRYPT_EMAIL}
       - --certificatesresolvers.myresolver.acme.storage=/certificates/acme.json
@@ -32,11 +39,16 @@ services:
     env_file:
       - .env
     labels:
+      # Explicitly tell Traefik to expose this container
       - traefik.enable=true
-      - traefik.http.services.app.loadbalancer.server.port=8000
+      # The domain the service will respond to
       - traefik.http.routers.app.rule=Host(`${DOMAIN}`)
+      # Allow request only from the predefined entry point named "websecure"
       - traefik.http.routers.app.entrypoints=websecure
+      # Uses the Host rule to define which certificate to issue
       - traefik.http.routers.app.tls.certresolver=myresolver
+      #
+      - traefik.http.services.app.loadbalancer.server.port=8000
 
   redis:
     container_name: redis
