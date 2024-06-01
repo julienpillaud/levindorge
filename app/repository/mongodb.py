@@ -91,11 +91,11 @@ class MongoRepository(IRepository):
             sort_key = "created_at"
             filter.update({"validated": False})
 
-        articles = self.database.catalog.find(filter).sort(sort_key)
+        articles = self.database.articles.find(filter).sort(sort_key)
         return [Article.model_validate(article) for article in articles]
 
     def get_extended_articles(self) -> list[ExtendedArticle]:
-        articles = self.database.catalog.aggregate(
+        articles = self.database.articles.aggregate(
             [
                 {
                     "$lookup": {
@@ -114,7 +114,7 @@ class MongoRepository(IRepository):
         """Retrieve a list of articles filtered by list category."""
         article_types = self.get_article_types_by_list(list_category)
         article_types_names = [x.name for x in article_types]
-        articles = self.database.catalog.find(
+        articles = self.database.articles.find(
             {"type": {"$in": article_types_names}}
         ).sort(
             [
@@ -128,36 +128,36 @@ class MongoRepository(IRepository):
 
     def get_article_by_id(self, article_id: str) -> Article:
         """Retrieve an article by its unique id."""
-        article = self.database.catalog.find_one({"_id": ObjectId(article_id)})
+        article = self.database.articles.find_one({"_id": ObjectId(article_id)})
         return Article.model_validate(article)
 
     def create_article(self, article: CreateOrUpdateArticle) -> InsertOneResult:
         """Create a new article."""
-        return self.database.catalog.insert_one(article.model_dump())
+        return self.database.articles.insert_one(article.model_dump())
 
     def update_article(
         self, article_id: str, article: CreateOrUpdateArticle
     ) -> UpdateResult:
         """Update an existing article."""
-        return self.database.catalog.replace_one(
+        return self.database.articles.replace_one(
             {"_id": ObjectId(article_id)}, article.model_dump()
         )
 
     def update_article_stock_quantity(
         self, article_id: str, stock_quantity: int, shop: Shop
     ) -> UpdateResult:
-        return self.database.catalog.update_one(
+        return self.database.articles.update_one(
             {"_id": ObjectId(article_id)},
             {"$set": {f"shops.{shop.username}.stock_quantity": stock_quantity}},
         )
 
     def delete_article(self, article_id: str) -> DeleteResult:
         """Delete an article."""
-        return self.database.catalog.delete_one({"_id": ObjectId(article_id)})
+        return self.database.articles.delete_one({"_id": ObjectId(article_id)})
 
     def validate_article(self, article_id: str) -> UpdateResult:
         """Set the 'validated' field to true."""
-        return self.database.catalog.update_one(
+        return self.database.articles.update_one(
             {"_id": ObjectId(article_id)}, {"$set": {"validated": True}}, upsert=False
         )
 
@@ -216,11 +216,11 @@ class MongoRepository(IRepository):
 
     def item_is_used(self, category: str, item: Item) -> bool:
         if category == "distributors":
-            return bool(self.database.catalog.find_one({"distributor": item.name}))
+            return bool(self.database.articles.find_one({"distributor": item.name}))
         elif category in {"breweries", "distilleries"}:
-            return bool(self.database.catalog.find_one({"name.name1": item.name}))
+            return bool(self.database.articles.find_one({"name.name1": item.name}))
         elif category in {"countries", "regions"}:
-            return bool(self.database.catalog.find_one({"region": item.name}))
+            return bool(self.database.articles.find_one({"region": item.name}))
         else:
             return False
 
@@ -256,7 +256,7 @@ class MongoRepository(IRepository):
     def volume_is_used(self, volume) -> bool:
         types = self.database.types.find({"volume_category": volume.category})
         return bool(
-            self.database.catalog.find_one(
+            self.database.articles.find_one(
                 {"volume": volume.value, "type": {"$in": [x["name"] for x in types]}}
             )
         )
@@ -290,26 +290,26 @@ class MongoRepository(IRepository):
         deposit_type_mapping = {"Unitaire": "unit", "Caisse": "case"}
         deposit_key = deposit_type_mapping[deposit.deposit_type]
         return bool(
-            self.database.catalog.find_one({f"deposit.{deposit_key}": deposit.value})
+            self.database.articles.find_one({f"deposit.{deposit_key}": deposit.value})
         )
 
     # --------------------------------------------------------------------------
     # inventory
     def get_inventories(self) -> list[Inventory]:
-        inventories = self.database.inventory.find()
+        inventories = self.database.inventories.find()
         return [Inventory.model_validate(inventory) for inventory in inventories]
 
     def get_inventory(self, inventory_id: str) -> Inventory:
-        inventory = self.database.inventory.find_one({"_id": ObjectId(inventory_id)})
+        inventory = self.database.inventories.find_one({"_id": ObjectId(inventory_id)})
         return Inventory.model_validate(inventory)
 
     def create_inventory(self, inventory: CreateInventory) -> InsertOneResult:
-        return self.database.inventory.insert_one(inventory.model_dump())
+        return self.database.inventories.insert_one(inventory.model_dump())
 
     def update_inventory(
         self, inventory_id: str, inventory: UpdateInventory
     ) -> UpdateResult:
-        return self.database.inventory.update_one(
+        return self.database.inventories.update_one(
             {"_id": ObjectId(inventory_id)},
             {
                 "$set": {
@@ -321,7 +321,7 @@ class MongoRepository(IRepository):
         )
 
     def delete_inventory(self, inventory_id: str) -> DeleteResult:
-        return self.database.inventory.delete_one({"_id": ObjectId(inventory_id)})
+        return self.database.inventories.delete_one({"_id": ObjectId(inventory_id)})
 
     def get_inventory_records(self, inventory_id: str) -> list[InventoryRecord]:
         inventory_records = self.database.inventory_records.find(
