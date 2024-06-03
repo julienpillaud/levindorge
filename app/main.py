@@ -4,7 +4,6 @@ from typing import Any
 import logfire
 from flask import Flask, render_template
 from flask_login import current_user
-from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from zoneinfo import ZoneInfo
 
 from app.blueprints import articles as articles_blueprint
@@ -16,8 +15,6 @@ from app.blueprints import tasks as tasks_blueprint
 from app.config import settings
 from app.data import navbar_categories
 from app.repository.dependencies import repository_provider
-
-logfire.configure()
 
 app = Flask(__name__)
 app.secret_key = settings.SECRET_KEY
@@ -33,7 +30,8 @@ app.register_blueprint(inventory_blueprint.blueprint)
 app.register_blueprint(tags_blueprint.blueprint)
 app.register_blueprint(tasks_blueprint.blueprint)
 
-FlaskInstrumentor().instrument_app(
+logfire.configure()
+logfire.instrument_flask(
     app, excluded_urls="articles/margins,articles/recommended_prices,static/*"
 )
 
