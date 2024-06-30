@@ -103,7 +103,7 @@ def compute_recommended_price(
     ratio_category: str,
 ) -> float:
     ratio = shop_margins.ratio
-    if ratio_category == "spirit" and taxfree_price >= 100:
+    if ratio_category == "spirit" and taxfree_price >= 100:  # noqa: PLR2004
         ratio += 10
 
     if shop_margins.operator == "+":
@@ -111,7 +111,7 @@ def compute_recommended_price(
     else:
         price = (taxfree_price * ratio) * (1 + tax / 100)
 
-    if shop_margins.decimal_round < 0.1:
+    if shop_margins.decimal_round < 0.1:  # noqa: PLR2004
         return math.ceil(price * (1 / shop_margins.decimal_round)) / (
             1 / shop_margins.decimal_round
         )

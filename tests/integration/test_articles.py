@@ -43,7 +43,7 @@ def test_create_article_view(
 
 
 @pytest.mark.parametrize("data", [article_data])
-@mock.patch("app.blueprints.articles.TactillManager", mock.MagicMock())
+@mock.patch("app.blueprints.articles.create_tactill_articles", mock.MagicMock())
 def test_create_article(
     client: FlaskClient,
     database: Database[Mapping[str, Any]],
@@ -55,7 +55,7 @@ def test_create_article(
     response = client.post("/articles/create/beer", data=data)
     assert response.status_code == http.HTTPStatus.FOUND
 
-    article = database.catalog.find_one({"name.name2": "TEST"})
+    article = database.articles.find_one({"name.name2": "TEST"})
     assert article
     article_to_delete.append(article["_id"])
 
@@ -126,7 +126,7 @@ def test_update_article(
     response = client.post(f"/articles/update/{article_id}", data=data)
     assert response.status_code == http.HTTPStatus.FOUND
 
-    article = database.catalog.find_one({"_id": ObjectId(article_id)})
+    article = database.articles.find_one({"_id": ObjectId(article_id)})
     assert article
     assert article["type"] == inserted_article.type
     assert article["name"]["name1"] == inserted_article.name.name1

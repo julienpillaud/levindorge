@@ -3,7 +3,6 @@ services:
   traefik:
     container_name: traefik
     image: traefik:v2.10
-    restart: always
     ports:
       - 80:80
       - 8080:8080
@@ -26,7 +25,6 @@ services:
   app:
     container_name: app
     build: .
-    restart: always
     env_file:
       - .env
     volumes:
@@ -44,7 +42,6 @@ services:
   redis:
     container_name: redis
     image: redis:7.2
-    restart: always
 
   worker:
     container_name: worker
@@ -53,7 +50,6 @@ services:
     environment:
       - CELERY_RESULT_PERSISTENT=true
     build: .
-    restart: always
     env_file:
       - .env
     command: celery -A app.worker worker -B --loglevel=info

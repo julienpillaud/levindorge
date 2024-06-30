@@ -72,7 +72,7 @@ article_data = {
     "name2": article_to_insert.name.name2,
     "region": article_to_insert.region,
     "color": article_to_insert.color,
-    "volume": article_to_insert.volume,
+    "volume": str(article_to_insert.volume.model_dump()),  # type: ignore
     "alcohol_by_volume": article_to_insert.alcohol_by_volume,
     "buy_price": article_to_insert.buy_price,
     "tax": article_to_insert.tax,

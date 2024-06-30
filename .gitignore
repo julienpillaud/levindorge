@@ -1,6 +1,6 @@
 __pycache__/
 .DS_Store
-.env
+*.env
 .idea/
 .mypy_cache/
 .pytest_cache/
