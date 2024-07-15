@@ -25,8 +25,22 @@
     </div>
     <div class="col-md">
         <div class="input-group">
-            <span class="input-group-text">TVA (%)</span>
-            <input type="text" class="form-control text-center bg-body-secondary" aria-label="" id="tax" name="tax" value="{{ tax | strip_zeros }}" readonly>
+            {% if list_category in ["food"] %}
+                <label class="input-group-text bg-dark-purple" for="tax">TVA (%)</label>
+                <select class="form-select text-center" id="tax" name="tax" required>
+                    <option selected></option>
+                    {% for tax_ in [5.5, 10.0] %}
+                        {% if article and article.tax == tax_ %}
+                            <option selected>{{ article.tax | strip_zeros }}</option>
+                        {% else %}
+                            <option>{{ tax_ | strip_zeros }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            {% else %}
+                <span class="input-group-text">TVA (%)</span>
+                <input type="text" class="form-control text-center bg-body-secondary" aria-label="" id="tax" name="tax" value="{{ tax | strip_zeros }}" readonly>
+            {% endif %}
         </div>
     </div>
 </div>

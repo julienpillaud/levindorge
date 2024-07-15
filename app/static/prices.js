@@ -5,7 +5,7 @@ window.addEventListener("DOMContentLoaded", function () {
     }
 
     // -------------------------------------------------------------------------
-    let buyPriceArray = document.querySelectorAll("#buy_price, #excise_duty, #social_security_levy");
+    let buyPriceArray = document.querySelectorAll("#tax, #buy_price, #excise_duty, #social_security_levy");
     buyPriceArray.forEach(function (elem) {
         elem.addEventListener("input", function () {
             computeAll();
