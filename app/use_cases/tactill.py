@@ -32,6 +32,7 @@ categories_mapping = {
     "wine": ["BIB", "VIN", "VIN EFFERVESCENT", "VIN MUTÉ"],
     "other": ["ACCESSOIRE", "ALIMENTATION", "BSA", "COFFRET", "EMBALLAGE"],
 }
+LITER_TO_CENTILITER = 100
 
 
 class TactillManagerError(Exception):
@@ -222,7 +223,7 @@ def format_volume(article: Article) -> str:
 
     volume = article.volume.value
     unit = article.volume.unit
-    if article.volume.unit == "cL" and article.volume.value > 100:
+    if article.volume.unit == "cL" and article.volume.value > LITER_TO_CENTILITER:
         volume = article.volume.value / 100
         unit = "L"
 
@@ -265,7 +266,7 @@ def define_icon_text(article: Article) -> str:
         return "    "
 
     volume = article.volume.value
-    if article.volume.unit == "cL" and article.volume.value > 100:
+    if article.volume.unit == "cL" and article.volume.value > LITER_TO_CENTILITER:
         volume = article.volume.value / 100
 
     return str(volume).rstrip("0").rstrip(".").ljust(4)

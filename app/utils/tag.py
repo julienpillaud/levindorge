@@ -11,6 +11,8 @@ from app.entities.item import Item
 
 MAX_BEER_TAGS = 9
 MAX_SPIRIT_TAGS = 40
+MAX_NAME_LENGTH = 300
+LITER_TO_CENTILITER = 100
 
 BEER_COLORS = {
     "Blonde": "blonde",
@@ -59,7 +61,7 @@ class PriceTag:
         if not article.volume:
             return ""
 
-        if article.volume.value > 100 and article.volume.unit == "cL":
+        if article.volume.value > LITER_TO_CENTILITER and article.volume.unit == "cL":
             volume = article.volume.value / 100
             unit = "L"
         else:
@@ -78,7 +80,7 @@ class PriceTag:
             return None, name1, name2
 
         length = font.getlength(name2)
-        if length <= 300:
+        if length <= MAX_NAME_LENGTH:
             return name2, None, None
 
         i = 1

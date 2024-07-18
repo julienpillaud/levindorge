@@ -1,9 +1,5 @@
 [tool.poetry]
-name = "levindorge"
-version = "0.1.0"
-description = ""
-authors = ["Julien Pillaud <julien.pillaud@gmail.com>"]
-readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -23,29 +19,29 @@ wizishop = {git = "https://github.com/julienpillaud/wizishop", rev = "v0.1.1"}
 logfire = {extras = ["celery", "flask"], version = "^0.39.0"}
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.4.7"
-mypy = "^1.10.0"
-pytest = "^7.4.3"
+ruff = "^0.5.3"
+mypy = "^1.10.1"
+pytest = "^8.2.2"
 types-pillow = "^10.1.0.2"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.ruff]
+output-format = "concise"
 
 [tool.ruff.lint]
 select = [
-    # pycodestyle
-    "E", "W",
-    # Pyflakes
-    "F",
-    # pyupgrade
-    "UP",
-    # flake8-bugbear
-    "B",
-    # flake8-simplify
-    "SIM",
-    # isort
-    "I",
+    "E", "W",  # pycodestyle
+    "F",  # Pyflakes
+    "UP",  # pyupgrade
+    "B",  # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "I",  # isort
+    "PL"  # Pylint
+]
+ignore = [
+    "PLR0911",  # Too many return statements
+    "PLR0912",  # Too many branches
+    "PLR0913",  # Too many arguments in function definition
+    "PLR0915",  # Too many statements
 ]
 
 [[tool.mypy.overrides]]

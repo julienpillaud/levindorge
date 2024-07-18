@@ -14,6 +14,9 @@ from app.entities.article import (
 from app.entities.shop import Shop, ShopMargin
 from app.interfaces.repository import IRepository
 
+SPIRIT_PRICE_RATIO_SWITCH = 100
+DECIMAL_ROUND_SWITCH = 0.1
+
 
 class ArticleManager:
     @staticmethod
@@ -103,7 +106,7 @@ def compute_recommended_price(
     ratio_category: str,
 ) -> float:
     ratio = shop_margins.ratio
-    if ratio_category == "spirit" and taxfree_price >= 100:
+    if ratio_category == "spirit" and taxfree_price >= SPIRIT_PRICE_RATIO_SWITCH:
         ratio += 10
 
     if shop_margins.operator == "+":
@@ -111,7 +114,7 @@ def compute_recommended_price(
     else:
         price = (taxfree_price * ratio) * (1 + tax / 100)
 
-    if shop_margins.decimal_round < 0.1:
+    if shop_margins.decimal_round < DECIMAL_ROUND_SWITCH:
         return math.ceil(price * (1 / shop_margins.decimal_round)) / (
             1 / shop_margins.decimal_round
         )
