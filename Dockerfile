@@ -1,4 +1,4 @@
-FROM python:3.11-slim as requirements-stage
+FROM python:3.11-slim AS requirements-stage
 
 WORKDIR /tmp
 
@@ -20,4 +20,8 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY ./app /code/app
 
-CMD ["gunicorn", "-b", "0.0.0.0:8000","-w", "4", "--log-level", "debug", "--reload", "app.main:app"]
+CMD ["gunicorn", \
+    "app.main:app", \
+    "--reload", \
+    "--bind", "0.0.0.0:8000", \
+    "--log-config-json", "app/logging/config.json"]
