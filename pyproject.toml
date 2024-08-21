@@ -14,8 +14,8 @@ pillow = "^10.1.0"
 gunicorn = "^21.2.0"
 celery = "^5.3.6"
 redis = "^5.0.1"
-tactill = {git = "https://github.com/julienpillaud/tactill", rev = "v0.2.1"}
-wizishop = {git = "https://github.com/julienpillaud/wizishop", rev = "v0.1.1"}
+tactill = {git = "https://github.com/julienpillaud/tactill", rev = "0.1.0"}
+wizishop = {git = "https://github.com/julienpillaud/wizishop", rev = "0.1.0"}
 logfire = {extras = ["celery", "flask"], version = "^0.39.0"}
 
 [tool.poetry.group.dev.dependencies]
