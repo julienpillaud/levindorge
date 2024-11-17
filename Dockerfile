@@ -1,27 +1,35 @@
-FROM python:3.11-slim AS requirements-stage
+FROM python:3.12-slim-bookworm
 
-WORKDIR /tmp
+RUN apt update && apt install -y git
 
-RUN pip install poetry
+COPY --from=ghcr.io/astral-sh/uv:0.4.29 /uv /uvx /bin/
 
-COPY ./pyproject.toml ./poetry.lock /tmp/
+# ------------------------------------------------------------------------------
+# from https://github.com/astral-sh/uv-docker-example/blob/main/Dockerfile
 
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
+# Install the project into `/app`
+WORKDIR /app
 
-FROM python:3.11-slim
+# Enable bytecode compilation
+ENV UV_COMPILE_BYTECODE=1
 
-RUN apt update && apt upgrade -y && apt install -y git
+# Copy from the cache instead of linking since it's a mounted volume
+ENV UV_LINK_MODE=copy
 
-WORKDIR /code
+# Install the project's dependencies using the lockfile and settings
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --no-install-project --no-dev
 
-COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
+# Then, add the rest of the project source code and install it
+# Installing separately from its dependencies allows optimal layer caching
+ADD . /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
+# ------------------------------------------------------------------------------
 
-COPY ./app /code/app
-
-CMD ["gunicorn", \
-    "app.main:app", \
-    "--reload", \
-    "--bind", "0.0.0.0:8000", \
-    "--log-config-json", "app/logging/config.json"]
+CMD ["gunicorn", "app.main:app", "--bind", "0.0.0.0:8000", "--log-config-json", "app/logging/config.json"]

@@ -1,4 +1,5 @@
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 from bson import ObjectId
 from pymongo import ASCENDING, DESCENDING

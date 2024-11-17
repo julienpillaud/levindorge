@@ -1,10 +1,10 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import logfire
 from flask import Flask, render_template
 from flask_login import current_user
-from zoneinfo import ZoneInfo
 
 from app.blueprints import articles as articles_blueprint
 from app.blueprints import auth as auth_blueprint
@@ -59,7 +59,7 @@ def strip_zeros(value: float) -> str:
 
 @app.template_filter()
 def local_timezone(value: datetime) -> datetime:
-    return value.replace(tzinfo=timezone.utc).astimezone(tz=ZoneInfo("Europe/Paris"))
+    return value.replace(tzinfo=UTC).astimezone(tz=ZoneInfo("Europe/Paris"))
 
 
 @app.template_filter()

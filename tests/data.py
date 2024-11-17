@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from app.entities.article import (
     ArticleDeposit,
@@ -9,7 +9,7 @@ from app.entities.article import (
     CreateOrUpdateArticle,
 )
 
-date = datetime.now(timezone.utc)
+date = datetime.now(UTC)
 
 categories_for_list_view = [
     "beer",

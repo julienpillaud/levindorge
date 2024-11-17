@@ -1,5 +1,6 @@
 import http
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 import pytest
 from flask.testing import FlaskClient

@@ -1,59 +1,29 @@
+# https://github.com/astral-sh/uv-docker-example/blob/main/compose.yml
+
 services:
-
-  traefik:
-    container_name: traefik
-    image: traefik:v2.10
-    restart: always
-    ports:
-      - 80:80
-      - 8080:8080
-    volumes:
-      # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
-    command:
-      # Tells Traefik to listen to docker
-      - --providers.docker
-      - --providers.docker.exposedbydefault=false
-      # Enables the web UI
-      - --api.insecure=true
-      # Enables logs
-      - --accesslog
-      - --log
-      - --log.level=DEBUG
-      #
-      - --entrypoints.web.address=:80
-
   app:
-    container_name: app
+    # Build the image from the Dockerfile in the current directory
     build: .
-    restart: always
+
+    # Host the application on port 8000
+    ports:
+      - "8000:8000"
+
+    # Load environment variables from .env file
     env_file:
       - .env
-    volumes:
-      - .:/code
-    labels:
-      # Explicitly tell Traefik to expose this container
-      - traefik.enable=true
-      # The domain the service will respond to
-      - traefik.http.routers.app.rule=Host(`${DOMAIN}`)
-      # Allow request only from the predefined entry point named "web"
-      - traefik.http.routers.app.entrypoints=web
-      #
-      - traefik.http.services.app.loadbalancer.server.port=8000
 
-  redis:
-    container_name: redis
-    image: redis:7.2
-    restart: always
+    develop:
+      # Create a `watch` configuration to update the app
+      watch:
+        # Sync the working directory with the `/app` directory in the container
+        - action: sync
+          path: .
+          target: /app
+          # Exclude the project virtual environment
+          ignore:
+            - .venv/
 
-  worker:
-    container_name: worker
-    depends_on:
-      - redis
-    environment:
-      - CELERY_RESULT_PERSISTENT=true
-    build: .
-    restart: always
-    env_file:
-      - .env
-    command: celery -A app.worker worker -B --loglevel=info
+        # Rebuild the image on changes to the `pyproject.toml`
+        - action: rebuild
+          path: pyproject.toml

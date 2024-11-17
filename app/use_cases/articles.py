@@ -1,5 +1,5 @@
 import math
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from app.blueprints.auth import Role, User
 from app.entities.article import (
@@ -61,7 +61,7 @@ class ArticleManager:
         article_shops: ArticleShops,
     ) -> Article:
         validated = current_user.role == Role.ADMIN
-        date = datetime.now(timezone.utc)
+        date = datetime.now(UTC)
         article_create = CreateOrUpdateArticle(
             validated=validated,
             created_by=current_user.name,
@@ -82,7 +82,7 @@ class ArticleManager:
         article: Article,
     ) -> Article:
         validated = True if current_user.role == Role.ADMIN else article.validated
-        date = datetime.now(timezone.utc)
+        date = datetime.now(UTC)
         article_update = CreateOrUpdateArticle(
             validated=validated,
             created_by=article.created_by,

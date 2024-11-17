@@ -3,10 +3,10 @@ services:
   traefik:
     container_name: traefik
     image: traefik:v2.10
-    restart: always
+    restart: unless-stopped
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -53,7 +53,7 @@ services:
   redis:
     container_name: redis
     image: redis:7.2
-    restart: always
+    restart: unless-stopped
 
   worker:
     container_name: worker
@@ -62,7 +62,7 @@ services:
     environment:
       - CELERY_RESULT_PERSISTENT=true
     build: .
-    restart: always
+    restart: unless-stopped
     env_file:
       - .env
     command: celery -A app.worker worker -B --loglevel=info
