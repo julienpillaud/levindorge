@@ -4,7 +4,6 @@ import logfire
 from celery import Celery
 from celery.schedules import crontab
 from celery.signals import worker_process_init
-from opentelemetry.instrumentation.celery import CeleryInstrumentor
 from tactill import TactillError
 from tactill.entities.base import TactillResponse
 from tactill.entities.catalog.article import Article as TactillArticle
@@ -13,6 +12,7 @@ from wizishop import WiziShopError
 from app.config import settings
 from app.entities.article import ExtendedArticle
 from app.entities.shop import Shop
+from app.repository.client import get_database
 from app.repository.dependencies import repository_provider
 from app.use_cases.articles import ArticleManager
 from app.use_cases.tactill import (
@@ -26,16 +26,15 @@ from app.use_cases.wizishop import WiziShopManager
 
 logfire.configure()
 
-
-@worker_process_init.connect(weak=False)
-def init_celery_tracing(*args, **kwargs):
-    CeleryInstrumentor().instrument()
-
-
 celery_app = Celery(
     "worker", broker=settings.CELERY_BROKER_URL, backend=settings.CELERY_RESULT_BACKEND
 )
 celery_app.conf.timezone = "Europe/Paris"
+
+
+@worker_process_init.connect
+def clear_mongodb_cache(*args, **kwargs):
+    get_database.cache_clear()
 
 
 @celery_app.on_after_configure.connect
