@@ -24,7 +24,7 @@ from app.use_cases.tactill import (
 )
 from app.use_cases.wizishop import WiziShopManager
 
-logfire.configure()
+logfire.configure(inspect_arguments=False)
 
 celery_app = Celery(
     "worker", broker=settings.CELERY_BROKER_URL, backend=settings.CELERY_RESULT_BACKEND
