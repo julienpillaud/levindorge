@@ -64,13 +64,13 @@ services:
       # Explicitly tell Traefik to expose this container
       - traefik.enable=true
       # The domain the service will respond to
-      - traefik.http.routers.app.rule=Host(`${DOMAIN}`) && PathPrefix(`/api`)
+      - traefik.http.routers.api.rule=Host(`${DOMAIN}`) && PathPrefix(`/api`)
       # Allow request only from the predefined entry point named "websecure"
-      - traefik.http.routers.app.entrypoints=websecure
+      - traefik.http.routers.api.entrypoints=websecure
       # Uses the Host rule to define which certificate to issue
-      - traefik.http.routers.app.tls.certresolver=myresolver
+      - traefik.http.routers.api.tls.certresolver=myresolver
       #
-      - traefik.http.services.app.loadbalancer.server.port=8001
+      - traefik.http.services.api.loadbalancer.server.port=8001
 
   redis:
     container_name: redis
