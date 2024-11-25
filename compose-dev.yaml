@@ -2,8 +2,11 @@
 
 services:
   app:
+    container_name: app
     # Build the image from the Dockerfile in the current directory
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
     # Host the application on port 8000
     ports:
       - "8000:8000"
@@ -25,6 +28,26 @@ services:
         - action: rebuild
           path: pyproject.toml
 
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - .venv/
+        - action: rebuild
+          path: pyproject.toml
+
   redis:
     container_name: redis
     image: redis:7.2
@@ -38,7 +61,9 @@ services:
       - redis
     environment:
       - CELERY_RESULT_PERSISTENT=true
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
     env_file:
       - .env
     command: celery -A app.worker worker -B --loglevel=info
