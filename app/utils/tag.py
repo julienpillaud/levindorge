@@ -145,7 +145,7 @@ class PriceTag:
 
                 f.write("{% endblock %}\n")
 
-    def write_large_tag(self, f, tag_index, article, shop_code, regions):  # noqa: C901
+    def write_large_tag(self, f, tag_index, article, shop_code, regions):
         color = article.color
 
         # ----------------------------------------------------------

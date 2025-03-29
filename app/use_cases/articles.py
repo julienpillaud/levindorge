@@ -30,7 +30,7 @@ class ArticleManager:
         articles = repository.get_articles_by_list(list_category)
         ratio_category = repository.get_ratio_category(list_category)
 
-        augmented_articles = []
+        augmented_articles: list[AugmentedArticle] = []
         for article in articles:
             recommended_price = compute_recommended_price(
                 taxfree_price=article.taxfree_price,
