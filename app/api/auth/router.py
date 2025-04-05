@@ -1,8 +1,9 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form, status
+from fastapi import APIRouter, Depends, status
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.auth.dependencies import get_optional_current_user
 from app.api.auth.security import create_access_token, verify_password
@@ -30,13 +31,12 @@ async def home(
 @router.post("/")
 async def login(
     request: Request,
-    username: Annotated[str, Form()],
-    password: Annotated[str, Form()],
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     settings: Annotated[Settings, Depends(get_settings)],
     domain: Annotated[Domain, Depends(get_domain)],
 ) -> Response:
-    user = domain.get_user_by_email(email=username)
-    if not user or not verify_password(password, user.hashed_password):
+    user = domain.get_user_by_email(email=form_data.username)
+    if not user or not verify_password(form_data.password, user.hashed_password):
         return templates.TemplateResponse(
             request=request,
             name="login.html",
