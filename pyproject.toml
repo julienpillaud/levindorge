@@ -4,14 +4,14 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "celery==5.4.0",
+    "fastapi[standard]>=0.115.12",
     "flask-bcrypt==1.0.1",
     "flask-login==0.6.3",
     "flask==3.1.0",
     "gunicorn==23.0.0",
-    "logfire[celery,flask]==2.3.0",
+    "logfire[celery,flask,fastapi]>=3.12.0",
     "pillow==11.0.0",
     "pydantic-settings==2.6.1",
-    "pydantic==2.9.2",
     "pymongo==4.10.1",
     "redis==5.2.0",
     "tactill",
@@ -21,15 +21,15 @@ dependencies = [
 
 [tool.uv]
 dev-dependencies = [
-    "ruff==0.8.0",
-    "mypy==1.13.0",
-    "pytest==8.3.3",
-    "pre-commit==4.0.1",
+    "ruff==0.11.4",
+    "mypy>=1.15",
+    "pytest>=8.3",
+    "pre-commit>=4.1",
 ]
 
 [tool.uv.sources]
-wizishop = { git = "https://github.com/julienpillaud/wizishop.git", tag = "0.1.2" }
-tactill = { git = "https://github.com/julienpillaud/tactill.git", tag = "0.1.2" }
+tactill = { git = "https://github.com/julienpillaud/tactill.git", tag = "0.2.0" }
+wizishop = { git = "https://github.com/julienpillaud/wizishop.git", tag = "0.2.0" }
 
 [tool.ruff]
 output-format = "concise"
@@ -42,7 +42,8 @@ select = [
     "B",  # flake8-bugbear
     "SIM",  # flake8-simplify
     "I",  # isort
-    "PL"  # Pylint
+    "PL",  # Pylint
+    "RUF",  # ruff
 ]
 ignore = [
     "PLR0911",  # Too many return statements
