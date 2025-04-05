@@ -1,12 +1,12 @@
-from app.api.app import app_factory
-from app.core.config import Settings
-from app.core.context import Context
-from app.domain.domain import Domain
+from fastapi import FastAPI
 
-settings = Settings(_env_file=".env")  # type: ignore
+from app.api.articles.router import router as articles_router
+from app.api.auth.router import router as auth_router
+from app.api.utils import add_exceptions_handler, mount_static
 
-context = Context(settings=settings)
+app = FastAPI(openapi_url=None, root_path="/api")
+add_exceptions_handler(app=app)
+mount_static(app=app)
 
-domain = Domain(context=context)
-
-app = app_factory(domain=domain)
+app.include_router(articles_router)
+app.include_router(auth_router)

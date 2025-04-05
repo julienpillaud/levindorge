@@ -6,6 +6,7 @@ from typing import Concatenate, ParamSpec, Protocol, TypeVar
 
 from app.domain.context import ContextProtocol
 from app.domain.exceptions import DomainError
+from app.domain.users.commands import get_user_by_email_command
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,7 @@ class TransactionalContextProtocol(UnitOfWorkProtocol, ContextProtocol): ...
 
 
 class Domain:
-    def _command_handler(
+    def command_handler(
         self, func: Callable[Concatenate[TransactionalContextProtocol, P], R]
     ) -> Callable[P, R]:
         @wraps(func)
@@ -44,3 +45,5 @@ class Domain:
 
     def __init__(self, context: TransactionalContextProtocol):
         self.context = context
+
+        self.get_user_by_email = self.command_handler(get_user_by_email_command)
