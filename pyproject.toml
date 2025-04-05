@@ -4,12 +4,12 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "celery==5.4.0",
-    "fastapi[standard]>=0.115.11",
+    "fastapi[standard]>=0.115.12",
     "flask-bcrypt==1.0.1",
     "flask-login==0.6.3",
     "flask==3.1.0",
     "gunicorn==23.0.0",
-    "logfire[celery,flask]==3.8.1",
+    "logfire[celery,flask,fastapi]==3.12.0",
     "pillow==11.0.0",
     "pydantic-settings==2.6.1",
     "pymongo==4.10.1",
