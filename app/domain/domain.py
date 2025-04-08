@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from functools import wraps
 from typing import Concatenate, ParamSpec, Protocol, TypeVar
 
+from app.domain.articles.commands import get_articles_command
 from app.domain.context import ContextProtocol
 from app.domain.exceptions import DomainError
 from app.domain.users.commands import get_user_by_email_command
@@ -47,3 +48,4 @@ class Domain:
         self.context = context
 
         self.get_user_by_email = self.command_handler(get_user_by_email_command)
+        self.get_articles = self.command_handler(get_articles_command)

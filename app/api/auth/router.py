@@ -8,6 +8,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.api.auth.dependencies import get_optional_current_user
 from app.api.auth.security import create_access_token, verify_password
 from app.api.dependencies import get_domain, get_settings
+from app.api.utils import url_for_with_query
 from app.core.config import Settings
 from app.core.templates import templates
 from app.domain.domain import Domain
@@ -23,7 +24,13 @@ async def home(
 ) -> Response:
     # A valid user is already logged in
     if current_user:
-        return RedirectResponse(url="/articles", status_code=status.HTTP_302_FOUND)
+        url = url_for_with_query(
+            request,
+            name="get_articles",
+            list_category="beer",
+            query_params={"shop": current_user.shops[0].username},
+        )
+        return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 
     return templates.TemplateResponse(request=request, name="login.html")
 
@@ -45,7 +52,13 @@ async def login(
 
     access_token = create_access_token(sub=user.email, secret_key=settings.SECRET_KEY)
 
-    response = RedirectResponse(url="/articles", status_code=302)
+    url = url_for_with_query(
+        request,
+        name="get_articles",
+        list_category="beer",
+        query_params={"shop": user.shops[0].username},
+    )
+    response = RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
     response.set_cookie(
         key="access_token",
         value=f"Bearer {access_token}",
