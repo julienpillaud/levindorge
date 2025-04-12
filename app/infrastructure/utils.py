@@ -20,4 +20,5 @@ def to_user_domain(user: dict[str, Any], shops: list[dict[str, Any]]) -> User:
             )
             for shop in shops
         ],
+        role=user["role"],
     )

@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-    {% include "navbar.html" %}
 
     <div class="container-fluid padding-navbar">
         <table class="table table-striped table-bordered table-hover table-sm sortable" id="articlesList">
@@ -177,13 +176,13 @@
 
                     <!-- BUTTON -->
                     <td class="text-center" style="width: 20px">
-                        <a href="{{ url_for('articles.update_article_get', article_id=article.id) }}">
+                        <a href="{{ url_for('update_article_view', article_id=article.id) }}">
                             <i class="bi bi-pencil-square text-warning"></i>
                         </a>
                     </td>
                     {% if current_user.role in ["admin", "superuser"] %}
                         <td class="text-center" style="width: 20px">
-                            <a href="{{ url_for('articles.delete_article', article_id=article.id) }}">
+                            <a href="{{ url_for('delete_article', article_id=article.id) }}">
                                 <i class="bi bi-x-square text-danger"></i>
                             </a>
                         </td>

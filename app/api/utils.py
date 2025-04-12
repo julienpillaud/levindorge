@@ -6,7 +6,9 @@ from fastapi.datastructures import URL
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
 
+from app.api.dependencies import get_settings
 from app.domain.exceptions import DomainError, NotAuthorizedError
 
 
@@ -24,6 +26,11 @@ def add_exceptions_handler(app: FastAPI) -> None:
         if isinstance(error, NotAuthorizedError):
             return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
         return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
+
+
+def add_session_middleware(app: FastAPI) -> None:
+    settings = get_settings()
+    app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 
 
 def url_for_with_query(

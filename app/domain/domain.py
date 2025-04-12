@@ -1,4 +1,5 @@
 import logging
+import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from functools import wraps
@@ -31,15 +32,23 @@ class Domain:
     ) -> Callable[P, R]:
         @wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            start_time = time.perf_counter()
             with self.context.transaction():
                 try:
                     result = func(self.context, *args, **kwargs)
                 except DomainError as error:
                     self.context.rollback()
-                    logger.info(f"Domain error: {error} - Rolling back transaction")
+                    logger.debug(
+                        f"Command '{func.__name__}' failed with "
+                        f"{error.__class__.__name__}: {error}"
+                    )
                     raise error
 
                 self.context.commit()
+                duration = time.perf_counter() - start_time
+                logger.debug(
+                    f"Command '{func.__name__}' succeeded in {duration * 1000:.1f} ms",
+                )
                 return result
 
         return wrapper

@@ -8,6 +8,7 @@ from app.api.dependencies import get_domain, get_settings
 from app.core.config import Settings
 from app.domain.domain import Domain
 from app.domain.exceptions import NotAuthorizedError
+from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
 
@@ -37,9 +38,16 @@ def _get_user_from_token(
     if not email:
         return None
 
-    user = domain.get_user_by_email(email=email)
+    user = request.session.get("current_user")
+    if user:
+        return User.model_validate(user)
 
-    return user or None
+    user = domain.get_user_by_email(email=email)
+    if not user:
+        return None
+
+    request.session["current_user"] = user.model_dump()
+    return user
 
 
 def get_current_user(
@@ -68,3 +76,11 @@ def get_optional_current_user(
         settings=settings,
         domain=domain,
     )
+
+
+def get_current_shop(
+    request: Request,
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> Shop:
+    query_shop = request.query_params["shop"]
+    return next(shop for shop in current_user.shops if shop.username == query_shop)

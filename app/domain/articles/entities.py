@@ -1,12 +1,12 @@
 import datetime
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
 from app.domain.entities import DomainModel
 
 
-class ArticleType(BaseModel):
+class TypeInfos(BaseModel):
     name: str
     category: str
     tax: float
@@ -14,6 +14,11 @@ class ArticleType(BaseModel):
     list_category: str
     volume_category: str | None = None
     tactill_category: str
+
+
+class ArticleMargin(BaseModel):
+    margin: float
+    markup: float
 
 
 class ArticleName(BaseModel):
@@ -60,3 +65,17 @@ class Article(DomainModel):
     created_at: datetime.datetime
     updated_at: datetime.datetime
     shops: dict[str, ArticleShopDetail]
+
+    # Aggregate from db
+    type_infos: TypeInfos
+    # Computed fo view
+    recommended_price: float | None = None
+    margin: ArticleMargin | None = None
+
+    @computed_field
+    @property
+    def taxfree_price(self) -> float:
+        taxfree_price_sum = sum(
+            [self.buy_price, self.excise_duty, self.social_security_levy]
+        )
+        return round(taxfree_price_sum, 4)

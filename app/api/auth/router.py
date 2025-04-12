@@ -8,9 +8,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.api.auth.dependencies import get_optional_current_user
 from app.api.auth.security import create_access_token, verify_password
 from app.api.dependencies import get_domain, get_settings
+from app.api.templates import templates
 from app.api.utils import url_for_with_query
 from app.core.config import Settings
-from app.core.templates import templates
 from app.domain.domain import Domain
 from app.domain.users.entities import User
 
@@ -68,7 +68,8 @@ async def login(
 
 
 @router.get("/logout")
-async def logout() -> Response:
+async def logout(request: Request) -> Response:
+    request.session.clear()
     response = RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
     response.delete_cookie(key="access_token")
     return response

@@ -4,7 +4,7 @@ from typing import Any, TypeVar
 from pymongo import ASCENDING
 from pymongo.database import Database
 
-from app.domain.articles.entities import Article, ArticleType
+from app.domain.articles.entities import Article, TypeInfos
 from app.domain.entities import DomainModel
 from app.domain.repository import RepositoryProtocol
 from app.domain.users.entities import User
@@ -18,7 +18,7 @@ class MongoRepository(RepositoryProtocol):
         self.database = database
 
     @staticmethod
-    def _to_domain(db_entity: dict[str, Any], entity_type: type[T]) -> T:
+    def _to_domain(entity_type: type[T], db_entity: dict[str, Any]) -> T:
         data = deepcopy(db_entity)
         entity_id = str(data.pop("_id"))
         return entity_type(id=entity_id, **data)
@@ -35,23 +35,38 @@ class MongoRepository(RepositoryProtocol):
         article_types = self._get_article_types_by_list_category(
             list_category=list_category
         )
-        request_filter = {
-            "type": {"$in": [article_type.name for article_type in article_types]}
-        }
-        request_sort = [
-            (field, ASCENDING)
-            for field in ("type", "region", "name.name1", "name.name2")
+        article_types_names = [article_type.name for article_type in article_types]
+        pipeline = [
+            {"$match": {"type": {"$in": article_types_names}}},
+            {
+                "$lookup": {
+                    "from": "types",
+                    "localField": "type",
+                    "foreignField": "name",
+                    "as": "type_infos",
+                }
+            },
+            {"$unwind": "$type_infos"},
+            {
+                "$sort": {
+                    "type": ASCENDING,
+                    "region": ASCENDING,
+                    "name.name1": ASCENDING,
+                    "name.name2": ASCENDING,
+                }
+            },
         ]
-        articles = self.database.articles.find(request_filter).sort(request_sort)
+        articles = self.database.articles.aggregate(pipeline)
+
         return [
-            self._to_domain(db_entity=article, entity_type=Article)
+            self._to_domain(entity_type=Article, db_entity=article)
             for article in articles
         ]
 
     def _get_article_types_by_list_category(
         self, list_category: str
-    ) -> list[ArticleType]:
+    ) -> list[TypeInfos]:
         article_types = self.database.types.find({"list_category": list_category})
         return [
-            ArticleType.model_validate(article_type) for article_type in article_types
+            TypeInfos.model_validate(article_type) for article_type in article_types
         ]
