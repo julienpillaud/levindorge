@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlencode
 
@@ -8,14 +9,15 @@ from fastapi.responses import RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
-from app.api.dependencies import get_settings
+from app.core.config import Settings
 from app.domain.exceptions import DomainError, NotAuthorizedError
 
 
 def mount_static(app: FastAPI) -> None:
+    static_directory = Path(__file__).parent.parent / "application/static"
     app.mount(
         "/static",
-        StaticFiles(directory="app/application/static"),
+        StaticFiles(directory=static_directory),
         name="static",
     )
 
@@ -28,8 +30,7 @@ def add_exceptions_handler(app: FastAPI) -> None:
         return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
 
 
-def add_session_middleware(app: FastAPI) -> None:
-    settings = get_settings()
+def add_session_middleware(app: FastAPI, settings: Settings) -> None:
     app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 
 

@@ -1,0 +1,162 @@
+{% if list_category in ["food"] %}
+    {% set tax = 10.0 %}
+{% else %}
+    {% set tax = 20.0 %}
+{% endif %}
+
+{% set buy_price = "" %}
+{% set excise_duty = "" %}
+{% set social_security_levy = "" %}
+
+{% if article %}
+    {% set buy_price = article.buy_price %}
+    {% set tax = article.tax %}
+    {% set excise_duty = article.excise_duty %}
+    {% set social_security_levy = article.social_security_levy %}
+{% endif %}
+
+{# -------------------------------------------------- #}
+<div class="row mt-3">
+    <div class="col-md">
+        <div class="input-group">
+            <span class="input-group-text bg-dark-purple">Tarif HT (€)</span>
+            <input type="number" step="0.0001" min="0.0001" class="form-control text-center" aria-label="" id="buy_price" name="buy_price" value="{{ buy_price | strip_zeros }}" required>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="input-group">
+            {% if list_category in ["food"] %}
+                <label class="input-group-text bg-dark-purple" for="tax">TVA (%)</label>
+                <select class="form-select text-center" id="tax" name="tax" required>
+                    <option selected></option>
+                    {% for tax_ in [5.5, 10.0] %}
+                        {% if article and article.tax == tax_ %}
+                            <option selected>{{ article.tax | strip_zeros }}</option>
+                        {% else %}
+                            <option>{{ tax_ | strip_zeros }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            {% else %}
+                <span class="input-group-text">TVA (%)</span>
+                <input type="text" class="form-control text-center bg-body-secondary" aria-label="" id="tax" name="tax" value="{{ tax | strip_zeros }}" readonly>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{# -------------------------------------------------- #}
+{% if list_category not in ["wine", "sparkling_wine", "bib", "misc", "food"] %}
+
+<div class="row mt-3">
+    <div class="col-md">
+        <div class="input-group">
+            <span class="input-group-text bg-dark-purple">DA (€)</span>
+            <input type="number" step="0.0001" min="0" class="form-control text-center" aria-label="" id="excise_duty" name="excise_duty" value="{{ excise_duty | strip_zeros }}">
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="input-group">
+            <span class="input-group-text bg-dark-purple">CSS (€)</span>
+            <input type="number" step="0.0001" min="0" class="form-control text-center" aria-label="" id="social_security_levy" name="social_security_levy" value="{{ social_security_levy | strip_zeros }}">
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{# -------------------------------------------------- #}
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-text">Tarif HT DI (€)</span>
+            <input type="text" class="form-control text-center bg-body-secondary" aria-label="" id="taxfree_price" readonly>
+        </div>
+    </div>
+</div>
+{# -------------------------------------------------- #}
+{# Only visible on screen larger than md #}
+<div class="row d-none d-md-block mt-3">
+    <div class="col-md">
+        <div class="input-group">
+            <span class="input-group-text rounded-bottom-0" style="width: 20%"></span>
+            <input type="text" class="form-control rounded-bottom-0 text-center" aria-label="" value="PVC" readonly>
+            <input type="text" class="form-control rounded-bottom-0 text-center bg-dark-purple" aria-label="" value="Prix" readonly>
+            <input type="text" class="form-control rounded-bottom-0 text-center" aria-label="" value="Marge" readonly>
+            <input type="text" class="form-control rounded-bottom-0 text-center" aria-label="" value="Taux (%)" readonly>
+            <input type="text" class="form-control rounded-bottom-0 text-center bg-dark-purple" aria-label="" value="Prix bar" readonly>
+            <input type="text" class="form-control rounded-bottom-0 text-center" aria-label="" value="Stock" readonly>
+        </div>
+    </div>
+</div>
+
+{% for shop in current_user.shops %}
+
+    {% set sell_price = "" %}
+    {% set bar_price = 0.0 %}
+    {% set stock_quantity = "" %}
+    {% if article %}
+        {% set sell_price = article.shops[shop.username]["sell_price"] %}
+        {% set bar_price = article.shops[shop.username]["bar_price"] %}
+        {% set stock_quantity = article.shops[shop.username]["stock_quantity"] %}
+    {% endif %}
+
+    {# Only visible on screen larger than md #}
+    <div class="row d-none d-md-block">
+        <div class="col-md">
+            <div class="input-group">
+                <span class="input-group-text {% if not loop.last %}rounded-0{% else %}rounded-top-0{% endif %} bg-dark-yellow text-dark" style="width: 20%">{{ shop.name }}</span>
+                <input type="text" class="form-control {% if not loop.last %}rounded-0{% else %}rounded-top-0{% endif %} text-center bg-body-secondary" aria-label="" id="{{ 'recommended_price_' + shop.username }}" readonly>
+                <input type="number" class="form-control {% if not loop.last %}rounded-0{% else %}rounded-top-0{% endif %} text-center" step="0.01" min="0" aria-label="" id="{{ 'sell_price_' + shop.username }}" name="{{ 'sell_price_' + shop.username }}" value="{{ sell_price | strip_zeros }}" required>
+                <input type="text" class="form-control {% if not loop.last %}rounded-0{% else %}rounded-top-0{% endif %} text-center bg-body-secondary" aria-label="" id="{{ 'profit_' + shop.username }}" readonly>
+                <input type="text" class="form-control {% if not loop.last %}rounded-0{% else %}rounded-top-0{% endif %} text-center bg-body-secondary" aria-label="" id="{{ 'margin_' + shop.username }}" readonly>
+                <input type="number" class="form-control {% if not loop.last %}rounded-0{% else %}rounded-top-0{% endif %} text-center" step="0.01" min="0" aria-label="" id="{{ 'bar_price_' + shop.username }}" name="{{ 'bar_price_' + shop.username }}" value="{{ bar_price | strip_zeros }}" required>
+                <input type="text" class="form-control {% if not loop.last %}rounded-0{% else %}rounded-top-0{% endif %} text-center bg-body-secondary" aria-label="" value="{{ stock_quantity }}" readonly>
+            </div>
+        </div>
+    </div>
+
+    {# Only visible on screen smaller than md #}
+    <div class="row g-0 mt-3 d-md-none">
+        <div class="col-md">
+            <input type="text" class="form-control rounded-bottom-0 text-center bg-dark-yellow text-dark" aria-label="" value="{{ shop.name }}" readonly>
+        </div>
+        <div class="col-md">
+            <div class="input-group">
+                <span class="input-group-text rounded-0 w-25">PVC</span>
+                <input type="text" class="form-control rounded-0 text-center bg-body-secondary" aria-label="" id="{{ '_recommended_price_' + shop.username }}" readonly>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="input-group">
+                <span class="input-group-text rounded-0 w-25 bg-dark-purple">Prix</span>
+                <input type="number" step="0.01" min="0" class="form-control rounded-0 text-center" aria-label="" id="{{ '_sell_price_' + shop.username }}" name="{{ 'sell_price_' + shop.username }}" value="{{ sell_price | strip_zeros }}"
+                       required>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="input-group">
+                <span class="input-group-text rounded-0 w-25">Marge</span>
+                <input type="text" class="form-control rounded-0 text-center bg-body-secondary" aria-label="" id="{{ '_profit_' + shop.username }}" readonly>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="input-group">
+                <span class="input-group-text rounded-0 w-25">Taux (%)</span>
+                <input type="text" class="form-control rounded-0 text-center bg-body-secondary" aria-label="" id="{{ '_margin_' + shop.username }}" readonly>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="input-group">
+                <span class="input-group-text rounded-0 w-25 bg-dark-purple">Prix bar</span>
+                <input type="number" step="0.01" min="0" class="form-control rounded-0 text-center" aria-label="" id="{{ '_bar_price_' + shop.username }}" name="{{ 'bar_price_' + shop.username }}" value="{{ bar_price | strip_zeros }}"
+                       required>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="input-group">
+                <span class="input-group-text rounded-top-0 w-25">Stock</span>
+                <input type="text" class="form-control rounded-top-0 text-center bg-body-secondary" aria-label="" value="{{ stock_quantity }}" readonly>
+            </div>
+        </div>
+    </div>
+
+{% endfor %}

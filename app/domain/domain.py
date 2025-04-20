@@ -5,7 +5,17 @@ from contextlib import contextmanager
 from functools import wraps
 from typing import Concatenate, ParamSpec, Protocol, TypeVar
 
-from app.domain.articles.commands import get_articles_command
+from app.domain.articles.commands import (
+    create_article_command,
+    delete_article_command,
+    get_article_command,
+    get_articles_command,
+    update_article_command,
+)
+from app.domain.commons.commands import (
+    get_template_context_command,
+    get_type_infos_command,
+)
 from app.domain.context import ContextProtocol
 from app.domain.exceptions import DomainError
 from app.domain.users.commands import get_user_by_email_command
@@ -58,3 +68,10 @@ class Domain:
 
         self.get_user_by_email = self.command_handler(get_user_by_email_command)
         self.get_articles = self.command_handler(get_articles_command)
+        self.get_article = self.command_handler(get_article_command)
+        self.create_article = self.command_handler(create_article_command)
+        self.update_article = self.command_handler(update_article_command)
+        self.delete_article = self.command_handler(delete_article_command)
+
+        self.get_type_infos = self.command_handler(get_type_infos_command)
+        self.get_template_context = self.command_handler(get_template_context_command)

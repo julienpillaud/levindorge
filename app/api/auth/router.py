@@ -26,7 +26,7 @@ async def home(
     if current_user:
         url = url_for_with_query(
             request,
-            name="get_articles",
+            name="get_articles_view",
             list_category="beer",
             query_params={"shop": current_user.shops[0].username},
         )
@@ -54,7 +54,7 @@ async def login(
 
     url = url_for_with_query(
         request,
-        name="get_articles",
+        name="get_articles_view",
         list_category="beer",
         query_params={"shop": user.shops[0].username},
     )

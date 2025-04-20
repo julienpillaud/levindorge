@@ -1,6 +1,9 @@
+from pathlib import Path
+
 from fastapi.templating import Jinja2Templates
 
-templates = Jinja2Templates(directory="app/application/templates")
+base_dir = Path(__file__).parents[2]
+templates = Jinja2Templates(directory=base_dir / "app/application/templates")
 
 
 def strip_zeros(value: float) -> str:

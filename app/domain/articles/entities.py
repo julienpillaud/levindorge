@@ -42,7 +42,7 @@ class ArticleShopDetail(BaseModel):
     stock_quantity: int
 
 
-class Article(DomainModel):
+class BaseArticle(BaseModel):
     type: str
     name: ArticleName
     buy_price: float
@@ -58,24 +58,37 @@ class Article(DomainModel):
     alcohol_by_volume: float = 0.0
     packaging: int = 0
     deposit: ArticleDeposit
-    food_pairing: list[str]
+    food_pairing: list[str] = []
     biodynamic: str = ""
-    validated: bool
-    created_by: str
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
     shops: dict[str, ArticleShopDetail]
-
-    # Aggregate from db
-    type_infos: TypeInfos
-    # Computed fo view
-    recommended_price: float | None = None
-    margin: ArticleMargin | None = None
 
     @computed_field
     @property
     def taxfree_price(self) -> float:
-        taxfree_price_sum = sum(
-            [self.buy_price, self.excise_duty, self.social_security_levy]
+        return round(
+            sum([self.buy_price, self.excise_duty, self.social_security_levy]), 4
         )
-        return round(taxfree_price_sum, 4)
+
+
+class ArticleCreateOrUpdate(BaseArticle):
+    pass
+
+
+class ArticleToDb(BaseArticle):
+    created_by: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    validated: bool = False
+
+
+class Article(DomainModel, BaseArticle):
+    created_by: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    validated: bool = False
+    type_infos: TypeInfos
+
+
+class AugmentedArticle(Article):
+    recommended_price: float
+    margin: ArticleMargin

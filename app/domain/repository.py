@@ -1,6 +1,6 @@
-from typing import Protocol
+from typing import Any, Protocol
 
-from app.domain.articles.entities import Article
+from app.domain.articles.entities import Article, ArticleToDb, TypeInfos
 from app.domain.users.entities import User
 
 
@@ -8,3 +8,17 @@ class RepositoryProtocol(Protocol):
     def get_user_by_email(self, email: str) -> User | None: ...
 
     def get_articles_by_list_category(self, list_category: str) -> list[Article]: ...
+
+    def get_article_by_id(self, article_id: str) -> Article: ...
+
+    def create_article(self, article: ArticleToDb) -> Article: ...
+
+    def update_article(self, article: Article) -> Article: ...
+
+    def delete_article(self, article: Article) -> None: ...
+
+    def get_type_infos_by_list_category(
+        self, list_category: str
+    ) -> list[TypeInfos]: ...
+
+    def get_template_context(self, volume_category: str | None) -> dict[str, Any]: ...

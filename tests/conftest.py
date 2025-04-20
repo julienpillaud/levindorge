@@ -1,79 +1,76 @@
 import os
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator
 from typing import Any
 
+import jwt
 import pytest
-from bson import ObjectId
 from dotenv import load_dotenv
-from flask import Flask, template_rendered
-from flask.testing import FlaskClient
-from flask_login import FlaskLoginClient
 from pymongo import MongoClient
 from pymongo.database import Database
+from starlette.testclient import TestClient
 
-from app.blueprints.auth import Role, User
-from app.entities.article import Article
-from app.main import app
-from tests.data import article_to_insert
+from app.api.app import create_app
+from app.api.dependencies import get_settings
+from app.core.config import Settings
+
+pytest_plugins = ["tests.fixtures.articles"]
 
 load_dotenv()
 
 
-@pytest.fixture
-def flask_app() -> Flask:
-    app.test_client_class = FlaskLoginClient
-    app.config.update({"TESTING": True})
-    return app
-
-
-@pytest.fixture
-def client(flask_app: Flask) -> FlaskClient:
-    user = User(
-        name="Test",
-        username="test",
-        email="user@levindorge.com",
-        password="password",
-        role=Role.USER,
-        shops=["pessac"],
+@pytest.fixture(scope="session")
+def settings() -> Settings:
+    return Settings(
+        ENVIRONMENT="test",
+        SECRET_KEY=os.environ["SECRET_KEY"],
+        MONGODB_URI=os.environ["MONGODB_URI"],
+        MONGODB_DATABASE="test",
+        WIZISHOP_EMAIL="",
+        WIZISHOP_PASSWORD="",
+        CELERY_BROKER_URL="",
+        CELERY_RESULT_BACKEND="",
+        LOGFIRE_TOKEN="",
+        LOGFIRE_SERVICE_NAME="",
     )
-    with flask_app.test_client(user=user) as client:
-        return client
 
 
-@pytest.fixture
-def templates(flask_app: Flask) -> Iterator[list[tuple[Any, Any]]]:
-    recorded = []
-
-    def record(sender, template, context, **extra):
-        recorded.append((template, context))
-
-    template_rendered.connect(record, flask_app)
-    try:
-        yield recorded
-    finally:
-        template_rendered.disconnect(record, flask_app)
-
-
-@pytest.fixture
-def database() -> Iterator[Database[Mapping[str, Any]]]:
-    uri = os.environ["MONGODB_URI"]
-    database = os.environ["MONGODB_DATABASE"]
-    client: MongoClient[Mapping[str, Any]] = MongoClient(uri)
-    yield client[database]
+@pytest.fixture(scope="session")
+def database(settings: Settings) -> Iterator[Database[dict[str, Any]]]:
+    client = MongoClient(settings.MONGODB_URI)
+    database = client[settings.MONGODB_DATABASE]
+    yield database
+    for collection in ["users", "articles"]:
+        database[collection].delete_many({})
     client.close()
 
 
-@pytest.fixture
-def inserted_article(database: Database[Mapping[str, Any]]) -> Iterator[Article]:
-    result = database.catalog.insert_one(article_to_insert.model_dump())
-    article_id = result.inserted_id
-    yield Article(id=article_id, **article_to_insert.model_dump())  # type: ignore
-    database.catalog.delete_one({"_id": ObjectId(article_id)})
+@pytest.fixture(scope="session")
+def test_user(database: Database[dict[str, Any]]) -> dict[str, Any]:
+    user_data = {
+        "name": "Test",
+        "username": "test_user",
+        "email": "test@email.com",
+        "password": "hashed_password",
+        "role": "user",
+        "shops": ["shop-test"],
+    }
+    database["users"].insert_one(user_data)
+    return user_data
 
 
-@pytest.fixture
-def article_to_delete(database: Database[Mapping[str, Any]]) -> Iterator[list[str]]:
-    to_delete: list[str] = []
-    yield to_delete
-    for article_id in to_delete:
-        database.catalog.delete_one({"_id": ObjectId(article_id)})
+@pytest.fixture(scope="session")
+def client(settings: Settings, test_user: dict[str, Any]) -> Iterator[TestClient]:
+    token = jwt.encode(
+        {"sub": test_user["email"]},
+        os.environ["SECRET_KEY"],
+        algorithm="HS256",
+    )
+
+    def get_settings_override() -> Settings:
+        return settings
+
+    app = create_app(settings=settings)
+
+    app.dependency_overrides[get_settings] = get_settings_override
+    yield TestClient(app, cookies={"access_token": f"Bearer {token}"})
+    app.dependency_overrides.clear()

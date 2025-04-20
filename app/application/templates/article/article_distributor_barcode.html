@@ -1,0 +1,27 @@
+<div class="row mt-3">
+    <div class="col-md">
+
+        <div class="input-group">
+            <label class="input-group-text bg-dark-purple" for="distributor">Fournisseur</label>
+            <select class="form-select text-center" id="distributor" name="distributor" required>
+                <option selected></option>
+                {% for x in distributors %}
+                    {% if article and x.name == article.distributor %}
+                        <option selected>{{ x.name }}</option>
+                    {% else %}
+                        <option>{{ x.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+    </div>
+    <div class="col-md">
+
+        <div class="input-group">
+            <span class="input-group-text bg-dark-purple">Code-barres</span>
+            <input type="text" class="form-control text-center" aria-label="" name="barcode" {% if article %}value="{{ article.barcode }}"{% endif %}>
+        </div>
+
+    </div>
+</div>
