@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block content %}
+    {% include "navbar.html" %}
+
+    <div class="container-fluid padding-navbar">
+        <table class="table table-striped table-bordered table-hover table-sm sortable" id="articlesList">
+            <thead class="sticky" style="--sticky-top: 53px">
+            <tr>
+                <th class="text-center align-middle bg-light-purple" role="button">#</th>
+
+                <!-- NAME 1 -->
+                {% if list_category in ["beer", "keg", "mini_keg"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">Brasserie</th>
+                {% elif list_category in ["cider"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">Cidrerie</th>
+                {% elif list_category in ["rhum", "whisky", "arranged", "spirit"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">Distillerie</th>
+                {% elif list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">Appellation</th>
+                {% else %}
+                    <th class="text-center align-middle bg-light-purple" role="button">Désignation</th>
+                {% endif %}
+
+                <!-- NAME 2 -->
+                {% if list_category not in ["box", "misc", "food"] %}
+                    {% if list_category in ["beer", "keg", "mini_keg"] %}
+                        <th class="text-center align-middle bg-light-purple" role="button">Bière</th>
+                    {% elif list_category in ["cider"] %}
+                        <th class="text-center align-middle bg-light-purple" role="button">Cidre</th>
+                    {% elif list_category in ["rhum", "whisky", "arranged", "spirit"] %}
+                        <th class="text-center align-middle bg-light-purple" role="button">Spiritueux</th>
+                    {% elif list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}
+                        <th class="text-center align-middle bg-light-purple" role="button">Produit</th>
+                    {% endif %}
+                {% endif %}
+
+                <!-- REGION -->
+                {% if list_category not in ["box", "misc", "food"] %}
+                    {% if list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}
+                        <th class="text-center align-middle bg-light-purple" role="button">Région</th>
+                    {% else %}
+                        <th class="text-center align-middle bg-light-purple" role="button">Pays</th>
+                    {% endif %}
+                {% endif %}
+
+                <!-- COLOR / TASTE -->
+                {% if list_category not in ["arranged", "box", "misc", "food"] %}
+                    {% if list_category in ["rhum", "whisky", "spirit"] %}
+                        <th class="text-center align-middle bg-light-purple" role="button">Saveur</th>
+                    {% else %}
+                        <th class="text-center align-middle bg-light-purple" role="button">Couleur</th>
+                    {% endif %}
+                {% endif %}
+
+                <!-- VOLUME -->
+                {% if list_category not in ["box", "misc", "food"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">Vol</th>
+                {% endif %}
+
+                <!-- ALCOHOL_BY_VOLUME -->
+                {% if list_category not in ["wine", "fortified_wine", "sparkling_wine", "bib", "box", "misc", "food"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">Deg</th>
+                {% endif %}
+
+                <!-- PRICE -->
+                <th class="text-center align-middle bg-light-purple text-nowrap" role="button">HT DI</th>
+                {% if list_category not in ["misc", "food"] %}
+                    <th class="text-center align-middle bg-light-purple text-nowrap" role="button">PVC</th>
+                {% endif %}
+                <th class="text-center align-middle bg-light-purple text-nowrap" role="button">TTC</th>
+                <th class="text-center align-middle bg-light-purple text-nowrap" role="button">M (€)</th>
+                <th class="text-center align-middle bg-light-purple text-nowrap" role="button">Tm (%)</th>
+
+                <!-- STOCK -->
+                <th class="text-center align-middle bg-light-purple" role="button">Stock</th>
+
+                <!-- DISTRIBUTOR -->
+                <th class="text-center align-middle bg-light-purple" role="button">Fournisseur</th>
+
+                <!-- PACKAGING / DEPOSIT -->
+                {% if list_category in ["beer"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">Cond</th>
+                {% endif %}
+                {% if list_category in ["beer"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">C.Btle</th>
+                {% endif %}
+                {% if list_category in ["keg", "mini_keg"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">Cons</th>
+                {% endif %}
+                {% if list_category in ["beer"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">C.Cai</th>
+                {% endif %}
+                <!-- TYPE -->
+                {% if list_category in ["spirit", "fortified_wine",  "misc"] %}
+                    <th class="text-center align-middle bg-light-purple" role="button">Type</th>
+                {% endif %}
+
+                <!-- BUTTON -->
+                {% if current_user.role in ["admin", "superuser"] %}
+                    <th class="bg-light-purple not-sortable"></th>
+                {% endif %}
+                <th class="bg-light-purple not-sortable"></th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for x in articles %}
+                <tr>
+                    <td class="text-center font-weight-bold">{{ loop.index }}</td>
+
+                    <!-- NAME 1 -->
+                    <td class="">{{ x.name.name1 }}</td>
+
+                    <!-- NAME 2 -->
+                    {% if list_category not in ["box", "misc", "food"] %}
+                        <td class="">{{ x.name.name2 }}</td>
+                    {% endif %}
+
+                    <!-- REGION -->
+                    {% if list_category not in ["box", "misc", "food"] %}
+                        <td class="text-center">{{ x.region }}</td>
+                    {% endif %}
+
+                    <!-- COLOR / TASTE -->
+                    {% if list_category not in ["arranged", "box", "misc", "food"] %}
+                        {% if list_category in ["rhum", "whisky", "spirit"] %}
+                            <td class="text-center">{{ x.taste }}</td>
+                        {% else %}
+                            <td class="text-center">{{ x.color }}</td>
+                        {% endif %}
+                    {% endif %}
+
+                    <!-- VOLUME -->
+                    {% if list_category not in ["box", "misc", "food"] %}
+                        <td class="text-center">{{ x.volume.value | strip_zeros }}</td>
+                    {% endif %}
+
+                    <!-- ALCOHOL_BY_VOLUME -->
+                    {% if list_category not in ["wine", "fortified_wine", "sparkling_wine", "bib", "box", "misc", "food"] %}
+                        <td class="text-center">{{ x.alcohol_by_volume | strip_zeros }}</td>
+                    {% endif %}
+
+                    <!-- PRICE -->
+                    <td class="text-center">{{ x.taxfree_price | strip_zeros }}</td>
+                    {% if list_category not in ["misc", "food"] %}
+                        <td class="text-center recommended_price">{{ x.shops[current_shop.username].recommended_price | strip_zeros }}</td>
+                    {% endif %}
+                    <td class="text-center sell_price">
+                        {{ x.shops[current_shop.username]["sell_price"] | strip_zeros }}
+                    </td>
+                    <td class="text-center">{{ x.shops[current_shop.username].margins.margin | strip_zeros }}</td>
+                    <td class="text-center">{{ x.shops[current_shop.username].margins.markup | strip_zeros }}</td>
+
+                    <!-- STOCK -->
+                    <td class="text-center stock_quantity">
+                        {{ x.shops[current_shop.username]["stock_quantity"] if x.shops[current_shop.username]["stock_quantity"] }}
+                    </td>
+
+                    <!-- DISTRIBUTOR -->
+                    <td class="text-center">{{ x.distributor }}</td>
+
+                    <!-- PACKAGING / DEPOSIT -->
+                    {% if list_category in ["beer"] %}
+                        <td class="text-center">{{ x.packaging if x.packaging }}</td>
+                    {% endif %}
+                    {% if list_category in ["beer", "keg", "mini_keg"] %}
+                        <td class="text-center">{{ x.deposit.unit | strip_zeros  if x.deposit.unit }}</td>
+                    {% endif %}
+                    {% if list_category in ["beer"] %}
+                        <td class="text-center">{{ x.deposit.case | strip_zeros  if x.deposit.case }}</td>
+                    {% endif %}
+
+                    <!-- TYPE -->
+                    {% if list_category in ["spirit", "fortified_wine", "misc"] %}
+                        <td class="text-center">{{ x.type }}</td>
+                    {% endif %}
+
+                    <!-- BUTTON -->
+                    <td class="text-center" style="width: 20px">
+                        <a href="{{ url_for('update_article_view', article_id=x.id) }}">
+                            <i class="bi bi-pencil-square text-warning"></i>
+                        </a>
+                    </td>
+                    {% if current_user.role in ["admin", "superuser"] %}
+                        <td class="text-center" style="width: 20px">
+                            <a href="{{ url_for('delete_article', article_id=x.id) }}">
+                                <i class="bi bi-x-square text-danger"></i>
+                            </a>
+                        </td>
+                    {% endif %}
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
