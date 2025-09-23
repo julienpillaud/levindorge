@@ -6,8 +6,9 @@ from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 
+from app.api.dependencies import get_domain, get_settings
 from app.app.auth.dependencies import get_current_shop, get_current_user
-from app.app.dependencies import get_domain, get_settings, get_templates
+from app.app.dependencies import get_templates
 from app.app.price_labels.dtos import PriceLabelRequest
 from app.app.utils import url_for_with_query
 from app.core.config import Settings

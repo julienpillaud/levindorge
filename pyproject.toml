@@ -5,7 +5,7 @@ requires-python = ">=3.12"
 dependencies = [
     "celery==5.4.0",
     "cleanstack[fastapi,mongo]",
-    "fastapi[standard]>=0.115.12",
+    "fastapi[standard]>=0.117",
     "flask-bcrypt==1.0.1",
     "flask-login==0.6.3",
     "flask==3.1.0",
@@ -24,14 +24,15 @@ dependencies = [
 [tool.uv]
 dev-dependencies = [
     "ruff==0.13.1",
-    "mypy==1.17.1",
+    "mypy==1.18.2",
     "pytest==8.4.2",
     "pre-commit==4.3.0",
     "types-passlib>=1.7",
+    "polyfactory==2.22.2",
 ]
 
 [tool.uv.sources]
-tactill = { git = "https://github.com/julienpillaud/tactill.git", tag = "0.2.0" }
+tactill = { git = "https://github.com/julienpillaud/tactill.git", tag = "0.5.1" }
 wizishop = { git = "https://github.com/julienpillaud/wizishop.git", tag = "0.2.0" }
 cleanstack = { git = "https://github.com/julienpillaud/cleanstack", tag = "0.5.0" }
 

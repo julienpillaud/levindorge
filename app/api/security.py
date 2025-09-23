@@ -1,7 +1,16 @@
 import jwt
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
+from pydantic import BaseModel
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

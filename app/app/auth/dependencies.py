@@ -6,7 +6,7 @@ from fastapi import Depends
 from fastapi.params import Query
 from fastapi.requests import Request
 
-from app.app.dependencies import get_domain, get_settings
+from app.api.dependencies import get_domain, get_settings
 from app.core.config import Settings
 from app.domain.domain import Domain
 from app.domain.exceptions import UserUnauthorizedError

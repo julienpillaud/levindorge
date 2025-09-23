@@ -6,9 +6,10 @@ from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 
+from app.api.dependencies import get_domain
 from app.app.articles.dtos import ArticleDTO, MarginsRequestDTO, PriceRequestDTO
 from app.app.auth.dependencies import get_current_shop, get_current_user
-from app.app.dependencies import get_domain, get_templates
+from app.app.dependencies import get_templates
 from app.app.utils import url_for_with_query
 from app.domain.articles.entities import ArticleCreateOrUpdate, ArticleMargins
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
@@ -29,7 +30,7 @@ def get_articles_view(
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     list_category: DisplayGroup,
 ) -> Response:
-    articles = domain.get_articles_by_category(display_group=list_category)
+    articles = domain.get_articles_by_display_group(display_group=list_category)
     return templates.TemplateResponse(
         request=request,
         name="article_list.html",

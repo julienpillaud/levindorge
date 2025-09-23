@@ -4,7 +4,7 @@ from app.domain.articles.commands import (
     create_article_command,
     delete_article_command,
     get_article_command,
-    get_articles_by_category_command,
+    get_articles_by_display_group_command,
     get_articles_command,
 )
 from app.domain.commons.commands import get_view_data_command
@@ -23,7 +23,9 @@ class Domain(BaseDomain[ContextProtocol]):
     get_user_by_email = CommandHandler(get_user_by_email_command)
     # articles
     get_articles = CommandHandler(get_articles_command)
-    get_articles_by_category = CommandHandler(get_articles_by_category_command)
+    get_articles_by_display_group = CommandHandler(
+        get_articles_by_display_group_command
+    )
     get_article = CommandHandler(get_article_command)
     create_article = CommandHandler(create_article_command)
     delete_article = CommandHandler(delete_article_command)

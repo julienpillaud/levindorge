@@ -6,9 +6,10 @@ from fastapi.responses import RedirectResponse, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
 
+from app.api.dependencies import get_domain, get_settings
+from app.api.security import create_access_token, verify_password
 from app.app.auth.dependencies import get_optional_current_user
-from app.app.auth.security import create_access_token, verify_password
-from app.app.dependencies import get_domain, get_settings, get_templates
+from app.app.dependencies import get_templates
 from app.app.utils import url_for_with_query
 from app.core.config import Settings
 from app.domain.commons.entities import DisplayGroup

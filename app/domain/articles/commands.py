@@ -13,7 +13,7 @@ def get_articles_command(context: ContextProtocol) -> list[Article]:
     return context.repository.get_all_articles()
 
 
-def get_articles_by_category_command(
+def get_articles_by_display_group_command(
     context: ContextProtocol,
     display_group: DisplayGroup,
 ) -> list[Article]:

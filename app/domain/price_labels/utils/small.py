@@ -7,7 +7,6 @@ from app.domain.articles.entities import Article
 from app.domain.price_labels.entities import PriceLabelWrapper
 from app.domain.price_labels.utils.common import (
     chunk_price_labels,
-    convert_volume,
     define_name,
     get_file_path,
     normalize_attribute,
@@ -91,7 +90,7 @@ def write_small_price_labels(
     # ----------------------------------------------------------
     file.write('<div class="bottomlineClass">\n')
     # ----------------------------------------------------------
-    volume = convert_volume(article=article)
+    volume = article.formated_volume(",")
     file.write(f'<div class="bottleClass">{volume}</div>')
     # ----------------------------------------------------------
     sell_price = article.shops[shop.username].sell_price

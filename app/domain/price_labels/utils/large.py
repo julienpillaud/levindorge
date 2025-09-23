@@ -9,7 +9,6 @@ from app.domain.context import ContextProtocol
 from app.domain.price_labels.entities import PriceLabelWrapper
 from app.domain.price_labels.utils.common import (
     chunk_price_labels,
-    convert_volume,
     define_beer_name,
     define_name,
     get_file_path,
@@ -101,7 +100,7 @@ def write_large_price_labels(
 
     # top line
     if pricing_group in {"beer", "keg", "mini_keg"}:
-        volume = convert_volume(article=article)
+        volume = article.formated_volume(",")
         demonym = regions_mapping[article.region].demonym
         top_line = f"{color} - {volume} - {demonym}"
         file.write(f'<div class="toplinebeerClass brandonClass">{top_line}</div>\n')
@@ -151,7 +150,7 @@ def write_large_price_labels(
     elif pricing_group == "mini_keg":
         file.write('<div class="consigneClass">Consigne : 7, 50 €</div>\n')
     elif pricing_group in {"wine", "sparkling_wine", "bib"}:
-        volume = convert_volume(article=article)
+        volume = article.formated_volume(",")
         file.write(f'<div class="volumeClass">{volume}</div>\n')
 
     file.write("</div>\n")

@@ -104,19 +104,6 @@ def normalize_attribute(attr: str) -> str:
     return ATTRIBUTES_MAPPING[attr]
 
 
-def convert_volume(article: Article) -> str:
-    if not article.volume:
-        return ""
-
-    value, unit = article.volume.value, article.volume.unit
-    if unit == "cL" and value > LITER_TO_CENTILITER:
-        value = value / 100
-        unit = "L"
-
-    formatted_value = str(value).rstrip("0").rstrip(".").replace(".", ",")
-    return f"{formatted_value}{unit}"
-
-
 def define_beer_name(
     article: Article,
     font: FreeTypeFont,
