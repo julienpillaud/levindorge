@@ -2,7 +2,9 @@ from cleanstack.domain import BaseDomain, CommandHandler
 
 from app.domain.articles.commands import (
     create_article_command,
+    create_pos_article_command,
     delete_article_command,
+    delete_pos_article_command,
     get_article_command,
     get_articles_by_display_group_command,
     get_articles_command,
@@ -29,6 +31,9 @@ class Domain(BaseDomain[ContextProtocol]):
     get_article = CommandHandler(get_article_command)
     create_article = CommandHandler(create_article_command)
     delete_article = CommandHandler(delete_article_command)
+    # POS article
+    create_pos_article = CommandHandler(create_pos_article_command)
+    delete_pos_article = CommandHandler(delete_pos_article_command)
     # price_labels
     create_price_labels = CommandHandler(create_price_labels_command)
     get_price_labels_files = CommandHandler(get_price_labels_files_command)

@@ -3,6 +3,7 @@ from typing import Any, Protocol
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import ArticleType, DisplayGroup, Item
 from app.domain.entities import PyObjectId
+from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
 
@@ -10,12 +11,16 @@ class RepositoryProtocol(Protocol):
     # Collection 'users'
     def get_user_by_email(self, email: str) -> User | None: ...
 
+    # Collection shops
+    def get_shops(self) -> list[Shop]: ...
+
     # Collection 'types'
     def get_article_types(
         self,
         name: str | None = None,
         display_group: DisplayGroup | None = None,
     ) -> list[ArticleType]: ...
+    def get_article_type_by_name(self, name: str) -> ArticleType: ...
     def get_article_types_by_list(
         self,
         display_group: DisplayGroup,

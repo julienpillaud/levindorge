@@ -2,6 +2,7 @@ import logfire
 
 from app.app.app import create_app
 from app.core.config import Settings
+from app.core.core import initialize_app
 
 settings = Settings()
 logfire.configure(
@@ -13,5 +14,6 @@ logfire.configure(
     console=False,
 )
 app = create_app(settings=settings)
+initialize_app(settings=settings, app=app)
 logfire.instrument_fastapi(app, capture_headers=True, extra_spans=True)
 logfire.instrument_pymongo(capture_statement=True)

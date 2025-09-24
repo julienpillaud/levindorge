@@ -1,22 +1,60 @@
+from collections.abc import Callable
+from functools import wraps
+from typing import Concatenate, ParamSpec, TypeVar
+
 from tactill import TactillClient
-from tactill.entities.catalog.article import Article as TactillArticle
 from tactill.entities.catalog.article import ArticleCreation
 from tactill.entities.catalog.category import Category
 from tactill.entities.catalog.tax import Tax
 
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import DisplayGroup
+from app.domain.protocols.pos_manager import POSManagerProtocol
 from app.domain.shops.entities import Shop
 from app.infrastructure.tactill.utils import define_color, define_icon_text, define_name
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
 class TactillManagerError(Exception):
     pass
 
 
-class TactillManager:
-    def __init__(self, api_key: str) -> None:
-        self.client = TactillClient(api_key=api_key)
+class TactillManager(POSManagerProtocol):
+    def __init__(self) -> None:
+        self._client: TactillClient | None = None
+        self._current_shop: Shop | None = None
+
+    @property
+    def client(self) -> TactillClient:
+        if self._client is None:
+            raise TactillManagerError()
+        return self._client
+
+    @client.setter
+    def client(self, value: TactillClient) -> None:
+        self._client = value
+
+    @staticmethod
+    def with_client(
+        func: Callable[Concatenate["TactillManager", Shop, P], R],
+    ) -> Callable[Concatenate["TactillManager", Shop, P], R]:
+        @wraps(func)
+        def wrapper(
+            self: "TactillManager",
+            shop: Shop,
+            /,
+            *args: P.args,
+            **kwargs: P.kwargs,
+        ) -> R:
+            if self._current_shop != shop or self._client is None:
+                self._client = TactillClient(api_key=shop.tactill_api_key)
+                self._current_shop = shop
+
+            return func(self, shop, *args, **kwargs)
+
+        return wrapper
 
     def get_category(self, name: str) -> Category:
         filter_ = f"deprecated=false&is_default=false&name={name}"
@@ -34,13 +72,15 @@ class TactillManager:
 
         return taxes[0]
 
-    def create(
+    @with_client
+    def create_article(
         self,
-        article: Article,
         shop: Shop,
+        /,
+        article: Article,
         category_name: str,
         display_group: DisplayGroup,
-    ) -> TactillArticle:
+    ) -> None:
         tactill_category = self.get_category(name=category_name)
         tactill_tax = self.get_tax(tax_rate=article.tax)
 
@@ -55,4 +95,19 @@ class TactillManager:
             reference=article.id,
             in_stock=True,
         )
-        return self.client.create_article(article_creation=article_creation)
+        self.client.create_article(article_creation=article_creation)
+
+    @with_client
+    def delete_article_by_reference(
+        self,
+        shop: Shop,
+        /,
+        reference: str,
+    ) -> None:
+        filter_ = f"deprecated=false&is_default=false&reference={reference}"
+        articles = self.client.get_articles(filter=filter_)
+        if not articles:
+            raise TactillManagerError()
+
+        article = articles[0]
+        self.client.delete_article(article_id=article.id)

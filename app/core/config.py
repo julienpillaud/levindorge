@@ -1,6 +1,6 @@
 from zoneinfo import ZoneInfo
 
-from pydantic import computed_field
+from pydantic import RedisDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.paths import AppPaths
@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     mongo_port: int = 27017
     mongo_database: str
 
+    redis_host: str
+    redis_port: int = 6379
+    redis_scheme: str = "redis"
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def mongo_uri(self) -> str:
@@ -40,3 +44,12 @@ class Settings(BaseSettings):
                 f"mongodb+srv://{self.mongo_user}:{self.mongo_password}"
                 f"@{self.mongo_host}/?retryWrites=true&w=majority"
             )
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def redis_dsn(self) -> RedisDsn:
+        return RedisDsn.build(
+            host=self.redis_host,
+            port=self.redis_port,
+            scheme=self.redis_scheme,
+        )

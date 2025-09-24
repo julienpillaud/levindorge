@@ -10,7 +10,7 @@ from pymongo.database import Database
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import ArticleType, Deposit, DisplayGroup, Item, Volume
 from app.domain.entities import PyObjectId
-from app.domain.repository import RepositoryProtocol
+from app.domain.protocols.repository import RepositoryProtocol
 from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
@@ -49,6 +49,10 @@ class MongoRepository(RepositoryProtocol):
             role=user["role"],
         )
 
+    # Collection shops
+    def get_shops(self) -> list[Shop]:
+        return [Shop(**shop) for shop in self.database["shops"].find()]
+
     # Collection 'types'
     def get_article_types(
         self,
@@ -63,6 +67,13 @@ class MongoRepository(RepositoryProtocol):
 
         article_types = self.database["types"].find(query_filter)
         return [ArticleType(**article_type) for article_type in article_types]
+
+    def get_article_type_by_name(self, name: str) -> ArticleType:
+        article_type = self.database["types"].find_one({"name": name})
+        if not article_type:
+            raise NotFoundError()
+
+        return ArticleType(**article_type)
 
     def get_article_types_by_list(
         self,

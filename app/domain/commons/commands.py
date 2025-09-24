@@ -21,3 +21,10 @@ def get_view_data_command(
         article_type_names=[x.name for x in article_types],
         items=items,
     )
+
+
+def test_redis_command(context: ContextProtocol) -> None:
+    article_types = context.repository.get_article_types(
+        name="Bière",
+    )
+    context.event_publisher.publish("test", article_types)
