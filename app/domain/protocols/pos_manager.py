@@ -14,6 +14,14 @@ class POSManagerProtocol(Protocol):
         category_name: str,
         display_group: DisplayGroup,
     ) -> None: ...
+    def update_article(
+        self,
+        shop: Shop,
+        /,
+        article: Article,
+        category_name: str,
+        display_group: DisplayGroup,
+    ) -> None: ...
     def delete_article_by_reference(
         self,
         shop: Shop,

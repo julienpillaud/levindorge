@@ -12,10 +12,6 @@ def create_app(settings: Settings) -> FastAPI:
     app = FastAPI(
         title=settings.project_name,
         version=settings.api_version,
-        swagger_ui_parameters={
-            "tryItOutEnabled": True,
-            "displayRequestDuration": True,
-        },
     )
 
     add_session_middleware(app=app, settings=settings)

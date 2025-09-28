@@ -1,4 +1,4 @@
-from app.domain.commons.entities import DisplayGroup, ViewData
+from app.domain.commons.entities import ArticleType, DisplayGroup, ViewData
 from app.domain.context import ContextProtocol
 
 
@@ -21,6 +21,10 @@ def get_view_data_command(
         article_type_names=[x.name for x in article_types],
         items=items,
     )
+
+
+def get_article_type_command(context: ContextProtocol, name: str) -> ArticleType:
+    return context.repository.get_article_type_by_name(name=name)
 
 
 def test_redis_command(context: ContextProtocol) -> None:

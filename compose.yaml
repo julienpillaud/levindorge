@@ -1,71 +1,31 @@
 services:
 
-  traefik:
-    container_name: traefik
-    image: traefik:v2.10
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
-      #
-      - certificates:/certificates
-    command:
-      # Tells Traefik to listen to docker
-      - --providers.docker
-      - --providers.docker.exposedbydefault=false
-      # Enables logs
-      - --accesslog
-      - --log
-      - --log.level=DEBUG
-
-      # https://doc.traefik.io/traefik/routing/entrypoints/#redirection
-      - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entryPoint.to=websecure
-      - --entrypoints.web.http.redirections.entryPoint.scheme=https
-      - --entrypoints.websecure.address=:443
-
-      # https://doc.traefik.io/traefik/user-guides/docker-compose/acme-tls/
-      - --certificatesresolvers.myresolver.acme.tlschallenge=true
-      - --certificatesresolvers.myresolver.acme.email=${LETS_ENCRYPT_EMAIL}
-      - --certificatesresolvers.myresolver.acme.storage=/certificates/acme.json
-
-  app:
-    container_name: app
-    build: .
+  backend:
+    container_name: backend
+    image: ghcr.io/julienpillaud/levindorge:0.0.1
     restart: always
+    networks:
+      - traefik-public
     env_file:
       - .env
     labels:
-      # Explicitly tell Traefik to expose this container
       - traefik.enable=true
-      # The domain the service will respond to
-      - traefik.http.routers.app.rule=Host(`${DOMAIN}`)
-      # Allow request only from the predefined entry point named "websecure"
-      - traefik.http.routers.app.entrypoints=websecure
-      # Uses the Host rule to define which certificate to issue
-      - traefik.http.routers.app.tls.certresolver=myresolver
-      #
-      - traefik.http.services.app.loadbalancer.server.port=8000
+      - traefik.docker.network=traefik-public
+      - traefik.constraint-label=traefik-public
 
-  redis:
-    container_name: redis
-    image: redis:7.2
-    restart: unless-stopped
+      - traefik.http.services.backend.loadbalancer.server.port=8000
 
-  worker:
-    container_name: worker
-    depends_on:
-      - redis
-    environment:
-      - CELERY_RESULT_PERSISTENT=true
-    build: .
-    restart: unless-stopped
-    env_file:
-      - .env
-    command: celery -A app.worker worker -B --loglevel=info
+      - traefik.http.routers.backend-http.rule=Host(`${HOST?Variable not set}`)
+      - traefik.http.routers.backend-http.entrypoints=http
 
-volumes:
-  certificates:
+      - traefik.http.routers.backend-https.rule=Host(`${HOST?Variable not set}`)
+      - traefik.http.routers.backend-https.entrypoints=https
+      - traefik.http.routers.backend-https.tls=true
+      - traefik.http.routers.backend-https.tls.certresolver=le
+
+      # Enable redirection for HTTP and HTTPS
+      - traefik.http.routers.backend-http.middlewares=https-redirect
+
+networks:
+  traefik-public:
+    external: true

@@ -108,6 +108,31 @@ def update_article_view(
     )
 
 
+@router.post("/update/{article_id}")
+def update_article(
+    request: Request,
+    current_user: Annotated[User, Depends(get_current_user)],
+    domain: Annotated[Domain, Depends(get_domain)],
+    form_data: Annotated[ArticleDTO, Form()],
+    article_id: str,
+) -> Response:
+    article_update = ArticleCreateOrUpdate(**form_data.model_dump())
+    article = domain.update_article(
+        current_user=current_user,
+        article_id=article_id,
+        data=article_update,
+    )
+
+    article_type = domain.get_article_type(name=article.type)
+    url = url_for_with_query(
+        request,
+        name="get_articles_view",
+        list_category=article_type.display_group,
+        query_params={"shop": current_user.shops[0].username},
+    )
+    return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
+
+
 @router.get("/delete/{article_id}")
 def delete_article(
     request: Request,

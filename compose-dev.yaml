@@ -1,57 +1,8 @@
-# https://github.com/astral-sh/uv-docker-example/blob/main/compose.yml
-
 services:
   app:
-    # Build the image from the Dockerfile in the current directory
     build: .
-    # Host the application on port 8000
+    image: levindorge:latest
     ports:
       - "8000:8000"
-    # Load environment variables from .env file
     env_file:
       - .env
-
-    develop:
-      # Create a `watch` configuration to update the app
-      watch:
-        # Sync the working directory with the `/app` directory in the container
-        - action: sync
-          path: .
-          target: /app
-          # Exclude the project virtual environment
-          ignore:
-            - .venv/
-        # Rebuild the image on changes to the `pyproject.toml`
-        - action: rebuild
-          path: pyproject.toml
-
-  redis:
-    container_name: redis
-    image: redis:7.2
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-
-  worker:
-    container_name: worker
-    depends_on:
-      - redis
-    environment:
-      - CELERY_RESULT_PERSISTENT=true
-    build: .
-    env_file:
-      - .env
-    command: celery -A app.worker worker -B --loglevel=info
-    develop:
-      # Create a `watch` configuration to update the worker
-      watch:
-        # Sync the working directory with the `/app` directory in the container
-        - action: sync
-          path: .
-          target: /app
-          # Exclude the project virtual environment
-          ignore:
-            - .venv/
-        # Rebuild the image on changes to the `pyproject.toml`
-        - action: rebuild
-          path: pyproject.toml

@@ -62,6 +62,8 @@ def split_by_size(
     small_labels = []
     for item in price_labels:
         article = context.repository.get_article(article_id=item.article_id)
+        if not article:
+            continue
         pricing_group = article_types_mapping[article.type].pricing_group
 
         wrapper = PriceLabelWrapper(

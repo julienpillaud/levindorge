@@ -5,8 +5,7 @@ from cleanstack.exceptions import NotFoundError
 from app.domain.articles.entities import Article, ArticleCreateOrUpdate
 from app.domain.commons.entities import DisplayGroup
 from app.domain.context import ContextProtocol
-from app.domain.entities import PyObjectId
-from app.domain.shops.entities import Shop
+from app.domain.entities import EntityId
 from app.domain.users.entities import User
 
 
@@ -18,11 +17,15 @@ def get_articles_by_display_group_command(
     context: ContextProtocol,
     display_group: DisplayGroup,
 ) -> list[Article]:
-    return context.repository.get_articles_by_list(display_group=display_group)
+    return context.repository.get_articles_by_display_group(display_group=display_group)
 
 
 def get_article_command(context: ContextProtocol, article_id: str) -> Article:
-    return context.repository.get_article(article_id=article_id)
+    article = context.repository.get_article(article_id=article_id)
+    if not article:
+        raise NotFoundError()
+
+    return article
 
 
 def create_article_command(
@@ -39,32 +42,51 @@ def create_article_command(
         created_at=current_time,
         updated_at=current_time,
     )
-    article = context.repository.create_article(article=article)
+    created_article = context.repository.create_article(article=article)
 
     for shop in context.repository.get_shops():
         context.event_publisher.publish(
             "create.article",
-            {"shop": shop, "article": article},
+            {"shop": shop, "article": created_article},
         )
 
-    return article
+    return created_article
 
 
-def create_pos_article_command(
+def update_article_command(
     context: ContextProtocol,
-    shop: Shop,
-    article: Article,
-) -> None:
-    article_type = context.repository.get_article_type_by_name(name=article.type)
-    context.pos_manager.create_article(
-        shop,
-        article=article,
-        category_name=article_type.tactill_category,
-        display_group=article_type.display_group,
+    current_user: User,
+    article_id: EntityId,
+    data: ArticleCreateOrUpdate,
+) -> Article:
+    existing_article = context.repository.get_article(article_id=article_id)
+    if not existing_article:
+        raise NotFoundError()
+
+    article = Article(
+        id=existing_article.id,
+        **data.model_dump(),
+        validated=existing_article.validated,
+        created_by=current_user.name,
+        created_at=existing_article.created_at,
+        updated_at=datetime.datetime.now(datetime.UTC),
     )
 
+    updated_article = context.repository.update_article(article=article)
 
-def delete_article_command(context: ContextProtocol, article_id: PyObjectId) -> None:
+    for shop in context.repository.get_shops():
+        context.event_publisher.publish(
+            "update.article",
+            {"shop": shop, "article": updated_article},
+        )
+
+    return updated_article
+
+
+def delete_article_command(
+    context: ContextProtocol,
+    article_id: EntityId,
+) -> None:
     article = context.repository.get_article(article_id=article_id)
     if not article:
         raise NotFoundError()
@@ -76,11 +98,3 @@ def delete_article_command(context: ContextProtocol, article_id: PyObjectId) -> 
             "delete.article",
             {"shop": shop, "article_id": article_id},
         )
-
-
-def delete_pos_article_command(
-    context: ContextProtocol,
-    shop: Shop,
-    article_id: PyObjectId,
-) -> None:
-    context.pos_manager.delete_article_by_reference(shop, reference=article_id)

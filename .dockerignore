@@ -4,3 +4,19 @@ __pycache__/
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
+
+.github/
+.venv/
+
+scripts/
+tests/
+
+# flask app related : to remove after migration
+app/blueprints/
+app/entities/
+app/interfaces/
+app/logging/
+app/repository/
+app/templates/
+app/use_cases/
+app/utils/

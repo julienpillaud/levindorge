@@ -9,10 +9,14 @@ from pymongo.database import Database
 
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import ArticleType, Deposit, DisplayGroup, Item, Volume
-from app.domain.entities import PyObjectId
+from app.domain.entities import EntityId
 from app.domain.protocols.repository import RepositoryProtocol
 from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
+
+
+class MongoRepositoryError(Exception):
+    pass
 
 
 class MongoRepository(RepositoryProtocol):
@@ -87,7 +91,9 @@ class MongoRepository(RepositoryProtocol):
         articles = self.database["articles"].find().sort("type")
         return [Article.model_validate(article) for article in articles]
 
-    def get_articles_by_list(self, display_group: DisplayGroup) -> list[Article]:
+    def get_articles_by_display_group(
+        self, display_group: DisplayGroup
+    ) -> list[Article]:
         article_types = self.get_article_types_by_list(display_group)
         article_types_names = [x.name for x in article_types]
         articles = (
@@ -102,21 +108,36 @@ class MongoRepository(RepositoryProtocol):
                 ]
             )
         )
-        return [Article.model_validate(article) for article in articles]
+        return [Article(**article) for article in articles]
 
-    def get_article(self, article_id: PyObjectId) -> Article:
+    def get_article(self, article_id: EntityId) -> Article | None:
         article = self.database["articles"].find_one({"_id": ObjectId(article_id)})
-        if not article:
-            raise NotFoundError()
-
-        return Article.model_validate(article)
+        return Article(**article) if article else None
 
     def create_article(self, article: Article) -> Article:
-        result = self.database["articles"].insert_one(article.model_dump())
-        return self.get_article(article_id=result.inserted_id)
+        result = self.database["articles"].insert_one(
+            article.model_dump(exclude={"id"})
+        )
+        return self._get_article_by_id(article_id=result.inserted_id)
+
+    def update_article(self, article: Article) -> Article:
+        result = self.database["articles"].replace_one(
+            {"_id": ObjectId(article.id)},
+            article.model_dump(exclude={"id"}),
+        )
+        if not result.modified_count:
+            raise MongoRepositoryError()
+        return self._get_article_by_id(article_id=article.id)
 
     def delete_article(self, article: Article) -> None:
         self.database["articles"].delete_one({"_id": ObjectId(article.id)})
+
+    def _get_article_by_id(self, article_id: str) -> Article:
+        article_db = self.database["articles"].find_one({"_id": ObjectId(article_id)})
+        if not article_db:
+            raise NotFoundError()
+
+        return Article(**article_db)
 
     # Items
     def get_items_dict(self, volume_category: str | None) -> dict[str, Any]:

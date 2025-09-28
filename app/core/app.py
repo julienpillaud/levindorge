@@ -13,7 +13,9 @@ logfire.configure(
     environment=settings.environment,
     console=False,
 )
+# Should be before any pymongo import
+logfire.instrument_pymongo(capture_statement=True)
+
 app = create_app(settings=settings)
 initialize_app(settings=settings, app=app)
 logfire.instrument_fastapi(app, capture_headers=True, extra_spans=True)
-logfire.instrument_pymongo(capture_statement=True)

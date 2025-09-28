@@ -183,7 +183,8 @@
                     </td>
                     {% if current_user.role in ["admin", "superuser"] %}
                         <td class="text-center" style="width: 20px">
-                            <a href="{{ url_for('delete_article', article_id=x.id) }}">
+                            <a href="{{ url_for('delete_article', article_id=x.id) }}"
+                                onclick="return confirm('Confirmez suppression ?');">
                                 <i class="bi bi-x-square text-danger"></i>
                             </a>
                         </td>
