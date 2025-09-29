@@ -10,7 +10,7 @@ from app.core.config import Settings
 from app.domain.context import ContextProtocol
 from app.domain.domain import Domain
 from app.infrastructure.event_publisher import FastStreamEventPublisher
-from app.infrastructure.repository import MongoRepository
+from app.infrastructure.repository.base import MongoRepository
 from app.infrastructure.tactill.manager import TactillManager
 
 

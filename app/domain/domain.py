@@ -10,6 +10,7 @@ from app.domain.articles.commands import (
 )
 from app.domain.commons.commands import get_article_type_command, get_view_data_command
 from app.domain.context import ContextProtocol
+from app.domain.items.commands import get_items_command
 from app.domain.pos.commands import (
     create_pos_article_command,
     delete_pos_article_command,
@@ -26,6 +27,7 @@ class Domain(BaseDomain[ContextProtocol]):
     # common
     get_view_data = CommandHandler(get_view_data_command)
     get_article_type = CommandHandler(get_article_type_command)
+    get_items = CommandHandler(get_items_command)
     # users
     get_user_by_email = CommandHandler(get_user_by_email_command)
     # articles

@@ -8,8 +8,8 @@ dependencies = [
     "faststream[cli,redis]==0.5.48",
     "itsdangerous==2.2.0",
     "logfire[fastapi,pymongo]==4.10.0",
-    "passlib[bcrypt]==1.7.4",
     "pillow==11.3.0",
+    "pwdlib[argon2]==0.2.1",
     "pydantic-settings==2.11.0",
     "pyjwt==2.10.1",
     "tactill",
@@ -24,7 +24,6 @@ dev = [
     "mypy==1.18.2",
     "pytest==8.4.2",
     "pre-commit==4.3.0",
-    "types-passlib>=1.7",
     "polyfactory==2.22.2",
 ]
 

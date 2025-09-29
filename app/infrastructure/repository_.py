@@ -10,7 +10,6 @@ from pymongo.database import Database
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import ArticleType, Deposit, DisplayGroup, Item, Volume
 from app.domain.entities import EntityId
-from app.domain.protocols.repository import RepositoryProtocol
 from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
@@ -19,7 +18,7 @@ class MongoRepositoryError(Exception):
     pass
 
 
-class MongoRepository(RepositoryProtocol):
+class MongoRepository:
     def __init__(self, database: Database[MongoDocument]):
         self.database = database
 
@@ -28,7 +27,7 @@ class MongoRepository(RepositoryProtocol):
 
     # Collection 'users'
     def get_user_by_email(self, email: str) -> User | None:
-        user = self.database.users.find_one({"email": email})
+        user = self.database["users"].find_one({"email": email})
         if not user:
             return None
 
@@ -151,8 +150,8 @@ class MongoRepository(RepositoryProtocol):
             "deposits": self.get_deposits(),
         }
 
-    def get_items(self, category: str) -> list[Item]:
-        collection = self._get_collection(category)
+    def get_items(self, name: str) -> list[Item]:
+        collection = self._get_collection(name=name)
         return [Item(**item) for item in collection.find().sort("name")]
 
     def get_volumes_by_category(self, volume_category: str | None) -> list[Volume]:

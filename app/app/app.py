@@ -3,6 +3,7 @@ from fastapi import FastAPI
 
 from app.app.articles.router import router as articles_router
 from app.app.auth.router import router as auth_router
+from app.app.items.router import router as resources_router
 from app.app.price_labels.router import router as tags_router
 from app.app.utils import add_session_middleware, mount_static
 from app.core.config import Settings
@@ -20,6 +21,7 @@ def create_app(settings: Settings) -> FastAPI:
 
     app.include_router(auth_router)
     app.include_router(articles_router)
+    app.include_router(resources_router)
     app.include_router(tags_router)
 
     return app
