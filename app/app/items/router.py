@@ -22,6 +22,42 @@ ITEMS_TITLE_MAPPING = {
 }
 
 
+@router.get("/volumes")
+def get_volumes_view(
+    request: Request,
+    current_user: Annotated[User, Depends(get_current_user)],
+    domain: Annotated[Domain, Depends(get_domain)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
+) -> Response:
+    items = domain.get_items(name="volumes")
+    return templates.TemplateResponse(
+        request=request,
+        name="items/volumes.html",
+        context={
+            "current_user": current_user,
+            "volumes": items,
+        },
+    )
+
+
+@router.get("/deposits")
+def get_deposits_view(
+    request: Request,
+    current_user: Annotated[User, Depends(get_current_user)],
+    domain: Annotated[Domain, Depends(get_domain)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
+) -> Response:
+    items = domain.get_items(name="deposits")
+    return templates.TemplateResponse(
+        request=request,
+        name="items/deposits.html",
+        context={
+            "current_user": current_user,
+            "deposits": items,
+        },
+    )
+
+
 @router.get("/{name}")
 def get_items_view(
     request: Request,
@@ -31,7 +67,7 @@ def get_items_view(
     name: str,
 ) -> Response:
     title = ITEMS_TITLE_MAPPING.get(name)
-    resources = domain.get_items(name=name)
+    items = domain.get_items(name=name)
     return templates.TemplateResponse(
         request=request,
         name="items/item_list.html",
@@ -39,7 +75,7 @@ def get_items_view(
             "current_user": current_user,
             "title": title,
             "category": name,
-            "items": resources,
+            "items": items,
         },
     )
 

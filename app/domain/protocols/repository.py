@@ -4,8 +4,9 @@ from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo.database import Database
 
 from app.domain.articles.entities import Article
-from app.domain.commons.entities import ArticleType, DisplayGroup, Item
+from app.domain.commons.entities import ArticleType, DisplayGroup
 from app.domain.entities import EntityId
+from app.domain.items.entities import Deposit, Item, Volume
 from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
@@ -54,12 +55,21 @@ class ArticleRepositoryProtocol(BaseRepositoryProtocol, Protocol):
     def delete_article(self, article: Article) -> None: ...
 
 
+class ItemRepositoryProtocol(BaseRepositoryProtocol, Protocol):
+    def get_items_dict(self, volume_category: str | None) -> dict[str, Any]: ...
+
+    def get_items(self, name: str) -> list[Item]: ...
+
+    def get_volumes(self) -> list[Volume]: ...
+
+    def get_deposits(self) -> list[Deposit]: ...
+
+
 class RepositoryProtocol(
     ShopRepositoryProtocol,
     UserRepositoryProtocol,
     ArticleTypeRepositoryProtocol,
     ArticleRepositoryProtocol,
+    ItemRepositoryProtocol,
     Protocol,
-):
-    def get_items_dict(self, volume_category: str | None) -> dict[str, Any]: ...
-    def get_items(self, name: str) -> list[Item]: ...
+): ...

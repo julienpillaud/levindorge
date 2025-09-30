@@ -1,9 +1,7 @@
 from enum import StrEnum
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import BaseModel, Field
-
-from app.domain.entities import DomainModel
 
 
 class DisplayGroup(StrEnum):
@@ -44,23 +42,6 @@ class ArticleType(BaseModel):
     display_group: DisplayGroup = Field(alias="list_category")
     volume_category: str | None = None
     tactill_category: str
-
-
-class Item(DomainModel):
-    name: str
-    demonym: str = ""
-
-
-class Volume(DomainModel):
-    value: float
-    unit: Literal["cL", "L"]
-    category: str
-
-
-class Deposit(DomainModel):
-    category: Literal["Bière", "Fût", "Mini-fût"]
-    deposit_type: Literal["Unitaire", "Caisse"]
-    value: float
 
 
 class ViewData(BaseModel):

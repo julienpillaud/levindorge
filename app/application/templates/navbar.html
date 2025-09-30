@@ -86,8 +86,8 @@
                         <a class="dropdown-item" href="{{ url_for('get_items_view', name='distributors') }}">Fournisseur</a>
                         <a class="dropdown-item" href="{{ url_for('get_items_view', name='countries') }}">Pays</a>
                         <a class="dropdown-item" href="{{ url_for('get_items_view', name='regions') }}">Région</a>
-                        <a class="dropdown-item" href="">Consigne</a>
-                        <a class="dropdown-item" href="">Volume</a>
+                        <a class="dropdown-item" href="{{ url_for('get_deposits_view') }}">Consigne</a>
+                        <a class="dropdown-item" href="{{ url_for('get_volumes_view') }}">Volume</a>
                     </div>
                 </li>
 
