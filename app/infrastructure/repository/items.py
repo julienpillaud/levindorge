@@ -1,31 +1,42 @@
-from typing import Any
-
+from bson import ObjectId
 from cleanstack.infrastructure.mongo.entities import MongoDocument
-from pymongo import ASCENDING, DESCENDING
 from pymongo.collection import Collection
 
-from app.domain.items.entities import Deposit, Item, Volume
+from app.domain.items.entities import Item, ItemType, Volume
 from app.domain.protocols.repository import ItemRepositoryProtocol
+
+FIELD_MAP = {
+    ItemType.BREWERIES: "name.name1",
+    ItemType.DISTILLERIES: "name.name1",
+    ItemType.DISTRIBUTORS: "distributor",
+    ItemType.COUNTRIES: "region",
+    ItemType.REGIONS: "region",
+}
 
 
 class ItemRepository(ItemRepositoryProtocol):
-    def _get_collection(self, name: str) -> Collection[MongoDocument]:
+    def _get_collection(self, name: ItemType) -> Collection[MongoDocument]:
         return self.database.get_collection(name)
 
-    def get_items_dict(self, volume_category: str | None) -> dict[str, Any]:
-        return {
-            "country_list": self.get_items("countries"),
-            "region_list": self.get_items("regions"),
-            "brewery_list": self.get_items("breweries"),
-            "distillery_list": self.get_items("distilleries"),
-            "distributor_list": self.get_items("distributors"),
-            "volumes": self.get_volumes_by_category(volume_category),
-            "deposits": self.get_deposits(),
-        }
+    def get_item(self, item_type: ItemType, item_id: str) -> Item | None:
+        collection = self._get_collection(name=item_type)
+        item = collection.find_one({"_id": ObjectId(item_id)})
+        return Item(**item) if item else None
 
-    def get_items(self, name: str) -> list[Item]:
-        collection = self._get_collection(name=name)
+    def get_items(self, item_type: ItemType) -> list[Item]:
+        collection = self._get_collection(name=item_type)
         return [Item(**item) for item in collection.find().sort("name")]
+
+    def delete_item(self, item_type: ItemType, item: Item) -> None:
+        collection = self._get_collection(name=item_type)
+        collection.delete_one({"_id": ObjectId(item.id)})
+
+    def item_is_used(self, item_type: ItemType, item: Item) -> bool:
+        field = FIELD_MAP.get(item_type)
+        if not field:
+            return False
+        article = self.database["articles"].find_one({field: item.name})
+        return article is not None
 
     def get_volumes_by_category(self, volume_category: str | None) -> list[Volume]:
         return [
@@ -33,31 +44,4 @@ class ItemRepository(ItemRepositoryProtocol):
             for volume in self.database["volumes"]
             .find({"category": volume_category})
             .sort("value")
-        ]
-
-    def get_volumes(self) -> list[Volume]:
-        return [
-            Volume(**volume)
-            for volume in self.database["volumes"]
-            .find()
-            .sort(
-                [
-                    ("category", ASCENDING),
-                    ("value", ASCENDING),
-                ]
-            )
-        ]
-
-    def get_deposits(self) -> list[Deposit]:
-        return [
-            Deposit(**item)
-            for item in self.database["deposits"]
-            .find()
-            .sort(
-                [
-                    ("category", ASCENDING),
-                    ("deposit_type", DESCENDING),
-                    ("value", ASCENDING),
-                ]
-            )
         ]

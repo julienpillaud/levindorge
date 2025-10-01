@@ -6,7 +6,7 @@ from app.core.config import Settings
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
 from app.domain.context import ContextProtocol
-from app.domain.items.entities import Item
+from app.domain.items.entities import Item, ItemType
 from app.domain.price_labels.entities import PriceLabelWrapper
 from app.domain.price_labels.utils.common import (
     chunk_price_labels,
@@ -27,7 +27,8 @@ def create_large_price_labels(
     price_labels: list[PriceLabelWrapper],
 ) -> None:
     regions_mapping = {
-        region.name: region for region in context.repository.get_items("countries")
+        region.name: region
+        for region in context.repository.get_items(ItemType.COUNTRIES)
     }
 
     for file_index, labels in enumerate(

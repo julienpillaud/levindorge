@@ -81,11 +81,11 @@
                 <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
                     <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gestion</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ url_for('get_items_view', name='breweries') }}">Brasserie</a>
-                        <a class="dropdown-item" href="{{ url_for('get_items_view', name='distilleries') }}">Distillerie</a>
-                        <a class="dropdown-item" href="{{ url_for('get_items_view', name='distributors') }}">Fournisseur</a>
-                        <a class="dropdown-item" href="{{ url_for('get_items_view', name='countries') }}">Pays</a>
-                        <a class="dropdown-item" href="{{ url_for('get_items_view', name='regions') }}">Région</a>
+                        <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='breweries') }}">Brasserie</a>
+                        <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='distilleries') }}">Distillerie</a>
+                        <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='distributors') }}">Fournisseur</a>
+                        <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='countries') }}">Pays</a>
+                        <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='regions') }}">Région</a>
                         <a class="dropdown-item" href="{{ url_for('get_deposits_view') }}">Consigne</a>
                         <a class="dropdown-item" href="{{ url_for('get_volumes_view') }}">Volume</a>
                     </div>

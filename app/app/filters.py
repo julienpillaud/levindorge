@@ -1,6 +1,9 @@
 import datetime
 from collections.abc import Callable
+from typing import Any
 from zoneinfo import ZoneInfo
+
+from fastapi.requests import Request
 
 from app.data import navbar_categories
 
@@ -24,3 +27,7 @@ def create_local_timezone_filter(
         return value.replace(tzinfo=datetime.UTC).astimezone(tz=zone_info)
 
     return local_timezone
+
+
+def get_flashed_messages(request: Request) -> Any:
+    return request.session.pop("_messages", [])

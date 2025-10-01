@@ -1,8 +1,8 @@
-from cleanstack.fastapi.exceptions import add_exception_handler
 from fastapi import FastAPI
 
 from app.app.articles.router import router as articles_router
 from app.app.auth.router import router as auth_router
+from app.app.handlers import add_exception_handler
 from app.app.items.router import router as resources_router
 from app.app.price_labels.router import router as tags_router
 from app.app.utils import add_session_middleware, mount_static

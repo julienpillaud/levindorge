@@ -6,7 +6,7 @@ from pymongo.database import Database
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import ArticleType, DisplayGroup
 from app.domain.entities import EntityId
-from app.domain.items.entities import Deposit, Item, Volume
+from app.domain.items.entities import Deposit, Item, ItemType, Volume
 from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
@@ -56,13 +56,33 @@ class ArticleRepositoryProtocol(BaseRepositoryProtocol, Protocol):
 
 
 class ItemRepositoryProtocol(BaseRepositoryProtocol, Protocol):
-    def get_items_dict(self, volume_category: str | None) -> dict[str, Any]: ...
+    def get_items(self, item_type: ItemType) -> list[Item]: ...
 
-    def get_items(self, name: str) -> list[Item]: ...
+    def get_item(self, item_type: ItemType, item_id: str) -> Item | None: ...
 
+    def delete_item(self, item_type: ItemType, item: Item) -> None: ...
+
+    def item_is_used(self, item_type: ItemType, item: Item) -> bool: ...
+
+
+class VolumeRepositoryProtocol(BaseRepositoryProtocol, Protocol):
     def get_volumes(self) -> list[Volume]: ...
 
+    def get_volume(self, volume_id: str) -> Volume | None: ...
+
+    def delete_volume(self, volume: Volume) -> None: ...
+
+    def volume_is_used(self, volume: Volume) -> bool: ...
+
+
+class DepositRepositoryProtocol(BaseRepositoryProtocol, Protocol):
     def get_deposits(self) -> list[Deposit]: ...
+
+    def get_deposit(self, deposit_id: str) -> Deposit | None: ...
+
+    def delete_deposit(self, deposit: Deposit) -> None: ...
+
+    def deposit_is_used(self, deposit: Deposit) -> bool: ...
 
 
 class RepositoryProtocol(
@@ -71,5 +91,8 @@ class RepositoryProtocol(
     ArticleTypeRepositoryProtocol,
     ArticleRepositoryProtocol,
     ItemRepositoryProtocol,
+    VolumeRepositoryProtocol,
+    DepositRepositoryProtocol,
     Protocol,
-): ...
+):
+    def get_items_dict(self, volume_category: str | None) -> dict[str, Any]: ...
