@@ -13,5 +13,15 @@ class ItemInUseError(ConflictError):
         self.item_name = item_name
 
 
+class VolumeInUseError(ConflictError):
+    def __init__(self, item_name: str):
+        self.item_name = item_name
+
+
+class DepositInUseError(ConflictError):
+    def __init__(self, item_name: str):
+        self.item_name = item_name
+
+
 class POSManagerError(Exception):
     pass

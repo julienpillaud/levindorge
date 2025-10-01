@@ -2,10 +2,12 @@ from typing import Any, Protocol
 
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import ArticleType, DisplayGroup
+from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId
-from app.domain.items.entities import Deposit, Item, ItemType, Volume
+from app.domain.items.entities import Item, ItemType
 from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
+from app.domain.volumes.entities import Volume
 
 
 class ShopRepositoryProtocol(Protocol):
@@ -53,6 +55,8 @@ class ItemRepositoryProtocol(Protocol):
 
     def get_item(self, item_type: ItemType, item_id: str) -> Item | None: ...
 
+    def create_item(self, item_type: ItemType, item: Item) -> Item: ...
+
     def delete_item(self, item_type: ItemType, item: Item) -> None: ...
 
     def item_is_used(self, item_type: ItemType, item: Item) -> bool: ...
@@ -63,6 +67,8 @@ class VolumeRepositoryProtocol(Protocol):
 
     def get_volume(self, volume_id: str) -> Volume | None: ...
 
+    def create_volume(self, volume: Volume) -> Volume: ...
+
     def delete_volume(self, volume: Volume) -> None: ...
 
     def volume_is_used(self, volume: Volume) -> bool: ...
@@ -72,6 +78,8 @@ class DepositRepositoryProtocol(Protocol):
     def get_deposits(self) -> list[Deposit]: ...
 
     def get_deposit(self, deposit_id: str) -> Deposit | None: ...
+
+    def create_deposit(self, deposit: Deposit) -> Deposit: ...
 
     def delete_deposit(self, deposit: Deposit) -> None: ...
 

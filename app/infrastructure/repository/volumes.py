@@ -1,9 +1,10 @@
 from bson import ObjectId
+from cleanstack.exceptions import NotFoundError
 from pymongo import ASCENDING
 
 from app.domain.entities import EntityId
-from app.domain.items.entities import Volume
 from app.domain.protocols.repository import VolumeRepositoryProtocol
+from app.domain.volumes.entities import Volume
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 
@@ -19,6 +20,10 @@ class VolumeRepository(MongoRepositoryProtocol, VolumeRepositoryProtocol):
         volume = self.database["volumes"].find_one({"_id": ObjectId(volume_id)})
         return Volume(**volume) if volume else None
 
+    def create_volume(self, volume: Volume) -> Volume:
+        result = self.database["volumes"].insert_one(volume.model_dump(exclude={"id"}))
+        return self._get_volume_by_id(volume_id=result.inserted_id)
+
     def delete_volume(self, volume: Volume) -> None:
         self.database["volumes"].delete_one({"_id": ObjectId(volume.id)})
 
@@ -29,3 +34,10 @@ class VolumeRepository(MongoRepositoryProtocol, VolumeRepositoryProtocol):
             {"volume.value": volume.value, "type": {"$in": type_names}}
         )
         return article is not None
+
+    def _get_volume_by_id(self, volume_id: EntityId) -> Volume:
+        volume = self.database["volumes"].find_one({"_id": ObjectId(volume_id)})
+        if not volume:
+            raise NotFoundError()
+
+        return Volume(**volume)

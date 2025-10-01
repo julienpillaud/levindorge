@@ -17,7 +17,7 @@ from app.domain.price_labels.entities import PriceLabelCreate
 from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
-router = APIRouter(prefix="/tags", tags=["Price Labels"])
+router = APIRouter(prefix="/tags")
 
 
 @router.get("/create")

@@ -1,10 +1,12 @@
 from bson import ObjectId
+from cleanstack.exceptions import NotFoundError
 from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo.collection import Collection
 
 from app.domain.entities import EntityId
-from app.domain.items.entities import Item, ItemType, Volume
+from app.domain.items.entities import Item, ItemType
 from app.domain.protocols.repository import ItemRepositoryProtocol
+from app.domain.volumes.entities import Volume
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 FIELD_MAP = {
@@ -24,6 +26,11 @@ class ItemRepository(MongoRepositoryProtocol, ItemRepositoryProtocol):
         collection = self._get_collection(name=item_type)
         item = collection.find_one({"_id": ObjectId(item_id)})
         return Item(**item) if item else None
+
+    def create_item(self, item_type: ItemType, item: Item) -> Item:
+        collection = self._get_collection(name=item_type)
+        result = collection.insert_one(item.model_dump(exclude={"id"}))
+        return self._get_item_by_id(collection=collection, item_id=result.inserted_id)
 
     def get_items(self, item_type: ItemType) -> list[Item]:
         collection = self._get_collection(name=item_type)
@@ -47,3 +54,14 @@ class ItemRepository(MongoRepositoryProtocol, ItemRepositoryProtocol):
             .find({"category": volume_category})
             .sort("value")
         ]
+
+    @staticmethod
+    def _get_item_by_id(
+        collection: Collection[MongoDocument],
+        item_id: str,
+    ) -> Item:
+        item_db = collection.find_one({"_id": ObjectId(item_id)})
+        if not item_db:
+            raise NotFoundError()
+
+        return Item(**item_db)

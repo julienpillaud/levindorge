@@ -10,13 +10,15 @@ from app.domain.articles.commands import (
 )
 from app.domain.commons.commands import get_article_type_command, get_view_data_command
 from app.domain.context import ContextProtocol
-from app.domain.items.commands import (
+from app.domain.deposits.commands import (
+    create_deposit_command,
     delete_deposit_command,
-    delete_item_command,
-    delete_volume_command,
     get_deposits_command,
+)
+from app.domain.items.commands import (
+    create_item_command,
+    delete_item_command,
     get_items_command,
-    get_volumes_command,
 )
 from app.domain.pos.commands import (
     create_pos_article_command,
@@ -28,6 +30,11 @@ from app.domain.price_labels.commands import (
     get_price_labels_files_command,
 )
 from app.domain.users.commands import get_user_by_email_command
+from app.domain.volumes.commands import (
+    create_volume_command,
+    delete_volume_command,
+    get_volumes_command,
+)
 
 
 class Domain(BaseDomain[ContextProtocol]):
@@ -36,12 +43,15 @@ class Domain(BaseDomain[ContextProtocol]):
     get_article_type = CommandHandler(get_article_type_command)
     # items
     get_items = CommandHandler(get_items_command)
+    create_item = CommandHandler(create_item_command)
     delete_item = CommandHandler(delete_item_command)
     # volumes
     get_volumes = CommandHandler(get_volumes_command)
+    create_volume = CommandHandler(create_volume_command)
     delete_volume = CommandHandler(delete_volume_command)
     # deposits
     get_deposits = CommandHandler(get_deposits_command)
+    create_deposit = CommandHandler(create_deposit_command)
     delete_deposit = CommandHandler(delete_deposit_command)
 
     # users

@@ -18,7 +18,7 @@ from app.domain.domain import Domain
 from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
-router = APIRouter(prefix="/articles", tags=["Articles"])
+router = APIRouter(prefix="/articles")
 
 
 @router.get("/{list_category}")
