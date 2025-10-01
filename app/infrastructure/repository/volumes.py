@@ -1,11 +1,13 @@
 from bson import ObjectId
 from pymongo import ASCENDING
 
+from app.domain.entities import EntityId
 from app.domain.items.entities import Volume
 from app.domain.protocols.repository import VolumeRepositoryProtocol
+from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 
-class VolumeRepository(VolumeRepositoryProtocol):
+class VolumeRepository(MongoRepositoryProtocol, VolumeRepositoryProtocol):
     def get_volumes(self) -> list[Volume]:
         sort_keys = [("category", ASCENDING), ("value", ASCENDING)]
         return [
@@ -13,7 +15,7 @@ class VolumeRepository(VolumeRepositoryProtocol):
             for volume in self.database["volumes"].find().sort(sort_keys)
         ]
 
-    def get_volume(self, volume_id: str) -> Volume | None:
+    def get_volume(self, volume_id: EntityId) -> Volume | None:
         volume = self.database["volumes"].find_one({"_id": ObjectId(volume_id)})
         return Volume(**volume) if volume else None
 

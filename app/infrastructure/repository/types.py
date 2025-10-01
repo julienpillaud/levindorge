@@ -2,9 +2,10 @@ from cleanstack.exceptions import NotFoundError
 
 from app.domain.commons.entities import ArticleType, DisplayGroup
 from app.domain.protocols.repository import ArticleTypeRepositoryProtocol
+from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 
-class ArticleTypeRepository(ArticleTypeRepositoryProtocol):
+class ArticleTypeRepository(MongoRepositoryProtocol, ArticleTypeRepositoryProtocol):
     def get_article_types(
         self,
         name: str | None = None,

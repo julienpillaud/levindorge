@@ -7,9 +7,10 @@ from app.domain.commons.entities import DisplayGroup
 from app.domain.entities import EntityId
 from app.domain.protocols.repository import ArticleRepositoryProtocol
 from app.infrastructure.repository.exceptions import MongoRepositoryError
+from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 
-class ArticleRepository(ArticleRepositoryProtocol):
+class ArticleRepository(MongoRepositoryProtocol, ArticleRepositoryProtocol):
     def get_all_articles(self) -> list[Article]:
         articles = self.database["articles"].find().sort("type")
         return [Article.model_validate(article) for article in articles]

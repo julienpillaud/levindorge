@@ -1,6 +1,7 @@
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.context import ContextProtocol
+from app.domain.entities import EntityId
 from app.domain.exceptions import ItemInUseError
 from app.domain.items.entities import Deposit, Item, ItemType, Volume
 
@@ -20,7 +21,7 @@ def get_deposits_command(context: ContextProtocol) -> list[Deposit]:
 def delete_item_command(
     context: ContextProtocol,
     item_type: ItemType,
-    item_id: str,
+    item_id: EntityId,
 ) -> None:
     item = context.repository.get_item(item_type=item_type, item_id=item_id)
     if not item:
@@ -32,7 +33,7 @@ def delete_item_command(
     context.repository.delete_item(item_type=item_type, item=item)
 
 
-def delete_volume_command(context: ContextProtocol, volume_id: str) -> None:
+def delete_volume_command(context: ContextProtocol, volume_id: EntityId) -> None:
     volume = context.repository.get_volume(volume_id=volume_id)
     if not volume:
         raise NotFoundError()
@@ -43,7 +44,7 @@ def delete_volume_command(context: ContextProtocol, volume_id: str) -> None:
     context.repository.delete_volume(volume=volume)
 
 
-def delete_deposit_command(context: ContextProtocol, deposit_id: str) -> None:
+def delete_deposit_command(context: ContextProtocol, deposit_id: EntityId) -> None:
     deposit = context.repository.get_deposit(deposit_id=deposit_id)
     if not deposit:
         raise NotFoundError()

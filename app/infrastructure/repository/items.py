@@ -2,8 +2,10 @@ from bson import ObjectId
 from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo.collection import Collection
 
+from app.domain.entities import EntityId
 from app.domain.items.entities import Item, ItemType, Volume
 from app.domain.protocols.repository import ItemRepositoryProtocol
+from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 FIELD_MAP = {
     ItemType.BREWERIES: "name.name1",
@@ -14,11 +16,11 @@ FIELD_MAP = {
 }
 
 
-class ItemRepository(ItemRepositoryProtocol):
+class ItemRepository(MongoRepositoryProtocol, ItemRepositoryProtocol):
     def _get_collection(self, name: ItemType) -> Collection[MongoDocument]:
         return self.database.get_collection(name)
 
-    def get_item(self, item_type: ItemType, item_id: str) -> Item | None:
+    def get_item(self, item_type: ItemType, item_id: EntityId) -> Item | None:
         collection = self._get_collection(name=item_type)
         item = collection.find_one({"_id": ObjectId(item_id)})
         return Item(**item) if item else None

@@ -1,8 +1,5 @@
 from typing import Any, Protocol
 
-from cleanstack.infrastructure.mongo.entities import MongoDocument
-from pymongo.database import Database
-
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import ArticleType, DisplayGroup
 from app.domain.entities import EntityId
@@ -11,19 +8,15 @@ from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
 
-class BaseRepositoryProtocol(Protocol):
-    database: Database[MongoDocument]
-
-
-class ShopRepositoryProtocol(BaseRepositoryProtocol, Protocol):
+class ShopRepositoryProtocol(Protocol):
     def get_shops(self) -> list[Shop]: ...
 
 
-class UserRepositoryProtocol(BaseRepositoryProtocol, Protocol):
+class UserRepositoryProtocol(Protocol):
     def get_user_by_email(self, email: str) -> User | None: ...
 
 
-class ArticleTypeRepositoryProtocol(BaseRepositoryProtocol, Protocol):
+class ArticleTypeRepositoryProtocol(Protocol):
     def get_article_types(
         self,
         name: str | None = None,
@@ -38,7 +31,7 @@ class ArticleTypeRepositoryProtocol(BaseRepositoryProtocol, Protocol):
     ) -> list[ArticleType]: ...
 
 
-class ArticleRepositoryProtocol(BaseRepositoryProtocol, Protocol):
+class ArticleRepositoryProtocol(Protocol):
     def get_all_articles(self) -> list[Article]: ...
 
     def get_articles_by_display_group(
@@ -55,7 +48,7 @@ class ArticleRepositoryProtocol(BaseRepositoryProtocol, Protocol):
     def delete_article(self, article: Article) -> None: ...
 
 
-class ItemRepositoryProtocol(BaseRepositoryProtocol, Protocol):
+class ItemRepositoryProtocol(Protocol):
     def get_items(self, item_type: ItemType) -> list[Item]: ...
 
     def get_item(self, item_type: ItemType, item_id: str) -> Item | None: ...
@@ -65,7 +58,7 @@ class ItemRepositoryProtocol(BaseRepositoryProtocol, Protocol):
     def item_is_used(self, item_type: ItemType, item: Item) -> bool: ...
 
 
-class VolumeRepositoryProtocol(BaseRepositoryProtocol, Protocol):
+class VolumeRepositoryProtocol(Protocol):
     def get_volumes(self) -> list[Volume]: ...
 
     def get_volume(self, volume_id: str) -> Volume | None: ...
@@ -75,7 +68,7 @@ class VolumeRepositoryProtocol(BaseRepositoryProtocol, Protocol):
     def volume_is_used(self, volume: Volume) -> bool: ...
 
 
-class DepositRepositoryProtocol(BaseRepositoryProtocol, Protocol):
+class DepositRepositoryProtocol(Protocol):
     def get_deposits(self) -> list[Deposit]: ...
 
     def get_deposit(self, deposit_id: str) -> Deposit | None: ...

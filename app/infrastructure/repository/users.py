@@ -1,9 +1,10 @@
 from app.domain.protocols.repository import UserRepositoryProtocol
 from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
+from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 
-class UserRepository(UserRepositoryProtocol):
+class UserRepository(MongoRepositoryProtocol, UserRepositoryProtocol):
     def get_user_by_email(self, email: str) -> User | None:
         user = self.database["users"].find_one({"email": email})
         if not user:

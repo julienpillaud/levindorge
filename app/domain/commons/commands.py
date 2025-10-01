@@ -25,10 +25,3 @@ def get_view_data_command(
 
 def get_article_type_command(context: ContextProtocol, name: str) -> ArticleType:
     return context.repository.get_article_type_by_name(name=name)
-
-
-def test_redis_command(context: ContextProtocol) -> None:
-    article_types = context.repository.get_article_types(
-        name="Bière",
-    )
-    context.event_publisher.publish("test", article_types)

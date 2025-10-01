@@ -20,7 +20,7 @@ def get_articles_by_display_group_command(
     return context.repository.get_articles_by_display_group(display_group=display_group)
 
 
-def get_article_command(context: ContextProtocol, article_id: str) -> Article:
+def get_article_command(context: ContextProtocol, article_id: EntityId) -> Article:
     article = context.repository.get_article(article_id=article_id)
     if not article:
         raise NotFoundError()
