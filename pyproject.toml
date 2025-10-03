@@ -1,13 +1,12 @@
 [project]
 name = "levindorge"
 version = "0.0.1"
-requires-python = ">=3.12"
 dependencies = [
     "cleanstack[fastapi,mongo]",
     "fastapi[standard]>=0.117",
     "faststream[cli,redis]==0.5.48",
     "itsdangerous==2.2.0",
-    "logfire[fastapi,pymongo]==4.10.0",
+    "logfire[fastapi,pymongo]==4.11.0",
     "pillow==11.3.0",
     "pwdlib[argon2]==0.2.1",
     "pydantic-settings==2.11.0",
@@ -15,12 +14,11 @@ dependencies = [
     "tactill",
     "tenacity==9.1.2",
     "unidecode==1.4.0",
-    "wizishop",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff==0.13.2",
+    "ruff==0.13.3",
     "mypy==1.18.2",
     "pytest==8.4.2",
     "pre-commit==4.3.0",
@@ -28,8 +26,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-tactill = { git = "https://github.com/julienpillaud/tactill.git", tag = "0.5.1" }
-wizishop = { git = "https://github.com/julienpillaud/wizishop.git", tag = "0.2.0" }
+tactill = { git = "https://github.com/julienpillaud/tactill.git", tag = "0.6.0" }
 cleanstack = { git = "https://github.com/julienpillaud/cleanstack", tag = "0.5.0" }
 
 [tool.ruff]
