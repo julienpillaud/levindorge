@@ -10,7 +10,7 @@ from app.domain.users.entities import User
 
 
 def get_articles_command(context: ContextProtocol) -> list[Article]:
-    return context.repository.get_all_articles()
+    return context.repository.get_articles()
 
 
 def get_articles_by_display_group_command(

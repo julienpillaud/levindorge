@@ -7,6 +7,7 @@ from app.domain.items.entities import ItemType
 from app.domain.protocols.repository import RepositoryProtocol
 from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.deposits import DepositRepository
+from app.infrastructure.repository.inventories import InventoryRepository
 from app.infrastructure.repository.items import ItemRepository
 from app.infrastructure.repository.shops import ShopRepository
 from app.infrastructure.repository.types import ArticleTypeRepository
@@ -23,6 +24,7 @@ class MongoRepository(
     ItemRepository,
     VolumeRepository,
     DepositRepository,
+    InventoryRepository,
 ):
     def __init__(self, database: Database[MongoDocument]):
         self.database = database

@@ -17,7 +17,7 @@ from app.domain.price_labels.entities import PriceLabelCreate
 from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
-router = APIRouter(prefix="/tags")
+router = APIRouter(prefix="/price-labes")
 
 
 @router.get("/create")
@@ -40,10 +40,7 @@ def create_price_labels_view(
     )
 
 
-@router.post(
-    "/create",
-    dependencies=[Depends(get_current_user)],
-)
+@router.post("/create", dependencies=[Depends(get_current_user)])
 def create_price_labels(
     request: Request,
     settings: Annotated[Settings, Depends(get_settings)],
@@ -104,10 +101,7 @@ def get_price_labels_file(
     )
 
 
-@router.get(
-    "/files/delete/{file}",
-    dependencies=[Depends(get_current_user)],
-)
+@router.get("/files/delete/{file}", dependencies=[Depends(get_current_user)])
 def delete_price_labels_file(
     request: Request,
     settings: Annotated[Settings, Depends(get_settings)],

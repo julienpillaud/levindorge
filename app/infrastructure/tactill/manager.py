@@ -1,19 +1,26 @@
 from collections.abc import Callable
 from functools import wraps
-from typing import Concatenate, ParamSpec, TypeVar
+from typing import Concatenate, Literal, ParamSpec, TypeVar
 
 from tactill import TactillClient
 from tactill.entities.catalog.article import Article as TactillArticle
 from tactill.entities.catalog.article import ArticleCreation, ArticleModification
 from tactill.entities.catalog.category import Category
 from tactill.entities.catalog.tax import Tax
+from tactill.utils import get_query_filter
 
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import DisplayGroup
 from app.domain.exceptions import POSManagerError
+from app.domain.pos.entities import POSArticle
 from app.domain.protocols.pos_manager import POSManagerProtocol
 from app.domain.shops.entities import Shop
-from app.infrastructure.tactill.utils import define_color, define_icon_text, define_name
+from app.infrastructure.tactill.utils import (
+    EXCLUDED_CATEGORIES,
+    define_color,
+    define_icon_text,
+    define_name,
+)
 
 T = TypeVar("T", bound="TactillManager")
 P = ParamSpec("P")
@@ -41,9 +48,25 @@ class TactillManager(POSManagerProtocol):
 
         return wrapper
 
-    def get_category(self, name: str) -> Category:
-        filter_ = f"deprecated=false&is_default=false&name={name}"
-        categories = self.client.get_categories(filter=filter_)
+    def _get_categories(
+        self,
+        name_or_names: str | list[str],
+        query_operator: Literal["in", "nin"] = "nin",
+    ) -> list[Category]:
+        if isinstance(name_or_names, str):
+            filter_ = f"deprecated=false&is_default=false&name={name_or_names}"
+        else:
+            query_filter = get_query_filter(
+                field="name",
+                values=name_or_names,
+                query_operator=query_operator,
+            )
+            filter_ = f"deprecated=false&is_default=false&{query_filter}"
+
+        return self.client.get_categories(filter=filter_)
+
+    def _get_category(self, name: str) -> Category:
+        categories = self._get_categories(name)
         if not categories:
             raise POSManagerError()
 
@@ -66,6 +89,22 @@ class TactillManager(POSManagerProtocol):
         return articles[0]
 
     @with_client
+    def get_articles(self, _: Shop, /) -> list[POSArticle]:
+        categories = self._get_categories(EXCLUDED_CATEGORIES)
+        category_ids = [category.id for category in categories]
+
+        query_filter = get_query_filter(
+            field="category_id",
+            values=category_ids,
+            query_operator="in",
+        )
+        articles = self.client.get_articles(
+            limit=5000,
+            filter=f"deprecated=false&is_default=false&{query_filter}",
+        )
+        return [POSArticle(**article.model_dump()) for article in articles]
+
+    @with_client
     def create_article(
         self,
         shop: Shop,
@@ -73,12 +112,12 @@ class TactillManager(POSManagerProtocol):
         article: Article,
         category_name: str,
         display_group: DisplayGroup,
-    ) -> None:
-        tactill_category = self.get_category(name=category_name)
+    ) -> POSArticle:
+        category = self._get_category(category_name)
         tactill_tax = self.get_tax(tax_rate=article.tax)
 
         article_creation = ArticleCreation(
-            category_id=tactill_category.id,
+            category_id=category.id,
             taxes=[tactill_tax.id],
             name=define_name(display_group=display_group, article=article),
             icon_text=define_icon_text(article=article),
@@ -88,7 +127,8 @@ class TactillManager(POSManagerProtocol):
             reference=article.id,
             in_stock=True,
         )
-        self.client.create_article(article_creation=article_creation)
+        result = self.client.create_article(article_creation=article_creation)
+        return POSArticle(**result.model_dump())
 
     @with_client
     def update_article(
@@ -101,11 +141,11 @@ class TactillManager(POSManagerProtocol):
     ) -> None:
         tactill_article = self.get_article_by_reference(reference=article.id)
 
-        tactill_category = self.get_category(name=category_name)
+        category = self._get_category(category_name)
         tactill_tax = self.get_tax(tax_rate=article.tax)
 
         article_modification = ArticleModification(
-            category_id=tactill_category.id,
+            category_id=category.id,
             taxes=[tactill_tax.id],
             name=define_name(display_group=display_group, article=article),
             icon_text=define_icon_text(article=article),

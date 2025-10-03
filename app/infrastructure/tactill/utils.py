@@ -3,6 +3,7 @@ from tactill import TactillColor
 from app.domain.articles.entities import Article, ArticleColor
 from app.domain.commons.entities import DisplayGroup
 
+EXCLUDED_CATEGORIES = ["AUTRE", "BAR", "CONSIGNE", "STREETFOOD", "VDO"]
 LITER_TO_CENTILITER = 100
 COLORS_MAPPING = {
     ArticleColor.AMBER_BEER: TactillColor.ORANGE,

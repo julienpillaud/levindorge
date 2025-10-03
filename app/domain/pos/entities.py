@@ -1,3 +1,5 @@
+import datetime
+
 from pydantic import BaseModel
 
 from app.domain.articles.entities import Article
@@ -13,3 +15,11 @@ class POSArticleCreateOrUpdate(BaseModel):
 class POSArticleDelete(BaseModel):
     shop: Shop
     article_id: EntityId
+
+
+class POSArticle(BaseModel):
+    id: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    stock_quantity: int = 0
+    reference: str

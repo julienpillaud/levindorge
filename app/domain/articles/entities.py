@@ -94,6 +94,19 @@ class BaseArticle(BaseModel):
         )
         return round(taxfree_price_sum, 4)
 
+    def inventory_value(self, stock_quantity: int) -> float:
+        return round((self.taxfree_price * stock_quantity), 2)
+
+    def deposit_value(self, stock_quantity: int) -> float:
+        if self.deposit.unit == 0:
+            return 0
+
+        if self.packaging > 0:
+            value = self.deposit.case * (stock_quantity / self.packaging)
+            return round(value, 2)
+
+        return self.deposit.unit * stock_quantity
+
     def formated_volume(self, /, separator: str = ".") -> str:
         if not self.volume:
             return ""

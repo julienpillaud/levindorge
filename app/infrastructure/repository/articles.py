@@ -11,7 +11,7 @@ from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 
 class ArticleRepository(MongoRepositoryProtocol, ArticleRepositoryProtocol):
-    def get_all_articles(self) -> list[Article]:
+    def get_articles(self) -> list[Article]:
         articles = self.database["articles"].find().sort("type")
         return [Article.model_validate(article) for article in articles]
 

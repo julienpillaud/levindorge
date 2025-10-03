@@ -74,7 +74,7 @@
 
                 {# Inventory #}
                 <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
-                    <a class="btn btn-light-purple nav-link" href="">Inventaire</a>
+                    <a class="btn btn-light-purple nav-link" href="{{ url_for('get_inventories_view') }}">Inventaires</a>
                 </li>
 
                 {# Gestion #}
@@ -90,18 +90,6 @@
                         <a class="dropdown-item" href="{{ url_for('get_volumes_view') }}">Volume</a>
                     </div>
                 </li>
-
-                {# Admin #}
-                {% if current_user.role == "superuser" %}
-                    <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
-                        <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="">Update stocks</a>
-                            <a class="dropdown-item" href="">Clean Tactill</a>
-                            <a class="dropdown-item" href="">Update tactill</a>
-                        </div>
-                    </li>
-                {% endif %}
 
                 <li class="nav-item mt-1 mt-lg-0 ms-lg-2">
                     <a class="btn btn-danger" href="{{ url_for('logout') }}">
