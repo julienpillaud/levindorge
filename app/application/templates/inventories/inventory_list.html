@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+    {% include "navbar.html" %}
+
+    <div class="container-fluid padding-navbar">
+
+        <div class="row justify-content-center">
+            <div class="col col-lg-8 d-md-flex justify-content-between">
+
+                <form method="post">
+                    <div class="dropdown mb-2 mb-md-0">
+                        <button class="btn btn-outline-light-purple dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Génerer nouvel inventaire
+                        </button>
+                        <div class="dropdown-menu">
+                            {% for shop in current_user.shops %}
+                                <button class="dropdown-item show-overlay" type="submit" name="shop" value="{{ shop.username }}">{{ shop.name }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </form>
+
+                <form action="" method="post">
+                    <div class="input-group flex-nowrap">
+                        <select class="form-select" name="shop" aria-label="Select shop">
+                            <option selected disabled>Magasin</option>
+                            {% for shop in current_user.shops %}
+                                <option value="{{ shop.username }}">{{ shop.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-outline-light-purple dropdown-toggle" type="button" id="reset-stocks" data-bs-toggle="dropdown" aria-expanded="false">
+                            Mise à zéro stocks Tactill
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <button class="dropdown-item show-overlay" name="category" value="beer">Bières / Cidre</button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item show-overlay" name="category" value="keg">Fûts</button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item show-overlay" name="category" value="spirit">Spiritueux</button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item show-overlay" name="category" value="wine">Vins</button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item show-overlay" name="category" value="other">Autres</button>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <div class="row justify-content-center mt-3">
+            <div class="col col-lg-8">
+
+                {% if inventories %}
+                    <table class="responsive">
+                        <thead class="sticky" style="--sticky-top: 53px">
+                        <tr>
+                            <th class="text-center align-middle bg-light-purple">Date</th>
+                            <th class="text-center align-middle bg-light-purple">Magasin</th>
+                            <th class="text-center align-middle bg-light-purple">Val. marchande</th>
+                            <th class="text-center align-middle bg-light-purple">Val. consigne</th>
+                            <th class="text-center align-middle bg-light-purple"></th>
+                            <th class="text-center align-middle bg-light-purple"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for inventory in inventories %}
+                            <tr>
+                                <td data-label="Date">{{ (inventory.date | local_timezone).strftime('%d / %m / %Y - %H:%M') }}</td>
+                                <td data-label="Magasin">{{ inventory.shop }}</td>
+                                <td data-label="Val. marchande">{{ inventory.sale_value }}</td>
+                                <td data-label="Val. consigne">{{ inventory.deposit_value }}</td>
+                                <td class="button">
+                                    <a href="{{ url_for('get_inventory_view', inventory_id=inventory.id) }}"><i class="bi bi-file-earmark text-primary"></i></a>
+                                </td>
+                                <td class="button">
+                                    <a href="{{ url_for('delete_inventory', inventory_id=inventory.id) }}"><i class="bi bi-file-earmark-x text-danger"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

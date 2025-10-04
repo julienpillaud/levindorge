@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="container vh-100">
+        <div class="row vh-100 justify-content-center align-items-center">
+            <div class="col-10 col-md-6 col-lg-4">
+
+                <form action="/" method="post">
+                    <div class="input-group input-group-lg mb-3">
+                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-person"></i></span>
+                        <input type="email" class="form-control text-center" placeholder="Adresse email" aria-label="username" name="username">
+                    </div>
+                    <div class="input-group input-group-lg mb-3"><span class="input-group-text" id="basic-addon1"><i class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control text-center" placeholder="Mot de passe" aria-label="password" name="password">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-outline-light-purple btn-lg">Connexion</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
