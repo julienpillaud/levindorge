@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/julienpillaud/levindorge/compare/0.1.2...0.2.0) (2025-10-04)
+
+
+### Features
+
+* add fastapi ([#4](https://github.com/julienpillaud/levindorge/issues/4)) ([5cfbf4d](https://github.com/julienpillaud/levindorge/commit/5cfbf4d3cf05589db33eaadaf5588b6245b9ffef))
+
 ## [0.1.2](https://github.com/julienpillaud/levindorge/compare/0.1.1...0.1.2) (2025-10-04)
 
 
