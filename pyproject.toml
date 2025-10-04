@@ -1,6 +1,6 @@
 [project]
 name = "levindorge"
-version = "0.0.1"
+version = "0.1.1"
 requires-python = ">=3.13"
 dependencies = [
     "bcrypt==4.2.0",
@@ -24,8 +24,6 @@ dev = [
     "mypy==1.18.2",
     "pytest==8.4.2",
     "pre-commit==4.3.0",
-    "polyfactory==2.22.2",
-    "types-passlib>=1.7",
 ]
 
 [tool.uv.sources]
