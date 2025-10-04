@@ -44,7 +44,7 @@ def create_article_command(
     )
     created_article = context.repository.create_article(article=article)
 
-    for shop in context.repository.get_shops():
+    for shop in current_user.shops:
         context.event_publisher.publish(
             "create.article",
             {"shop": shop, "article": created_article},
@@ -74,7 +74,7 @@ def update_article_command(
 
     updated_article = context.repository.update_article(article=article)
 
-    for shop in context.repository.get_shops():
+    for shop in current_user.shops:
         context.event_publisher.publish(
             "update.article",
             {"shop": shop, "article": updated_article},
@@ -85,6 +85,7 @@ def update_article_command(
 
 def delete_article_command(
     context: ContextProtocol,
+    current_user: User,
     article_id: EntityId,
 ) -> None:
     article = context.repository.get_article(article_id=article_id)
@@ -93,7 +94,7 @@ def delete_article_command(
 
     context.repository.delete_article(article=article)
 
-    for shop in context.repository.get_shops():
+    for shop in current_user.shops:
         context.event_publisher.publish(
             "delete.article",
             {"shop": shop, "article_id": article_id},

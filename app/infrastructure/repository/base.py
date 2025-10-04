@@ -9,7 +9,6 @@ from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.deposits import DepositRepository
 from app.infrastructure.repository.inventories import InventoryRepository
 from app.infrastructure.repository.items import ItemRepository
-from app.infrastructure.repository.shops import ShopRepository
 from app.infrastructure.repository.types import ArticleTypeRepository
 from app.infrastructure.repository.users import UserRepository
 from app.infrastructure.repository.volumes import VolumeRepository
@@ -17,7 +16,6 @@ from app.infrastructure.repository.volumes import VolumeRepository
 
 class MongoRepository(
     RepositoryProtocol,
-    ShopRepository,
     UserRepository,
     ArticleTypeRepository,
     ArticleRepository,

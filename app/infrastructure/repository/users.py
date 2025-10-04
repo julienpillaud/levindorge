@@ -32,6 +32,6 @@ class UserRepository(MongoRepositoryProtocol, UserRepositoryProtocol):
         if not user:
             return None
 
-        user["shops"] = list(self.database["shops"].find())
+        user["shops"] = list(self.database["shops"].find().sort("name"))
 
         return User(**user)

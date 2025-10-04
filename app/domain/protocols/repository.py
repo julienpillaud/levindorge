@@ -6,13 +6,8 @@ from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId
 from app.domain.inventories.entities import Inventory, InventoryRecord, InventoryReport
 from app.domain.items.entities import Item, ItemType
-from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 from app.domain.volumes.entities import Volume
-
-
-class ShopRepositoryProtocol(Protocol):
-    def get_shops(self) -> list[Shop]: ...
 
 
 class UserRepositoryProtocol(Protocol):
@@ -115,7 +110,6 @@ class InventoryRepositoryProtocol(Protocol):
 
 
 class RepositoryProtocol(
-    ShopRepositoryProtocol,
     UserRepositoryProtocol,
     ArticleTypeRepositoryProtocol,
     ArticleRepositoryProtocol,

@@ -140,7 +140,7 @@ def delete_article(
     domain: Annotated[Domain, Depends(get_domain)],
     article_id: str,
 ) -> Response:
-    domain.delete_article(article_id=article_id)
+    domain.delete_article(current_user=current_user, article_id=article_id)
 
     url = url_for_with_query(
         request,
