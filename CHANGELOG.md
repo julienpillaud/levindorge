@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/julienpillaud/levindorge/compare/0.1.1...0.1.2) (2025-10-04)
+
+
+### Bug Fixes
+
+* add justfile ([#9](https://github.com/julienpillaud/levindorge/issues/9)) ([add05e7](https://github.com/julienpillaud/levindorge/commit/add05e7dbc49b54ac1ed21c246ee4f4b98b694c1))
+
 ## [0.1.1](https://github.com/julienpillaud/levindorge/compare/0.1.0...0.1.1) (2025-10-04)
 
 
