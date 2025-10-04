@@ -4,6 +4,7 @@ from collections import defaultdict
 from typing import Any
 
 from app.domain.articles.entities import ArticleMargins
+from app.domain.commons.entities import PricingGroup
 from app.domain.shops.entities import ShopMargin
 
 DECIMAL_ROUND_SWITCH = 0.1
@@ -19,10 +20,13 @@ def apply_rounding(value: float, decimal_round: float) -> float:
 
 
 def compute_recommended_price(
-    net_price: float, tax_rate: float, shop_margins: ShopMargin, ratio_category: str
+    net_price: float,
+    tax_rate: float,
+    shop_margins: ShopMargin,
+    pricing_group: str,
 ) -> float:
     ratio = shop_margins.ratio
-    if ratio_category == "spirit" and net_price >= SPIRIT_PRICE_RATIO_SWITCH:
+    if pricing_group == PricingGroup.SPIRIT and net_price >= SPIRIT_PRICE_RATIO_SWITCH:
         ratio += SPIRIT_PRICE_BOOST
 
     tax_factor = 1 + (tax_rate / 100)
@@ -48,7 +52,9 @@ def compute_markup_rate(tax_rate: float, gross_price: float, margin: float) -> f
 
 
 def compute_article_margins(
-    net_price: float, tax_rate: float, gross_price: float
+    net_price: float,
+    tax_rate: float,
+    gross_price: float,
 ) -> ArticleMargins:
     margin = compute_margin(
         net_price=net_price, tax_rate=tax_rate, gross_price=gross_price

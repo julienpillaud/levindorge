@@ -35,7 +35,7 @@ from app.domain.price_labels.commands import (
     create_price_labels_command,
     get_price_labels_files_command,
 )
-from app.domain.users.commands import get_user_by_email_command
+from app.domain.users.commands import get_user_by_email_command, update_user_command
 from app.domain.volumes.commands import (
     create_volume_command,
     delete_volume_command,
@@ -65,6 +65,7 @@ class Domain(BaseDomain[ContextProtocol]):
 
     # users
     get_user_by_email = CommandHandler(get_user_by_email_command)
+    update_user = CommandHandler(update_user_command)
 
     # articles
     get_articles = CommandHandler(get_articles_command)

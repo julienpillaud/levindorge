@@ -14,7 +14,7 @@ from app.app.utils import url_for_with_query
 from app.core.config import Settings
 from app.domain.commons.entities import DisplayGroup
 from app.domain.domain import Domain
-from app.domain.users.entities import User
+from app.domain.users.entities import User, UserUpdate
 
 router = APIRouter()
 
@@ -47,7 +47,22 @@ def login(
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
 ) -> Response:
     user = domain.get_user_by_email(email=form_data.username)
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if not user:
+        return templates.TemplateResponse(
+            request=request,
+            name="login.html",
+            context={"error": "Email ou mot de passe incorrect"},
+        )
+
+    valid_password, updated_hash = verify_password(
+        plain_password=form_data.password,
+        hashed_password=user.hashed_password,
+    )
+    if updated_hash is not None:
+        user_update = UserUpdate(hashed_password=updated_hash)
+        domain.update_user(user_id=user.id, user_update=user_update)
+
+    if not valid_password:
         return templates.TemplateResponse(
             request=request,
             name="login.html",

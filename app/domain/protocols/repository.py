@@ -16,7 +16,11 @@ class ShopRepositoryProtocol(Protocol):
 
 
 class UserRepositoryProtocol(Protocol):
+    def get_user(self, user_id: EntityId) -> User | None: ...
+
     def get_user_by_email(self, email: str) -> User | None: ...
+
+    def update_user(self, user: User) -> User: ...
 
 
 class ArticleTypeRepositoryProtocol(Protocol):

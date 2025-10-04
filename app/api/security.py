@@ -1,9 +1,11 @@
 import jwt
 from fastapi.security import OAuth2PasswordBearer
 from pwdlib import PasswordHash
+from pwdlib.hashers.argon2 import Argon2Hasher
+from pwdlib.hashers.bcrypt import BcryptHasher
 from pydantic import BaseModel
 
-password_hash = PasswordHash.recommended()
+password_hash = PasswordHash((Argon2Hasher(), BcryptHasher()))
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -13,8 +15,11 @@ class Token(BaseModel):
     token_type: str
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return password_hash.verify(plain_password, hashed_password)
+def verify_password(
+    plain_password: str,
+    hashed_password: str,
+) -> tuple[bool, str | None]:
+    return password_hash.verify_and_update(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:

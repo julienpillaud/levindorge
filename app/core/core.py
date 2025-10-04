@@ -16,8 +16,8 @@ from app.infrastructure.tactill.manager import TactillManager
 
 class BaseContext(ContextProtocol):
     def __init__(self, settings: Settings) -> None:
-        client: MongoClient[MongoDocument] = MongoClient(settings.mongo_uri)
-        self.database = client[settings.mongo_database]
+        self.client: MongoClient[MongoDocument] = MongoClient(settings.mongo_uri)
+        self.database = self.client[settings.mongo_database]
         self.broker = RedisBroker(str(settings.redis_dsn))
 
     @contextmanager

@@ -1,32 +1,37 @@
+from typing import Any
+
+from bson import ObjectId
+from cleanstack.exceptions import NotFoundError
+
+from app.domain.entities import EntityId
 from app.domain.protocols.repository import UserRepositoryProtocol
-from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 
 class UserRepository(MongoRepositoryProtocol, UserRepositoryProtocol):
+    def get_user(self, user_id: EntityId) -> User | None:
+        return self._get_user_by_filter({"_id": ObjectId(user_id)})
+
     def get_user_by_email(self, email: str) -> User | None:
-        user = self.database["users"].find_one({"email": email})
+        return self._get_user_by_filter({"email": email})
+
+    def update_user(self, user: User) -> User:
+        self.database["users"].replace_one(
+            {"_id": ObjectId(user.id)},
+            user.model_dump(exclude={"id", "shops"}),
+        )
+        user_db = self._get_user_by_filter({"_id": ObjectId(user.id)})
+        if not user_db:
+            raise NotFoundError()
+
+        return user_db
+
+    def _get_user_by_filter(self, match_filter: dict[str, Any]) -> User | None:
+        user = self.database["users"].find_one(match_filter)
         if not user:
             return None
 
-        shops = list(self.database["shops"].find({"username": {"$in": user["shops"]}}))
+        user["shops"] = list(self.database["shops"].find())
 
-        return User(
-            id=str(user["_id"]),
-            name=user["name"],
-            username=user["username"],
-            email=user["email"],
-            hashed_password=user["password"],
-            shops=[
-                Shop(
-                    id=str(shop["_id"]),
-                    name=shop["name"],
-                    username=shop["username"],
-                    tactill_api_key=shop["tactill_api_key"],
-                    margins=shop["margins"],
-                )
-                for shop in shops
-            ],
-            role=user["role"],
-        )
+        return User(**user)

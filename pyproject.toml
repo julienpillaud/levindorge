@@ -1,14 +1,16 @@
 [project]
 name = "levindorge"
 version = "0.0.1"
+requires-python = ">=3.13"
 dependencies = [
+    "bcrypt==4.2.0",
     "cleanstack[fastapi,mongo]",
     "fastapi[standard]>=0.117",
     "faststream[cli,redis]==0.5.48",
     "itsdangerous==2.2.0",
     "logfire[fastapi,pymongo]==4.11.0",
     "pillow==11.3.0",
-    "pwdlib[argon2]==0.2.1",
+    "pwdlib[argon2,bcrypt]==0.2.1",
     "pydantic-settings==2.11.0",
     "pyjwt==2.10.1",
     "tactill",
@@ -23,6 +25,7 @@ dev = [
     "pytest==8.4.2",
     "pre-commit==4.3.0",
     "polyfactory==2.22.2",
+    "types-passlib>=1.7",
 ]
 
 [tool.uv.sources]

@@ -161,7 +161,7 @@ def recommended_prices(
             net_price=data.taxfree_price,
             tax_rate=data.tax,
             shop_margins=shop.margins[data.ratio_category],
-            ratio_category=data.ratio_category,
+            pricing_group=data.ratio_category,
         )
         for shop in current_user.shops
     }

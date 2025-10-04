@@ -80,7 +80,7 @@ def load_user(email: str) -> User:
     return User(**user)
 
 
-def admin_required(func: Callable[P, T]) -> Callable[P, T]:
+def admin_required(func: Callable[P, T]) -> Callable[P, T]:  # noqa
     @functools.wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
         if current_user.role not in {"admin", "superuser"}:
