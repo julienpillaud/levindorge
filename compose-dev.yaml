@@ -1,7 +1,6 @@
 services:
   app:
     build: .
-    image: levindorge:latest
     ports:
       - "8000:8000"
     env_file:

@@ -1,8 +1,8 @@
 services:
 
   backend:
-    container_name: backend
-    image: ghcr.io/julienpillaud/levindorge:0.0.1
+    container_name: app
+    image: ghcr.io/julienpillaud/levindorge:${IMAGE_TAG}
     restart: always
     networks:
       - traefik-public
