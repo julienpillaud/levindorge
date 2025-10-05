@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/julienpillaud/levindorge/compare/0.3.1...0.3.2) (2025-10-05)
+
+
+### Bug Fixes
+
+* version issue ([#16](https://github.com/julienpillaud/levindorge/issues/16)) ([ea38cdc](https://github.com/julienpillaud/levindorge/commit/ea38cdcf89f783df15ee1904d89844c706e106bf))
+
 ## [0.3.1](https://github.com/julienpillaud/levindorge/compare/0.3.0...0.3.1) (2025-10-05)
 
 
