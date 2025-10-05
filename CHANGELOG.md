@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/julienpillaud/levindorge/compare/0.2.0...0.3.0) (2025-10-05)
+
+
+### Features
+
+* add github action to build and push docker image ([#12](https://github.com/julienpillaud/levindorge/issues/12)) ([988caed](https://github.com/julienpillaud/levindorge/commit/988caed2baed7e47ebfa91f599df855cdd215bb8))
+
 ## [0.2.0](https://github.com/julienpillaud/levindorge/compare/0.1.2...0.2.0) (2025-10-04)
 
 
