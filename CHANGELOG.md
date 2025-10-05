@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/julienpillaud/levindorge/compare/0.3.0...0.3.1) (2025-10-05)
+
+
+### Bug Fixes
+
+* docker github action ([#14](https://github.com/julienpillaud/levindorge/issues/14)) ([3f3410e](https://github.com/julienpillaud/levindorge/commit/3f3410eef28394fe83276c7764a7021bcc7ed2a2))
+
 ## [0.3.0](https://github.com/julienpillaud/levindorge/compare/0.2.0...0.3.0) (2025-10-05)
 
 
