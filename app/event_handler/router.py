@@ -4,6 +4,7 @@ from typing import Annotated, ParamSpec, TypeVar
 
 from faststream import Context
 from faststream.redis import RedisRouter
+from faststream.redis.opentelemetry import RedisTelemetryMiddleware
 from tactill import TactillError
 from tenacity import (
     before_sleep_log,
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 P = ParamSpec("P")
 R = TypeVar("R")
 
-router = RedisRouter()
+router = RedisRouter(middlewares=(RedisTelemetryMiddleware(),))
 
 
 @router.subscriber("create.article")
@@ -30,6 +31,10 @@ def create_article(
     message: POSArticleCreateOrUpdate,
     domain: Annotated[Domain, Context()],
 ) -> None:
+    logger.info(
+        f"Creating article for {message.shop.name}",
+        extra=message.model_dump(),
+    )
     retry_command(domain.create_pos_article, data=message)
 
 
@@ -38,6 +43,10 @@ def update_article(
     message: POSArticleCreateOrUpdate,
     domain: Annotated[Domain, Context()],
 ) -> None:
+    logger.info(
+        f"Updating article for {message.shop.name}",
+        extra=message.model_dump(),
+    )
     retry_command(domain.update_pos_article, data=message)
 
 
@@ -46,6 +55,10 @@ def delete_article(
     message: POSArticleDelete,
     domain: Annotated[Domain, Context()],
 ) -> None:
+    logger.info(
+        f"Deleting article for {message.shop.name}",
+        extra=message.model_dump(),
+    )
     retry_command(domain.delete_pos_article, data=message)
 
 

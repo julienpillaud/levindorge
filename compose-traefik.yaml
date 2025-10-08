@@ -1,0 +1,80 @@
+services:
+
+  traefik:
+    container_name: traefik
+    image: traefik:3.3
+    ports:
+      # HTTP port (nécessaire)
+      - "80:80"
+
+      # HTTPS port (désactivé en local)
+      # - "443:443"
+    restart: always
+    labels:
+      # Enable Traefik
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+
+      # Internal dashboard service
+      - traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080
+
+      # HTTP router (traefik.localhost)
+      - traefik.http.routers.traefik-dashboard-http.entrypoints=http
+      - traefik.http.routers.traefik-dashboard-http.rule=Host(`traefik.${DOMAIN?Variable not set}`)
+
+      # --- HTTPS & Let's Encrypt disabled for local ---
+      # - traefik.http.routers.traefik-dashboard-https.entrypoints=https
+      # - traefik.http.routers.traefik-dashboard-https.rule=Host(`traefik.${DOMAIN?Variable not set}`)
+      # - traefik.http.routers.traefik-dashboard-https.tls=true
+      # - traefik.http.routers.traefik-dashboard-https.tls.certresolver=le
+      # - traefik.http.routers.traefik-dashboard-https.service=api@internal
+
+      # --- Redirect middleware (only useful if HTTPS is active) ---
+      # - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      # - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+      # - traefik.http.routers.traefik-dashboard-http.middlewares=https-redirect
+
+      # Basic auth (optional, keep for local)
+      - traefik.http.middlewares.admin-auth.basicauth.users=${USERNAME?Variable not set}:${HASHED_PASSWORD?Variable not set}
+      - traefik.http.routers.traefik-dashboard-http.middlewares=admin-auth
+
+      # Use the internal API/Dashboard
+      - traefik.http.routers.traefik-dashboard-http.service=api@internal
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+      # --- Certificate storage disabled for local ---
+      # - traefik-public-certificates:/certificates
+
+    command:
+      # Enable Docker provider
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+
+      # Entrypoints
+      - --entrypoints.http.address=:80
+
+      # --- HTTPS entrypoint commented for local use ---
+      # - --entrypoints.https.address=:443
+
+      # --- Let's Encrypt disabled locally ---
+      # - --certificatesresolvers.le.acme.email=${EMAIL?Variable not set}
+      # - --certificatesresolvers.le.acme.storage=/certificates/acme.json
+      # - --certificatesresolvers.le.acme.tlschallenge=true
+
+      # Logging & dashboard
+      - --accesslog
+      - --log
+      - --api
+
+    networks:
+      - traefik-public
+
+# --- Certificate volume not needed locally ---
+# volumes:
+#   traefik-public-certificates:
+
+networks:
+  traefik-public:
+    external: true

@@ -9,7 +9,7 @@ from app.core.config import Settings
 def create_api(settings: Settings) -> FastAPI:
     app = FastAPI(
         title=settings.project_name,
-        version=settings.api_version,
+        version=settings.app_version,
         swagger_ui_parameters={
             "tryItOutEnabled": True,
             "displayRequestDuration": True,
