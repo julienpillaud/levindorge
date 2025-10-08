@@ -9,7 +9,7 @@ logfire.configure(
     send_to_logfire="if-token-present",
     token=settings.logfire_token,
     service_name="api",
-    service_version=settings.api_version,
+    service_version=settings.app_version,
     environment=settings.environment,
     console=False,
 )

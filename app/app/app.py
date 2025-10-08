@@ -15,7 +15,7 @@ from app.core.config import Settings
 def create_app(settings: Settings) -> FastAPI:
     app = FastAPI(
         title=settings.project_name,
-        version=settings.api_version,
+        version=settings.app_version,
     )
 
     add_session_middleware(app=app, settings=settings)

@@ -1,7 +1,22 @@
 services:
+
   app:
+    container_name: app
     build: .
     ports:
       - "8000:8000"
     env_file:
       - .env
+
+  worker:
+    container_name: worker
+    build: .
+    command: faststream run app.core.event_handler:app --log-config app/core/logging/config.json
+    env_file:
+      - .env
+
+  redis:
+    container_name: redis
+    image: redis:8.2
+    ports:
+      - "6379:6379"

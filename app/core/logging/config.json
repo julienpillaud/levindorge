@@ -16,24 +16,24 @@
     }
   },
   "loggers": {
-    "app": {
-      "level": "DEBUG",
+    "pymongo": {
+      "level": "INFO",
       "handlers": ["console", "logfire"],
       "propagate": false
     },
-    "cleanstack": {
-      "level": "DEBUG",
+    "urllib3": {
+      "level": "INFO",
       "handlers": ["console", "logfire"],
       "propagate": false
     },
     "watchfiles": {
       "level": "WARNING",
-      "handlers": ["console"],
+      "handlers": ["console", "logfire"],
       "propagate": false
     }
   },
   "root": {
-    "level": "INFO",
+    "level": "DEBUG",
     "handlers": ["console", "logfire"]
   }
 }

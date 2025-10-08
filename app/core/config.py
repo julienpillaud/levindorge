@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     )
 
     project_name: str = "Le Vin d'Orge"
-    api_version: str = "0.0.1"
+    app_version: str
     environment: str
     secret_key: str
     app_path: AppPaths = AppPaths()
@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     mongo_database: str
 
     redis_host: str
-    redis_port: int = 6379
+    redis_port: int
     redis_scheme: str = "redis"
 
     @computed_field  # type: ignore[prop-decorator]
