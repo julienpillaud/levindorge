@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/julienpillaud/levindorge/compare/0.1.0...0.2.0) (2025-10-08)
+
+
+### Features
+
+* add Docker Compose configurations and environment variables ([#25](https://github.com/julienpillaud/levindorge/issues/25)) ([e55f788](https://github.com/julienpillaud/levindorge/commit/e55f78834267f946704a20a41938e172da1b59ef))
+
 ## 0.1.0 (2025-10-05)
 
 
