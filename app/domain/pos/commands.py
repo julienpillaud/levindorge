@@ -1,5 +1,6 @@
 from app.domain.context import ContextProtocol
 from app.domain.pos.entities import POSArticleCreateOrUpdate, POSArticleDelete
+from app.domain.shops.entities import Shop
 
 
 def create_pos_article_command(
@@ -36,3 +37,11 @@ def delete_pos_article_command(
         data.shop,
         reference=data.article_id,
     )
+
+
+def reset_pos_stocks_command(
+    context: ContextProtocol,
+    shop: Shop,
+    category: str,
+) -> None:
+    context.pos_manager.reset_stocks_by_category(shop, category=category)

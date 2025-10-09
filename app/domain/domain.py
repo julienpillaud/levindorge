@@ -29,6 +29,7 @@ from app.domain.items.commands import (
 from app.domain.pos.commands import (
     create_pos_article_command,
     delete_pos_article_command,
+    reset_pos_stocks_command,
     update_pos_article_command,
 )
 from app.domain.price_labels.commands import (
@@ -81,6 +82,7 @@ class Domain(BaseDomain[ContextProtocol]):
     create_pos_article = CommandHandler(create_pos_article_command)
     update_pos_article = CommandHandler(update_pos_article_command)
     delete_pos_article = CommandHandler(delete_pos_article_command)
+    reset_pos_stocks = CommandHandler(reset_pos_stocks_command)
 
     # price_labels
     create_price_labels = CommandHandler(create_price_labels_command)

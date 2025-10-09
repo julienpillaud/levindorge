@@ -87,3 +87,17 @@ def delete_inventory(
         url=request.url_for("get_inventories_view"),
         status_code=status.HTTP_302_FOUND,
     )
+
+
+@router.post("/stocks/reset", dependencies=[Depends(get_current_user)])
+def reset_pos_stocks(
+    request: Request,
+    domain: Annotated[Domain, Depends(get_domain)],
+    shop: Annotated[Shop, Depends(get_shop_from_form)],
+    category: Annotated[str, Form()],
+) -> Response:
+    domain.reset_pos_stocks(shop=shop, category=category)
+    return RedirectResponse(
+        url=request.url_for("get_inventories_view"),
+        status_code=status.HTTP_302_FOUND,
+    )

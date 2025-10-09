@@ -23,6 +23,7 @@ def init_templates(settings: Settings) -> Jinja2Templates:
 
     templates.env.globals["navbar_categories"] = navbar_categories
     templates.env.globals["get_flashed_messages"] = get_flashed_messages
+    templates.env.globals["app_version"] = settings.app_version
 
     templates.env.filters["strip_zeros"] = strip_zeros
     templates.env.filters["get_navbar_category_title"] = get_navbar_category_title

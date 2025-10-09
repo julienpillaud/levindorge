@@ -33,3 +33,10 @@ class POSManagerProtocol(Protocol):
         /,
         reference: str,
     ) -> None: ...
+
+    def reset_stocks_by_category(
+        self,
+        shop: Shop,
+        /,
+        category: str,
+    ) -> None: ...

@@ -3,7 +3,53 @@ from tactill import TactillColor
 from app.domain.articles.entities import Article, ArticleColor
 from app.domain.commons.entities import DisplayGroup
 
-EXCLUDED_CATEGORIES = ["AUTRE", "BAR", "CONSIGNE", "STREETFOOD", "VDO"]
+INCLUDED_CATEGORIES = [
+    "ABSINTHE",
+    "ACCESSOIRE",
+    "ALIMENTATION",
+    "ANISÉ",
+    "ARMAGNAC",
+    "BIB",
+    "BIÈRE",
+    "BSA",
+    "CACHAÇA",
+    "CIDRE",
+    "COFFRET",
+    "COGNAC",
+    "EMBALLAGE",
+    "FÛT",
+    "GIN",
+    "LIQUEUR",
+    "MEZCAL",
+    "MINI-FÛT",
+    "RHUM",
+    "RHUM ARRANGÉ",
+    "VIN",
+    "VIN EFFERVESCENT",
+    "VIN MUTÉ",
+    "VODKA",
+    "WHISKY",
+]
+CATEGORIES_MAPPING = {
+    "beer": ["BIÈRE", "CIDRE"],
+    "keg": ["FÛT", "MINI-FÛT"],
+    "spirit": [
+        "ABSINTHE",
+        "ANISÉ",
+        "ARMAGNAC",
+        "CACHAÇA",
+        "COGNAC",
+        "GIN",
+        "LIQUEUR",
+        "MEZCAL",
+        "RHUM",
+        "RHUM ARRANGÉ",
+        "VODKA",
+        "WHISKY",
+    ],
+    "wine": ["BIB", "VIN", "VIN EFFERVESCENT", "VIN MUTÉ"],
+    "other": ["ACCESSOIRE", "ALIMENTATION", "BSA", "COFFRET", "EMBALLAGE"],
+}
 LITER_TO_CENTILITER = 100
 COLORS_MAPPING = {
     ArticleColor.AMBER_BEER: TactillColor.ORANGE,
