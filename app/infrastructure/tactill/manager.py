@@ -1,3 +1,4 @@
+import datetime
 from collections.abc import Callable
 from functools import wraps
 from typing import Concatenate, Literal, ParamSpec, TypeVar
@@ -7,6 +8,7 @@ from tactill.entities.catalog.article import Article as TactillArticle
 from tactill.entities.catalog.article import ArticleCreation, ArticleModification
 from tactill.entities.catalog.category import Category
 from tactill.entities.catalog.tax import Tax
+from tactill.entities.stock.movement import ArticleMovement, MovementCreation
 from tactill.utils import get_query_filter
 
 from app.domain.articles.entities import Article
@@ -16,7 +18,8 @@ from app.domain.pos.entities import POSArticle
 from app.domain.protocols.pos_manager import POSManagerProtocol
 from app.domain.shops.entities import Shop
 from app.infrastructure.tactill.utils import (
-    EXCLUDED_CATEGORIES,
+    CATEGORIES_MAPPING,
+    INCLUDED_CATEGORIES,
     define_color,
     define_icon_text,
     define_name,
@@ -51,11 +54,16 @@ class TactillManager(POSManagerProtocol):
     def _get_categories(
         self,
         name_or_names: str | list[str],
-        query_operator: Literal["in", "nin"] = "nin",
+        query_operator: Literal["in", "nin"] | None = None,
     ) -> list[Category]:
         if isinstance(name_or_names, str):
             filter_ = f"deprecated=false&is_default=false&name={name_or_names}"
         else:
+            if query_operator is None:
+                raise POSManagerError(
+                    "'query_operator' must be provided for list of names"
+                )
+
             query_filter = get_query_filter(
                 field="name",
                 values=name_or_names,
@@ -88,21 +96,28 @@ class TactillManager(POSManagerProtocol):
 
         return articles[0]
 
-    @with_client
-    def get_articles(self, _: Shop, /) -> list[POSArticle]:
-        categories = self._get_categories(EXCLUDED_CATEGORIES)
-        category_ids = [category.id for category in categories]
-
+    def _get_articles_by_category(
+        self,
+        category_ids: list[str],
+        query_operator: Literal["in", "nin"],
+    ) -> list[POSArticle]:
         query_filter = get_query_filter(
             field="category_id",
             values=category_ids,
-            query_operator="in",
+            query_operator=query_operator,
         )
         articles = self.client.get_articles(
             limit=5000,
             filter=f"deprecated=false&is_default=false&{query_filter}",
         )
         return [POSArticle(**article.model_dump()) for article in articles]
+
+    @with_client
+    def get_articles(self, _: Shop, /) -> list[POSArticle]:
+        categories = self._get_categories(INCLUDED_CATEGORIES, query_operator="in")
+        category_ids = [category.id for category in categories]
+
+        return self._get_articles_by_category(category_ids, query_operator="in")
 
     @with_client
     def create_article(
@@ -173,3 +188,69 @@ class TactillManager(POSManagerProtocol):
 
         article = articles[0]
         self.client.delete_article(article_id=article.id)
+
+    @with_client
+    def reset_stocks_by_category(
+        self,
+        shop: Shop,
+        /,
+        category: str,
+    ) -> None:
+        category_names = CATEGORIES_MAPPING.get(category)
+        if not category_names:
+            raise POSManagerError()
+
+        categories = self._get_categories(category_names, query_operator="in")
+        categories_mapping = {category.id: category.name for category in categories}
+        category_ids = [category.id for category in categories]
+
+        articles = self._get_articles_by_category(
+            category_ids=category_ids,
+            query_operator="in",
+        )
+
+        current_date = datetime.datetime.now(datetime.UTC).isoformat()
+        article_movements_out = []
+        article_movements_in = []
+        for article in articles:
+            if article.stock_quantity > 0:
+                article_movements_out.append(
+                    ArticleMovement(
+                        article_id=article.id,
+                        article_name=article.name,
+                        category_name=categories_mapping[article.category_id],
+                        state="done",
+                        units=article.stock_quantity,
+                        done_on=current_date,
+                    )
+                )
+            if article.stock_quantity < 0:
+                article_movements_in.append(
+                    ArticleMovement(
+                        article_id=article.id,
+                        article_name=article.name,
+                        category_name=categories_mapping[article.category_id],
+                        state="done",
+                        units=-article.stock_quantity,
+                        done_on=current_date,
+                    )
+                )
+
+        if article_movements_out:
+            self.client.create_movement(
+                MovementCreation(
+                    validated_by=[],
+                    type="out",
+                    state="done",
+                    movements=article_movements_out,
+                )
+            )
+        if article_movements_in:
+            self.client.create_movement(
+                MovementCreation(
+                    validated_by=[],
+                    type="in",
+                    state="done",
+                    movements=article_movements_in,
+                )
+            )

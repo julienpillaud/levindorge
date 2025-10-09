@@ -20,10 +20,10 @@
                     </div>
                 </form>
 
-                <form action="" method="post">
+                <form action="{{ url_for('reset_pos_stocks') }}" method="post">
                     <div class="input-group flex-nowrap">
-                        <select class="form-select" name="shop" aria-label="Select shop">
-                            <option selected disabled>Magasin</option>
+                        <select class="form-select" name="shop" aria-label="Select shop" required>
+                            <option selected disabled value="">Magasin</option>
                             {% for shop in current_user.shops %}
                                 <option value="{{ shop.username }}">{{ shop.name }}</option>
                             {% endfor %}
