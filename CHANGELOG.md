@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/julienpillaud/levindorge/compare/0.2.0...0.3.0) (2025-10-09)
+
+
+### Features
+
+* implement reset stocks by category functionality ([#27](https://github.com/julienpillaud/levindorge/issues/27)) ([1850028](https://github.com/julienpillaud/levindorge/commit/1850028c12d5c4b321c4af18360e3602c60da59e))
+
 ## [0.2.0](https://github.com/julienpillaud/levindorge/compare/0.1.0...0.2.0) (2025-10-08)
 
 
