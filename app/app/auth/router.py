@@ -10,7 +10,6 @@ from app.api.dependencies import get_domain, get_settings
 from app.api.security import create_access_token, verify_password
 from app.app.auth.dependencies import get_optional_current_user
 from app.app.dependencies import get_templates
-from app.app.utils import url_for_with_query
 from app.core.config import Settings
 from app.domain.commons.entities import DisplayGroup
 from app.domain.domain import Domain
@@ -27,13 +26,13 @@ def home(
 ) -> Response:
     # A valid user is already logged in
     if current_user:
-        url = url_for_with_query(
-            request,
-            name="get_articles_view",
-            list_category=DisplayGroup.BEER,
-            query_params={"shop": current_user.shops[0].username},
+        return RedirectResponse(
+            url=request.url_for(
+                "get_articles_view",
+                list_category=DisplayGroup.BEER,
+            ),
+            status_code=status.HTTP_302_FOUND,
         )
-        return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 
     return templates.TemplateResponse(request=request, name="login.html")
 
@@ -71,13 +70,10 @@ def login(
 
     access_token = create_access_token(sub=user.email, secret_key=settings.secret_key)
 
-    url = url_for_with_query(
-        request,
-        name="get_articles_view",
-        list_category=DisplayGroup.BEER,
-        query_params={"shop": user.shops[0].username},
+    response = RedirectResponse(
+        url=request.url_for("get_articles_view", list_category=DisplayGroup.BEER),
+        status_code=status.HTTP_302_FOUND,
     )
-    response = RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
     response.set_cookie(
         key="access_token",
         value=f"Bearer {access_token}",

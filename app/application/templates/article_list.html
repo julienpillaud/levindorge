@@ -143,17 +143,23 @@
                     <!-- PRICE -->
                     <td class="text-center">{{ x.taxfree_price | strip_zeros }}</td>
                     {% if list_category not in ["misc", "food"] %}
-                        <td class="text-center recommended_price">{{ x.shops[current_shop.username].recommended_price | strip_zeros }}</td>
+                        <td class="text-center recommended_price" data-shops='{{ x.shops | tojson }}'>
+                            {{ x.shops[current_user.shops[0].username].recommended_price | strip_zeros }}
+                        </td>
                     {% endif %}
-                    <td class="text-center sell_price">
-                        {{ x.shops[current_shop.username]["sell_price"] | strip_zeros }}
+                    <td class="text-center sell_price" data-shops='{{ x.shops | tojson }}'>
+                        {{ x.shops[current_user.shops[0].username]["sell_price"] | strip_zeros }}
                     </td>
-                    <td class="text-center">{{ x.shops[current_shop.username].margins.margin | strip_zeros }}</td>
-                    <td class="text-center">{{ x.shops[current_shop.username].margins.markup | strip_zeros }}</td>
+                    <td class="text-center" data-shops='{{ x.shops | tojson }}'>
+                        {{ x.shops[current_user.shops[0].username].margins.margin | strip_zeros }}
+                    </td>
+                    <td class="text-center" data-shops='{{ x.shops | tojson }}'>
+                        {{ x.shops[current_user.shops[0].username].margins.markup | strip_zeros }}
+                    </td>
 
                     <!-- STOCK -->
-                    <td class="text-center stock_quantity">
-                        {{ x.shops[current_shop.username]["stock_quantity"] if x.shops[current_shop.username]["stock_quantity"] }}
+                    <td class="text-center stock_quantity" data-shops='{{ x.shops | tojson }}'>
+                        {{ x.shops[current_user.shops[0].username]["stock_quantity"] if x.shops[current_user.shops[0].username]["stock_quantity"] }}
                     </td>
 
                     <!-- DISTRIBUTOR -->

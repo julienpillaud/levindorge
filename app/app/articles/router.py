@@ -8,14 +8,12 @@ from fastapi.templating import Jinja2Templates
 
 from app.api.dependencies import get_domain
 from app.app.articles.dtos import ArticleDTO, MarginsRequestDTO, PriceRequestDTO
-from app.app.auth.dependencies import get_current_shop, get_current_user
+from app.app.auth.dependencies import get_current_user
 from app.app.dependencies import get_templates
-from app.app.utils import url_for_with_query
 from app.domain.articles.entities import ArticleCreateOrUpdate, ArticleMargins
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
 from app.domain.commons.entities import DisplayGroup
 from app.domain.domain import Domain
-from app.domain.shops.entities import Shop
 from app.domain.users.entities import User
 
 router = APIRouter(prefix="/articles")
@@ -25,7 +23,6 @@ router = APIRouter(prefix="/articles")
 def get_articles_view(
     request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
-    current_shop: Annotated[Shop, Depends(get_current_shop)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     list_category: DisplayGroup,
@@ -36,7 +33,6 @@ def get_articles_view(
         name="article_list.html",
         context={
             "current_user": current_user,
-            "current_shop": current_shop,
             "articles": articles,
             "list_category": list_category,
         },
@@ -75,14 +71,10 @@ def create_article(
 ) -> Response:
     article_create = ArticleCreateOrUpdate(**form_data.model_dump())
     domain.create_article(current_user=current_user, data=article_create)
-
-    url = url_for_with_query(
-        request,
-        name="get_articles_view",
-        list_category=list_category,
-        query_params={"shop": current_user.shops[0].username},
+    return RedirectResponse(
+        url=request.url_for("get_articles_view", list_category=list_category),
+        status_code=status.HTTP_302_FOUND,
     )
-    return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/update/{article_id}")
@@ -122,15 +114,14 @@ def update_article(
         article_id=article_id,
         data=article_update,
     )
-
     article_type = domain.get_article_type(name=article.type)
-    url = url_for_with_query(
-        request,
-        name="get_articles_view",
-        list_category=article_type.display_group,
-        query_params={"shop": current_user.shops[0].username},
+    return RedirectResponse(
+        url=request.url_for(
+            "get_articles_view",
+            list_category=article_type.display_group,
+        ),
+        status_code=status.HTTP_302_FOUND,
     )
-    return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/delete/{article_id}")
@@ -141,14 +132,11 @@ def delete_article(
     article_id: str,
 ) -> Response:
     domain.delete_article(current_user=current_user, article_id=article_id)
-
-    url = url_for_with_query(
-        request,
-        name="get_articles_view",
-        list_category=URL(request.headers["referer"]).path.split("/")[-1],
-        query_params={"shop": current_user.shops[0].username},
+    display_group = URL(request.headers["referer"]).path.split("/")[-1]
+    return RedirectResponse(
+        url=request.url_for("get_articles_view", list_category=display_group),
+        status_code=status.HTTP_302_FOUND,
     )
-    return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 
 
 @router.post("/recommended_prices")

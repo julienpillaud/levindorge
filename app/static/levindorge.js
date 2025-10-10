@@ -1,86 +1,67 @@
-$(function () {
+document.addEventListener('DOMContentLoaded', () => {
+    const shopItems = document.querySelectorAll('.shop-item-navbar');
 
-    $(".show-overlay").on("click", function () {
-        $(".overlay").show();
-    });
-
-    setTimeout(() => {
-        $(".alert").fadeOut();
-    }, 3000);
-
-    // Search and filter table rows
-    $("#search").on("keyup", function () {
-        let value = $(this).val().toLowerCase();
-        $("table tbody tr").filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    shopItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const shopName = item.textContent.trim();
+            const shopUserName = item.getAttribute('data-item-navbar');
+            switchShop(shopName, shopUserName, item);
         });
     });
 
-    // Sort table columns
-    $("th:not(.not-sortable)").on("click", function () {
-        let table = $(this).parents("table.sortable").eq(0)
-        let rows = table.find("tr:gt(0)").toArray().sort(compare($(this).index()))
-        this.asc = !this.asc
-        if (!this.asc) {
-            rows = rows.reverse()
-        }
-        for (let i = 0; i < rows.length; i++) {
-            table.append(rows[i])
-        }
-    });
-
-    // Color sell price
-    $("table#articlesList tbody tr").each(function () {
-        let $recommended_price = $(this).find(".recommended_price");
-        let recommended_price = Number($recommended_price.html());
-        let $sell_price = $(this).find(".sell_price");
-        let sell_price = Number($sell_price.html());
-
-        if (sell_price > recommended_price) {
-            $sell_price.css("background-color", "darkgreen");
-        } else if (sell_price < recommended_price) {
-            $sell_price.css("background-color", "darkred");
-        }
-    });
-
-    // Color stock quantity
-    $("table#articlesList tbody tr td.stock_quantity").each(function () {
-        let $elem = $(this);
-        let value = Number($elem.html());
-
-        if (value > 0) {
-            $elem.css("background-color", "darkgreen");
-        } else if (value < 0) {
-            $elem.css("background-color", "darkred");
-        }
-    });
+    colorStockQuantities();
+    colorSellPrices();
 
 });
 
-function isNumeric(value) {
-    return !isNaN(parseFloat(value)) && isFinite(value);
+function switchShop(shopName, shopUserName, item) {
+    item.closest('.dropdown').querySelector('.dropdown-toggle').textContent = shopName;
+
+    document.querySelectorAll('[data-shop]').forEach(cell => {
+        cell.style.display = 'none';
+    });
+    document.querySelectorAll(`[data-shop="${shopUserName}"]`).forEach(cell => {
+        cell.style.display = 'table-cell';
+    });
 }
 
-function getCellValue(row, index) {
-    return $(row).children("td").eq(index).text()
+function colorSellPrices() {
+    document.querySelectorAll('tbody tr').forEach(row => {
+
+        const shops = row.querySelectorAll('[data-shop]');
+        const shopNames = [...new Set([...shops].map(s => s.dataset.shop))];
+
+        shopNames.forEach(shopName => {
+            const recommendedPriceElem = row.querySelector(`.recommended_price[data-shop="${shopName}"]`);
+            const sellPriceElem = row.querySelector(`.sell_price[data-shop="${shopName}"]`);
+
+            if (recommendedPriceElem && sellPriceElem) {
+                const recommendedPrice = parseFloat(recommendedPriceElem.textContent) || 0;
+                const sellPrice = parseFloat(sellPriceElem.textContent) || 0;
+
+                sellPriceElem.style.backgroundColor = '';
+
+                if (sellPrice > recommendedPrice) {
+                    sellPriceElem.style.backgroundColor = 'darkgreen';
+                } else if (sellPrice < recommendedPrice) {
+                    sellPriceElem.style.backgroundColor = 'darkred';
+                }
+            }
+        });
+    });
 }
 
-function compare(index) {
-    return function (a, b) {
-        let valA = getCellValue(a, index), valB = getCellValue(b, index)
-        return isNumeric(valA) && isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
-    }
-}
+function colorStockQuantities() {
+    document.querySelectorAll('.stock_quantity').forEach(elem => {
+        const value = parseFloat(elem.textContent) || 0;
 
-function toggleEmptyRows() {
-    let $rows = $("table tbody tr")
-    let rows = document.querySelectorAll("table tbody tr")
-    let noEmptyRows = Array.from(rows).filter(row => row.cells[row.cells.length - 1].children[0].value)
+        elem.style.backgroundColor = '';
 
-    if ($rows.is(":hidden")) {
-        $rows.show()
-    } else {
-        $(rows).hide()
-        $(noEmptyRows).show()
-    }
+        if (value > 0) {
+            elem.style.backgroundColor = 'darkgreen';
+        } else if (value < 0) {
+            elem.style.backgroundColor = 'darkred';
+        }
+    });
 }
