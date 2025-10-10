@@ -64,15 +64,16 @@
 
                 <!-- PRICE -->
                 <th class="text-center align-middle bg-light-purple text-nowrap" role="button">HT DI</th>
-                {% if list_category not in ["misc", "food"] %}
-                    <th class="text-center align-middle bg-light-purple text-nowrap" role="button">PVC</th>
-                {% endif %}
-                <th class="text-center align-middle bg-light-purple text-nowrap" role="button">TTC</th>
-                <th class="text-center align-middle bg-light-purple text-nowrap" role="button">M (€)</th>
-                <th class="text-center align-middle bg-light-purple text-nowrap" role="button">Tm (%)</th>
 
-                <!-- STOCK -->
-                <th class="text-center align-middle bg-light-purple" role="button">Stock</th>
+                {% for shop in current_user.shops %}
+                  {% if list_category not in ["misc", "food"] %}
+                      <th class="text-center align-middle bg-light-purple text-nowrap" role="button" data-shop="{{ shop.username }}" {% if shop.username != current_user.shops[0].username %}style="display:none"{% endif %}>PVC</th>
+                  {% endif %}
+                  <th class="text-center align-middle bg-light-purple text-nowrap" role="button" data-shop="{{ shop.username }}" {% if shop.username != current_user.shops[0].username %}style="display:none"{% endif %}>TTC</th>
+                  <th class="text-center align-middle bg-light-purple text-nowrap" role="button" data-shop="{{ shop.username }}" {% if shop.username != current_user.shops[0].username %}style="display:none"{% endif %}>M (€)</th>
+                  <th class="text-center align-middle bg-light-purple text-nowrap" role="button" data-shop="{{ shop.username }}" {% if shop.username != current_user.shops[0].username %}style="display:none"{% endif %}>Tm (%)</th>
+                  <th class="text-center align-middle bg-light-purple text-nowrap" role="button" data-shop="{{ shop.username }}" {% if shop.username != current_user.shops[0].username %}style="display:none"{% endif %}>Stock</th>
+                {% endfor %}
 
                 <!-- DISTRIBUTOR -->
                 <th class="text-center align-middle bg-light-purple" role="button">Fournisseur</th>
@@ -142,25 +143,35 @@
 
                     <!-- PRICE -->
                     <td class="text-center">{{ x.taxfree_price | strip_zeros }}</td>
+
                     {% if list_category not in ["misc", "food"] %}
-                        <td class="text-center recommended_price" data-shops='{{ x.shops | tojson }}'>
-                            {{ x.shops[current_user.shops[0].username].recommended_price | strip_zeros }}
+                      {% for shop_name, shop in x.shops.items() %}
+                        <td class="text-center recommended_price" data-shop="{{ shop_name }}" {% if shop_name != current_user.shops[0].username %}style="display:none"{% endif %}>
+                          {{ shop.recommended_price | strip_zeros }}
                         </td>
+                      {% endfor %}
                     {% endif %}
-                    <td class="text-center sell_price" data-shops='{{ x.shops | tojson }}'>
-                        {{ x.shops[current_user.shops[0].username]["sell_price"] | strip_zeros }}
-                    </td>
-                    <td class="text-center" data-shops='{{ x.shops | tojson }}'>
-                        {{ x.shops[current_user.shops[0].username].margins.margin | strip_zeros }}
-                    </td>
-                    <td class="text-center" data-shops='{{ x.shops | tojson }}'>
-                        {{ x.shops[current_user.shops[0].username].margins.markup | strip_zeros }}
-                    </td>
+
+                    {% for shop_name, shop in x.shops.items() %}
+                      <td class="text-center sell_price" data-shop="{{ shop_name }}" {% if shop_name != current_user.shops[0].username %}style="display:none"{% endif %}>
+                        {{ shop["sell_price"] | strip_zeros }}
+                      </td>
+
+                      <td class="text-center margin" data-shop="{{ shop_name }}" {% if shop_name != current_user.shops[0].username %}style="display:none"{% endif %}>
+                        {{ shop.margins.margin | strip_zeros }}
+                      </td>
+
+                      <td class="text-center markup" data-shop="{{ shop_name }}" {% if shop_name != current_user.shops[0].username %}style="display:none"{% endif %}>
+                        {{ shop.margins.markup | strip_zeros }}
+                      </td>
+                    {% endfor %}
 
                     <!-- STOCK -->
-                    <td class="text-center stock_quantity" data-shops='{{ x.shops | tojson }}'>
-                        {{ x.shops[current_user.shops[0].username]["stock_quantity"] if x.shops[current_user.shops[0].username]["stock_quantity"] }}
-                    </td>
+                    {% for shop_name, shop in x.shops.items() %}
+                      <td class="text-center stock_quantity" data-shop="{{ shop_name }}" {% if shop_name != current_user.shops[0].username %}style="display:none"{% endif %}>
+                        {{ shop["stock_quantity"] if shop["stock_quantity"] }}
+                      </td>
+                    {% endfor %}
 
                     <!-- DISTRIBUTOR -->
                     <td class="text-center">{{ x.distributor }}</td>
