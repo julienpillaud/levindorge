@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/julienpillaud/levindorge/compare/0.3.0...0.4.0) (2025-10-12)
+
+
+### Features
+
+* implement shop switcher ([#29](https://github.com/julienpillaud/levindorge/issues/29)) ([106ab9f](https://github.com/julienpillaud/levindorge/commit/106ab9fa6b27e7b1233794aff15f79b09022f96e))
+
 ## [0.3.0](https://github.com/julienpillaud/levindorge/compare/0.2.0...0.3.0) (2025-10-09)
 
 
