@@ -20,11 +20,11 @@
 
                 {# Shops #}
                 <li class="nav-item dropdown mt-1 mt-lg-0">
-                    <a class="btn btn-dark-yellow nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ current_shop.name }}</a>
+                    <a class="btn btn-dark-yellow nav-link dropdown-toggle text-start" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 140px;">{{ current_shop.name }}</a>
                     {% if current_user.shops | length >= 2 %}
                         <div class="dropdown-menu">
                             {% for shop in current_user.shops %}
-                                <a class="dropdown-item" href="{{ url_for('get_articles_view', list_category=list_category) }}?shop={{ shop.username }}">{{ shop.name }}</a>
+                                <a class="dropdown-item shop-item-navbar" data-item-navbar="{{ shop.username }}" href="#">{{ shop.name }}</a>
                             {% endfor %}
                         </div>
                     {% endif %}
@@ -36,7 +36,7 @@
                     <div class="dropdown-menu">
                         {% for _, categories in navbar_categories.items() %}
                             {% for category in categories %}
-                                <a class="dropdown-item" href="{{ url_for('get_articles_view', list_category=category.code) }}?shop={{ current_shop.username }}">{{ category.plural_name }}</a>
+                                <a class="dropdown-item" href="{{ url_for('get_articles_view', list_category=category.code) }}">{{ category.plural_name }}</a>
                             {% endfor %}
                             {% if not loop.last %}
                                 <div class="dropdown-divider"></div>
