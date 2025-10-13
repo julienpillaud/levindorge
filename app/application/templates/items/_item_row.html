@@ -3,10 +3,11 @@
     {% if category == 'countries' %}
         <td class="text-center text-nowrap">{{ item.demonym }}</td>{% endif %}
     <td class="text-center" style="width: 20px">
-        <a href="#"
-           hx-delete="{{ url_for('delete_item', item_type=category, item_id=item.id) }}"
-           hx-target="closest tr"
-           hx-swap="outerHTML"
+        <a
+            href="#"
+            hx-delete="{{ url_for('delete_item', item_type=category, item_id=item.id) }}"
+            hx-target="closest tr"
+            hx-swap="outerHTML"
         >
             <i class="bi bi-x-square text-danger"></i>
         </a>

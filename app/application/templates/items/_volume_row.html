@@ -1,0 +1,24 @@
+{% set category_mapping = {
+    "beer": "Bière / Cidre",
+    "bib": "BIB",
+    "keg": "Fût",
+    "mini_keg": "Mini-fût",
+    "spirit": "Spiritueux",
+    "wine": "Vin",
+} %}
+
+<tr>
+    <td class="text-center text-nowrap">{{ category_mapping[volume.category] }}</td>
+    <td class="text-center text-nowrap">{{ volume.unit }}</td>
+    <td class="text-center text-nowrap">{{ volume.value | strip_zeros }}</td>
+    <td class="text-center" style="width: 20px">
+        <a
+            href="#"
+            hx-delete="{{ url_for('delete_volume', volume_id=volume.id) }}"
+            hx-target="closest tr"
+            hx-swap="outerHTML"
+        >
+            <i class="bi bi-x-square text-danger"></i>
+        </a>
+    </td>
+</tr>

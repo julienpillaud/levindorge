@@ -16,7 +16,7 @@
                 <form
                     method="post"
                     hx-post="{{ request.url }}"
-                    hx-target="#items-table-body"
+                    hx-target="tbody"
                     hx-swap="afterbegin"
                     hx-on:htmx:after-request="this.reset()"
                 >
@@ -46,7 +46,7 @@
                         <th class="bg-light-purple not-sortable"></th>
                     </tr>
                     </thead>
-                    <tbody id="items-table-body">
+                    <tbody>
                     {% for item in items %}
                         {% include "items/_item_row.html" %}
                     {% endfor %}

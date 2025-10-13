@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, status
 from fastapi.requests import Request
-from fastapi.responses import RedirectResponse, Response
+from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
 
 from app.api.dependencies import get_domain
@@ -37,23 +37,21 @@ def get_volumes_view(
 def create_volume(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
     form_data: Annotated[VolumeCreate, Form()],
 ) -> Response:
-    domain.create_volume(volume_create=form_data)
-    return RedirectResponse(
-        url=request.url_for("get_volumes_view"),
-        status_code=status.HTTP_302_FOUND,
+    item = domain.create_volume(volume_create=form_data)
+    return templates.TemplateResponse(
+        request=request,
+        name="items/_volume_row.html",
+        context={"volume": item},
     )
 
 
-@router.get("/{volume_id}/delete", dependencies=[Depends(get_current_user)])
+@router.delete("/{volume_id}", dependencies=[Depends(get_current_user)])
 def delete_volume(
-    request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
     volume_id: str,
 ) -> Response:
     domain.delete_volume(volume_id=volume_id)
-    return RedirectResponse(
-        url=request.url_for("get_volumes_view"),
-        status_code=status.HTTP_302_FOUND,
-    )
+    return Response(status_code=status.HTTP_200_OK)

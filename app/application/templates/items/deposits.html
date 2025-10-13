@@ -6,7 +6,13 @@
         <div class="row justify-content-center">
             <div class="col col-lg-6">
 
-                <form method="post">
+                <form
+                    method="post"
+                    hx-post="{{ request.url }}"
+                    hx-target="tbody"
+                    hx-swap="afterbegin"
+                    hx-on:htmx:after-request="this.reset()"
+                >
                     <div class="input-group mb-2">
                         <label class="input-group-text w-25 bg-light-purple" for="deposit-category">Catégorie</label>
                         <select class="form-select text-center" id="deposit-category" name="category" required>
@@ -44,16 +50,7 @@
                     </thead>
                     <tbody>
                     {% for deposit in deposits %}
-                        <tr>
-                            <td class="text-center text-nowrap">{{ deposit.category }}</td>
-                            <td class="text-center text-nowrap">{{ deposit.deposit_type }}</td>
-                            <td class="text-center text-nowrap">{{ deposit.value | strip_zeros }}</td>
-                            <td class="text-center" style="width: 20px">
-                                <a href="{{ url_for('delete_deposit', deposit_id=deposit.id) }}">
-                                    <i class="bi bi-x-square text-danger"></i>
-                                </a>
-                            </td>
-                        </tr>
+                        {% include "items/_deposit_row.html" %}
                     {% endfor %}
                     </tbody>
                 </table>
