@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0](https://github.com/julienpillaud/levindorge/compare/0.4.0...0.5.0) (2025-10-13)
+
+
+### Features
+
+* update items list rendering ([#31](https://github.com/julienpillaud/levindorge/issues/31)) ([2177710](https://github.com/julienpillaud/levindorge/commit/21777105a1171db5a81fa45e05da3c22d0379fcf))
+* update volumes and deposits list rendering ([#33](https://github.com/julienpillaud/levindorge/issues/33)) ([2a4e95a](https://github.com/julienpillaud/levindorge/commit/2a4e95af18abcb32b784f440f29fb82bd25b3d94))
+
 ## [0.4.0](https://github.com/julienpillaud/levindorge/compare/0.3.0...0.4.0) (2025-10-12)
 
 
