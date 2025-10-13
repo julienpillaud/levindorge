@@ -1,0 +1,15 @@
+<tr>
+    <td class="text-center text-nowrap">{{ deposit.category }}</td>
+    <td class="text-center text-nowrap">{{ deposit.deposit_type }}</td>
+    <td class="text-center text-nowrap">{{ deposit.value | strip_zeros }}</td>
+    <td class="text-center" style="width: 20px">
+        <a
+            href="#"
+            hx-delete="{{ url_for('delete_deposit', deposit_id=deposit.id) }}"
+            hx-target="closest tr"
+            hx-swap="outerHTML"
+        >
+            <i class="bi bi-x-square text-danger"></i>
+        </a>
+    </td>
+</tr>

@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, status
 from fastapi.requests import Request
-from fastapi.responses import RedirectResponse, Response
+from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
 
 from app.api.dependencies import get_domain
@@ -37,23 +37,21 @@ def get_deposits_view(
 def create_deposit(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
     form_data: Annotated[DepositCreate, Form()],
 ) -> Response:
-    domain.create_deposit(deposit_create=form_data)
-    return RedirectResponse(
-        url=request.url_for("get_deposits_view"),
-        status_code=status.HTTP_302_FOUND,
+    item = domain.create_deposit(deposit_create=form_data)
+    return templates.TemplateResponse(
+        request=request,
+        name="items/_deposit_row.html",
+        context={"deposit": item},
     )
 
 
-@router.get("/{deposit_id}/delete", dependencies=[Depends(get_current_user)])
+@router.delete("/{deposit_id}", dependencies=[Depends(get_current_user)])
 def delete_deposit(
-    request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
     deposit_id: str,
 ) -> Response:
     domain.delete_deposit(deposit_id=deposit_id)
-    return RedirectResponse(
-        url=request.url_for("get_deposits_view"),
-        status_code=status.HTTP_302_FOUND,
-    )
+    return Response(status_code=status.HTTP_200_OK)
