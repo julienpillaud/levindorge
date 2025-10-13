@@ -13,7 +13,13 @@
 
             <div class="col col-lg-{{ col_width }}">
 
-                <form method="post">
+                <form
+                    method="post"
+                    hx-post="{{ request.url }}"
+                    hx-target="#items-table-body"
+                    hx-swap="afterbegin"
+                    hx-on:htmx:after-request="this.reset()"
+                >
                     <div class="input-group mb-2">
                         <span class="input-group-text w-25 bg-light-purple">{{ title }}</span>
                         <input type="text" class="form-control" name="name" required>
@@ -40,18 +46,9 @@
                         <th class="bg-light-purple not-sortable"></th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="items-table-body">
                     {% for item in items %}
-                        <tr>
-                            <td class="text-center text-nowrap">{{ item.name }}</td>
-                            {% if category == 'countries' %}
-                                <td class="text-center text-nowrap">{{ item.demonym }}</td>{% endif %}
-                            <td class="text-center" style="width: 20px">
-                                <a href="{{ url_for('delete_item', item_type=category, item_id=item.id) }}">
-                                    <i class="bi bi-x-square text-danger"></i>
-                                </a>
-                            </td>
-                        </tr>
+                        {% include "items/_item_row.html" %}
                     {% endfor %}
                     </tbody>
                 </table>

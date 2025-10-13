@@ -1,19 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Auto-hide alerts after 2 seconds
-    setTimeout(() => {
-        document.querySelectorAll('.alert').forEach(alert => {
-            alert.animate(
-                [{opacity: 0}],
-                {duration: 500, easing: 'ease-out'}
-            ).finished.then(() => {
-                alert.style.display = 'none';
-            });
-        });
-    }, 2000);
-
+    // Add event listener to the button that toggles Shops
     const shopItems = document.querySelectorAll('.shop-item-navbar');
-
     shopItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
@@ -27,6 +15,34 @@ document.addEventListener('DOMContentLoaded', () => {
     colorSellPrices();
     setupTableFilter();
     setupTableSorting();
+
+    // Listen for the 'htmx:responseError' event on the entire document body.
+    // This event is triggered by HTMX whenever a request results in an error status code (4xx or 5xx).
+    document.body.addEventListener('htmx:responseError', function (event) {
+
+        // Find the container element where all toasts will be displayed.
+        const toastContainer = document.getElementById('toast-container');
+
+        // Take the HTML content from the server's error response (e.g., the toast's markup)
+        // and insert it just inside the container, after any existing toasts.
+        // 'beforeend' is what allows the toasts to stack.
+        toastContainer.insertAdjacentHTML('beforeend', event.detail.xhr.responseText);
+
+        // Get a reference to the new toast element we just added.
+        // It's the last child element inside the container.
+        const newToastEl = toastContainer.lastElementChild;
+
+        // Check if the element was successfully added.
+        if (newToastEl) {
+            // Create a new Bootstrap Toast instance from the HTML element.
+            // This initializes the toast component, making it functional.
+            const newToast = new bootstrap.Toast(newToastEl);
+
+            // Show the toast, which triggers its appearance and animation.
+            newToast.show();
+        }
+    });
+
 });
 
 function switchShop(shopName, shopUserName, item) {

@@ -10,7 +10,6 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.app.filters import (
     create_local_timezone_filter,
-    get_flashed_messages,
     get_navbar_category_title,
     strip_zeros,
 )
@@ -22,7 +21,6 @@ def init_templates(settings: Settings) -> Jinja2Templates:
     templates = Jinja2Templates(directory=settings.app_path.templates)
 
     templates.env.globals["navbar_categories"] = navbar_categories
-    templates.env.globals["get_flashed_messages"] = get_flashed_messages
     templates.env.globals["app_version"] = settings.app_version
 
     templates.env.filters["strip_zeros"] = strip_zeros
