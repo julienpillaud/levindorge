@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/julienpillaud/levindorge/compare/0.5.0...0.5.1) (2025-10-15)
+
+
+### Bug Fixes
+
+* update routing and navbar to use display_group instead of list_category ([#34](https://github.com/julienpillaud/levindorge/issues/34)) ([b5edd27](https://github.com/julienpillaud/levindorge/commit/b5edd27f3d0e979896ab17b78cb6c321c88ae165))
+
 ## [0.5.0](https://github.com/julienpillaud/levindorge/compare/0.4.0...0.5.0) (2025-10-13)
 
 
