@@ -74,6 +74,9 @@ def extract_name(data: dict[str, Any]) -> None:
 
 def extract_volume(data: dict[str, Any]) -> None:
     volume_data = data.pop("volume", None)
+    if not volume_data:
+        data["volume"] = None
+        return
 
     try:
         volume = json.loads(volume_data)

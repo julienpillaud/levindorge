@@ -19,41 +19,41 @@ from app.domain.users.entities import User
 router = APIRouter(prefix="/articles")
 
 
-@router.get("/{list_category}")
+@router.get("/{display_group}")
 def get_articles_view(
     request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
-    list_category: DisplayGroup,
+    display_group: DisplayGroup,
 ) -> Response:
-    articles = domain.get_articles_by_display_group(display_group=list_category)
+    articles = domain.get_articles_by_display_group(display_group=display_group)
     return templates.TemplateResponse(
         request=request,
         name="article_list.html",
         context={
             "current_user": current_user,
             "articles": articles,
-            "list_category": list_category,
+            "list_category": display_group,
         },
     )
 
 
-@router.get("/create/{list_category}")
+@router.get("/create/{display_group}")
 def create_article_view(
     request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
-    list_category: DisplayGroup,
+    display_group: DisplayGroup,
 ) -> Response:
-    view_data = domain.get_view_data(display_group=list_category)
+    view_data = domain.get_view_data(display_group=display_group)
     return templates.TemplateResponse(
         request=request,
         name="article/article.html",
         context={
             "current_user": current_user,
-            "list_category": list_category,
+            "list_category": display_group,
             "ratio_category": view_data.pricing_group,
             "type_list": view_data.article_type_names,
             **view_data.items,
@@ -61,18 +61,18 @@ def create_article_view(
     )
 
 
-@router.post("/create/{list_category}")
+@router.post("/create/{display_group}")
 def create_article(
     request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     form_data: Annotated[ArticleDTO, Form()],
-    list_category: DisplayGroup,
+    display_group: DisplayGroup,
 ) -> Response:
     article_create = ArticleCreateOrUpdate(**form_data.model_dump())
     domain.create_article(current_user=current_user, data=article_create)
     return RedirectResponse(
-        url=request.url_for("get_articles_view", list_category=list_category),
+        url=request.url_for("get_articles_view", display_group=display_group),
         status_code=status.HTTP_302_FOUND,
     )
 
@@ -118,7 +118,7 @@ def update_article(
     return RedirectResponse(
         url=request.url_for(
             "get_articles_view",
-            list_category=article_type.display_group,
+            display_group=article_type.display_group,
         ),
         status_code=status.HTTP_302_FOUND,
     )
@@ -134,15 +134,15 @@ def delete_article(
     domain.delete_article(current_user=current_user, article_id=article_id)
     display_group = URL(request.headers["referer"]).path.split("/")[-1]
     return RedirectResponse(
-        url=request.url_for("get_articles_view", list_category=display_group),
+        url=request.url_for("get_articles_view", display_group=display_group),
         status_code=status.HTTP_302_FOUND,
     )
 
 
 @router.post("/recommended_prices")
-def recommended_prices(
-    data: PriceRequestDTO,
+async def recommended_prices(
     current_user: Annotated[User, Depends(get_current_user)],
+    data: PriceRequestDTO,
 ) -> dict[str, float]:
     return {
         shop.username: compute_recommended_price(
