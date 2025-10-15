@@ -36,7 +36,7 @@
                     <div class="dropdown-menu">
                         {% for _, categories in navbar_categories.items() %}
                             {% for category in categories %}
-                                <a class="dropdown-item" href="{{ url_for('get_articles_view', list_category=category.code) }}">{{ category.plural_name }}</a>
+                                <a class="dropdown-item" href="{{ url_for('get_articles_view', display_group=category.code) }}">{{ category.plural_name }}</a>
                             {% endfor %}
                             {% if not loop.last %}
                                 <div class="dropdown-divider"></div>
@@ -63,7 +63,7 @@
                     <div class="dropdown-menu">
                         {% for _, categories in navbar_categories.items() %}
                             {% for category in categories %}
-                                <a class="dropdown-item" href="{{ url_for('create_article_view', list_category=category.code) }}">{{ category.singular_name }}</a>
+                                <a class="dropdown-item" href="{{ url_for('create_article_view', display_group=category.code) }}">{{ category.singular_name }}</a>
                             {% endfor %}
                             {% if not loop.last %}
                                 <div class="dropdown-divider"></div>
