@@ -34,13 +34,8 @@
                 <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
                     <a class="btn btn-dark-yellow nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ list_category | get_navbar_category_title }}</a>
                     <div class="dropdown-menu">
-                        {% for _, categories in navbar_categories.items() %}
-                            {% for category in categories %}
-                                <a class="dropdown-item" href="{{ url_for('get_articles_view', display_group=category.code) }}">{{ category.plural_name }}</a>
-                            {% endfor %}
-                            {% if not loop.last %}
-                                <div class="dropdown-divider"></div>
-                            {% endif %}
+                        {% for category in navbar_categories %}
+                            <a class="dropdown-item" href="{{ url_for('get_articles_view', display_group=category.code) }}">{{ category.plural_name }}</a>
                         {% endfor %}
                     </div>
                 </li>
@@ -61,13 +56,8 @@
                 <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
                     <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Nouveau</a>
                     <div class="dropdown-menu">
-                        {% for _, categories in navbar_categories.items() %}
-                            {% for category in categories %}
-                                <a class="dropdown-item" href="{{ url_for('create_article_view', display_group=category.code) }}">{{ category.singular_name }}</a>
-                            {% endfor %}
-                            {% if not loop.last %}
-                                <div class="dropdown-divider"></div>
-                            {% endif %}
+                        {% for category in navbar_categories %}
+                            <a class="dropdown-item" href="{{ url_for('create_article_view', display_group=category.code) }}">{{ category.singular_name }}</a>
                         {% endfor %}
                     </div>
                 </li>

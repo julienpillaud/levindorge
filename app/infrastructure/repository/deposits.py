@@ -26,6 +26,16 @@ class DepositRepository(MongoRepositoryProtocol, DepositRepositoryProtocol):
         deposit = self.database["deposits"].find_one({"_id": ObjectId(deposit_id)})
         return Deposit(**deposit) if deposit else None
 
+    def deposit_exists(self, deposit: Deposit) -> bool:
+        result = self.database["deposits"].find_one(
+            {
+                "category": deposit.category,
+                "deposit_type": deposit.deposit_type,
+                "value": deposit.value,
+            }
+        )
+        return result is not None
+
     def create_deposit(self, deposit: Deposit) -> Deposit:
         result = self.database["deposits"].insert_one(
             deposit.model_dump(exclude={"id"})

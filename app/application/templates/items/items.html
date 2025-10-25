@@ -1,60 +1,51 @@
-{% extends "base.html" %}
+{% extends "base_daisyui.html" %}
 {% block content %}
-    {% include "navbar.html" %}
+  {% include 'items/item_create.html' %}
+  <div class="h-dvh flex flex-col">
+    {% include 'navbar_daisyui.html' %}
+    <div class="flex flex-col flex-1 px-10 py-6 gap-6 min-h-0">
 
-    <div class="container padding-navbar">
-        <div class="row justify-content-center">
-
-            {% if category == "countries" %}
-                {% set col_width = 6 %}
-            {% else %}
-                {% set col_width = 4 %}
-            {% endif %}
-
-            <div class="col col-lg-{{ col_width }}">
-
-                <form
-                    method="post"
-                    hx-post="{{ request.url }}"
-                    hx-target="tbody"
-                    hx-swap="afterbegin"
-                    hx-on:htmx:after-request="this.reset()"
-                >
-                    <div class="input-group mb-2">
-                        <span class="input-group-text w-25 bg-light-purple">{{ title }}</span>
-                        <input type="text" class="form-control" name="name" required>
-                    </div>
-
-                    {% if category == "countries" %}
-                        <div class="input-group mb-2">
-                            <span class="input-group-text w-25 bg-light-purple">Gentilé</span>
-                            <input type="text" class="form-control" name="demonym">
-                        </div>
-                    {% endif %}
-
-                    <div class="d-grid mb-2">
-                        <button class="btn btn-outline-primary" type="submit">Créer</button>
-                    </div>
-                </form>
-
-                <table class="table table-striped table-bordered table-hover table-sm">
-                    <thead class="sticky" style="--sticky-top: 53px">
-                    <tr>
-                        <th class="text-center text-nowrap bg-light-purple">{{ title }}</th>
-                        {% if category == 'countries' %}
-                            <th class="text-center text-nowrap bg-light-purple">Gentilé</th>{% endif %}
-                        <th class="bg-light-purple not-sortable"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in items %}
-                        {% include "items/_item_row.html" %}
-                    {% endfor %}
-                    </tbody>
-                </table>
-
+      <div class="card bg-base-200 shadow-sm">
+        <div class="card-body space-y-4">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div class="flex items-center gap-4">
+              <h1 class="card-title text-2xl">{{ title }}</h1>
+              <div id="items-count" class="badge badge-soft badge-accent">{{ items | length }}</div>
             </div>
+            <div class="card-actions justify-end">
+            <button id="item-create-button" class="btn btn-outline btn-primary">Nouveau</button>
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
 
+      <div class="overflow-x-auto rounded-lg shadow-sm">
+        <table id="items-table" class="table md:table-lg table-pin-rows">
+          <thead>
+          <tr>
+            <th class="relative w-30">
+              <button
+                  id="items-delete-button"
+                  data-category="{{ category }}"
+                  class="btn btn-soft btn-error hidden absolute left-2 top-1/2 -translate-y-1/2"
+              >
+                Supprimer
+              </button>
+            </th>
+            <th>Nom</th>
+            {% if category == 'countries' %}
+              <th>Gentillé</th>
+            {% endif %}
+          </tr>
+          </thead>
+          <tbody>
+          {% for item in items %}
+            {% include "items/_item_row.html" %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
 {% endblock %}

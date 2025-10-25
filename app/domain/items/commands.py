@@ -1,4 +1,4 @@
-from cleanstack.exceptions import NotFoundError
+from cleanstack.exceptions import ConflictError, NotFoundError
 
 from app.domain.context import ContextProtocol
 from app.domain.entities import EntityId
@@ -16,6 +16,10 @@ def create_item_command(
     item_create: ItemCreate,
 ) -> Item:
     item = Item(id="", name=item_create.name, demonym=item_create.demonym)
+
+    if context.repository.item_exists(item_type=item_type, item=item):
+        raise ConflictError()
+
     return context.repository.create_item(item_type=item_type, item=item)
 
 
