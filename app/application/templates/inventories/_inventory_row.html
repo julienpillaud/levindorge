@@ -1,0 +1,13 @@
+<tr data-id="{{ inventory.id }}">
+  <td class="text-nowrap">{{ (inventory.date | local_timezone).strftime('%d / %m / %Y') }}</td>
+  <td class="text-nowrap">{{ inventory.shop }}</td>
+  <td>{{ inventory.sale_value | round | int }} €</td>
+  <td>{{ inventory.deposit_value | round | int }} €</td>
+  <td>
+    <button class="btn btn-soft btn-primary btn-xs">
+      <a href="{{ url_for('get_inventory_view', inventory_id=inventory.id) }}">
+        <i class="bi bi-file-earmark"></i>
+      </a>
+    </button>
+  </td>
+</tr>

@@ -2,6 +2,7 @@
 <html lang="fr" data-theme="light">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
 
   {# Should be before everything to prevent FOUC #}
@@ -14,7 +15,12 @@
 </head>
 <body>
 
-<div class="toast toast-end z-99"></div>
+<div class="toast toast-end z-9999"></div>
+
+<div id="loading-overlay" class="absolute inset-0 flex items-center justify-center z-9998 bg-neutral/20 hidden">
+  <span class="loading loading-bars loading-xl"></span>
+</div>
+
 
 {% block content %}
 {% endblock %}

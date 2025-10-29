@@ -1,0 +1,64 @@
+<div class="navbar bg-primary text-primary-content shadow-sm z-50">
+  {# Navbar start ----------------------------------------------------------- #}
+  <div class="navbar-start">
+
+    {# Menu burger visible until 'lg' (hidden on 'lg' and up) #}
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/>
+        </svg>
+      </div>
+      <ul tabindex="-1" class="menu dropdown-content bg-primary rounded-box z-1 mt-3 w-52 p-2 shadow">
+        {% include 'includes/_menu.html' %}
+      </ul>
+    </div>
+
+    {# Badge visible from 'md' onwards #}
+    <div class="badge badge-xl badge-accent font-bold ms-4 hidden md:flex">
+      Le Vin d'Orge
+    </div>
+
+  </div>
+  {# ------------------------------------------------------------------------ #}
+
+  {# Navbar center ---------------------------------------------------------- #}
+  <div class="navbar-center">
+
+    {# Search input centered (visible until 'md') #}
+    <div class="md:hidden">
+      {% with suffix = 'mobile' %}
+        {% include 'includes/_search.html' %}
+      {% endwith %}
+    </div>
+
+    {# Horizontal menu visible from 'lg' onwards #}
+    <div class="hidden lg:flex">
+      <ul class="menu menu-horizontal">
+        {% include 'includes/_menu.html' %}
+      </ul>
+    </div>
+
+  </div>
+  {# ------------------------------------------------------------------------ #}
+
+  {# Navbar end ------------------------------------------------------------- #}
+  <div class="navbar-end gap-4 pe-4">
+
+    {# Search input visible at end from 'md' onwards #}
+    <div class="hidden md:flex">
+      {% with suffix = 'desktop' %}
+        {% include 'includes/_search.html' %}
+      {% endwith %}
+    </div>
+
+    {# Swap theme button always visible #}
+    <label class="swap swap-rotate">
+      <input type="checkbox" data-toggle-theme="light,dark"/>
+      <i class="swap-off bi bi-sun text-2xl"></i>
+      <i class="swap-on bi bi-moon text-2xl"></i>
+    </label>
+
+  </div>
+  {# ------------------------------------------------------------------------ #}
+</div>

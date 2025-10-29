@@ -54,7 +54,6 @@ def create_item(
     item_type: ItemType,
 ) -> Response:
     item = domain.create_item(item_type=item_type, item_create=form_data)
-    # Return the HTML row to be inserted in the table via JS
     return templates.TemplateResponse(
         request=request,
         name="items/_item_row.html",

@@ -1,0 +1,32 @@
+<dialog id="reset-stocks-modal" class="modal">
+  <div class="modal-box flex justify-center">
+    <form id="reset-stocks-form">
+      <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+
+        <span class="label">Magasin</span>
+        <select class="select" required>
+          <option disabled selected></option>
+          {% for shop in current_user.shops %}
+            <option value="{{ shop.username }}">{{ shop.name }}</option>
+          {% endfor %}
+        </select>
+
+        <span class="label">Catégorie</span>
+        <select class="select" name="category" required>
+          <option disabled selected></option>
+          <option name="category" value="beer">Bières / Cidres</option>
+          <option name="category" value="keg">Fûts</option>
+          <option name="category" value="spirit">Spiritueux</option>
+          <option name="category" value="wine">Vins</option>
+          <option name="category" value="other">Autres</option>
+        </select>
+
+        <div class="modal-action flex justify-between">
+          <button type="button" id="reset-stocks-modal-close" class="btn btn-soft">Annuler</button>
+          <button type="submit" class="btn btn-outline btn-primary">Mise à zéro</button>
+        </div>
+
+      </fieldset>
+    </form>
+  </div>
+</dialog>

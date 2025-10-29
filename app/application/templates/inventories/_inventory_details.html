@@ -1,0 +1,42 @@
+<dialog id="my_modal_1" class="modal">
+  <div class="modal-box max-w-full max-h-[calc(100vh-4rem)] flex flex-col">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-soft absolute right-2 top-2">✕</button>
+    </form>
+
+      <div class="overflow-x-auto rounded-lg shadow-sm m-4">
+        <table id="items-table" class="table table-sm table-pin-rows">
+          <thead>
+          <tr>
+            <th>Article</th>
+            <th>HT DI</th>
+            <th>Quantité</th>
+            <th>Val. marchande</th>
+            <th>Cond.</th>
+            <th>Consigne bouteille</th>
+            <th>Consigne caisse</th>
+            <th>Val. consigne</th>
+            <th>Catégorie</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for record in inventory.records %}
+            <tr>
+              <td class="text-nowrap">{{ record.article_name.name1 ~ " " ~ record.article_name.name2 }}</td>
+              <td>{{ record.taxfree_price | strip_zeros }}</td>
+              <td>{{ record.stock_quantity }}</td>
+              <td>{{ record.sale_value | strip_zeros if record.sale_value }}</td>
+              <td>{{ record.article_packaging if record.article_packaging }}</td>
+              <td>{{ record.article_deposit.unit | strip_zeros if record.article_deposit.unit }}</td>
+              <td>{{ record.article_deposit.case | strip_zeros if record.article_deposit.case }}</td>
+              <td>{{ record.deposit_value | strip_zeros if record.deposit_value }}</td>
+              <td>{{ record.article_type }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+  </div>
+</dialog>

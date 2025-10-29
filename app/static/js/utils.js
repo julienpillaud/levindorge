@@ -35,3 +35,9 @@ export function showToast(message, type = 'error', timeout = 5000) {
         toast.remove();
     }, timeout);
 }
+
+
+export function setOverlayVisible(show) {
+  const overlay = document.getElementById('loading-overlay');
+  overlay.classList.toggle('hidden', !show);
+}
