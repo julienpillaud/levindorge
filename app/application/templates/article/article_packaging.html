@@ -1,23 +1,19 @@
 {% if list_category == "beer" %}
-
-    <div class="row mt-3">
-        <div class="col-md-6">
-
-            <div class="input-group">
-                <label class="input-group-text bg-dark-purple" for="packaging">Conditionnement</label>
-                <select class="form-select text-center" id="packaging" name="packaging" required>
-                    <option selected></option>
-                    {% for x in [0, 6, 12, 20, 24] %}
-                        {% if article and x == article.packaging %}
-                            <option selected>{{ x }}</option>
-                        {% else %}
-                            <option>{{ x }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-            </div>
-
-        </div>
+  <div class="row mt-3">
+    <div class="col-md-6">
+      <div class="input-group">
+        <label class="input-group-text bg-dark-purple" for="packaging">Conditionnement</label>
+        <select class="form-select text-center" id="packaging" name="packaging" required>
+          <option selected></option>
+          {% for x in [0, 6, 12, 20, 24] %}
+            {% if article and x == article.packaging %}
+              <option selected>{{ x }}</option>
+            {% else %}
+              <option>{{ x }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
     </div>
-
+  </div>
 {% endif %}

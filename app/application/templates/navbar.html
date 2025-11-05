@@ -1,100 +1,148 @@
 {% if current_shop is not defined %}
-    {% set current_shop = current_user.shops[0] %}
+  {% set current_shop = current_user.shops[0] %}
 {% endif %}
 
 {% if list_category is not defined %}
-    {% set list_category = "beer" %}
+  {% set list_category = "beer" %}
 {% endif %}
 
 <nav class="navbar navbar-expand-lg fixed-top bg-dark-purple">
-    <div class="container-fluid">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">{{ current_user.name }}</span>
 
-        <span class="navbar-brand mb-0 h1">{{ current_user.name }}</span>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {# Shops #}
+        <li class="nav-item dropdown mt-1 mt-lg-0">
+          <a
+            class="btn btn-dark-yellow nav-link dropdown-toggle text-start"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            style="min-width: 140px;"
+            >{{ current_shop.name }}</a
+          >
+          {% if current_user.shops | length >= 2 %}
+            <div class="dropdown-menu">
+              {% for shop in current_user.shops %}
+                <a class="dropdown-item shop-item-navbar" data-item-navbar="{{ shop.username }}" href="#"
+                  >{{ shop.name }}</a
+                >
+              {% endfor %}
+            </div>
+          {% endif %}
+        </li>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {# Categories #}
+        <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+          <a
+            class="btn btn-dark-yellow nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            >{{ list_category | get_navbar_category_title }}</a
+          >
+          <div class="dropdown-menu">
+            {% for category in navbar_categories %}
+              <a class="dropdown-item" href="{{ url_for('get_articles_view', display_group=category.code) }}"
+                >{{ category.plural_name }}</a
+              >
+            {% endfor %}
+          </div>
+        </li>
 
-                {# Shops #}
-                <li class="nav-item dropdown mt-1 mt-lg-0">
-                    <a class="btn btn-dark-yellow nav-link dropdown-toggle text-start" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 140px;">{{ current_shop.name }}</a>
-                    {% if current_user.shops | length >= 2 %}
-                        <div class="dropdown-menu">
-                            {% for shop in current_user.shops %}
-                                <a class="dropdown-item shop-item-navbar" data-item-navbar="{{ shop.username }}" href="#">{{ shop.name }}</a>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </li>
+        {# Tag #}
+        <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+          <a
+            class="btn btn-light-purple nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            >Etiquette</a
+          >
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="{{ url_for('get_price_labels_files') }}">A imprimer</a>
+            <hr class="dropdown-divider" />
+            {% for shop in current_user.shops %}
+              <a class="dropdown-item" href="{{ url_for('create_price_labels_view') }}?shop={{ current_shop.username }}"
+                >{{ shop.name }}</a
+              >
+            {% endfor %}
+          </div>
+        </li>
 
-                {# Categories #}
-                <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
-                    <a class="btn btn-dark-yellow nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ list_category | get_navbar_category_title }}</a>
-                    <div class="dropdown-menu">
-                        {% for category in navbar_categories %}
-                            <a class="dropdown-item" href="{{ url_for('get_articles_view', display_group=category.code) }}">{{ category.plural_name }}</a>
-                        {% endfor %}
-                    </div>
-                </li>
+        {# Article creation #}
+        <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+          <a
+            class="btn btn-light-purple nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            >Nouveau</a
+          >
+          <div class="dropdown-menu">
+            {% for category in navbar_categories %}
+              <a class="dropdown-item" href="{{ url_for('create_article_view', display_group=category.code) }}"
+                >{{ category.singular_name }}</a
+              >
+            {% endfor %}
+          </div>
+        </li>
 
-                {# Tag #}
-                <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
-                    <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Etiquette</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ url_for('get_price_labels_files') }}">A imprimer</a>
-                        <hr class="dropdown-divider">
-                        {% for shop in current_user.shops %}
-                            <a class="dropdown-item" href="{{ url_for('create_price_labels_view') }}?shop={{ current_shop.username }}">{{ shop.name }}</a>
-                        {% endfor %}
-                    </div>
-                </li>
+        {# Inventory #}
+        <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+          <a class="btn btn-light-purple nav-link" href="{{ url_for('get_inventories_view') }}">Inventaires</a>
+        </li>
 
-                {# Article creation #}
-                <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
-                    <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Nouveau</a>
-                    <div class="dropdown-menu">
-                        {% for category in navbar_categories %}
-                            <a class="dropdown-item" href="{{ url_for('create_article_view', display_group=category.code) }}">{{ category.singular_name }}</a>
-                        {% endfor %}
-                    </div>
-                </li>
+        {# Gestion #}
+        <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
+          <a
+            class="btn btn-light-purple nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            >Gestion</a
+          >
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='breweries') }}">Brasserie</a>
+            <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='distilleries') }}">Distillerie</a>
+            <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='distributors') }}">Fournisseur</a>
+            <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='countries') }}">Pays</a>
+            <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='regions') }}">Région</a>
+            <a class="dropdown-item" href="{{ url_for('get_deposits_view') }}">Consigne</a>
+            <a class="dropdown-item" href="{{ url_for('get_volumes_view') }}">Volume</a>
+          </div>
+        </li>
 
-                {# Inventory #}
-                <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
-                    <a class="btn btn-light-purple nav-link" href="{{ url_for('get_inventories_view') }}">Inventaires</a>
-                </li>
-
-                {# Gestion #}
-                <li class="nav-item dropdown mt-1 mt-lg-0 ms-lg-2">
-                    <a class="btn btn-light-purple nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Gestion</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='breweries') }}">Brasserie</a>
-                        <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='distilleries') }}">Distillerie</a>
-                        <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='distributors') }}">Fournisseur</a>
-                        <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='countries') }}">Pays</a>
-                        <a class="dropdown-item" href="{{ url_for('get_items_view', item_type='regions') }}">Région</a>
-                        <a class="dropdown-item" href="{{ url_for('get_deposits_view') }}">Consigne</a>
-                        <a class="dropdown-item" href="{{ url_for('get_volumes_view') }}">Volume</a>
-                    </div>
-                </li>
-
-                <li class="nav-item mt-1 mt-lg-0 ms-lg-2">
-                    <a class="btn btn-danger" href="{{ url_for('logout') }}">
-                        <i class="bi bi-box-arrow-right"></i>
-                    </a>
-                </li>
-
-            </ul>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" id="search" placeholder="Rechercher" aria-label="Search">
-            </form>
-            <span class="navbar-text ms-2">
-                <small class="badge rounded-pill text-bg-light opacity-75">{{ app_version }}</small>
-            </span>
-        </div>
-
+        <li class="nav-item mt-1 mt-lg-0 ms-lg-2">
+          <a class="btn btn-danger" href="{{ url_for('logout') }}">
+            <i class="bi bi-box-arrow-right"></i>
+          </a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" id="search" placeholder="Rechercher" aria-label="Search" />
+      </form>
+      <span class="navbar-text ms-2">
+        <small class="badge rounded-pill text-bg-light opacity-75">{{ app_version }}</small>
+      </span>
     </div>
+  </div>
 </nav>
