@@ -5,7 +5,9 @@
     <ul class="bg-primary w-max">
       {% for category in navbar_categories %}
         <li>
-          <a href="{{ url_for('get_articles_view', display_group=category.code) }}">
+          <a
+            href="{{ url_for('get_articles_view', display_group=category.code) }}"
+          >
             {{ category.plural_name }}
           </a>
         </li>
@@ -20,7 +22,9 @@
     <ul class="bg-primary w-max">
       {% for category in navbar_categories %}
         <li>
-          <a href="{{ url_for('create_article_view', display_group=category.code) }}">
+          <a
+            href="{{ url_for('create_article_view', display_group=category.code) }}"
+          >
             {{ category.singular_name }}
           </a>
         </li>
@@ -44,9 +48,7 @@
       {% for item in navbar_items %}
         {% set href = url_for(item.endpoint, item_type=item.item_type) if item.item_type else url_for(item.endpoint) %}
         <li>
-          <a href="{{ href }}">
-            {{ item.label }}
-          </a>
+          <a href="{{ href }}"> {{ item.label }} </a>
         </li>
       {% endfor %}
     </ul>
