@@ -1,16 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Etiquette</title>
-    <link href="{{ url_for('static', path='css/style_font.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', path='css/style_biere.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', path='css/style_biere_position.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='css/style_font.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', path='css/style_biere.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', path='css/style_biere_position.css') }}" rel="stylesheet" />
   </head>
   <body>
-
     {% block content %}
     {% endblock %}
-
   </body>
 </html>

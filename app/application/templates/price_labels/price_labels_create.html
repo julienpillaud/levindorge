@@ -3,7 +3,6 @@
   <div class="h-dvh flex flex-col">
     {% include '_includes/_navbar.html' %}
     <div class="flex flex-col flex-1 px-10 py-6 gap-6 min-h-0">
-
       <div class="card bg-base-200 shadow-sm">
         <div class="card-body flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div class="flex items-center gap-4">
@@ -16,35 +15,36 @@
       <div class="overflow-x-auto rounded-lg shadow-sm">
         <table class="table table-pin-rows">
           <thead>
-          <tr>
-            <th></th>
-            <th></th>
-            <th>Région</th>
-            <th>Couleur</th>
-            <th>Volume</th>
-            <th>Degré</th>
-            <th>TTC</th>
-            <th>Catégorie</th>
-            <th></th>
-          </tr>
+            <tr>
+              <th></th>
+              <th></th>
+              <th>Région</th>
+              <th>Couleur</th>
+              <th>Volume</th>
+              <th>Degré</th>
+              <th>TTC</th>
+              <th>Catégorie</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
-          {% for article in articles %}
-            <tr>
-              <td>{{ article.name.name1 }}</td>
-              <td>{{ article.name.name2 }}</td>
-              <td>{{ article.region }}</td>
-              <td>{{ article.color }}</td>
-              <td>{{ article.volume.value | strip_zeros if article.volume }} {{ article.volume.unit if article.volume }}</td>
-              <td>{{ article.alcohol_by_volume | strip_zeros if article.alcohol_by_volume }}</td>
-              <td>{{ article.shops[current_shop.username]['sell_price'] | strip_zeros }}</td>
-              <td>{{ article.type }}</td>
-            </tr>
-          {% endfor %}
+            {% for article in articles %}
+              <tr>
+                <td>{{ article.name.name1 }}</td>
+                <td>{{ article.name.name2 }}</td>
+                <td>{{ article.region }}</td>
+                <td>{{ article.color }}</td>
+                <td>
+                  {{ article.volume.value | strip_zeros if article.volume }} {{ article.volume.unit if article.volume }}
+                </td>
+                <td>{{ article.alcohol_by_volume | strip_zeros if article.alcohol_by_volume }}</td>
+                <td>{{ article.shops[current_shop.username]['sell_price'] | strip_zeros }}</td>
+                <td>{{ article.type }}</td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
-
     </div>
   </div>
 {% endblock %}
