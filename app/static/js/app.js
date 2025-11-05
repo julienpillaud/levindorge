@@ -4,6 +4,8 @@ import {
     initCreateItemListener,
     initDeleteItemsListener, initResetStocksListener
 } from "./listener.js";
+import {initToggleDeleteButton} from "./listener/global.js";
+import {initDeletePriceLabels} from "./listener/price_labels.js";
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,5 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initDeleteItemsListener();
     initCreateInventoryListener();
     initResetStocksListener();
+
+    initToggleDeleteButton();
+    initDeletePriceLabels();
     // -------------------------------------------------------------------------
 });

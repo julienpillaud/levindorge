@@ -10,7 +10,7 @@
         </svg>
       </div>
       <ul tabindex="-1" class="menu dropdown-content bg-primary rounded-box z-1 mt-3 w-52 p-2 shadow">
-        {% include 'includes/_menu.html' %}
+        {% include '_includes/_menu.html' %}
       </ul>
     </div>
 
@@ -28,14 +28,14 @@
     {# Search input centered (visible until 'md') #}
     <div class="md:hidden">
       {% with suffix = 'mobile' %}
-        {% include 'includes/_search.html' %}
+        {% include '_includes/_search.html' %}
       {% endwith %}
     </div>
 
     {# Horizontal menu visible from 'lg' onwards #}
     <div class="hidden lg:flex">
       <ul class="menu menu-horizontal">
-        {% include 'includes/_menu.html' %}
+        {% include '_includes/_menu.html' %}
       </ul>
     </div>
 
@@ -48,7 +48,7 @@
     {# Search input visible at end from 'md' onwards #}
     <div class="hidden md:flex">
       {% with suffix = 'desktop' %}
-        {% include 'includes/_search.html' %}
+        {% include '_includes/_search.html' %}
       {% endwith %}
     </div>
 

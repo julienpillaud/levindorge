@@ -76,7 +76,7 @@ def get_price_labels_files(
     files = domain.get_price_labels_files(settings=settings)
     return templates.TemplateResponse(
         request=request,
-        name="tag_files_list.html",
+        name="price_labels/price_labels.html",
         context={
             "current_user": current_user,
             "files": files,
@@ -101,12 +101,9 @@ def get_price_labels_file(
     )
 
 
-@router.get("/files/delete/{file}", dependencies=[Depends(get_current_user)])
+@router.delete("/files/delete/{file}", dependencies=[Depends(get_current_user)])
 def delete_price_labels_file(
-    request: Request,
     settings: Annotated[Settings, Depends(get_settings)],
     file: str,
-) -> Response:
+) -> None:
     Path.unlink(settings.app_path.price_labels / file)
-    url = url_for_with_query(request, name="get_price_labels_files")
-    return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)

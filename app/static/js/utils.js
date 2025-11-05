@@ -16,6 +16,23 @@ export function searchTable(query) {
 }
 
 
+export function resetCheckBoxes(checkedBoxes) {
+    checkedBoxes.forEach(cb => cb.checked = false);
+}
+
+
+export function resetDeleteButton(deleteButton) {
+    deleteButton.classList.add('hidden');
+}
+
+
+export function updateCountBadge(table) {
+    const itemsCount = table.querySelectorAll('tbody tr').length;
+    const badge = document.getElementById('items-count');
+    badge.textContent = String(itemsCount);
+}
+
+
 export function swapDeleteButton() {
     const deleteBtn = document.getElementById('items-delete-button');
     const allCheckboxes = document.querySelectorAll('.checkbox');

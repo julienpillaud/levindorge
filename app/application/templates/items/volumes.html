@@ -2,7 +2,7 @@
 {% block content %}
   {% include 'items/_volume_create.html' %}
   <div class="h-dvh flex flex-col">
-    {% include 'includes/_navbar.html' %}
+    {% include '_includes/_navbar.html' %}
     <div class="flex flex-col flex-1 px-10 py-6 gap-6 min-h-0">
 
       <div class="card bg-base-200 shadow-sm">
@@ -20,7 +20,7 @@
       </div>
 
       <div class="overflow-x-auto rounded-lg shadow-sm">
-        <table id="items-table" class="table md:table-lg table-pin-rows">
+        <table id="items-table" class="table table-pin-rows">
           <thead>
           <tr>
             <th class="relative w-30">

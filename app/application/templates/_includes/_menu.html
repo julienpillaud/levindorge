@@ -30,19 +30,7 @@
 </li>
 {# Etiquettes --------------------------------------------------------- #}
 <li>
-  <details>
-    <summary>Etiquettes</summary>
-    <ul class="p-2 bg-primary w-max">
-      <li><a href="{{ url_for('get_price_labels_files') }}">A imprimer</a></li>
-      {% for shop in current_user.shops %}
-        <li>
-          <a href="{{ url_for('create_price_labels_view') }}?shop={{ shop.username }}">
-            {{ shop.name }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  </details>
+  <a href="{{ url_for('get_price_labels_files') }}">Etiquettes</a>
 </li>
 {# Inventaires -------------------------------------------------------- #}
 <li>
