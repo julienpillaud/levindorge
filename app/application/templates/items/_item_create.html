@@ -2,13 +2,12 @@
   <div class="modal-box flex justify-center">
     <form id="item-create-form" data-category="{{ category }}">
       <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-
         <label class="label">Nom</label>
-        <input type="text" class="input" name="name" required/>
+        <input type="text" class="input" name="name" required />
 
         {% if category == 'countries' %}
           <label class="label">Gentillé</label>
-          <input type="text" class="input" name="demonym"/>
+          <input type="text" class="input" name="demonym" />
         {% endif %}
 
         <div class="modal-action flex justify-between">

@@ -1,5 +1,7 @@
 <tr data-id="{{ deposit.id }}">
-  <th><label><input type="checkbox" class="checkbox"/></label></th>
+  <th>
+    <label><input type="checkbox" class="checkbox" /></label>
+  </th>
   <td>{{ deposit.value | strip_zeros }}</td>
   <td>{{ deposit.deposit_type }}</td>
   <td>{{ deposit.category }}</td>

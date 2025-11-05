@@ -4,7 +4,6 @@
   <div class="h-dvh flex flex-col">
     {% include '_includes/_navbar.html' %}
     <div class="flex flex-col flex-1 px-10 py-6 gap-6 min-h-0">
-
       <div class="card bg-base-200 shadow-sm">
         <div class="card-body space-y-4">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
@@ -22,30 +21,29 @@
       <div class="overflow-x-auto rounded-lg shadow-sm">
         <table id="items-table" class="table table-pin-rows">
           <thead>
-          <tr>
-            <th class="relative w-30">
-              <button
+            <tr>
+              <th class="relative w-30">
+                <button
                   id="items-delete-button"
                   data-category="{{ category }}"
                   class="btn btn-soft btn-error hidden absolute left-2 top-1/2 -translate-y-1/2"
-              >
-                Supprimer
-              </button>
-            </th>
-            <th>Nom</th>
-            {% if category == 'countries' %}
-              <th>Gentillé</th>
-            {% endif %}
-          </tr>
+                >
+                  Supprimer
+                </button>
+              </th>
+              <th>Nom</th>
+              {% if category == 'countries' %}
+                <th>Gentillé</th>
+              {% endif %}
+            </tr>
           </thead>
           <tbody>
-          {% for item in items %}
-            {% include "items/_item_row.html" %}
-          {% endfor %}
+            {% for item in items %}
+              {% include "items/_item_row.html" %}
+            {% endfor %}
           </tbody>
         </table>
       </div>
-
     </div>
   </div>
 {% endblock %}
