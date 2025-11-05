@@ -18,7 +18,8 @@
     {
       "files": ["*.html"],
       "options": {
-        "parser": "jinja-template"
+        "parser": "jinja-template",
+        "printWidth": 120
       }
     }
   ]

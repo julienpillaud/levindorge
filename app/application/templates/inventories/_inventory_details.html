@@ -4,9 +4,9 @@
       <button class="btn btn-sm btn-circle btn-soft absolute right-2 top-2">✕</button>
     </form>
 
-      <div class="overflow-x-auto rounded-lg shadow-sm m-4">
-        <table id="items-table" class="table table-sm table-pin-rows">
-          <thead>
+    <div class="overflow-x-auto rounded-lg shadow-sm m-4">
+      <table id="items-table" class="table table-sm table-pin-rows">
+        <thead>
           <tr>
             <th>Article</th>
             <th>HT DI</th>
@@ -19,8 +19,8 @@
             <th>Catégorie</th>
             <th></th>
           </tr>
-          </thead>
-          <tbody>
+        </thead>
+        <tbody>
           {% for record in inventory.records %}
             <tr>
               <td class="text-nowrap">{{ record.article_name.name1 ~ " " ~ record.article_name.name2 }}</td>
@@ -34,9 +34,8 @@
               <td>{{ record.article_type }}</td>
             </tr>
           {% endfor %}
-          </tbody>
-        </table>
-      </div>
-
+        </tbody>
+      </table>
+    </div>
   </div>
 </dialog>

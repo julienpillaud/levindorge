@@ -4,21 +4,18 @@
   <div class="h-dvh flex flex-col">
     {% include '_includes/_navbar.html' %}
     <div class="flex flex-col flex-1 px-10 py-6 gap-6 min-h-0">
-
       <div class="card bg-base-200 shadow-sm">
         <div class="card-body space-y-4">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div class="flex items-center gap-4">
               <h1 class="card-title text-2xl">Inventaire</h1>
               <div class="badge badge-lg badge-primary">{{ inventory.shop }}</div>
-              <div class="badge badge-lg badge-primary">{{ (inventory.date | local_timezone).strftime('%d / %m / %Y') }}</div>
+              <div class="badge badge-lg badge-primary">
+                {{ (inventory.date | local_timezone).strftime('%d / %m / %Y') }}
+              </div>
             </div>
             <div class="card-actions justify-end">
-              <button
-                id="item-create-button"
-                class="btn btn-outline btn-primary"
-                onclick="my_modal_1.showModal()"
-              >
+              <button id="item-create-button" class="btn btn-outline btn-primary" onclick="my_modal_1.showModal()">
                 Détails
               </button>
             </div>
@@ -29,123 +26,29 @@
       <div class="overflow-x-auto rounded-lg shadow-sm">
         <table id="items-table" class="table table-sm table-pin-rows">
           <thead>
-          <tr>
-            <th></th>
-            <th>Valeur marchande</th>
-            <th>Valeur consigne</th>
-          </tr>
+            <tr>
+              <th></th>
+              <th>Valeur marchande</th>
+              <th>Valeur consigne</th>
+            </tr>
           </thead>
           <tbody>
-          {% for category in navbar_categories %}
-            {% set values = inventory.inventory[category.code] %}
+            {% for category in navbar_categories %}
+              {% set values = inventory.inventory[category.code] %}
+              <tr>
+                <td class="text-nowrap">{{ category.plural_name }}</td>
+                <td>{{ values.sale_value | strip_zeros if values }}</td>
+                <td>{{ values.deposit_value | strip_zeros if values and values.deposit_value }}</td>
+              </tr>
+            {% endfor %}
             <tr>
-              <td class="text-nowrap">{{ category.plural_name }}</td>
-              <td>{{ values.sale_value | strip_zeros if values }}</td>
-              <td>{{ values.deposit_value | strip_zeros if values and values.deposit_value }}</td>
+              <th></th>
+              <th><div class="badge badge-accent">{{ inventory.sale_value }} €</div></th>
+              <th><div class="badge badge-accent">{{ inventory.deposit_value }} €</div></th>
             </tr>
-          {% endfor %}
-          <tr>
-            <th></th>
-            <th><div class="badge badge-accent">{{ inventory.sale_value }} €</div></th>
-            <th><div class="badge badge-accent">{{ inventory.deposit_value }} €</div></th>
-          </tr>
           </tbody>
         </table>
       </div>
-
     </div>
   </div>
 {% endblock %}
-
-
-
-{#{% extends "base.html" %}#}
-{#{% block content %}#}
-{#    {% include "navbar.html" %}#}
-{##}
-{#    <div class="container-fluid padding-navbar">#}
-{##}
-{#        <div class="row justify-content-center">#}
-{#            <div class="col col-lg-6">#}
-{#                <div class="input-group mb-3">#}
-{#                    <span class="input-group-text" id="basic-addon1">Inventaire</span>#}
-{#                    <input type="text" class="form-control text-center" aria-label="date" value="{{ (inventory.date | local_timezone).strftime('%d / %m / %Y - %H:%M') }}" readonly>#}
-{#                    <input type="text" class="form-control text-center" aria-label="shop" value="{{ inventory.shop }}" readonly>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{##}
-{#        <div class="row justify-content-center">#}
-{#            <div class="col col-lg-6">#}
-{##}
-{#                <table class="table table-striped table-bordered table-hover table-sm">#}
-{#                    <thead>#}
-{#                    <tr>#}
-{#                        <th class="text-center align-middle bg-light-purple"></th>#}
-{#                        <th class="text-center align-middle bg-light-purple">Valeur marchande</th>#}
-{#                        <th class="text-center align-middle bg-light-purple">Valeur consigne</th>#}
-{#                    </tr>#}
-{#                    </thead>#}
-{#                    <tbody>#}
-{#                    {% for _, categories in navbar_categories.items() %}#}
-{#                        {% for category in categories %}#}
-{#                            {% set values = inventory.inventory.get(category.code) %}#}
-{#                            <tr>#}
-{#                                <td class="fw-bold">{{ category.plural_name }}</td>#}
-{#                                <td class="text-center">{{ values.sale_value | strip_zeros if values }}</td>#}
-{#                                <td class="text-center">{{ values.deposit_value | strip_zeros if values and values.deposit_value }}</td>#}
-{#                            </tr>#}
-{#                        {% endfor %}#}
-{#                    {% endfor %}#}
-{#                    <tr>#}
-{#                        <td class="fw-bold text-black bg-dark-yellow">TOTAL</td>#}
-{#                        <td class="text-center fw-bold text-black bg-dark-yellow">{{ inventory.sale_value }}</td>#}
-{#                        <td class="text-center fw-bold text-black bg-dark-yellow">{{ inventory.deposit_value }}</td>#}
-{#                    </tr>#}
-{#                    </tbody>#}
-{#                </table>#}
-{##}
-{#            </div>#}
-{#        </div>#}
-{##}
-{#        <div class="row justify-content-center">#}
-{#            <div class="col">#}
-{##}
-{#                <table class="table table-striped table-bordered table-hover table-sm">#}
-{#                    <thead>#}
-{#                    <tr>#}
-{#                        <th class="text-center align-middle bg-light-purple">Article</th>#}
-{#                        <th class="text-center align-middle bg-light-purple">HT DI</th>#}
-{#                        <th class="text-center align-middle bg-light-purple">Quantité</th>#}
-{#                        <th class="text-center align-middle bg-light-purple">Val. marchande</th>#}
-{#                        <th class="text-center align-middle bg-light-purple">Cond.</th>#}
-{#                        <th class="text-center align-middle bg-light-purple">Consigne bouteille</th>#}
-{#                        <th class="text-center align-middle bg-light-purple">Consigne caisse</th>#}
-{#                        <th class="text-center align-middle bg-light-purple">Val. consigne</th>#}
-{#                        <th class="text-center align-middle bg-light-purple">Catégorie</th>#}
-{#                    </tr>#}
-{#                    </thead>#}
-{#                    <tbody>#}
-{#                    {% for record in inventory.records %}#}
-{#                        {% set volume = record.article_volume | strip_zeros ~ " cl" if record.article_volume %}#}
-{#                        <tr>#}
-{#                            <td>{{ record.article_name.name1 ~ " " ~ record.article_name.name2 ~ " " ~ volume }}</td>#}
-{#                            <td class="text-center">{{ record.taxfree_price | strip_zeros }}</td>#}
-{#                            <td class="text-center">{{ record.stock_quantity }}</td>#}
-{#                            <td class="text-center">{{ record.sale_value | strip_zeros }}</td>#}
-{#                            <td class="text-center">{{ record.article_packaging if record.article_packaging }}</td>#}
-{#                            <td class="text-center">{{ record.article_deposit.unit | strip_zeros if record.article_deposit.unit }}</td>#}
-{#                            <td class="text-center">{{ record.article_deposit.case | strip_zeros if record.article_deposit.case }}</td>#}
-{#                            <td class="text-center">{{ record.deposit_value | strip_zeros if record.deposit_value }}</td>#}
-{#                            <td class="text-center">{{ record.article_type }}</td>#}
-{#                        </tr>#}
-{#                    {% endfor %}#}
-{#                    </tbody>#}
-{#                </table>#}
-{##}
-{#            </div>#}
-{#        </div>#}
-{##}
-{#    </div>#}
-{##}
-{#{% endblock %}#}
