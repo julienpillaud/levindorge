@@ -1,52 +1,156 @@
-.Afrique_du_Sud {background-image: url(../images/flag/Afrique_du_Sud.png);}
-.Allemagne {background-image: url(../images/flag/Allemagne.png);}
-.Angleterre {background-image: url(../images/flag/Angleterre.png);}
-.Autriche {background-image: url(../images/flag/Autriche.png);}
-.Barbade {background-image: url(../images/flag/Barbade.png);}
-.Belgique {background-image: url(../images/flag/Belgique.png);}
-.Belize {background-image: url(../images/flag/Belize.png);}
-.Bresil {background-image: url(../images/flag/Bresil.png);}
-.Canada {background-image: url(../images/flag/Canada.png);}
-.Colombie {background-image: url(../images/flag/Colombie.png);}
-.Costa_Rica {background-image: url(../images/flag/Costa_Rica.png);}
-.Cuba {background-image: url(../images/flag/Cuba.png);}
-.Danemark {background-image: url(../images/flag/Danemark.png);}
-.Ecosse {background-image: url(../images/flag/Ecosse.png);}
-.Espagne {background-image: url(../images/flag/Espagne.png);}
-.Etats-Unis {background-image: url(../images/flag/Etats-Unis.png);}
-.Fidji {background-image: url(../images/flag/Fidji.png);}
-.France {background-image: url(../images/flag/France.png);}
-.Grece {background-image: url(../images/flag/Grece.png);}
-.Guatemala {background-image: url(../images/flag/Guatemala.png);}
-.Guyana {background-image: url(../images/flag/Guyana.png);}
-.Haiti {background-image: url(../images/flag/Haiti.png);}
-.Iles_Vierges {background-image: url(../images/flag/Iles_Vierges.png);}
-.Inde {background-image: url(../images/flag/Inde.png);}
-.Indonesie {background-image: url(../images/flag/Indonesie.png);}
-.Irlande {background-image: url(../images/flag/Irlande.png);}
-.Italie {background-image: url(../images/flag/Italie.png);}
-.Jamaique {background-image: url(../images/flag/Jamaique.png);}
-.Japon {background-image: url(../images/flag/Japon.png);}
-.Madagascar {background-image: url(../images/flag/Madagascar.png);}
-.Maurice {background-image: url(../images/flag/Maurice.png);}
-.Mexique {background-image: url(../images/flag/Mexique.png);}
-.Nicaragua {background-image: url(../images/flag/Nicaragua.png);}
-.Norvege {background-image: url(../images/flag/Norvege.png);}
-.Panama {background-image: url(../images/flag/Panama.png);}
-.Pays-Bas {background-image: url(../images/flag/Pays-Bas.png);}
-.Pays_de_Galles {background-image: url(../images/flag/Pays_de_Galles.png);}
-.Perou {background-image: url(../images/flag/Perou.png);}
-.Philippines {background-image: url(../images/flag/Philippines.png);}
-.Pologne {background-image: url(../images/flag/Pologne.png);}
-.Portugal {background-image: url(../images/flag/Portugal.png);}
-.Republique_dominicaine {background-image: url(../images/flag/Republique_dominicaine.png);}
-.Republique_tcheque {background-image: url(../images/flag/Republique_tcheque.png);}
-.Russie {background-image: url(../images/flag/Russie.png);}
-.Sainte-Lucie {background-image: url(../images/flag/Sainte-Lucie.png);}
-.Slovaquie {background-image: url(../images/flag/Slovaquie.png);}
-.Sri_Lanka {background-image: url(../images/flag/Sri_Lanka.png);}
-.Suede {background-image: url(../images/flag/Suede.png);}
-.Suisse {background-image: url(../images/flag/Suisse.png);}
-.Taiwan {background-image: url(../images/flag/Taiwan.png);}
-.Trinite-et-Tobago {background-image: url(../images/flag/Trinite-et-Tobago.png);}
-.Venezuela {background-image: url(../images/flag/Venezuela.png);}
+.Afrique_du_Sud {
+  background-image: url(../images/flag/Afrique_du_Sud.png);
+}
+.Allemagne {
+  background-image: url(../images/flag/Allemagne.png);
+}
+.Angleterre {
+  background-image: url(../images/flag/Angleterre.png);
+}
+.Autriche {
+  background-image: url(../images/flag/Autriche.png);
+}
+.Barbade {
+  background-image: url(../images/flag/Barbade.png);
+}
+.Belgique {
+  background-image: url(../images/flag/Belgique.png);
+}
+.Belize {
+  background-image: url(../images/flag/Belize.png);
+}
+.Bresil {
+  background-image: url(../images/flag/Bresil.png);
+}
+.Canada {
+  background-image: url(../images/flag/Canada.png);
+}
+.Colombie {
+  background-image: url(../images/flag/Colombie.png);
+}
+.Costa_Rica {
+  background-image: url(../images/flag/Costa_Rica.png);
+}
+.Cuba {
+  background-image: url(../images/flag/Cuba.png);
+}
+.Danemark {
+  background-image: url(../images/flag/Danemark.png);
+}
+.Ecosse {
+  background-image: url(../images/flag/Ecosse.png);
+}
+.Espagne {
+  background-image: url(../images/flag/Espagne.png);
+}
+.Etats-Unis {
+  background-image: url(../images/flag/Etats-Unis.png);
+}
+.Fidji {
+  background-image: url(../images/flag/Fidji.png);
+}
+.France {
+  background-image: url(../images/flag/France.png);
+}
+.Grece {
+  background-image: url(../images/flag/Grece.png);
+}
+.Guatemala {
+  background-image: url(../images/flag/Guatemala.png);
+}
+.Guyana {
+  background-image: url(../images/flag/Guyana.png);
+}
+.Haiti {
+  background-image: url(../images/flag/Haiti.png);
+}
+.Iles_Vierges {
+  background-image: url(../images/flag/Iles_Vierges.png);
+}
+.Inde {
+  background-image: url(../images/flag/Inde.png);
+}
+.Indonesie {
+  background-image: url(../images/flag/Indonesie.png);
+}
+.Irlande {
+  background-image: url(../images/flag/Irlande.png);
+}
+.Italie {
+  background-image: url(../images/flag/Italie.png);
+}
+.Jamaique {
+  background-image: url(../images/flag/Jamaique.png);
+}
+.Japon {
+  background-image: url(../images/flag/Japon.png);
+}
+.Madagascar {
+  background-image: url(../images/flag/Madagascar.png);
+}
+.Maurice {
+  background-image: url(../images/flag/Maurice.png);
+}
+.Mexique {
+  background-image: url(../images/flag/Mexique.png);
+}
+.Nicaragua {
+  background-image: url(../images/flag/Nicaragua.png);
+}
+.Norvege {
+  background-image: url(../images/flag/Norvege.png);
+}
+.Panama {
+  background-image: url(../images/flag/Panama.png);
+}
+.Pays-Bas {
+  background-image: url(../images/flag/Pays-Bas.png);
+}
+.Pays_de_Galles {
+  background-image: url(../images/flag/Pays_de_Galles.png);
+}
+.Perou {
+  background-image: url(../images/flag/Perou.png);
+}
+.Philippines {
+  background-image: url(../images/flag/Philippines.png);
+}
+.Pologne {
+  background-image: url(../images/flag/Pologne.png);
+}
+.Portugal {
+  background-image: url(../images/flag/Portugal.png);
+}
+.Republique_dominicaine {
+  background-image: url(../images/flag/Republique_dominicaine.png);
+}
+.Republique_tcheque {
+  background-image: url(../images/flag/Republique_tcheque.png);
+}
+.Russie {
+  background-image: url(../images/flag/Russie.png);
+}
+.Sainte-Lucie {
+  background-image: url(../images/flag/Sainte-Lucie.png);
+}
+.Slovaquie {
+  background-image: url(../images/flag/Slovaquie.png);
+}
+.Sri_Lanka {
+  background-image: url(../images/flag/Sri_Lanka.png);
+}
+.Suede {
+  background-image: url(../images/flag/Suede.png);
+}
+.Suisse {
+  background-image: url(../images/flag/Suisse.png);
+}
+.Taiwan {
+  background-image: url(../images/flag/Taiwan.png);
+}
+.Trinite-et-Tobago {
+  background-image: url(../images/flag/Trinite-et-Tobago.png);
+}
+.Venezuela {
+  background-image: url(../images/flag/Venezuela.png);
+}
