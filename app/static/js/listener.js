@@ -1,4 +1,4 @@
-import { swapDeleteButton } from "./utils.js";
+import {colorStockQuantities, swapDeleteButton} from "./utils.js";
 import { createItem, deleteItems } from "./api/items.js";
 import { createInventory, resetStocks } from "./api/inventories.js";
 
@@ -84,5 +84,30 @@ export function initResetStocksListener() {
   modalForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     await resetStocks(modalForm);
+  });
+}
+
+export function initSelectShopListener() {
+  const shopSelect = document.getElementById("shop-select");
+  if (!shopSelect) {
+    return;
+  }
+
+  shopSelect.addEventListener("change", (event) => {
+    const shop = event.target.value;
+    const articlesData = JSON.parse(document.getElementById("articles-data").textContent);
+
+    document.querySelectorAll("tr[data-id]").forEach(row => {
+      const articleId = row.dataset.id;
+      const data = articlesData[articleId][shop];
+      row.querySelector('td[data-field="recommended_price"]').textContent = data.recommended_price;
+      row.querySelector('td[data-field="sell_price"]').textContent = data.sell_price;
+      row.querySelector('td[data-field="margin"]').textContent = data.margins.margin;
+      row.querySelector('td[data-field="markup"]').textContent = data.margins.markup;
+      const cell = row.querySelector('td[data-field="stock_quantity"]');
+      const div = cell.querySelector('div');
+      div.textContent = data.stock_quantity === 0 ? '' : data.stock_quantity;
+      colorStockQuantities();
+    })
   });
 }

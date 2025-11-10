@@ -1,15 +1,15 @@
-import { searchTable } from "./utils.js";
+import {colorStockQuantities, searchTable} from "./utils.js";
 import {
   initCreateInventoryListener,
   initCreateItemListener,
   initDeleteItemsListener,
-  initResetStocksListener,
+  initResetStocksListener, initSelectShopListener,
 } from "./listener.js";
 import { initToggleDeleteButton } from "./listener/global.js";
 import { initDeletePriceLabels } from "./listener/price_labels.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // -------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Search
   const searchInputs = document.querySelectorAll(
     "#search-mobile, #search-desktop",
@@ -31,7 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
       searchTable("");
     });
   });
-  // -------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  initSelectShopListener();
+  colorStockQuantities();
+
   initCreateItemListener();
   initDeleteItemsListener();
   initCreateInventoryListener();
@@ -39,5 +42,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initToggleDeleteButton();
   initDeletePriceLabels();
-  // -------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
 });

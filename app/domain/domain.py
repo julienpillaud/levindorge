@@ -8,7 +8,11 @@ from app.domain.articles.commands import (
     get_articles_command,
     update_article_command,
 )
-from app.domain.commons.commands import get_article_type_command, get_view_data_command
+from app.domain.commons.commands import (
+    get_article_type_command,
+    get_category_group_command,
+    get_view_data_command,
+)
 from app.domain.context import ContextProtocol
 from app.domain.deposits.commands import (
     create_deposit_command,
@@ -48,6 +52,7 @@ class Domain(BaseDomain[ContextProtocol]):
     # common
     get_view_data = CommandHandler(get_view_data_command)
     get_article_type = CommandHandler(get_article_type_command)
+    get_category_group = CommandHandler(get_category_group_command)
 
     # items
     get_items = CommandHandler(get_items_command)

@@ -3,7 +3,6 @@ from cleanstack.exceptions import NotFoundError
 from pymongo import ASCENDING
 
 from app.domain.articles.entities import Article
-from app.domain.commons.entities import DisplayGroup
 from app.domain.entities import EntityId
 from app.domain.protocols.repository import ArticleRepositoryProtocol
 from app.infrastructure.repository.exceptions import MongoRepositoryError
@@ -15,15 +14,13 @@ class ArticleRepository(MongoRepositoryProtocol, ArticleRepositoryProtocol):
         articles = self.database["articles"].find().sort("type")
         return [Article.model_validate(article) for article in articles]
 
-    def get_articles_by_display_group(
-        self, display_group: DisplayGroup
-    ) -> list[Article]:
-        article_types = self.database["types"].find({"list_category": display_group})
-        article_types_names = [x["name"] for x in article_types]
+    def get_articles_by_display_group(self, display_group: str) -> list[Article]:
+        categories = self.database["types"].find({"list_category": display_group})
+        category_names = [x["name"] for x in categories]
 
         articles = (
             self.database["articles"]
-            .find({"type": {"$in": article_types_names}})
+            .find({"type": {"$in": category_names}})
             .sort(
                 [
                     ("type", ASCENDING),

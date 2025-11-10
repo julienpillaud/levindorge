@@ -53,3 +53,24 @@ export function setOverlayVisible(show) {
   const overlay = document.getElementById("loading-overlay");
   overlay.classList.toggle("hidden", !show);
 }
+
+export function colorStockQuantities() {
+  document.querySelectorAll('td[data-field="stock_quantity"]').forEach((elem) => {
+    const div = elem.querySelector('div');
+    const value = parseFloat(div?.textContent.trim()) || 0;
+
+    div.classList.remove(
+      "badge",
+      "badge-sm",
+      "badge-soft",
+      "badge-success",
+      "badge-error"
+    );
+
+    if (value > 0) {
+      div.classList.add("badge", "badge-sm", "badge-soft", "badge-success");
+    } else if (value < 0) {
+      div.classList.add("badge", "badge-sm", "badge-soft", "badge-error");
+    }
+  });
+}
