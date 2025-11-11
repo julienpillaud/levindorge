@@ -20,15 +20,15 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "ruff==0.13.3",
+    "ruff==0.14.4",
     "mypy==1.18.2",
-    "pytest==8.4.2",
-    "pre-commit==4.3.0",
+    "pytest==9.0.0",
+    "pre-commit==4.4.0",
 ]
 
 [tool.uv.sources]
 tactill = { git = "https://github.com/julienpillaud/tactill.git", tag = "0.6.0" }
-cleanstack = { git = "https://github.com/julienpillaud/cleanstack", tag = "0.5.0" }
+cleanstack = { git = "https://github.com/julienpillaud/cleanstack", tag = "0.6.0" }
 
 [tool.ruff]
 output-format = "concise"
