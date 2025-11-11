@@ -10,6 +10,7 @@ from app.core.config import Settings
 from app.domain.context import ContextProtocol
 from app.domain.domain import Domain
 from app.infrastructure.event_publisher import FastStreamEventPublisher
+from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.base import MongoRepository
 from app.infrastructure.tactill.manager import TactillManager
 
@@ -35,6 +36,10 @@ class Context(BaseContext):
     @property
     def repository(self) -> MongoRepository:
         return MongoRepository(database=self.database)
+
+    @property
+    def article_repository(self) -> ArticleRepository:
+        return ArticleRepository(database=self.database)
 
     @property
     def pos_manager(self) -> TactillManager:

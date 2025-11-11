@@ -27,7 +27,10 @@ def home(
     # A valid user is already logged in
     if current_user:
         return RedirectResponse(
-            url=request.url_for("get_articles_view", display_group=DisplayGroup.BEER),
+            url=request.url_for(
+                "get_articles_view",
+                display_group=DisplayGroup.BEER,
+            ),
             status_code=status.HTTP_302_FOUND,
         )
 

@@ -14,7 +14,7 @@ class InventoryRepository(MongoRepositoryProtocol, InventoryRepositoryProtocol):
     def get_inventories(self) -> list[Inventory]:
         sort_keys = [("date", ASCENDING), ("shop", ASCENDING)]
         inventories = self.database["inventories"].find().sort(sort_keys)
-        return [Inventory(**inventory) for inventory in inventories]
+        return [Inventory.to_domain_entity(inventory) for inventory in inventories]
 
     def get_inventory(self, inventory_id: EntityId) -> Inventory | None:
         inventory = self.database["inventories"].find_one(

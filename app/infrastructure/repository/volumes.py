@@ -12,7 +12,7 @@ class VolumeRepository(MongoRepositoryProtocol, VolumeRepositoryProtocol):
     def get_volumes(self) -> list[Volume]:
         sort_keys = [("category", ASCENDING), ("value", ASCENDING)]
         return [
-            Volume(**volume)
+            Volume.to_domain_entity(volume)
             for volume in self.database["volumes"].find().sort(sort_keys)
         ]
 

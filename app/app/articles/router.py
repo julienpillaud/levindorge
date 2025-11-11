@@ -29,7 +29,8 @@ def get_articles_view(
     display_group: str,
 ) -> Response:
     category_group = domain.get_category_group(slug=display_group)
-    articles = domain.get_articles_by_display_group(display_group=display_group)
+    result = domain.get_articles_by_display_group(display_group=display_group)
+    articles = result.items
     return templates.TemplateResponse(
         request=request,
         name="articles/articles.html",

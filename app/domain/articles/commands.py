@@ -4,23 +4,26 @@ from cleanstack.exceptions import NotFoundError
 
 from app.domain.articles.entities import Article, ArticleCreateOrUpdate
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId
+from app.domain.entities import EntityId, PaginatedResponse, Pagination
 from app.domain.users.entities import User
 
 
 def get_articles_command(context: ContextProtocol) -> list[Article]:
-    return context.repository.get_articles()
+    return context.article_repository.get_all(
+        sort={"type": 1},
+        pagination=Pagination(page=1, limit=1000),
+    ).items
 
 
 def get_articles_by_display_group_command(
     context: ContextProtocol,
     display_group: str,
-) -> list[Article]:
-    return context.repository.get_articles_by_display_group(display_group=display_group)
+) -> PaginatedResponse[Article]:
+    return context.article_repository.get_by_display_group(display_group=display_group)
 
 
 def get_article_command(context: ContextProtocol, article_id: EntityId) -> Article:
-    article = context.repository.get_article(article_id=article_id)
+    article = context.article_repository.get_by_id(article_id)
     if not article:
         raise NotFoundError()
 
@@ -34,14 +37,13 @@ def create_article_command(
 ) -> Article:
     current_time = datetime.datetime.now(datetime.UTC)
     article = Article(
-        id="",
         **data.model_dump(),
         validated=False,
         created_by=current_user.name,
         created_at=current_time,
         updated_at=current_time,
     )
-    created_article = context.repository.create_article(article=article)
+    created_article = context.article_repository.create(article)
 
     for shop in current_user.shops:
         context.event_publisher.publish(
@@ -58,7 +60,7 @@ def update_article_command(
     article_id: EntityId,
     data: ArticleCreateOrUpdate,
 ) -> Article:
-    existing_article = context.repository.get_article(article_id=article_id)
+    existing_article = context.article_repository.get_by_id(article_id)
     if not existing_article:
         raise NotFoundError()
 
@@ -71,7 +73,7 @@ def update_article_command(
         updated_at=datetime.datetime.now(datetime.UTC),
     )
 
-    updated_article = context.repository.update_article(article=article)
+    updated_article = context.article_repository.update(article)
 
     for shop in current_user.shops:
         context.event_publisher.publish(
@@ -87,11 +89,11 @@ def delete_article_command(
     current_user: User,
     article_id: EntityId,
 ) -> None:
-    article = context.repository.get_article(article_id=article_id)
+    article = context.article_repository.get_by_id(article_id)
     if not article:
         raise NotFoundError()
 
-    context.repository.delete_article(article=article)
+    context.article_repository.delete(article)
 
     for shop in current_user.shops:
         context.event_publisher.publish(

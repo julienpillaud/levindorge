@@ -4,7 +4,7 @@ from collections import defaultdict
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId
+from app.domain.entities import EntityId, Pagination
 from app.domain.inventories.entities import (
     Inventory,
     InventoryDetail,
@@ -30,7 +30,11 @@ def get_inventory_command(
 
 
 def create_inventory_command(context: ContextProtocol, shop: Shop) -> Inventory:
-    articles = context.repository.get_articles()
+    results = context.article_repository.get_all(
+        sort={"type": 1},
+        pagination=Pagination(page=1, limit=1000),
+    )
+    articles = results.items
     article_types_mapping = {
         article_type.name: article_type
         for article_type in context.repository.get_article_types()

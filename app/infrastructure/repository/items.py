@@ -39,7 +39,7 @@ class ItemRepository(MongoRepositoryProtocol, ItemRepositoryProtocol):
 
     def get_items(self, item_type: ItemType) -> list[Item]:
         collection = self._get_collection(name=item_type)
-        return [Item(**item) for item in collection.find().sort("name")]
+        return [Item.to_domain_entity(item) for item in collection.find().sort("name")]
 
     def delete_item(self, item_type: ItemType, item: Item) -> None:
         collection = self._get_collection(name=item_type)
@@ -54,7 +54,7 @@ class ItemRepository(MongoRepositoryProtocol, ItemRepositoryProtocol):
 
     def get_volumes_by_category(self, volume_category: str | None) -> list[Volume]:
         return [
-            Volume(**volume)
+            Volume.to_domain_entity(volume)
             for volume in self.database["volumes"]
             .find({"category": volume_category})
             .sort("value")

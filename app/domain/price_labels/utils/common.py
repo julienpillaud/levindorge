@@ -61,7 +61,7 @@ def split_by_size(
     large_labels = []
     small_labels = []
     for item in price_labels:
-        article = context.repository.get_article(article_id=item.article_id)
+        article = context.article_repository.get_by_id(item.article_id)
         if not article:
             continue
         pricing_group = article_types_mapping[article.type].pricing_group

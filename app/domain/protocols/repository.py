@@ -1,6 +1,5 @@
 from typing import Any, Protocol
 
-from app.domain.articles.entities import Article
 from app.domain.category_groups.entities import CategoryGroup
 from app.domain.commons.entities import ArticleType, DisplayGroup
 from app.domain.deposits.entities import Deposit
@@ -34,20 +33,6 @@ class ArticleTypeRepositoryProtocol(Protocol):
     ) -> list[ArticleType]: ...
 
     def get_category_group(self, slug: str) -> CategoryGroup: ...
-
-
-class ArticleRepositoryProtocol(Protocol):
-    def get_articles(self) -> list[Article]: ...
-
-    def get_articles_by_display_group(self, display_group: str) -> list[Article]: ...
-
-    def get_article(self, article_id: EntityId) -> Article | None: ...
-
-    def create_article(self, article: Article) -> Article: ...
-
-    def update_article(self, article: Article) -> Article: ...
-
-    def delete_article(self, article: Article) -> None: ...
 
 
 class ItemRepositoryProtocol(Protocol):
@@ -118,7 +103,6 @@ class InventoryRepositoryProtocol(Protocol):
 class RepositoryProtocol(
     UserRepositoryProtocol,
     ArticleTypeRepositoryProtocol,
-    ArticleRepositoryProtocol,
     ItemRepositoryProtocol,
     VolumeRepositoryProtocol,
     DepositRepositoryProtocol,
