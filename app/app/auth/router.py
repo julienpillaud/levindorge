@@ -29,7 +29,7 @@ def home(
         return RedirectResponse(
             url=request.url_for(
                 "get_articles_view",
-                list_category=DisplayGroup.BEER,
+                display_group=DisplayGroup.BEER,
             ),
             status_code=status.HTTP_302_FOUND,
         )

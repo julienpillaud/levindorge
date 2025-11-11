@@ -1,11 +1,38 @@
-from typing import Annotated
+from typing import Any
 
-from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
+from pydantic import (
+    BaseModel,
+    NonNegativeInt,
+    PositiveInt,
+)
 
-EntityId = Annotated[str, BeforeValidator(str)]
+DEFAULT_PAGINATION_LIMIT = 25
+
+type EntityId = str
 
 
 class DomainModel(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+    id: EntityId = ""
 
-    id: EntityId = Field(alias="_id")
+    # Temporary until refactoring is complete
+    @classmethod
+    def to_domain_entity[T: DomainModel](
+        cls: type[T],
+        document: dict[str, Any],
+        /,
+    ) -> T:
+        document["id"] = str(document.pop("_id"))
+        return cls.model_validate(document)
+
+
+class Pagination(BaseModel):
+    page: PositiveInt = 1
+    limit: PositiveInt = DEFAULT_PAGINATION_LIMIT
+
+
+class PaginatedResponse[T: DomainModel](BaseModel):
+    page: PositiveInt
+    limit: NonNegativeInt
+    total: NonNegativeInt
+    total_pages: NonNegativeInt
+    items: list[T]

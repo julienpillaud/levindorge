@@ -27,13 +27,13 @@ def get_articles_view(
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     display_group: DisplayGroup,
 ) -> Response:
-    articles = domain.get_articles_by_display_group(display_group=display_group)
+    result = domain.get_articles_by_display_group(display_group=display_group)
     return templates.TemplateResponse(
         request=request,
         name="article_list.html",
         context={
             "current_user": current_user,
-            "articles": articles,
+            "articles": result.items,
             "list_category": display_group,
         },
     )

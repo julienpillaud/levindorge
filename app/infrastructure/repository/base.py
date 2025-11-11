@@ -5,7 +5,6 @@ from pymongo.database import Database
 
 from app.domain.items.entities import ItemType
 from app.domain.protocols.repository import RepositoryProtocol
-from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.deposits import DepositRepository
 from app.infrastructure.repository.inventories import InventoryRepository
 from app.infrastructure.repository.items import ItemRepository
@@ -18,7 +17,6 @@ class MongoRepository(
     RepositoryProtocol,
     UserRepository,
     ArticleTypeRepository,
-    ArticleRepository,
     ItemRepository,
     VolumeRepository,
     DepositRepository,

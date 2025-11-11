@@ -18,7 +18,7 @@ class DepositRepository(MongoRepositoryProtocol, DepositRepositoryProtocol):
             ("value", ASCENDING),
         ]
         return [
-            Deposit(**deposit)
+            Deposit.to_domain_entity(deposit)
             for deposit in self.database["deposits"].find().sort(sort_keys)
         ]
 
