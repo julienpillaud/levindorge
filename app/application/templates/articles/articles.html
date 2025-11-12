@@ -136,7 +136,9 @@
                 {# Prices --------------------------------------------------- #}
                 <td>{{ article.taxfree_price | strip_zeros }}</td>
                 {% if category_group.recommended_price %}
-                  <td data-field="recommended_price">{{ article.shops[current_shop.username].recommended_price | strip_zeros }}</td>
+                  <td data-field="recommended_price">
+                    {{ article.shops[current_shop.username].recommended_price | strip_zeros }}
+                  </td>
                 {% endif %}
                 <td data-field="sell_price">{{ article.shops[current_shop.username].sell_price | strip_zeros }}</td>
                 <td data-field="margin">{{ article.shops[current_shop.username].margins.margin | strip_zeros }}</td>
@@ -179,8 +181,9 @@
     </div>
   </div>
 
+  <!-- prettier-ignore-start -->
 <script type="application/json" id="articles-data">
   {{ articles_mapping | safe }}
 </script>
-
+<!-- prettier-ignore-end -->
 {% endblock %}

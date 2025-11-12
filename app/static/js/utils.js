@@ -55,22 +55,24 @@ export function setOverlayVisible(show) {
 }
 
 export function colorStockQuantities() {
-  document.querySelectorAll('td[data-field="stock_quantity"]').forEach((elem) => {
-    const div = elem.querySelector('div');
-    const value = parseFloat(div?.textContent.trim()) || 0;
+  document
+    .querySelectorAll('td[data-field="stock_quantity"]')
+    .forEach((elem) => {
+      const div = elem.querySelector("div");
+      const value = parseFloat(div?.textContent.trim()) || 0;
 
-    div.classList.remove(
-      "badge",
-      "badge-sm",
-      "badge-soft",
-      "badge-success",
-      "badge-error"
-    );
+      div.classList.remove(
+        "badge",
+        "badge-sm",
+        "badge-soft",
+        "badge-success",
+        "badge-error",
+      );
 
-    if (value > 0) {
-      div.classList.add("badge", "badge-sm", "badge-soft", "badge-success");
-    } else if (value < 0) {
-      div.classList.add("badge", "badge-sm", "badge-soft", "badge-error");
-    }
-  });
+      if (value > 0) {
+        div.classList.add("badge", "badge-sm", "badge-soft", "badge-success");
+      } else if (value < 0) {
+        div.classList.add("badge", "badge-sm", "badge-soft", "badge-error");
+      }
+    });
 }

@@ -1,9 +1,10 @@
-import {colorStockQuantities, searchTable} from "./utils.js";
+import { colorStockQuantities, searchTable } from "./utils.js";
 import {
   initCreateInventoryListener,
   initCreateItemListener,
   initDeleteItemsListener,
-  initResetStocksListener, initSelectShopListener,
+  initResetStocksListener,
+  initSelectShopListener,
 } from "./listener.js";
 import { initToggleDeleteButton } from "./listener/global.js";
 import { initDeletePriceLabels } from "./listener/price_labels.js";
