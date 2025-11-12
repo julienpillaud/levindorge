@@ -6,7 +6,7 @@ from pydantic import (
     PositiveInt,
 )
 
-DEFAULT_PAGINATION_LIMIT = 25
+DEFAULT_PAGINATION_SIZE = 50
 
 type EntityId = str
 
@@ -23,11 +23,6 @@ class DomainModel(BaseModel):
     ) -> T:
         document["id"] = str(document.pop("_id"))
         return cls.model_validate(document)
-
-
-class Pagination(BaseModel):
-    page: PositiveInt = 1
-    limit: PositiveInt = DEFAULT_PAGINATION_LIMIT
 
 
 class PaginatedResponse[T: DomainModel](BaseModel):

@@ -11,7 +11,6 @@ from app.api.security import create_access_token, verify_password
 from app.app.auth.dependencies import get_optional_current_user
 from app.app.dependencies import get_templates
 from app.core.config import Settings
-from app.domain.commons.entities import DisplayGroup
 from app.domain.domain import Domain
 from app.domain.users.entities import User, UserUpdate
 
@@ -27,10 +26,7 @@ def home(
     # A valid user is already logged in
     if current_user:
         return RedirectResponse(
-            url=request.url_for(
-                "get_articles_view",
-                display_group=DisplayGroup.BEER,
-            ),
+            url=request.url_for("get_articles"),
             status_code=status.HTTP_302_FOUND,
         )
 
@@ -71,7 +67,7 @@ def login(
     access_token = create_access_token(sub=user.email, secret_key=settings.secret_key)
 
     response = RedirectResponse(
-        url=request.url_for("get_articles_view", display_group=DisplayGroup.BEER),
+        url=request.url_for("get_articles"),
         status_code=status.HTTP_302_FOUND,
     )
     response.set_cookie(

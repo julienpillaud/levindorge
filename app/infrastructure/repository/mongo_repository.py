@@ -3,9 +3,14 @@ from typing import Any
 from bson import ObjectId
 from cleanstack.exceptions import NotFoundError
 from cleanstack.infrastructure.mongo.entities import MongoDocument
+from pydantic import PositiveInt
 from pymongo.database import Database
 
-from app.domain.entities import DomainModel, PaginatedResponse, Pagination
+from app.domain.entities import (
+    DEFAULT_PAGINATION_SIZE,
+    DomainModel,
+    PaginatedResponse,
+)
 from app.domain.protocols.base_repository import RepositoryProtocol
 from app.infrastructure.repository.exceptions import MongoRepositoryError
 
@@ -24,17 +29,16 @@ class MongoRepository[T: DomainModel](RepositoryProtocol[T]):
         filters: dict[str, Any] | None = None,
         search: str | None = None,
         sort: dict[str, int] | None = None,
-        pagination: Pagination | None = None,
+        page: PositiveInt = 1,
+        limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
     ) -> PaginatedResponse[T]:
-        pagination = pagination or Pagination()
-        skip = (pagination.page - 1) * pagination.limit
-        search = search.strip() if search else None
+        skip = (page - 1) * limit
 
         pipeline = []
         if filters:
             pipeline.extend([{"$match": filters}])
         if search:
-            pipeline.extend(self._search_pipeline(search))
+            pipeline.extend(self._search_pipeline(search.strip()))
         pipeline.extend(self._aggregation_pipeline())
         if sort:
             pipeline.append({"$sort": sort})
@@ -43,7 +47,7 @@ class MongoRepository[T: DomainModel](RepositoryProtocol[T]):
             {
                 "$facet": {
                     "metadata": [{"$count": "total"}],
-                    "data": [{"$skip": skip}, {"$limit": pagination.limit}],
+                    "data": [{"$skip": skip}, {"$limit": limit}],
                 }
             },
         ]
@@ -53,10 +57,10 @@ class MongoRepository[T: DomainModel](RepositoryProtocol[T]):
         items_db = result[0]["data"]
 
         return PaginatedResponse(
-            page=pagination.page,
-            limit=pagination.limit,
+            page=page,
+            limit=limit,
             total=total,
-            total_pages=(total + pagination.limit - 1) // pagination.limit,
+            total_pages=(total + limit - 1) // limit,
             items=[self._to_domain_entity(item) for item in items_db],
         )
 

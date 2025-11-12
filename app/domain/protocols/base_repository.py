@@ -1,6 +1,12 @@
 from typing import Any, Protocol
 
-from app.domain.entities import DomainModel, PaginatedResponse, Pagination
+from pydantic import PositiveInt
+
+from app.domain.entities import (
+    DEFAULT_PAGINATION_SIZE,
+    DomainModel,
+    PaginatedResponse,
+)
 
 
 class RepositoryProtocol[T: DomainModel](Protocol):
@@ -9,7 +15,8 @@ class RepositoryProtocol[T: DomainModel](Protocol):
         filters: dict[str, Any] | None = None,
         search: str | None = None,
         sort: dict[str, int] | None = None,
-        pagination: Pagination | None = None,
+        page: PositiveInt = 1,
+        limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
     ) -> PaginatedResponse[T]: ...
 
     def get_by_id(self, entity_id: str, /) -> T | None: ...

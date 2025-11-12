@@ -1,18 +1,25 @@
 import datetime
 
 from cleanstack.exceptions import NotFoundError
+from pydantic import PositiveInt
 
 from app.domain.articles.entities import Article, ArticleCreateOrUpdate
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId, PaginatedResponse, Pagination
+from app.domain.entities import DEFAULT_PAGINATION_SIZE, EntityId, PaginatedResponse
 from app.domain.users.entities import User
 
 
-def get_articles_command(context: ContextProtocol) -> list[Article]:
+def get_articles_command(
+    context: ContextProtocol,
+    search: str | None = None,
+    page: PositiveInt = 1,
+    limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
+) -> PaginatedResponse[Article]:
     return context.article_repository.get_all(
-        sort={"type": 1},
-        pagination=Pagination(page=1, limit=1000),
-    ).items
+        search=search,
+        page=page,
+        limit=limit,
+    )
 
 
 def get_articles_by_display_group_command(
