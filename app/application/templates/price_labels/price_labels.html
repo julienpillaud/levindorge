@@ -1,0 +1,74 @@
+{% extends "base_daisyui.html" %}
+{% block content %}
+  <div class="h-dvh flex flex-col">
+    {% include '_includes/_navbar.html' %}
+    <div class="flex flex-col flex-1 px-10 py-6 gap-6 min-h-0">
+      <div class="card bg-base-200 shadow-sm">
+        <div class="card-body flex flex-col md:flex-row justify-between md:items-center gap-4">
+          <div class="flex items-center gap-4">
+            <h1 class="card-title text-2xl">Etiquettes</h1>
+            <div id="items-count" class="badge badge-soft badge-accent">{{ files | length }}</div>
+          </div>
+          <div>
+            <details class="dropdown">
+              <summary class="btn btn-outline btn-primary">Nouveau</summary>
+              <ul class="menu dropdown-content bg-base-100 rounded-box w-52 p-2 shadow-sm">
+                {% for shop in current_user.shops %}
+                  <li>
+                    <a href="{{ url_for('create_price_labels_view') }}?shop={{ shop.username }}"> {{ shop.name }} </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto rounded-lg shadow-sm">
+        <table class="table table-pin-rows" data-scope="price-labels">
+          <thead>
+            <tr>
+              <th class="relative w-30">
+                <button
+                  class="btn btn-soft btn-error hidden absolute left-2 top-1/2 -translate-y-1/2"
+                  data-role="delete"
+                >
+                  Supprimer
+                </button>
+              </th>
+              <th>Type</th>
+              <th>Magasin</th>
+              <th>Date</th>
+              <th>Heure</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for file in files %}
+              <tr data-file="{{ file.file }}">
+                <th>
+                  <label><input type="checkbox" class="checkbox" /></label>
+                </th>
+                <td>{{ file.type }}</td>
+                <td>{{ file.shop }}</td>
+                <td>{{ (file.date | local_timezone).strftime("%d / %m / %Y") }}</td>
+                <td>{{ (file.date | local_timezone).strftime("%H:%M") }}</td>
+                <td>
+                  <button class="btn btn-soft btn-primary btn-xs">
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="{{ url_for('get_price_labels_file', file=file.file) }}"
+                    >
+                      Ouvrir
+                    </a>
+                  </button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

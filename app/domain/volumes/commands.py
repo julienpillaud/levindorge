@@ -1,4 +1,4 @@
-from cleanstack.exceptions import NotFoundError
+from cleanstack.exceptions import ConflictError, NotFoundError
 
 from app.domain.context import ContextProtocol
 from app.domain.entities import EntityId
@@ -20,6 +20,10 @@ def create_volume_command(
         unit=volume_create.unit,
         category=volume_create.category,
     )
+
+    if context.repository.volume_exists(volume=volume):
+        raise ConflictError()
+
     return context.repository.create_volume(volume=volume)
 
 

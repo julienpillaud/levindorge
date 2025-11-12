@@ -71,7 +71,7 @@ def login(
     access_token = create_access_token(sub=user.email, secret_key=settings.secret_key)
 
     response = RedirectResponse(
-        url=request.url_for("get_articles_view", list_category=DisplayGroup.BEER),
+        url=request.url_for("get_articles_view", display_group=DisplayGroup.BEER),
         status_code=status.HTTP_302_FOUND,
     )
     response.set_cookie(

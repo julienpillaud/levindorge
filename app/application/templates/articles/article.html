@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+  <input type="hidden" id="ratio_category" value="{{ ratio_category }}" />
+
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-xl-8">
+        <div class="card border-secondary my-3">
+          <form method="post" id="create-update-article-form" onsubmit="showOverlay()">
+            <div class="card-header">{% include "articles/article_type.html" %}</div>
+            <div class="card-body">
+              {% include "articles/article_name.html" %}
+              {% include "articles/article_color_taste_region.html" %}
+              {% include "articles/article_volume_alcohol.html" %}
+              {% include "articles/article_food_pairing.html" %}
+              {% include "articles/article_price.html" %}
+              {% include "articles/article_distributor_barcode.html" %}
+              {% include "articles/article_deposit.html" %}
+              {% include "articles/article_packaging.html" %}
+            </div>
+            <div class="card-footer text-body-secondary d-flex">
+              <button type="submit" class="btn btn-outline-primary ms-auto">Valider</button>
+              <button type="submit" class="btn btn-outline-secondary ms-2" onclick="history.back()">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,6 +1,5 @@
 from app.domain.articles.entities import Article
 from app.domain.articles.repository import ArticleRepositoryProtocol
-from app.domain.commons.entities import DisplayGroup
 from app.domain.entities import PaginatedResponse, Pagination
 from app.infrastructure.repository.mongo_repository import MongoRepository
 
@@ -20,7 +19,7 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
 
     def get_by_display_group(
         self,
-        display_group: DisplayGroup,
+        display_group: str,
     ) -> PaginatedResponse[Article]:
         article_types = self.database["types"].find({"list_category": display_group})
         article_types_names = [x["name"] for x in article_types]

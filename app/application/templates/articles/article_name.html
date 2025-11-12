@@ -1,0 +1,64 @@
+{% if list_category in ['beer', 'keg', 'mini_keg'] %}
+  {% set name1 = "Brasserie" %}
+  {% set name2 = "Bière" %}
+  {% set name_list = brewery_list %}
+{% elif list_category in ['cider'] %}
+  {% set name1 = "Cidrerie" %}
+  {% set name2 = "Cidre" %}
+  {% set name_list = brewery_list %}
+{% elif list_category in ["rhum", "whisky", "arranged", "spirit"] %}
+  {% set name1 = "Distillerie" %}
+  {% set name2 = "Spiritueux" %}
+  {% set name_list = distillery_list %}
+{% elif list_category in ["wine", "fortified_wine", "sparkling_wine", "bib"] %}
+  {% set name1 = "Appellation" %}
+  {% set name2 = "Produit" %}
+{% else %}
+  {% set name1 = "Désignation" %}
+{% endif %}
+
+<div class="row">
+  <div class="col-md">
+    <div class="input-group">
+      {% if list_category not in ["wine", "fortified_wine", "sparkling_wine", "bib", "box", "misc", "food"] %}
+        <label class="input-group-text bg-dark-purple" for="name1">{{ name1 }}</label>
+        <select class="form-select text-center" id="name1" name="name1">
+          <option selected></option>
+          {% for x in name_list %}
+            {% if article and x.name == article.name.name1 %}
+              <option selected>{{ x.name }}</option>
+            {% else %}
+              <option>{{ x.name }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      {% else %}
+        <span class="input-group-text bg-dark-purple">{{ name1 }}</span>
+        <input
+          type="text"
+          class="form-control text-center"
+          aria-label=""
+          name="name1"
+          {% if article %}value="{{ article.name.name1 }}"{% endif %}
+          required
+        />
+      {% endif %}
+    </div>
+  </div>
+
+  {% if list_category not in ["box", "misc", "food"] %}
+    <div class="col-md">
+      <div class="input-group">
+        <span class="input-group-text bg-dark-purple">{{ name2 }}</span>
+        <input
+          type="text"
+          class="form-control text-center"
+          aria-label=""
+          name="name2"
+          {% if article %}value="{{ article.name.name2 }}"{% endif %}
+          required
+        />
+      </div>
+    </div>
+  {% endif %}
+</div>

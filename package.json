@@ -1,0 +1,27 @@
+{
+  "name": "levindorge",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "check": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.1",
+    "eslint": "9.39.1",
+    "globals": "16.5.0",
+    "prettier": "3.6.2",
+    "prettier-plugin-jinja-template": "2.1.0"
+  },
+  "prettier" : {
+    "plugins": ["prettier-plugin-jinja-template"],
+    "overrides": [
+    {
+      "files": ["*.html"],
+      "options": {
+        "parser": "jinja-template",
+        "printWidth": 120
+      }
+    }
+  ]
+  }
+}

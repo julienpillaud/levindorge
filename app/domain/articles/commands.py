@@ -3,7 +3,6 @@ import datetime
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.articles.entities import Article, ArticleCreateOrUpdate
-from app.domain.commons.entities import DisplayGroup
 from app.domain.context import ContextProtocol
 from app.domain.entities import EntityId, PaginatedResponse, Pagination
 from app.domain.users.entities import User
@@ -18,7 +17,7 @@ def get_articles_command(context: ContextProtocol) -> list[Article]:
 
 def get_articles_by_display_group_command(
     context: ContextProtocol,
-    display_group: DisplayGroup,
+    display_group: str,
 ) -> PaginatedResponse[Article]:
     return context.article_repository.get_by_display_group(display_group=display_group)
 

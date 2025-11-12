@@ -1,4 +1,4 @@
-from cleanstack.exceptions import NotFoundError
+from cleanstack.exceptions import ConflictError, NotFoundError
 
 from app.domain.context import ContextProtocol
 from app.domain.deposits.entities import Deposit, DepositCreate
@@ -20,6 +20,10 @@ def create_deposit_command(
         deposit_type=deposit_create.deposit_type,
         value=deposit_create.value,
     )
+
+    if context.repository.deposit_exists(deposit=deposit):
+        raise ConflictError()
+
     return context.repository.create_deposit(deposit=deposit)
 
 

@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form, status
+from fastapi import APIRouter, Depends, Form
 from fastapi.requests import Request
 from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
@@ -15,11 +15,11 @@ from app.domain.users.entities import User
 router = APIRouter(prefix="/items")
 
 ITEMS_TITLE_MAPPING = {
-    "breweries": "Brasserie",
-    "distilleries": "Distillerie",
-    "distributors": "Fournisseur",
+    "breweries": "Brasseries",
+    "distilleries": "Distilleries",
+    "distributors": "Fournisseurs",
     "countries": "Pays",
-    "regions": "Région",
+    "regions": "Régions",
 }
 
 
@@ -61,14 +61,10 @@ def create_item(
     )
 
 
-@router.delete(
-    "/{item_type}/{item_id}",
-    dependencies=[Depends(get_current_user)],
-)
+@router.delete("/{item_type}/{item_id}", dependencies=[Depends(get_current_user)])
 def delete_item(
     domain: Annotated[Domain, Depends(get_domain)],
     item_type: ItemType,
     item_id: str,
-) -> Response:
+) -> None:
     domain.delete_item(item_type=item_type, item_id=item_id)
-    return Response(status_code=status.HTTP_200_OK)

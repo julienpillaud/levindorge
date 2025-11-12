@@ -1,71 +1,47 @@
-{% extends "base.html" %}
+{% extends "base_daisyui.html" %}
 {% block content %}
-    {% include "navbar.html" %}
-
-    {% set category_mapping = {
-        "beer": "Bière / Cidre",
-        "bib": "BIB",
-        "keg": "Fût",
-        "mini_keg": "Mini-fût",
-        "spirit": "Spiritueux",
-        "wine": "Vin",
-    } %}
-
-    <div class="container padding-navbar">
-        <div class="row justify-content-center">
-            <div class="col col-lg-6">
-
-                <form
-                    method="post"
-                    hx-post="{{ request.url }}"
-                    hx-target="tbody"
-                    hx-swap="afterbegin"
-                    hx-on:htmx:after-request="this.reset()"
-                >
-                    <div class="input-group mb-2">
-                        <label class="input-group-text w-25 bg-light-purple" for="volume-category">Catégorie</label>
-                        <select class="form-select text-center" id="volume-category" name="category" required>
-                            <option selected></option>
-                            {% for key, value in category_mapping.items() %}
-                                <option value="{{ key }}">{{ value }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="input-group mb-2">
-                        <label class="input-group-text w-25 bg-light-purple" for="volume-unit">Unité</label>
-                        <select class="form-select text-center" id="volume-unit" name="unit" required>
-                            <option selected></option>
-                            <option>cL</option>
-                            <option>L</option>
-                        </select>
-                    </div>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text w-25 bg-light-purple">Valeur</span>
-                        <input type="number" step="0.1" min="0.1" class="form-control text-center" aria-label="value" name="value" required>
-                    </div>
-                    <div class="d-grid mb-2">
-                        <button class="btn btn-outline-primary" type="submit">Créer</button>
-                    </div>
-                </form>
-
-                <table class="table table-striped table-bordered table-hover table-sm">
-                    <thead class="sticky" style="--sticky-top: 53px">
-                    <tr>
-                        <th class="text-center text-nowrap bg-light-purple">Catégorie</th>
-                        <th class="text-center text-nowrap bg-light-purple">Unité</th>
-                        <th class="text-center text-nowrap bg-light-purple">Valeur</th>
-                        <th class="bg-light-purple"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for volume in volumes %}
-                        {% include "items/_volume_row.html" %}
-                    {% endfor %}
-                    </tbody>
-                </table>
-
+  {% include 'items/_volume_create.html' %}
+  <div class="h-dvh flex flex-col">
+    {% include '_includes/_navbar.html' %}
+    <div class="flex flex-col flex-1 px-10 py-6 gap-6 min-h-0">
+      <div class="card bg-base-200 shadow-sm">
+        <div class="card-body space-y-4">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div class="flex items-center gap-4">
+              <h1 class="card-title text-2xl">Volumes</h1>
+              <div id="items-count" class="badge badge-soft badge-accent">{{ volumes | length }}</div>
             </div>
+            <div class="card-actions justify-end">
+              <button id="item-create-button" class="btn btn-outline btn-primary">Nouveau</button>
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
 
+      <div class="overflow-x-auto rounded-lg shadow-sm">
+        <table id="items-table" class="table table-pin-rows">
+          <thead>
+            <tr>
+              <th class="relative w-30">
+                <button
+                  id="items-delete-button"
+                  data-category="volumes"
+                  class="btn btn-soft btn-error hidden absolute left-2 top-1/2 -translate-y-1/2"
+                >
+                  Supprimer
+                </button>
+              </th>
+              <th>Volume</th>
+              <th>Catégorie</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for volume in volumes %}
+              {% include "items/_volume_row.html" %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 {% endblock %}

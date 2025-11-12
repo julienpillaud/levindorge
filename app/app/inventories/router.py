@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from cleanstack.exceptions import BadRequestError
-from fastapi import APIRouter, Depends, Form, status
+from fastapi import APIRouter, Body, Depends, status
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
@@ -16,9 +16,9 @@ from app.domain.users.entities import User
 router = APIRouter(prefix="/inventories")
 
 
-def get_shop_from_form(
+def get_shop_from_body(
     current_user: Annotated[User, Depends(get_current_user)],
-    shop: Annotated[str, Form()],
+    shop: Annotated[str, Body()],
 ) -> Shop:
     for user_shop in current_user.shops:
         if shop == user_shop.username:
@@ -36,7 +36,7 @@ def get_inventories_view(
     inventories = domain.get_inventories()
     return templates.TemplateResponse(
         request=request,
-        name="inventories/inventory_list.html",
+        name="inventories/inventories.html",
         context={
             "current_user": current_user,
             "inventories": inventories,
@@ -48,12 +48,14 @@ def get_inventories_view(
 def create_inventory(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
-    shop: Annotated[Shop, Depends(get_shop_from_form)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
+    shop: Annotated[Shop, Depends(get_shop_from_body)],
 ) -> Response:
-    domain.create_inventory(shop=shop)
-    return RedirectResponse(
-        url=request.url_for("get_inventories_view"),
-        status_code=status.HTTP_302_FOUND,
+    inventory = domain.create_inventory(shop=shop)
+    return templates.TemplateResponse(
+        request=request,
+        name="inventories/_inventory_row.html",
+        context={"inventory": inventory},
     )
 
 
@@ -93,8 +95,8 @@ def delete_inventory(
 def reset_pos_stocks(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
-    shop: Annotated[Shop, Depends(get_shop_from_form)],
-    category: Annotated[str, Form()],
+    shop: Annotated[Shop, Depends(get_shop_from_body)],
+    category: Annotated[str, Body()],
 ) -> Response:
     domain.reset_pos_stocks(shop=shop, category=category)
     return RedirectResponse(

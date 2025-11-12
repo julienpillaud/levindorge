@@ -1,0 +1,41 @@
+{%
+  set category_mapping = {
+      "beer": "Bière / Cidre",
+      "bib": "BIB",
+      "keg": "Fût",
+      "mini_keg": "Mini-fût",
+      "spirit": "Spiritueux",
+      "wine": "Vin",
+  }
+%}
+
+<dialog id="item-create-modal" class="modal">
+  <div class="modal-box flex justify-center">
+    <form id="item-create-form" data-category="volumes">
+      <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+        <label class="label">Valeur</label>
+        <input type="number" step="0.1" min="1" class="input" name="value" required />
+
+        <label class="label">Unité</label>
+        <select class="select" name="unit" required>
+          <option disabled selected></option>
+          <option>cL</option>
+          <option>L</option>
+        </select>
+
+        <label class="label">Catégorie</label>
+        <select class="select" name="category" required>
+          <option disabled selected></option>
+          {% for key, value in category_mapping.items() %}
+            <option value="{{ key }}">{{ value }}</option>
+          {% endfor %}
+        </select>
+
+        <div class="modal-action flex justify-between">
+          <button type="button" id="item-create-modal-close" class="btn btn-soft">Annuler</button>
+          <button type="submit" class="btn btn-outline btn-primary">Créer</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</dialog>

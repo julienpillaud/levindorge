@@ -1,3 +1,4 @@
+from app.domain.category_groups.entities import CategoryGroup
 from app.domain.commons.entities import ArticleType, DisplayGroup, ViewData
 from app.domain.context import ContextProtocol
 
@@ -25,3 +26,7 @@ def get_view_data_command(
 
 def get_article_type_command(context: ContextProtocol, name: str) -> ArticleType:
     return context.repository.get_article_type_by_name(name=name)
+
+
+def get_category_group_command(context: ContextProtocol, slug: str) -> CategoryGroup:
+    return context.repository.get_category_group(slug=slug)

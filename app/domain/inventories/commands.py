@@ -29,7 +29,7 @@ def get_inventory_command(
     return inventory
 
 
-def create_inventory_command(context: ContextProtocol, shop: Shop) -> None:
+def create_inventory_command(context: ContextProtocol, shop: Shop) -> Inventory:
     results = context.article_repository.get_all(
         sort={"type": 1},
         pagination=Pagination(page=1, limit=1000),
@@ -89,6 +89,7 @@ def create_inventory_command(context: ContextProtocol, shop: Shop) -> None:
         inventory_id=inventory.id,
         records=records,
     )
+    return inventory
 
 
 def delete_inventory_command(context: ContextProtocol, inventory_id: EntityId) -> None:

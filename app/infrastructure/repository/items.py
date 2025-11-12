@@ -27,6 +27,11 @@ class ItemRepository(MongoRepositoryProtocol, ItemRepositoryProtocol):
         item = collection.find_one({"_id": ObjectId(item_id)})
         return Item(**item) if item else None
 
+    def item_exists(self, item_type: ItemType, item: Item) -> bool:
+        collection = self._get_collection(name=item_type)
+        result = collection.find_one({"name": item.name})
+        return result is not None
+
     def create_item(self, item_type: ItemType, item: Item) -> Item:
         collection = self._get_collection(name=item_type)
         result = collection.insert_one(item.model_dump(exclude={"id"}))

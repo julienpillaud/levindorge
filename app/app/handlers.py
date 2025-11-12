@@ -1,9 +1,8 @@
-from cleanstack.exceptions import DomainError
-from fastapi import FastAPI
+from cleanstack.exceptions import ConflictError, DomainError
+from fastapi import FastAPI, status
+from fastapi.exceptions import HTTPException as StarletteHTTPException
 from fastapi.requests import Request
-from fastapi.responses import Response
-from starlette import status
-from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.responses import JSONResponse, Response
 
 from app.app.dependencies import get_templates
 from app.core.config import Settings
@@ -31,15 +30,20 @@ def add_exception_handler(app: FastAPI, settings: Settings) -> None:
             name="errors/401.html",
         )
 
+    @app.exception_handler(ConflictError)
+    async def conflict_error_handler(request: Request, exc: ConflictError) -> Response:
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"detail": "Existe déjà !"},
+        )
+
     @app.exception_handler(CannotDeleteError)
     async def cannot_delete_exception_handler(
         request: Request,
         exc: CannotDeleteError,
     ) -> Response:
         message = f"'{exc.item_name}' ne peut pas être supprimé"
-        return templates.TemplateResponse(
-            request=request,
-            name="errors/_error_toast.html",
-            context={"message": message, "category": "danger"},
+        return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
+            content={"detail": message},
         )
