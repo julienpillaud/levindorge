@@ -1,0 +1,59 @@
+{% set search = request.query_params.get('search') %}
+{% if search %}
+  {% set search_query = '&search=' ~ search %}
+{% else %}
+  {% set search_query = '' %}
+{% endif %}
+
+{% set total_buttons = 5 %}
+{% set start_page = result.page - 2 %}
+{% set end_page = result.page + 2 %}
+
+{% if start_page < 1 %}
+  {% set end_page = end_page + (1 - start_page) %}
+  {% set start_page = 1 %}
+{% endif %}
+
+{% if end_page > result.total_pages %}
+  {% set start_page = start_page - (end_page - result.total_pages) %}
+  {% set end_page = result.total_pages %}
+{% endif %}
+
+{% if start_page < 1 %}
+  {% set start_page = 1 %}
+{% endif %}
+
+<div class="join">
+  <a
+    class="join-item btn btn-soft btn-primary btn-sm shadow-sm {% if result.page == 1 %}btn-disabled{% endif %}"
+    href="{{ url_for('get_articles') }}?page=1{{ search_query }}"
+  >
+    <<
+  </a>
+  <a
+    class="join-item btn btn-soft btn-primary btn-sm shadow-sm {% if result.page == 1 %}btn-disabled{% endif %}"
+    href="{{ url_for('get_articles') }}?page={{ result.page - 1 }}{{ search_query }}"
+  >
+    <
+  </a>
+  {% for page in range(start_page, end_page + 1) %}
+    <a
+      class="join-item btn btn-soft btn-primary btn-sm shadow-sm {% if page == result.page %}btn-active{% endif %}"
+      href="{{ url_for('get_articles') }}?page={{ page }}{{ search_query }}"
+    >
+      {{ page }}
+    </a>
+  {% endfor %}
+  <a
+    class="join-item btn btn-soft btn-primary btn-sm shadow-sm {% if result.page == result.total_pages %}btn-disabled{% endif %}"
+    href="{{ url_for('get_articles') }}?page={{ result.page + 1 }}{{ search_query }}"
+  >
+    >
+  </a>
+  <a
+    class="join-item btn btn-soft btn-primary btn-sm shadow-sm {% if result.page == result.total_pages %}btn-disabled{% endif %}"
+    href="{{ url_for('get_articles') }}?page={{ result.total_pages }}{{ search_query }}"
+  >
+    >>
+  </a>
+</div>

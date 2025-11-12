@@ -6,6 +6,7 @@ from fastapi.datastructures import URL
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
+from pydantic import PositiveInt
 
 from app.api.dependencies import get_domain
 from app.app.articles.dtos import ArticleDTO, MarginsRequestDTO, PriceRequestDTO
@@ -15,9 +16,31 @@ from app.domain.articles.entities import ArticleCreateOrUpdate, ArticleMargins
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
 from app.domain.commons.entities import DisplayGroup
 from app.domain.domain import Domain
+from app.domain.entities import DEFAULT_PAGINATION_SIZE
 from app.domain.users.entities import User
 
 router = APIRouter(prefix="/articles")
+
+
+@router.get("")
+def get_articles(
+    request: Request,
+    current_user: Annotated[User, Depends(get_current_user)],
+    domain: Annotated[Domain, Depends(get_domain)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
+    search: str | None = None,
+    page: PositiveInt = 1,
+    limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
+) -> Response:
+    result = domain.get_articles(search=search, page=page, limit=limit)
+    return templates.TemplateResponse(
+        request=request,
+        name="articles/articles_global.html",
+        context={
+            "current_user": current_user,
+            "result": result,
+        },
+    )
 
 
 @router.get("/{display_group}")

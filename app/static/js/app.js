@@ -1,4 +1,4 @@
-import { colorStockQuantities, searchTable } from "./utils.js";
+import {colorStockQuantities, searchTable, setCursor} from "./utils.js";
 import {
   initCreateInventoryListener,
   initCreateItemListener,
@@ -20,6 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
       searchTable(event.target.value);
     });
   });
+
+  // Set cursor at the end of the search input on page load
+  window.addEventListener("load", setCursor);
+
   // Clear search
   const clearSearchButtons = document.querySelectorAll(
     "#clear-search-mobile, #clear-search-desktop",

@@ -5,12 +5,29 @@ function normalizeString(str) {
     .toLowerCase();
 }
 
+let searchTimer;
+
 export function searchTable(query) {
-  const normalizedQuery = normalizeString(query);
-  const tableRows = document.querySelectorAll("table tbody tr");
-  tableRows.forEach((row) => {
-    const rowText = normalizeString(row.textContent);
-    row.style.display = rowText.includes(normalizedQuery) ? "" : "none";
+  clearTimeout(searchTimer);
+
+searchTimer = setTimeout(() => {
+    const trimmed = query.trim();
+    let url = "/articles";
+
+    if (trimmed) {
+      url += "?search=" + encodeURIComponent(trimmed);
+    }
+
+    window.location = url;
+  }, 500);
+}
+
+export function setCursor() {
+  const inputs = document.querySelectorAll("#search-mobile, #search-desktop");
+
+  inputs.forEach((input) => {
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
   });
 }
 

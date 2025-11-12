@@ -1,6 +1,6 @@
 from app.domain.articles.entities import Article
 from app.domain.articles.repository import ArticleRepositoryProtocol
-from app.domain.entities import PaginatedResponse, Pagination
+from app.domain.entities import PaginatedResponse
 from app.infrastructure.repository.mongo_repository import MongoRepository
 
 
@@ -26,5 +26,6 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
         return self.get_all(
             filters={"type": {"$in": article_types_names}},
             sort={"type": 1, "region": 1, "name.name1": 1, "name.name2": 1},
-            pagination=Pagination(page=1, limit=1000),
+            page=1,
+            limit=1000,
         )
