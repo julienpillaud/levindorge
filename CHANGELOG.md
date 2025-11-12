@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.0](https://github.com/julienpillaud/levindorge/compare/0.5.1...0.6.0) (2025-11-12)
+
+
+### Features
+
+* implement articles pagination ([#39](https://github.com/julienpillaud/levindorge/issues/39)) ([663cd4a](https://github.com/julienpillaud/levindorge/commit/663cd4a61fc75bea2e7bda2384a1d332c63901aa))
+* new UI ([#36](https://github.com/julienpillaud/levindorge/issues/36)) ([429206c](https://github.com/julienpillaud/levindorge/commit/429206c4ab31ee4c484fe1aa3c9fd1d87c51aa95))
+* refactor article repository ([#37](https://github.com/julienpillaud/levindorge/issues/37)) ([5eec19d](https://github.com/julienpillaud/levindorge/commit/5eec19dffbd91da71691839aaa6a23b0654205f1))
+
 ## [0.5.1](https://github.com/julienpillaud/levindorge/compare/0.5.0...0.5.1) (2025-10-15)
 
 
