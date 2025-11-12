@@ -1,4 +1,4 @@
-import {colorStockQuantities, searchTable, setCursor} from "./utils.js";
+import { colorStockQuantities, searchTable, setCursor } from "./utils.js";
 import {
   initCreateInventoryListener,
   initCreateItemListener,

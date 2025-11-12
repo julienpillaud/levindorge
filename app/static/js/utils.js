@@ -10,7 +10,7 @@ let searchTimer;
 export function searchTable(query) {
   clearTimeout(searchTimer);
 
-searchTimer = setTimeout(() => {
+  searchTimer = setTimeout(() => {
     const trimmed = query.trim();
     let url = "/articles";
 
