@@ -1,0 +1,17 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mx-auto">
+
+  {% if category_group.producer %}
+  <div class="join w-full">
+    <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.producer }}</span>
+    <input type="text" class="input input-bordered join-item w-full" />
+  </div>
+  {% endif %}
+
+  {% if category_group.product %}
+  <div class="join w-full">
+    <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.product }}</span>
+    <input type="text" class="input input-bordered join-item w-full" />
+  </div>
+  {% endif %}
+
+</div>

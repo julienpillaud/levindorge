@@ -34,6 +34,11 @@ class ArticleTypeRepositoryProtocol(Protocol):
 
     def get_category_group(self, slug: str) -> CategoryGroup: ...
 
+    def get_category_group_by_category(
+        self,
+        category_name: str,
+    ) -> CategoryGroup: ...
+
 
 class ItemRepositoryProtocol(Protocol):
     def get_items(self, item_type: ItemType) -> list[Item]: ...

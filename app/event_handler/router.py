@@ -32,7 +32,7 @@ def create_article(
     domain: Annotated[Domain, Context()],
 ) -> None:
     logger.info(
-        f"Creating article for {message.shop.name}",
+        f"Creating article for {message.store.name}",
         extra=message.model_dump(),
     )
     retry_command(domain.create_pos_article, data=message)
@@ -44,7 +44,7 @@ def update_article(
     domain: Annotated[Domain, Context()],
 ) -> None:
     logger.info(
-        f"Updating article for {message.shop.name}",
+        f"Updating article for {message.store.name}",
         extra=message.model_dump(),
     )
     retry_command(domain.update_pos_article, data=message)
@@ -56,7 +56,7 @@ def delete_article(
     domain: Annotated[Domain, Context()],
 ) -> None:
     logger.info(
-        f"Deleting article for {message.shop.name}",
+        f"Deleting article for {message.store.name}",
         extra=message.model_dump(),
     )
     retry_command(domain.delete_pos_article, data=message)

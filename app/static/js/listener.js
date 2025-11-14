@@ -117,3 +117,19 @@ export function initSelectShopListener() {
     });
   });
 }
+
+export function initArticleModalListener() {
+  const articlesTableRows = document.querySelectorAll("#articles-table tbody tr");
+  const modal = document.getElementById("article-modal");
+  const modalContent = modal.querySelector("div");
+
+  articlesTableRows.forEach(row => {
+    row.addEventListener("click", async () => {
+      const {id} = row.dataset;
+      const response = await fetch(`/articles/update/${id}`);
+      const html = await response.text();
+      modalContent.innerHTML = html;
+      modal.showModal();
+    });
+  });
+}

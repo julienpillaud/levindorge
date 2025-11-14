@@ -28,7 +28,7 @@
           </thead>
           <tbody>
             {% for article in result.items %}
-              <tr data-id="{{ article.id }}">
+              <tr class="hover cursor-pointer" data-id="{{ article.id }}">
                 <td class="text-nowrap">
                   {{ article.name.name1 }} {{ article.name.name2 }} {{ article.volume.value | strip_zeros }}
                   {{ article.volume.unit }}
@@ -46,4 +46,10 @@
       </div>
     </div>
   </div>
+
+  <dialog id="article-modal" class="modal">
+    <div class="modal-box flex justify-center w-11/12 max-w-5xl">
+    </div>
+  </dialog>
+
 {% endblock %}

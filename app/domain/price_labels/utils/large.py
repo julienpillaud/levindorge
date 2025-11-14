@@ -15,7 +15,7 @@ from app.domain.price_labels.utils.common import (
     get_file_path,
     normalize_attribute,
 )
-from app.domain.shops.entities import Shop
+from app.domain.stores.entities import Store
 
 MAX_LARGE_LABELS_PER_FILE = 9
 
@@ -23,7 +23,7 @@ MAX_LARGE_LABELS_PER_FILE = 9
 def create_large_price_labels(
     context: ContextProtocol,
     settings: Settings,
-    current_shop: Shop,
+    current_store: Store,
     price_labels: list[PriceLabelWrapper],
 ) -> None:
     regions_mapping = {
@@ -40,7 +40,7 @@ def create_large_price_labels(
         file_path = get_file_path(
             prefix="large",
             index=file_index,
-            shop=current_shop,
+            store=current_store,
             path=settings.app_path.price_labels,
         )
 
@@ -52,7 +52,7 @@ def create_large_price_labels(
                 settings=settings,
                 file=file,
                 price_labels=labels,
-                shop=current_shop,
+                store=current_store,
                 regions_mapping=regions_mapping,
             )
 
@@ -63,7 +63,7 @@ def write_large_labels_file(
     settings: Settings,
     file: TextIO,
     price_labels: list[PriceLabelWrapper],
-    shop: Shop,
+    store: Store,
     regions_mapping: dict[str, Item],
 ) -> None:
     for index, price_label in enumerate(price_labels):
@@ -73,7 +73,7 @@ def write_large_labels_file(
             index=index,
             pricing_group=price_label.pricing_group,
             article=price_label.article,
-            shop=shop,
+            store=store,
             regions_mapping=regions_mapping,
         )
 
@@ -84,7 +84,7 @@ def write_large_price_labels(
     index: int,
     pricing_group: PricingGroup,
     article: Article,
-    shop: Shop,
+    store: Store,
     regions_mapping: dict[str, Item],
 ) -> None:
     font_file = settings.app_path.fonts / "localbrewerytwo-bold.otf"
@@ -108,10 +108,10 @@ def write_large_price_labels(
         file.write(f'<div class="toplinebeerClass brandonClass">{top_line}</div>\n')
 
     elif pricing_group in {"wine", "sparkling_wine", "bib"}:
-        if article.type in {"Vin", "Vin effervescent", "BIB"}:
+        if article.category in {"Vin", "Vin effervescent", "BIB"}:
             top_line = f"{color} - {article.region}"
         else:
-            top_line = f"{color} - {article.type}"
+            top_line = f"{color} - {article.category}"
         file.write(f'<div class="toplinewineClass">{top_line}</div>\n')
 
     # ----------------------------------------------------------
@@ -140,7 +140,7 @@ def write_large_price_labels(
         file.write("</div>\n")
 
     # ----------------------------------------------------------
-    sell_price = article.shops[shop.username].sell_price
+    sell_price = article.store_data[store.slug].gross_price
     sell_price_tag = f"{sell_price:.2f}".replace(".", ", ")
     file.write(f'<div class="priceClass">{sell_price_tag} €</div>\n')
 
