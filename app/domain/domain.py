@@ -10,6 +10,7 @@ from app.domain.articles.commands import (
 )
 from app.domain.commons.commands import (
     get_article_type_command,
+    get_category_group_by_category_command,
     get_category_group_command,
     get_view_data_command,
 )
@@ -53,6 +54,9 @@ class Domain(BaseDomain[ContextProtocol]):
     get_view_data = CommandHandler(get_view_data_command)
     get_article_type = CommandHandler(get_article_type_command)
     get_category_group = CommandHandler(get_category_group_command)
+    get_category_group_by_category = CommandHandler(
+        get_category_group_by_category_command
+    )
 
     # items
     get_items = CommandHandler(get_items_command)

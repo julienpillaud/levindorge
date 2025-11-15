@@ -5,64 +5,78 @@ from typing import Any
 
 from app.domain.articles.entities import ArticleMargins
 from app.domain.commons.entities import PricingGroup
-from app.domain.shops.entities import ShopMargin
+from app.domain.stores.entities import PricingConfig
 
-DECIMAL_ROUND_SWITCH = 0.1
-SPIRIT_PRICE_RATIO_SWITCH = 100
-SPIRIT_PRICE_BOOST = 10
+SPIRIT_PRICE_THRESHOLD = 100
+SPIRIT_EXTRA_MARGIN = 10
+ROUND_STEP_CEIL_THRESHOLD = 0.1
 
 
-def apply_rounding(value: float, decimal_round: float) -> float:
-    factor = 1 / decimal_round
-    if decimal_round < DECIMAL_ROUND_SWITCH:
+def apply_rounding(value: float, round_step: float) -> float:
+    factor = 1 / round_step
+    if round_step < ROUND_STEP_CEIL_THRESHOLD:
         return math.ceil(value * factor) / factor
     return round(value * factor) / factor
 
 
 def compute_recommended_price(
-    net_price: float,
-    tax_rate: float,
-    shop_margins: ShopMargin,
-    pricing_group: str,
+    total_cost: float,
+    vat_rate: float,
+    pricing_group: PricingGroup,
+    pricing_config: PricingConfig,
 ) -> float:
-    ratio = shop_margins.ratio
-    if pricing_group == PricingGroup.SPIRIT and net_price >= SPIRIT_PRICE_RATIO_SWITCH:
-        ratio += SPIRIT_PRICE_BOOST
+    value = pricing_config.value
+    if pricing_group == PricingGroup.SPIRIT and total_cost >= SPIRIT_PRICE_THRESHOLD:
+        value += SPIRIT_EXTRA_MARGIN
 
-    tax_factor = 1 + (tax_rate / 100)
-    if shop_margins.operator == "+":
-        price = (net_price + ratio) * tax_factor
+    vat_factor = 1 + (vat_rate / 100)
+    if pricing_config.operator == "+":
+        price = (total_cost + value) * vat_factor
     else:
-        price = (net_price * ratio) * tax_factor
+        price = (total_cost * value) * vat_factor
 
-    return apply_rounding(value=price, decimal_round=shop_margins.decimal_round)
-
-
-def compute_margin(net_price: float, tax_rate: float, gross_price: float) -> float:
-    tax_factor = 1 + (tax_rate / 100)
-    return (gross_price / tax_factor) - net_price
+    return apply_rounding(value=price, round_step=pricing_config.round_step)
 
 
-def compute_markup_rate(tax_rate: float, gross_price: float, margin: float) -> float:
+def compute_margin_amount(
+    total_cost: float,
+    vat_rate: float,
+    gross_price: float,
+) -> float:
+    tax_factor = 1 + (vat_rate / 100)
+    margin_amount = (gross_price / tax_factor) - total_cost
+    return round(margin_amount, 2)
+
+
+def compute_margin_rate(
+    vat_rate: float,
+    gross_price: float,
+    margin_amount: float,
+) -> float:
     if gross_price == 0:
         return 0
 
-    tax_factor = 1 + (tax_rate / 100)
-    return margin / (gross_price / tax_factor) * 100
+    tax_factor = 1 + (vat_rate / 100)
+    margin_rate = margin_amount / (gross_price / tax_factor) * 100
+    return round(margin_rate)
 
 
 def compute_article_margins(
-    net_price: float,
+    total_cost: float,
     tax_rate: float,
     gross_price: float,
 ) -> ArticleMargins:
-    margin = compute_margin(
-        net_price=net_price, tax_rate=tax_rate, gross_price=gross_price
+    margin_amount = compute_margin_amount(
+        total_cost=total_cost,
+        vat_rate=tax_rate,
+        gross_price=gross_price,
     )
-    markup = compute_markup_rate(
-        tax_rate=tax_rate, gross_price=gross_price, margin=margin
+    margin_rate = compute_margin_rate(
+        vat_rate=tax_rate,
+        gross_price=gross_price,
+        margin_amount=margin_amount,
     )
-    return ArticleMargins(margin=round(margin, 2), markup=round(markup))
+    return ArticleMargins(margin_amount=margin_amount, margin_rate=margin_rate)
 
 
 def extract_name(data: dict[str, Any]) -> None:

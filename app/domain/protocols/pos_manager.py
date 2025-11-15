@@ -3,15 +3,15 @@ from typing import Protocol
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import DisplayGroup
 from app.domain.pos.entities import POSArticle
-from app.domain.shops.entities import Shop
+from app.domain.stores.entities import Store
 
 
 class POSManagerProtocol(Protocol):
-    def get_articles(self, _: Shop, /) -> list[POSArticle]: ...
+    def get_articles(self, _: Store, /) -> list[POSArticle]: ...
 
     def create_article(
         self,
-        shop: Shop,
+        store: Store,
         /,
         article: Article,
         category_name: str,
@@ -20,7 +20,7 @@ class POSManagerProtocol(Protocol):
 
     def update_article(
         self,
-        shop: Shop,
+        store: Store,
         /,
         article: Article,
         category_name: str,
@@ -29,14 +29,14 @@ class POSManagerProtocol(Protocol):
 
     def delete_article_by_reference(
         self,
-        shop: Shop,
+        store: Store,
         /,
         reference: str,
     ) -> None: ...
 
     def reset_stocks_by_category(
         self,
-        shop: Shop,
+        store: Store,
         /,
         category: str,
     ) -> None: ...

@@ -45,17 +45,15 @@ def create_article_command(
     current_time = datetime.datetime.now(datetime.UTC)
     article = Article(
         **data.model_dump(),
-        validated=False,
-        created_by=current_user.name,
         created_at=current_time,
         updated_at=current_time,
     )
     created_article = context.article_repository.create(article)
 
-    for shop in current_user.shops:
+    for store in current_user.stores:
         context.event_publisher.publish(
             "create.article",
-            {"shop": shop, "article": created_article},
+            {"shop": store, "article": created_article},
         )
 
     return created_article
@@ -74,18 +72,16 @@ def update_article_command(
     article = Article(
         id=existing_article.id,
         **data.model_dump(),
-        validated=existing_article.validated,
-        created_by=current_user.name,
         created_at=existing_article.created_at,
         updated_at=datetime.datetime.now(datetime.UTC),
     )
 
     updated_article = context.article_repository.update(article)
 
-    for shop in current_user.shops:
+    for store in current_user.stores:
         context.event_publisher.publish(
             "update.article",
-            {"shop": shop, "article": updated_article},
+            {"shop": store, "article": updated_article},
         )
 
     return updated_article
@@ -102,8 +98,8 @@ def delete_article_command(
 
     context.article_repository.delete(article)
 
-    for shop in current_user.shops:
+    for store in current_user.stores:
         context.event_publisher.publish(
             "delete.article",
-            {"shop": shop, "article_id": article_id},
+            {"shop": store, "article_id": article_id},
         )

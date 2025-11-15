@@ -11,7 +11,7 @@ from app.domain.inventories.entities import (
     InventoryRecord,
     InventoryReport,
 )
-from app.domain.shops.entities import Shop
+from app.domain.stores.entities import Store
 
 
 def get_inventories_command(context: ContextProtocol) -> list[Inventory]:
@@ -29,14 +29,14 @@ def get_inventory_command(
     return inventory
 
 
-def create_inventory_command(context: ContextProtocol, shop: Shop) -> Inventory:
+def create_inventory_command(context: ContextProtocol, store: Store) -> Inventory:
     results = context.article_repository.get_all(sort={"type": 1}, page=1, limit=1000)
     articles = results.items
     article_types_mapping = {
         article_type.name: article_type
         for article_type in context.repository.get_article_types()
     }
-    pos_articles = context.pos_manager.get_articles(shop)
+    pos_articles = context.pos_manager.get_articles(store)
     stock_quantity_mapping = {
         article.reference: article.stock_quantity
         for article in pos_articles
@@ -57,8 +57,8 @@ def create_inventory_command(context: ContextProtocol, shop: Shop) -> Inventory:
                 article_volume=article.volume.value if article.volume else 0.0,
                 article_packaging=article.packaging,
                 article_deposit=article.deposit,
-                article_type=article.type,
-                taxfree_price=article.taxfree_price,
+                article_type=article.category,
+                taxfree_price=article.total_cost,
                 stock_quantity=stock_quantity,
                 sale_value=article.inventory_value(stock_quantity),
                 deposit_value=article.deposit_value(stock_quantity),
@@ -76,7 +76,7 @@ def create_inventory_command(context: ContextProtocol, shop: Shop) -> Inventory:
     inventory_create = Inventory(
         id="",
         date=datetime.datetime.now(datetime.UTC),
-        shop=shop.name,
+        shop=store.name,
         inventory=inventory_details,
         sale_value=sum(value.sale_value for value in inventory_details.values()),
         deposit_value=sum(value.deposit_value for value in inventory_details.values()),

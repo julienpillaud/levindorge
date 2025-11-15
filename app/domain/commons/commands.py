@@ -30,3 +30,12 @@ def get_article_type_command(context: ContextProtocol, name: str) -> ArticleType
 
 def get_category_group_command(context: ContextProtocol, slug: str) -> CategoryGroup:
     return context.repository.get_category_group(slug=slug)
+
+
+def get_category_group_by_category_command(
+    context: ContextProtocol,
+    category_name: str,
+) -> CategoryGroup:
+    return context.repository.get_category_group_by_category(
+        category_name=category_name
+    )

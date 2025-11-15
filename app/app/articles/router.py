@@ -59,14 +59,14 @@ def get_articles_view(
         name="articles/articles.html",
         context={
             "current_user": current_user,
-            "current_shop": current_user.shops[0],
+            "current_shop": current_user.stores[0],
             "category_group": category_group,
             "articles": articles,
             "articles_mapping": json.dumps(
                 {
                     article.id: {
                         shop: shop_data.model_dump()
-                        for shop, shop_data in article.shops.items()
+                        for shop, shop_data in article.store_data.items()
                     }
                     for article in articles
                 }
@@ -123,16 +123,17 @@ def update_article_view(
     article_id: str,
 ) -> Response:
     article = domain.get_article(article_id=article_id)
-    view_data = domain.get_view_data(name=article.type)
+    category_group = domain.get_category_group_by_category(
+        category_name=article.category
+    )
+    domain.get_view_data(name=article.category)
     return templates.TemplateResponse(
         request=request,
-        name="articles/article.html",
+        name="articles/_article.html",
         context={
             "current_user": current_user,
-            "list_category": view_data.display_group,
-            "ratio_category": view_data.pricing_group,
             "article": article,
-            **view_data.items,
+            "category_group": category_group,
         },
     )
 
@@ -151,7 +152,7 @@ def update_article(
         article_id=article_id,
         data=article_update,
     )
-    article_type = domain.get_article_type(name=article.type)
+    article_type = domain.get_article_type(name=article.category)
     return RedirectResponse(
         url=request.url_for(
             "get_articles_view",
@@ -182,20 +183,20 @@ async def recommended_prices(
     data: PriceRequestDTO,
 ) -> dict[str, float]:
     return {
-        shop.username: compute_recommended_price(
-            net_price=data.taxfree_price,
-            tax_rate=data.tax,
-            shop_margins=shop.margins[data.ratio_category],
-            pricing_group=data.ratio_category,
+        store.slug: compute_recommended_price(
+            total_cost=data.total_cost,
+            vat_rate=data.vat_rate,
+            pricing_group=data.pricing_group,
+            pricing_config=store.pricing_configs[data.pricing_group],
         )
-        for shop in current_user.shops
+        for store in current_user.stores
     }
 
 
 @router.post("/margins", dependencies=[Depends(get_current_user)])
 async def margins(data: MarginsRequestDTO) -> ArticleMargins:
     return compute_article_margins(
-        net_price=data.taxfree_price,
-        tax_rate=data.tax,
-        gross_price=data.sell_price,
+        total_cost=data.total_cost,
+        tax_rate=data.vat_rate,
+        gross_price=data.gross_price,
     )

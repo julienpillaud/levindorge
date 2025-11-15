@@ -16,7 +16,7 @@ from app.domain.commons.entities import DisplayGroup
 from app.domain.exceptions import POSManagerError
 from app.domain.pos.entities import POSArticle
 from app.domain.protocols.pos_manager import POSManagerProtocol
-from app.domain.shops.entities import Shop
+from app.domain.stores.entities import Store
 from app.infrastructure.tactill.utils import (
     CATEGORIES_MAPPING,
     INCLUDED_CATEGORIES,
@@ -42,12 +42,12 @@ class TactillManager(POSManagerProtocol):
 
     @staticmethod
     def with_client(
-        func: Callable[Concatenate[T, Shop, P], R],
-    ) -> Callable[Concatenate[T, Shop, P], R]:
+        func: Callable[Concatenate[T, Store, P], R],
+    ) -> Callable[Concatenate[T, Store, P], R]:
         @wraps(func)
-        def wrapper(self: T, shop: Shop, /, *args: P.args, **kwargs: P.kwargs) -> R:
-            self._client = TactillClient(api_key=shop.tactill_api_key)
-            return func(self, shop, *args, **kwargs)
+        def wrapper(self: T, store: Store, /, *args: P.args, **kwargs: P.kwargs) -> R:
+            self._client = TactillClient(api_key=store.tactill_api_key)
+            return func(self, store, *args, **kwargs)
 
         return wrapper
 
@@ -113,7 +113,7 @@ class TactillManager(POSManagerProtocol):
         return [POSArticle(**article.model_dump()) for article in articles]
 
     @with_client
-    def get_articles(self, _: Shop, /) -> list[POSArticle]:
+    def get_articles(self, _: Store, /) -> list[POSArticle]:
         categories = self._get_categories(INCLUDED_CATEGORIES, query_operator="in")
         category_ids = [category.id for category in categories]
 
@@ -122,14 +122,14 @@ class TactillManager(POSManagerProtocol):
     @with_client
     def create_article(
         self,
-        shop: Shop,
+        store: Store,
         /,
         article: Article,
         category_name: str,
         display_group: DisplayGroup,
     ) -> POSArticle:
         category = self._get_category(category_name)
-        tactill_tax = self.get_tax(tax_rate=article.tax)
+        tactill_tax = self.get_tax(tax_rate=article.vat_rate)
 
         article_creation = ArticleCreation(
             category_id=category.id,
@@ -137,7 +137,7 @@ class TactillManager(POSManagerProtocol):
             name=define_name(display_group=display_group, article=article),
             icon_text=define_icon_text(article=article),
             color=define_color(display_group=display_group, article=article),
-            full_price=article.shops[shop.username].sell_price,
+            full_price=article.store_data[store.slug].gross_price,
             barcode=article.barcode,
             reference=article.id,
             in_stock=True,
@@ -148,7 +148,7 @@ class TactillManager(POSManagerProtocol):
     @with_client
     def update_article(
         self,
-        shop: Shop,
+        store: Store,
         /,
         article: Article,
         category_name: str,
@@ -157,7 +157,7 @@ class TactillManager(POSManagerProtocol):
         tactill_article = self.get_article_by_reference(reference=article.id)
 
         category = self._get_category(category_name)
-        tactill_tax = self.get_tax(tax_rate=article.tax)
+        tactill_tax = self.get_tax(tax_rate=article.vat_rate)
 
         article_modification = ArticleModification(
             category_id=category.id,
@@ -165,7 +165,7 @@ class TactillManager(POSManagerProtocol):
             name=define_name(display_group=display_group, article=article),
             icon_text=define_icon_text(article=article),
             color=define_color(display_group=display_group, article=article),
-            full_price=article.shops[shop.username].sell_price,
+            full_price=article.store_data[store.slug].gross_price,
             barcode=article.barcode,
             in_stock=True,
         )
@@ -177,7 +177,7 @@ class TactillManager(POSManagerProtocol):
     @with_client
     def delete_article_by_reference(
         self,
-        shop: Shop,
+        store: Store,
         /,
         reference: str,
     ) -> None:
@@ -192,7 +192,7 @@ class TactillManager(POSManagerProtocol):
     @with_client
     def reset_stocks_by_category(
         self,
-        shop: Shop,
+        store: Store,
         /,
         category: str,
     ) -> None:

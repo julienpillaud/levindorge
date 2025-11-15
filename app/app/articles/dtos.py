@@ -5,7 +5,7 @@ from pydantic import BaseModel, field_validator, model_validator
 from app.domain.articles.entities import (
     ArticleDeposit,
     ArticleName,
-    ArticleShop,
+    ArticleStoreData,
     ArticleVolume,
 )
 from app.domain.articles.utils import (
@@ -14,18 +14,19 @@ from app.domain.articles.utils import (
     extract_shops,
     extract_volume,
 )
+from app.domain.commons.entities import PricingGroup
 
 
 class PriceRequestDTO(BaseModel):
-    ratio_category: str
-    taxfree_price: float
-    tax: float
+    total_cost: float
+    vat_rate: float
+    pricing_group: PricingGroup
 
 
 class MarginsRequestDTO(BaseModel):
-    taxfree_price: float
-    tax: float
-    sell_price: float
+    total_cost: float
+    vat_rate: float
+    gross_price: float
 
 
 class ArticleDTO(BaseModel):
@@ -46,7 +47,7 @@ class ArticleDTO(BaseModel):
     deposit: ArticleDeposit
     food_pairing: list[str] = []
     biodynamic: str = ""
-    shops: dict[str, ArticleShop]
+    shops: dict[str, ArticleStoreData]
 
     @model_validator(mode="before")
     @classmethod

@@ -1,15 +1,17 @@
 from app.domain.context import ContextProtocol
 from app.domain.pos.entities import POSArticleCreateOrUpdate, POSArticleDelete
-from app.domain.shops.entities import Shop
+from app.domain.stores.entities import Store
 
 
 def create_pos_article_command(
     context: ContextProtocol,
     data: POSArticleCreateOrUpdate,
 ) -> None:
-    article_type = context.repository.get_article_type_by_name(name=data.article.type)
+    article_type = context.repository.get_article_type_by_name(
+        name=data.article.category
+    )
     context.pos_manager.create_article(
-        data.shop,
+        data.store,
         article=data.article,
         category_name=article_type.tactill_category,
         display_group=article_type.display_group,
@@ -20,9 +22,11 @@ def update_pos_article_command(
     context: ContextProtocol,
     data: POSArticleCreateOrUpdate,
 ) -> None:
-    article_type = context.repository.get_article_type_by_name(name=data.article.type)
+    article_type = context.repository.get_article_type_by_name(
+        name=data.article.category
+    )
     context.pos_manager.update_article(
-        data.shop,
+        data.store,
         article=data.article,
         category_name=article_type.tactill_category,
         display_group=article_type.display_group,
@@ -34,14 +38,14 @@ def delete_pos_article_command(
     data: POSArticleDelete,
 ) -> None:
     context.pos_manager.delete_article_by_reference(
-        data.shop,
+        data.store,
         reference=data.article_id,
     )
 
 
 def reset_pos_stocks_command(
     context: ContextProtocol,
-    shop: Shop,
+    store: Store,
     category: str,
 ) -> None:
-    context.pos_manager.reset_stocks_by_category(shop, category=category)
+    context.pos_manager.reset_stocks_by_category(store, category=category)

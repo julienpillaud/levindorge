@@ -7,14 +7,14 @@ from fastapi.responses import RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 
 from app.api.dependencies import get_domain, get_settings
-from app.app.auth.dependencies import get_current_shop, get_current_user
+from app.app.auth.dependencies import get_current_store, get_current_user
 from app.app.dependencies import get_templates
 from app.app.price_labels.dtos import PriceLabelRequest
 from app.app.utils import url_for_with_query
 from app.core.config import Settings
 from app.domain.domain import Domain
 from app.domain.price_labels.entities import PriceLabelCreate
-from app.domain.shops.entities import Shop
+from app.domain.stores.entities import Store
 from app.domain.users.entities import User
 
 router = APIRouter(prefix="/price-labes")
@@ -24,7 +24,7 @@ router = APIRouter(prefix="/price-labes")
 def create_price_labels_view(
     request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
-    current_shop: Annotated[Shop, Depends(get_current_shop)],
+    current_store: Annotated[Store, Depends(get_current_store)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
 ) -> Response:
@@ -34,7 +34,7 @@ def create_price_labels_view(
         name="article_list_glob.html",
         context={
             "current_user": current_user,
-            "current_shop": current_shop,
+            "current_shop": current_store,
             "articles": articles,
         },
     )
@@ -44,7 +44,7 @@ def create_price_labels_view(
 def create_price_labels(
     request: Request,
     settings: Annotated[Settings, Depends(get_settings)],
-    current_shop: Annotated[Shop, Depends(get_current_shop)],
+    current_store: Annotated[Store, Depends(get_current_store)],
     domain: Annotated[Domain, Depends(get_domain)],
     form_data: Annotated[PriceLabelRequest, Form()],
 ) -> Response:
@@ -54,13 +54,13 @@ def create_price_labels(
     ]
     domain.create_price_labels(
         settings=settings,
-        current_shop=current_shop,
+        current_store=current_store,
         price_labels_create=price_labels_create,
     )
     url = url_for_with_query(
         request,
         name="create_price_labels_view",
-        query_params={"shop": current_shop.username},
+        query_params={"shop": current_store.slug},
     )
     return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 

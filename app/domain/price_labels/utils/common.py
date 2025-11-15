@@ -9,7 +9,7 @@ from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
 from app.domain.context import ContextProtocol
 from app.domain.price_labels.entities import PriceLabelCreate, PriceLabelWrapper
-from app.domain.shops.entities import Shop
+from app.domain.stores.entities import Store
 
 LARGE_LABELS_CATEGORY = {
     PricingGroup.BEER,
@@ -64,7 +64,7 @@ def split_by_size(
         article = context.article_repository.get_by_id(item.article_id)
         if not article:
             continue
-        pricing_group = article_types_mapping[article.type].pricing_group
+        pricing_group = article_types_mapping[article.category].pricing_group
 
         wrapper = PriceLabelWrapper(
             article=article,
@@ -96,9 +96,9 @@ def chunk_price_labels(
         yield chunk
 
 
-def get_file_path(prefix: str, index: int, shop: Shop, path: Path) -> Path:
+def get_file_path(prefix: str, index: int, store: Store, path: Path) -> Path:
     date = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d_%H-%M-%S")
-    file_name = f"{prefix}_{index + 1}_{shop.username}_{date}.html"
+    file_name = f"{prefix}_{index + 1}_{store.slug}_{date}.html"
     return path / file_name
 
 

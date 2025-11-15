@@ -1,13 +1,13 @@
 from typing import Annotated, Any
 
 import typer
+from app.domain.shops.entities import Shop
 from rich.console import Console
 
 from app.core.config import Settings
 from app.core.core import Context
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
 from app.domain.commons.entities import ArticleType
-from app.domain.shops.entities import Shop
 
 app = typer.Typer()
 console = Console()
@@ -33,21 +33,21 @@ def update_article(
     pricing_group = article_type.pricing_group
     for shop in shops:
         recommended_price = compute_recommended_price(
-            net_price=taxfree_price(article),
-            tax_rate=article["tax"],
+            total_cost=taxfree_price(article),
+            vat_rate=article["tax"],
             shop_margins=shop.margins[pricing_group],
             pricing_group=pricing_group,
         )
         article["shops"][shop.username]["recommended_price"] = recommended_price
 
         margins = compute_article_margins(
-            net_price=taxfree_price(article),
+            total_cost=taxfree_price(article),
             tax_rate=article["tax"],
             gross_price=article["shops"][shop.username]["sell_price"],
         )
         article["shops"][shop.username]["margins"] = {}
-        article["shops"][shop.username]["margins"]["margin"] = margins.margin
-        article["shops"][shop.username]["margins"]["markup"] = margins.markup
+        article["shops"][shop.username]["margins"]["margin"] = margins.margin_amount
+        article["shops"][shop.username]["margins"]["markup"] = margins.margin_rate
 
 
 def update_articles(context: Context, articles: list[dict[str, Any]]) -> None:

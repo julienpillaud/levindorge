@@ -41,3 +41,19 @@ class ArticleTypeRepository(MongoRepositoryProtocol, ArticleTypeRepositoryProtoc
             raise NotFoundError()
 
         return CategoryGroup(**category_group)
+
+    def get_category_group_by_category(
+        self,
+        category_name: str,
+    ) -> CategoryGroup:
+        category = self.database["types"].find_one({"name": category_name})
+        if not category:
+            raise NotFoundError()
+
+        category_group = self.database["category_groups"].find_one(
+            {"slug": category["list_category"]}
+        )
+        if not category_group:
+            raise NotFoundError()
+
+        return CategoryGroup(**category_group)
