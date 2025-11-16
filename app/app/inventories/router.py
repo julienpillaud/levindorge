@@ -10,7 +10,7 @@ from app.api.dependencies import get_domain
 from app.app.auth.dependencies import get_current_user
 from app.app.dependencies import get_templates
 from app.domain.domain import Domain
-from app.domain.shops.entities import Shop
+from app.domain.stores.entities import Store
 from app.domain.users.entities import User
 
 router = APIRouter(prefix="/inventories")
@@ -18,11 +18,11 @@ router = APIRouter(prefix="/inventories")
 
 def get_shop_from_body(
     current_user: Annotated[User, Depends(get_current_user)],
-    shop: Annotated[str, Body()],
-) -> Shop:
-    for user_shop in current_user.shops:
-        if shop == user_shop.username:
-            return user_shop
+    store: Annotated[str, Body()],
+) -> Store:
+    for user_store in current_user.stores:
+        if store == user_store.slug:
+            return user_store
     raise BadRequestError("Invalid shop")
 
 
@@ -49,9 +49,9 @@ def create_inventory(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
-    shop: Annotated[Shop, Depends(get_shop_from_body)],
+    store: Annotated[Store, Depends(get_shop_from_body)],
 ) -> Response:
-    inventory = domain.create_inventory(shop=shop)
+    inventory = domain.create_inventory(store=store)
     return templates.TemplateResponse(
         request=request,
         name="inventories/_inventory_row.html",
@@ -95,10 +95,10 @@ def delete_inventory(
 def reset_pos_stocks(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
-    shop: Annotated[Shop, Depends(get_shop_from_body)],
+    store: Annotated[Store, Depends(get_shop_from_body)],
     category: Annotated[str, Body()],
 ) -> Response:
-    domain.reset_pos_stocks(shop=shop, category=category)
+    domain.reset_pos_stocks(store=store, category=category)
     return RedirectResponse(
         url=request.url_for("get_inventories_view"),
         status_code=status.HTTP_302_FOUND,

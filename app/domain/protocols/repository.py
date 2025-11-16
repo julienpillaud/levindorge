@@ -6,16 +6,7 @@ from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId
 from app.domain.inventories.entities import Inventory, InventoryRecord, InventoryReport
 from app.domain.items.entities import Item, ItemType
-from app.domain.users.entities import User
 from app.domain.volumes.entities import Volume
-
-
-class UserRepositoryProtocol(Protocol):
-    def get_user(self, user_id: EntityId) -> User | None: ...
-
-    def get_user_by_email(self, email: str) -> User | None: ...
-
-    def update_user(self, user: User) -> User: ...
 
 
 class ArticleTypeRepositoryProtocol(Protocol):
@@ -33,6 +24,11 @@ class ArticleTypeRepositoryProtocol(Protocol):
     ) -> list[ArticleType]: ...
 
     def get_category_group(self, slug: str) -> CategoryGroup: ...
+
+    def get_category_group_by_category(
+        self,
+        category_name: str,
+    ) -> CategoryGroup: ...
 
 
 class ItemRepositoryProtocol(Protocol):
@@ -101,7 +97,6 @@ class InventoryRepositoryProtocol(Protocol):
 
 
 class RepositoryProtocol(
-    UserRepositoryProtocol,
     ArticleTypeRepositoryProtocol,
     ItemRepositoryProtocol,
     VolumeRepositoryProtocol,

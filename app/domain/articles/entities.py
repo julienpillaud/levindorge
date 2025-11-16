@@ -9,7 +9,8 @@ from pydantic import (
     PositiveFloat,
 )
 
-from app.domain.entities import DomainModel
+from app.domain.entities import DomainEntity
+from app.domain.stores.entities import StoreSlug
 
 LITER_TO_CENTILITER = 100
 
@@ -56,12 +57,12 @@ class ArticleDeposit(BaseModel):
 
 
 class ArticleMargins(BaseModel):
-    margin: NonNegativeFloat
-    markup: NonNegativeFloat
+    margin_amount: NonNegativeFloat
+    margin_rate: NonNegativeFloat
 
 
-class ArticleShop(BaseModel):
-    sell_price: PositiveFloat
+class ArticleStoreData(BaseModel):
+    gross_price: PositiveFloat
     bar_price: NonNegativeFloat
     stock_quantity: int
     recommended_price: PositiveFloat
@@ -69,12 +70,12 @@ class ArticleShop(BaseModel):
 
 
 class BaseArticle(BaseModel):
-    type: str
+    category: str
     name: ArticleName
-    buy_price: PositiveFloat
+    cost_price: PositiveFloat
     excise_duty: NonNegativeFloat = 0.0
-    social_security_levy: NonNegativeFloat = 0.0
-    tax: float
+    social_security_contribution: NonNegativeFloat = 0.0
+    vat_rate: float
     distributor: str
     barcode: str = ""
     region: str = ""
@@ -84,18 +85,16 @@ class BaseArticle(BaseModel):
     alcohol_by_volume: NonNegativeFloat = 0.0
     packaging: NonNegativeInt = 0
     deposit: ArticleDeposit
-    food_pairing: list[str] = []
-    biodynamic: str = ""
 
     @property
-    def taxfree_price(self) -> float:
-        taxfree_price_sum = sum(
-            [self.buy_price, self.excise_duty, self.social_security_levy]
+    def total_cost(self) -> float:
+        total_cost_sum = sum(
+            [self.cost_price, self.excise_duty, self.social_security_contribution]
         )
-        return round(taxfree_price_sum, 4)
+        return round(total_cost_sum, 4)
 
     def inventory_value(self, stock_quantity: int) -> float:
-        return round((self.taxfree_price * stock_quantity), 2)
+        return round((self.total_cost * stock_quantity), 2)
 
     def deposit_value(self, stock_quantity: int) -> float:
         if self.deposit.unit == 0:
@@ -121,12 +120,10 @@ class BaseArticle(BaseModel):
 
 
 class ArticleCreateOrUpdate(BaseArticle):
-    shops: dict[str, ArticleShop]
+    store_data: dict[str, ArticleStoreData]
 
 
-class Article(DomainModel, BaseArticle):
-    validated: bool
-    created_by: str
+class Article(DomainEntity, BaseArticle):
     created_at: datetime.datetime
     updated_at: datetime.datetime
-    shops: dict[str, ArticleShop]
+    store_data: dict[StoreSlug, ArticleStoreData]

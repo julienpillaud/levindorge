@@ -4,7 +4,7 @@ from decimal import Decimal
 from pydantic import BaseModel, NonNegativeInt, PositiveFloat, field_serializer
 
 from app.domain.articles.entities import ArticleDeposit, ArticleName
-from app.domain.entities import DomainModel, EntityId
+from app.domain.entities import DomainEntity, EntityId
 
 
 class InventoryRecord(BaseModel):
@@ -34,7 +34,7 @@ class InventoryDetail(BaseModel):
         return float(value.quantize(Decimal("0.01")))
 
 
-class Inventory(DomainModel):
+class Inventory(DomainEntity):
     date: datetime.datetime
     shop: str
     inventory: dict[str, InventoryDetail]

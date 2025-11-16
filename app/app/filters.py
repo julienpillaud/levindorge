@@ -4,7 +4,7 @@ from collections.abc import Callable
 from zoneinfo import ZoneInfo
 
 from app.data import navbar_categories
-from app.domain.articles.entities import ArticleShop
+from app.domain.articles.entities import ArticleStoreData
 
 
 def strip_zeros(value: float) -> str:
@@ -28,7 +28,7 @@ def create_local_timezone_filter(
     return local_timezone
 
 
-def article_shops_to_json(article_shops: dict[str, ArticleShop]) -> str:
+def article_shops_to_json(article_shops: dict[str, ArticleStoreData]) -> str:
     return json.dumps(
         {shop: shop_data.model_dump() for shop, shop_data in article_shops.items()}
     )

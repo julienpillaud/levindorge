@@ -2,24 +2,23 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
-from app.domain.entities import DomainModel
-from app.domain.shops.entities import Shop
+from app.domain.entities import DomainEntity
+from app.domain.stores.entities import Store
 
 
 class Role(StrEnum):
     USER = "user"
     ADMIN = "admin"
-    SUPERUSER = "superuser"
+    SUPERADMIN = "superadmin"
 
 
 class UserUpdate(BaseModel):
     hashed_password: str
 
 
-class User(DomainModel):
+class User(DomainEntity):
     name: str
-    username: str
     email: str
     hashed_password: str
-    shops: list[Shop]
+    stores: list[Store]
     role: Role

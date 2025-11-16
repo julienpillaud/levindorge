@@ -5,7 +5,7 @@ from app.infrastructure.repository.mongo_repository import MongoRepository
 
 
 class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
-    domain_model = Article
+    domain_entity_type = Article
     collection_name = "articles"
     searchable_fields = (
         "name.name1",

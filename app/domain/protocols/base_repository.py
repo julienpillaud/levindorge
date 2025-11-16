@@ -4,12 +4,13 @@ from pydantic import PositiveInt
 
 from app.domain.entities import (
     DEFAULT_PAGINATION_SIZE,
-    DomainModel,
+    DomainEntity,
+    EntityId,
     PaginatedResponse,
 )
 
 
-class RepositoryProtocol[T: DomainModel](Protocol):
+class RepositoryProtocol[T: DomainEntity](Protocol):
     def get_all(
         self,
         filters: dict[str, Any] | None = None,
@@ -22,6 +23,8 @@ class RepositoryProtocol[T: DomainModel](Protocol):
     def get_by_id(self, entity_id: str, /) -> T | None: ...
 
     def create(self, entity: T, /) -> T: ...
+
+    def create_many(self, entities: list[T], /) -> list[EntityId]: ...
 
     def update(self, entity: T, /) -> T: ...
 

@@ -10,7 +10,7 @@ from app.api.dependencies import get_domain, get_settings
 from app.core.config import Settings
 from app.domain.domain import Domain
 from app.domain.exceptions import UserUnauthorizedError
-from app.domain.shops.entities import Shop
+from app.domain.stores.entities import Store
 from app.domain.users.entities import User
 
 
@@ -80,11 +80,11 @@ def get_optional_current_user(
     )
 
 
-def get_current_shop(
+def get_current_store(
     current_user: Annotated[User, Depends(get_current_user)],
-    shop: Annotated[str, Query()],
-) -> Shop:
-    for user_shop in current_user.shops:
-        if shop == user_shop.username:
-            return user_shop
+    store: Annotated[str, Query()],
+) -> Store:
+    for user_store in current_user.stores:
+        if store == user_store.slug:
+            return user_store
     raise BadRequestError("Invalid shop")

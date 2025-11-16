@@ -1,37 +1,35 @@
-from typing import Any
+from typing import TypedDict
 
-from bson import ObjectId
-from cleanstack.exceptions import NotFoundError
+from cleanstack.infrastructure.mongo.entities import MongoDocument
 
-from app.domain.entities import EntityId
-from app.domain.protocols.repository import UserRepositoryProtocol
-from app.domain.users.entities import User
-from app.infrastructure.repository.protocol import MongoRepositoryProtocol
+from app.domain.users.entities import Role, User
+from app.domain.users.repository import UserRepositoryProtocol
+from app.infrastructure.repository.mongo_repository import MongoRepository
 
 
-class UserRepository(MongoRepositoryProtocol, UserRepositoryProtocol):
-    def get_user(self, user_id: EntityId) -> User | None:
-        return self._get_user_by_filter({"_id": ObjectId(user_id)})
+class UserDocument(TypedDict):
+    _id: str
+    name: str
+    email: str
+    hashed_password: str
+    stores: list[str]
+    role: Role
 
-    def get_user_by_email(self, email: str) -> User | None:
-        return self._get_user_by_filter({"email": email})
 
-    def update_user(self, user: User) -> User:
-        self.database["users"].replace_one(
-            {"_id": ObjectId(user.id)},
-            user.model_dump(exclude={"id", "shops"}),
-        )
-        user_db = self._get_user_by_filter({"_id": ObjectId(user.id)})
-        if not user_db:
-            raise NotFoundError()
+class UserRepository(MongoRepository[User], UserRepositoryProtocol):
+    domain_entity_type = User
+    collection_name = "users"
 
-        return user_db
-
-    def _get_user_by_filter(self, match_filter: dict[str, Any]) -> User | None:
-        user = self.database["users"].find_one(match_filter)
+    def get_by_email(self, email: str, /) -> User | None:
+        user = self.collection.find_one({"email": email})
         if not user:
             return None
 
-        user["shops"] = list(self.database["shops"].find().sort("name"))
-
+        user["stores"] = list(self.database["stores"].find().sort("name"))
         return User(**user)
+
+    @staticmethod
+    def _to_database_entity(entity: User, /) -> MongoDocument:
+        document = entity.model_dump(exclude={"id"})
+        document["stores"] = [store.slug for store in entity.stores]
+        return document
