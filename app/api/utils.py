@@ -8,13 +8,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
-from app.app.filters import (
+from app.api.filters import (
     article_shops_to_json,
     create_local_timezone_filter,
     get_navbar_category_title,
     strip_zeros,
 )
-from app.app.navbar import navbar_categories, navbar_items
+from app.api.navbar import navbar_categories, navbar_items
 from app.core.config import Settings
 
 
