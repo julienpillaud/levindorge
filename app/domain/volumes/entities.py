@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from app.domain.entities import DomainModel
+from app.domain.entities import DomainEntity
 
 
 class VolumeCreate(BaseModel):
@@ -11,7 +11,7 @@ class VolumeCreate(BaseModel):
     category: str
 
 
-class Volume(DomainModel):
+class Volume(DomainEntity):
     value: float
     unit: Literal["cL", "L"]
     category: str

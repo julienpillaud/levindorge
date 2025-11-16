@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from app.domain.entities import DomainModel
+from app.domain.entities import DomainEntity
 
 
 class DepositCreate(BaseModel):
@@ -11,7 +11,7 @@ class DepositCreate(BaseModel):
     value: float
 
 
-class Deposit(DomainModel):
+class Deposit(DomainEntity):
     category: Literal["Bière", "Fût", "Mini-fût"]
     deposit_type: Literal["Unitaire", "Caisse"]
     value: float

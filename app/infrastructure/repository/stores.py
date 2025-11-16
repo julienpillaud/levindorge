@@ -4,6 +4,6 @@ from app.infrastructure.repository.mongo_repository import MongoRepository
 
 
 class StoreRepository(MongoRepository[Store], StoreRepositoryProtocol):
-    domain_model = Store
+    domain_entity_type = Store
     collection_name = "stores"
     searchable_fields = ()

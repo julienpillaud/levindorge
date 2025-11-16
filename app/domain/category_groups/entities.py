@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from app.domain.entities import DomainModel
+from app.domain.entities import DomainEntity
 
 
 class DepositField(BaseModel):
@@ -8,7 +8,7 @@ class DepositField(BaseModel):
     unit: bool
 
 
-class CategoryGroup(DomainModel):
+class CategoryGroup(DomainEntity):
     slug: str
     title: str
     producer: str

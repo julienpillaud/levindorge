@@ -2,7 +2,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
-from app.domain.entities import DomainModel
+from app.domain.entities import DomainEntity
 
 
 class ItemType(StrEnum):
@@ -20,6 +20,6 @@ class ItemCreate(BaseModel):
     demonym: str = ""
 
 
-class Item(DomainModel):
+class Item(DomainEntity):
     name: str
     demonym: str = ""

@@ -14,6 +14,7 @@ from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.base import MongoRepository
 from app.infrastructure.repository.categories import CategoryRepository
 from app.infrastructure.repository.stores import StoreRepository
+from app.infrastructure.repository.users import UserRepository
 from app.infrastructure.tactill.manager import TactillManager
 
 
@@ -38,6 +39,10 @@ class Context(BaseContext):
     @property
     def repository(self) -> MongoRepository:
         return MongoRepository(database=self.database)
+
+    @property
+    def user_repository(self) -> UserRepository:
+        return UserRepository(database=self.database)
 
     @property
     def store_repository(self) -> StoreRepository:

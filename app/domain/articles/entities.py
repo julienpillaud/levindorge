@@ -9,7 +9,8 @@ from pydantic import (
     PositiveFloat,
 )
 
-from app.domain.entities import DomainModel
+from app.domain.entities import DomainEntity
+from app.domain.stores.entities import StoreSlug
 
 LITER_TO_CENTILITER = 100
 
@@ -122,7 +123,7 @@ class ArticleCreateOrUpdate(BaseArticle):
     store_data: dict[str, ArticleStoreData]
 
 
-class Article(DomainModel, BaseArticle):
+class Article(DomainEntity, BaseArticle):
     created_at: datetime.datetime
     updated_at: datetime.datetime
-    store_data: dict[str, ArticleStoreData]
+    store_data: dict[StoreSlug, ArticleStoreData]

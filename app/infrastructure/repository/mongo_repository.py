@@ -8,15 +8,16 @@ from pymongo.database import Database
 
 from app.domain.entities import (
     DEFAULT_PAGINATION_SIZE,
-    DomainModel,
+    DomainEntity,
+    EntityId,
     PaginatedResponse,
 )
 from app.domain.protocols.base_repository import RepositoryProtocol
 from app.infrastructure.repository.exceptions import MongoRepositoryError
 
 
-class MongoRepository[T: DomainModel](RepositoryProtocol[T]):
-    domain_model: type[T]
+class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
+    domain_entity_type: type[T]
     collection_name: str
     searchable_fields: tuple[str, ...]
 
@@ -79,6 +80,13 @@ class MongoRepository[T: DomainModel](RepositoryProtocol[T]):
 
         return self._to_domain_entity(db_result)
 
+    def create_many(self, entities: list[T], /) -> list[EntityId]:
+        db_entities = [self._to_database_entity(entity) for entity in entities]
+
+        result = self.collection.insert_many(db_entities)
+
+        return [str(entity) for entity in result.inserted_ids]
+
     def update(self, entity: T, /) -> T:
         db_entity = self._to_database_entity(entity)
 
@@ -104,13 +112,11 @@ class MongoRepository[T: DomainModel](RepositoryProtocol[T]):
 
     def _to_domain_entity(self, document: MongoDocument, /) -> T:
         document["id"] = str(document.pop("_id"))
-        return self.domain_model.model_validate(document)
+        return self.domain_entity_type.model_validate(document)
 
     @staticmethod
     def _to_database_entity(entity: T, /) -> MongoDocument:
-        document = entity.model_dump(exclude={"id"})
-        document["_id"] = entity.id
-        return document
+        return entity.model_dump(exclude={"id"})
 
     def _search_pipeline(self, search: str, /) -> list[MongoDocument]:
         conditions = [

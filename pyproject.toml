@@ -1,11 +1,11 @@
 [project]
 name = "levindorge"
-dynamic = ["version"]
+version = "0.6.0"
 requires-python = ">=3.13"
 dependencies = [
     "bcrypt==4.2.0",
     "cleanstack[fastapi,mongo]",
-    "fastapi[standard]==0.120.1",
+    "fastapi[standard]==0.121.2",
     "faststream[cli,redis]==0.5.48",
     "itsdangerous==2.2.0",
     "logfire[fastapi,pymongo]==4.14.2",
