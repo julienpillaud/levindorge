@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException as StarletteHTTPException
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse, Response
 
-from app.app.dependencies import get_templates
+from app.api.dependencies import get_templates
 from app.core.config import Settings
 from app.domain.exceptions import (
     CannotDeleteError,

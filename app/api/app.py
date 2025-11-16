@@ -1,14 +1,14 @@
 from fastapi import FastAPI
 
-from app.app.articles.router import router as articles_router
-from app.app.auth.router import router as auth_router
-from app.app.deposits.router import router as deposits_router
-from app.app.handlers import add_exception_handler
-from app.app.inventories.router import router as inventories_router
-from app.app.items.router import router as items_router
-from app.app.price_labels.router import router as tags_router
-from app.app.utils import add_session_middleware, mount_static
-from app.app.volumes.router import router as volumes_router
+from app.api.articles.router import router as articles_router
+from app.api.auth.router import router as auth_router
+from app.api.deposits.router import router as deposits_router
+from app.api.handlers import add_exception_handler
+from app.api.inventories.router import router as inventories_router
+from app.api.items.router import router as items_router
+from app.api.price_labels.router import router as tags_router
+from app.api.utils import add_session_middleware, mount_static
+from app.api.volumes.router import router as volumes_router
 from app.core.config import Settings
 
 

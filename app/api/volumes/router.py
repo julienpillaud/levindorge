@@ -5,9 +5,8 @@ from fastapi.requests import Request
 from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
 
-from app.api.dependencies import get_domain
-from app.app.auth.dependencies import get_current_user
-from app.app.dependencies import get_templates
+from app.api.auth.dependencies import get_current_user
+from app.api.dependencies import get_domain, get_templates
 from app.domain.domain import Domain
 from app.domain.users.entities import User
 from app.domain.volumes.entities import VolumeCreate
