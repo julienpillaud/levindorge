@@ -4,7 +4,8 @@ from polyfactory.factories.pydantic_factory import ModelFactory
 
 from app.domain.commons.entities import PricingGroup
 from app.domain.stores.entities import PricingConfig, Store
-from tests.factories.base import MongoBaseFactory
+from app.infrastructure.repository.stores import StoreRepository
+from tests.factories.base import BaseFactory
 
 
 class PricingConfigEntityFactory(ModelFactory[PricingConfig]): ...
@@ -16,9 +17,10 @@ class StoreEntityFactory(ModelFactory[Store]):
     }
 
 
-class StoreFactory(MongoBaseFactory[Store]):
-    domain_entity_type = Store
-    collection_name = "stores"
+class StoreFactory(BaseFactory[Store]):
+    @property
+    def repository(self) -> StoreRepository:
+        return StoreRepository(database=self.database)
 
-    def build_entity(self, **kwargs: Any) -> Store:
+    def build(self, **kwargs: Any) -> Store:
         return StoreEntityFactory.build(**kwargs)

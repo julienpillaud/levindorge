@@ -7,7 +7,7 @@ def test_create_store(
     store_factory: StoreFactory,
     store_repository: StoreRepository,
 ) -> None:
-    store = store_factory.build_entity()
+    store = store_factory.build()
 
     store_db = store_repository.create(store)
 

@@ -10,7 +10,7 @@ def test_create_user(
     user_repository: UserRepository,
 ) -> None:
     stores = store_factory.create_many(2)
-    user = user_factory.build_entity(stores=stores)
+    user = user_factory.build(stores=stores)
 
     user_db = user_repository.create(user)
 
