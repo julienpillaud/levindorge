@@ -1,5 +1,6 @@
 from app.infrastructure.repository.stores import StoreRepository
 from tests.factories.stores import StoreFactory
+from tests.utils import is_str_object_id
 
 
 def test_create_store(
@@ -10,6 +11,7 @@ def test_create_store(
 
     store_db = store_repository.create(store)
 
+    assert is_str_object_id(store_db.id)
     assert store_db.name == store.name
     assert store_db.slug == store.slug
     assert store_db.tactill_api_key == store.tactill_api_key
@@ -20,16 +22,16 @@ def test_get_stores(
     store_factory: StoreFactory,
     store_repository: StoreRepository,
 ) -> None:
-    stores_count = 4
+    items_count = 4
     limit = 3
-    store_factory.create_many(stores_count)
+    store_factory.create_many(items_count)
 
     result = store_repository.get_all(limit=limit)
 
     assert result.page == 1
     assert result.limit == limit
-    assert result.total == stores_count
-    assert result.total_pages == (stores_count + limit - 1) // limit
+    assert result.total == items_count
+    assert result.total_pages == (items_count + limit - 1) // limit
     assert len(result.items) == limit
 
 
@@ -43,6 +45,7 @@ def test_get_store(
     store_db = store_repository.get_by_id(store.id)
 
     assert store_db
+    assert is_str_object_id(store_db.id)
     assert store_db.name == store.name
     assert store_db.slug == store.slug
     assert store_db.tactill_api_key == store.tactill_api_key

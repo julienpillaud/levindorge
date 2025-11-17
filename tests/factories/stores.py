@@ -18,6 +18,7 @@ class StoreEntityFactory(ModelFactory[Store]):
 
 class StoreFactory(MongoBaseFactory[Store]):
     domain_entity_type = Store
+    collection_name = "stores"
 
     def build_entity(self, **kwargs: Any) -> Store:
         return StoreEntityFactory.build(**kwargs)

@@ -1,9 +1,10 @@
 from typing import Any
 
 from cleanstack.infrastructure.mongo.entities import MongoDocument
-from pymongo.collection import Collection
+from pymongo.database import Database
 
 from app.domain.entities import DomainEntity
+from app.utils.utils import iter_dicts
 
 
 class BaseFactory[T: DomainEntity]:
@@ -34,9 +35,11 @@ class BaseFactory[T: DomainEntity]:
 
 class MongoBaseFactory[T: DomainEntity](BaseFactory[T]):
     domain_entity_type: type[T]
+    collection_name: str
 
-    def __init__(self, collection: Collection[MongoDocument]):
-        self.collection = collection
+    def __init__(self, database: Database[MongoDocument]):
+        self.database = database
+        self.collection = self.database[self.collection_name]
 
     def _insert_one(self, entity: T, /) -> T:
         db_entity = self._to_database_entity(entity)
@@ -50,5 +53,11 @@ class MongoBaseFactory[T: DomainEntity](BaseFactory[T]):
         return entity.model_dump(exclude={"id"})
 
     def _to_domain_entity(self, document: MongoDocument, /) -> T:
-        document["id"] = str(document.pop("_id"))
+        self._normalize_ids(document)
         return self.domain_entity_type.model_validate(document)
+
+    @staticmethod
+    def _normalize_ids(document: MongoDocument, /) -> None:
+        for d in iter_dicts(document):
+            if "_id" in d:
+                d["id"] = str(d.pop("_id"))
