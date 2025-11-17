@@ -20,3 +20,15 @@ traefik:
     USERNAME=admin \
     HASHED_PASSWORD=$(openssl passwd -apr1 admin) \
     docker compose -f compose-traefik.yaml up -d
+
+mongodb container_name="mongodb" \
+        port="27017" \
+        user="user" \
+        password="password":
+    docker run -d \
+    --name {{container_name}} \
+    -p {{port}}:27017 \
+    -e MONGO_INITDB_ROOT_USERNAME={{user}} \
+    -e MONGO_INITDB_ROOT_PASSWORD={{password}} \
+    --restart unless-stopped \
+    mongo:latest

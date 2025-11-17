@@ -24,6 +24,7 @@ dev = [
     "mypy==1.18.2",
     "pytest==9.0.0",
     "pre-commit==4.4.0",
+    "polyfactory==3.0.0",
 ]
 
 [tool.uv.sources]
@@ -67,5 +68,4 @@ exclude = [
     '^app/main.py$',
 
     '^scripts/',
-    '^tests/',
 ]
