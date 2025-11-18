@@ -42,6 +42,13 @@ def create_article_command(
     current_user: User,
     data: ArticleCreateOrUpdate,
 ) -> Article:
+    if not context.category_repository.get_by_name(data.category):
+        raise NotFoundError()
+
+    for store in data.store_data:
+        if not context.store_repository.get_by_slug(store):
+            raise NotFoundError()
+
     current_time = datetime.datetime.now(datetime.UTC)
     article = Article(
         **data.model_dump(),
@@ -65,6 +72,13 @@ def update_article_command(
     article_id: EntityId,
     data: ArticleCreateOrUpdate,
 ) -> Article:
+    if not context.category_repository.get_by_name(data.category):
+        raise NotFoundError()
+
+    for store in data.store_data:
+        if not context.store_repository.get_by_slug(store):
+            raise NotFoundError()
+
     existing_article = context.article_repository.get_by_id(article_id)
     if not existing_article:
         raise NotFoundError()

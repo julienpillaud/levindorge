@@ -120,7 +120,7 @@ class BaseArticle(BaseModel):
 
 
 class ArticleCreateOrUpdate(BaseArticle):
-    store_data: dict[str, ArticleStoreData]
+    store_data: dict[StoreSlug, ArticleStoreData]
 
 
 class Article(DomainEntity, BaseArticle):

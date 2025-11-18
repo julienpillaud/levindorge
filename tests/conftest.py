@@ -1,6 +1,11 @@
 import pytest
 
 from app.core.config import Settings
+from app.core.core import Context
+from app.domain.stores.entities import Store
+from app.domain.users.entities import User
+from tests.factories.stores import StoreFactory
+from tests.factories.users import UserFactory
 
 pytest_plugins = [
     "tests.fixtures.database",
@@ -23,3 +28,18 @@ def settings() -> Settings:
         redis_host="localhost",
         redis_port=6379,
     )
+
+
+@pytest.fixture
+def store(store_factory: StoreFactory) -> Store:
+    return store_factory.create_one(name="Store Test", slug="store-test")
+
+
+@pytest.fixture
+def current_user(user_factory: UserFactory, store: Store) -> User:
+    return user_factory.create_one(stores=[store])
+
+
+@pytest.fixture(scope="session")
+def context(settings: Settings):
+    return Context(settings=settings)

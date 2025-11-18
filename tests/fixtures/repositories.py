@@ -2,6 +2,7 @@ import pytest
 from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo.database import Database
 
+from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.categories import CategoryRepository
 from app.infrastructure.repository.stores import StoreRepository
 from app.infrastructure.repository.users import UserRepository
@@ -20,3 +21,8 @@ def user_repository(database: Database[MongoDocument]) -> UserRepository:
 @pytest.fixture
 def category_repository(database: Database[MongoDocument]) -> CategoryRepository:
     return CategoryRepository(database=database)
+
+
+@pytest.fixture
+def article_repository(database: Database[MongoDocument]) -> ArticleRepository:
+    return ArticleRepository(database=database)
