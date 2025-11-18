@@ -1,54 +1,30 @@
 from typing import Any
 
 from cleanstack.infrastructure.mongo.entities import MongoDocument
-from pymongo.collection import Collection
+from pymongo.synchronous.database import Database
 
 from app.domain.entities import DomainEntity
+from app.domain.protocols.base_repository import RepositoryProtocol
+from app.infrastructure.repository.mongo_repository import MongoRepository
 
 
 class BaseFactory[T: DomainEntity]:
+    repository: RepositoryProtocol[T]
+
+    def build(self, **kwargs: Any) -> T:
+        raise NotImplementedError()
+
     def create_one(self, **kwargs: Any) -> T:
-        entity = self.build_entity(**kwargs)
-        return self._insert_one(entity)
+        entity = self.build(**kwargs)
+        return self.repository.create(entity)
 
     def create_many(self, count: int, /, **kwargs: Any) -> list[T]:
-        entities = [self.build_entity(**kwargs) for _ in range(count)]
-        return self._insert_many(entities)
-
-    def build_entity(self, **kwargs: Any) -> T:
-        """Build a domain entity with the given kwargs."""
-        raise NotImplementedError()
-
-    def _insert_one(self, entity: T) -> T:
-        """Insert a single entity into the database."""
-        raise NotImplementedError()
-
-    def _insert_many(self, entities: list[T]) -> list[T]:
-        """Insert multiple entities into the database."""
-        results: list[T] = []
-        for entity in entities:
-            result = self._insert_one(entity)
-            results.append(result)
-        return results
+        return [self.create_one(**kwargs) for _ in range(count)]
 
 
-class MongoBaseFactory[T: DomainEntity](BaseFactory[T]):
-    domain_entity_type: type[T]
+class BaseMongoFactory[T: DomainEntity](BaseFactory[T]):
+    repository_class: type[MongoRepository[T]]
 
-    def __init__(self, collection: Collection[MongoDocument]):
-        self.collection = collection
-
-    def _insert_one(self, entity: T, /) -> T:
-        db_entity = self._to_database_entity(entity)
-        result = self.collection.insert_one(db_entity)
-        db_result = self.collection.find_one({"_id": result.inserted_id})
-        if not db_result:
-            raise RuntimeError()
-        return self._to_domain_entity(db_entity)
-
-    def _to_database_entity(self, entity: T, /) -> MongoDocument:
-        return entity.model_dump(exclude={"id"})
-
-    def _to_domain_entity(self, document: MongoDocument, /) -> T:
-        document["id"] = str(document.pop("_id"))
-        return self.domain_entity_type.model_validate(document)
+    def __init__(self, database: Database[MongoDocument]) -> None:
+        self.database = database
+        self.repository = self.repository_class(database=database)

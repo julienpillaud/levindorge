@@ -33,3 +33,16 @@ class UserRepository(MongoRepository[User], UserRepositoryProtocol):
         document = entity.model_dump(exclude={"id"})
         document["stores"] = [store.slug for store in entity.stores]
         return document
+
+    @staticmethod
+    def _aggregation_pipeline() -> list[MongoDocument]:
+        return [
+            {
+                "$lookup": {
+                    "from": "stores",
+                    "let": {"slugs": "$stores"},
+                    "pipeline": [{"$match": {"$expr": {"$in": ["$slug", "$$slugs"]}}}],
+                    "as": "stores",
+                }
+            }
+        ]

@@ -14,6 +14,7 @@ from app.domain.entities import (
 )
 from app.domain.protocols.base_repository import RepositoryProtocol
 from app.infrastructure.repository.exceptions import MongoRepositoryError
+from app.utils.utils import iter_dicts
 
 
 class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
@@ -66,7 +67,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
         )
 
     def get_by_id(self, entity_id: str, /) -> T | None:
-        result = self._get_database_entity(entity_id)
+        result = self._get_by_id(entity_id)
         return self._to_domain_entity(result) if result else None
 
     def create(self, entity: T, /) -> T:
@@ -74,7 +75,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
 
         result = self.collection.insert_one(db_entity)
 
-        db_result = self._get_database_entity(result.inserted_id)
+        db_result = self._get_by_id(result.inserted_id)
         if not db_result:
             raise NotFoundError()
 
@@ -94,7 +95,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
         if not result.modified_count:
             raise MongoRepositoryError()
 
-        db_result = self._get_database_entity(entity.id)
+        db_result = self._get_by_id(entity.id)
         if not db_result:
             raise NotFoundError()
 
@@ -103,7 +104,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
     def delete(self, entity: T, /) -> None:
         self.collection.delete_one({"_id": ObjectId(entity.id)})
 
-    def _get_database_entity(self, entity_id: str, /) -> MongoDocument | None:
+    def _get_by_id(self, entity_id: str, /) -> MongoDocument | None:
         pipeline = [
             {"$match": {"_id": ObjectId(entity_id)}},
             *self._aggregation_pipeline(),
@@ -111,7 +112,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
         return next(self.collection.aggregate(pipeline), None)
 
     def _to_domain_entity(self, document: MongoDocument, /) -> T:
-        document["id"] = str(document.pop("_id"))
+        self._normalize_ids(document)
         return self.domain_entity_type.model_validate(document)
 
     @staticmethod
@@ -128,3 +129,9 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
     @staticmethod
     def _aggregation_pipeline() -> list[MongoDocument]:
         return []
+
+    @staticmethod
+    def _normalize_ids(document: MongoDocument, /) -> None:
+        for d in iter_dicts(document):
+            if "_id" in d:
+                d["id"] = str(d.pop("_id"))
