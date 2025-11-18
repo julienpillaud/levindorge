@@ -5,15 +5,11 @@ from pymongo.synchronous.database import Database
 
 from app.domain.entities import DomainEntity
 from app.domain.protocols.base_repository import RepositoryProtocol
+from app.infrastructure.repository.mongo_repository import MongoRepository
 
 
 class BaseFactory[T: DomainEntity]:
-    def __init__(self, database: Database[MongoDocument]) -> None:
-        self.database = database
-
-    @property
-    def repository(self) -> RepositoryProtocol[T]:
-        raise NotImplementedError()
+    repository: RepositoryProtocol[T]
 
     def build(self, **kwargs: Any) -> T:
         raise NotImplementedError()
@@ -24,3 +20,11 @@ class BaseFactory[T: DomainEntity]:
 
     def create_many(self, count: int, /, **kwargs: Any) -> list[T]:
         return [self.create_one(**kwargs) for _ in range(count)]
+
+
+class BaseMongoFactory[T: DomainEntity](BaseFactory[T]):
+    repository_class: type[MongoRepository[T]]
+
+    def __init__(self, database: Database[MongoDocument]) -> None:
+        self.database = database
+        self.repository = self.repository_class(database=database)

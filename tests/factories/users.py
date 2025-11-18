@@ -5,7 +5,7 @@ from polyfactory.factories.pydantic_factory import ModelFactory
 from app.domain.stores.entities import Store
 from app.domain.users.entities import User
 from app.infrastructure.repository.users import UserRepository
-from tests.factories.base import BaseFactory
+from tests.factories.base import BaseMongoFactory
 from tests.factories.stores import StoreFactory
 
 
@@ -14,10 +14,8 @@ class UserEntityFactory(ModelFactory[User]):
     stores: ClassVar[list[Store]] = []
 
 
-class UserFactory(BaseFactory[User]):
-    @property
-    def repository(self) -> UserRepository:
-        return UserRepository(database=self.database)
+class UserFactory(BaseMongoFactory[User]):
+    repository_class = UserRepository
 
     @property
     def store_factory(self) -> StoreFactory:
