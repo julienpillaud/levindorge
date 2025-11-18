@@ -2,6 +2,7 @@ import pytest
 from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo.database import Database
 
+from tests.factories.articles import ArticleFactory
 from tests.factories.categories import CategoryFactory
 from tests.factories.stores import StoreFactory
 from tests.factories.users import UserFactory
@@ -20,3 +21,8 @@ def user_factory(database: Database[MongoDocument]) -> UserFactory:
 @pytest.fixture
 def category_factory(database: Database[MongoDocument]) -> CategoryFactory:
     return CategoryFactory(database=database)
+
+
+@pytest.fixture
+def article_factory(database: Database[MongoDocument]) -> ArticleFactory:
+    return ArticleFactory(database=database)
