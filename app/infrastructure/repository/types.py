@@ -1,6 +1,5 @@
 from cleanstack.exceptions import NotFoundError
 
-from app.domain.category_groups.entities import CategoryGroup
 from app.domain.commons.entities import ArticleType, DisplayGroup
 from app.domain.protocols.repository import ArticleTypeRepositoryProtocol
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
@@ -34,26 +33,3 @@ class ArticleTypeRepository(MongoRepositoryProtocol, ArticleTypeRepositoryProtoc
     ) -> list[ArticleType]:
         article_types = self.database["types"].find({"list_category": display_group})
         return [ArticleType(**article_type) for article_type in article_types]
-
-    def get_category_group(self, slug: str) -> CategoryGroup:
-        category_group = self.database["category_groups"].find_one({"slug": slug})
-        if not category_group:
-            raise NotFoundError()
-
-        return CategoryGroup(**category_group)
-
-    def get_category_group_by_category(
-        self,
-        category_name: str,
-    ) -> CategoryGroup:
-        category = self.database["types"].find_one({"name": category_name})
-        if not category:
-            raise NotFoundError()
-
-        category_group = self.database["category_groups"].find_one(
-            {"slug": category["list_category"]}
-        )
-        if not category_group:
-            raise NotFoundError()
-
-        return CategoryGroup(**category_group)

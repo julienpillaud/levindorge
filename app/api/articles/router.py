@@ -1,4 +1,3 @@
-import json
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, status
@@ -13,6 +12,7 @@ from app.api.auth.dependencies import get_current_user
 from app.api.dependencies import get_domain, get_templates
 from app.domain.articles.entities import ArticleCreateOrUpdate, ArticleMargins
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
+from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP
 from app.domain.commons.entities import DisplayGroup
 from app.domain.domain import Domain
 from app.domain.entities import DEFAULT_PAGINATION_SIZE
@@ -38,39 +38,6 @@ def get_articles(
         context={
             "current_user": current_user,
             "result": result,
-        },
-    )
-
-
-@router.get("/{display_group}")
-def get_articles_view(
-    request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
-    domain: Annotated[Domain, Depends(get_domain)],
-    templates: Annotated[Jinja2Templates, Depends(get_templates)],
-    display_group: str,
-) -> Response:
-    category_group = domain.get_category_group(slug=display_group)
-    result = domain.get_articles_by_display_group(display_group=display_group)
-    articles = result.items
-    return templates.TemplateResponse(
-        request=request,
-        name="articles/articles.html",
-        context={
-            "current_user": current_user,
-            "current_shop": current_user.stores[0],
-            "category_group": category_group,
-            "articles": articles,
-            "articles_mapping": json.dumps(
-                {
-                    article.id: {
-                        shop: shop_data.model_dump()
-                        for shop, shop_data in article.store_data.items()
-                    }
-                    for article in articles
-                }
-            ),
-            "display_group": display_group,
         },
     )
 
@@ -122,9 +89,8 @@ def update_article_view(
     article_id: str,
 ) -> Response:
     article = domain.get_article(article_id=article_id)
-    category_group = domain.get_category_group_by_category(
-        category_name=article.category
-    )
+    category = domain.get_category_by_name(article.category)
+    category_group = CATEGORY_GROUPS_MAP[category.category_group]
     domain.get_view_data(name=article.category)
     return templates.TemplateResponse(
         request=request,

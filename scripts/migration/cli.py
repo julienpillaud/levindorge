@@ -31,7 +31,7 @@ def main(
 
     update_stores(src_context, dst_context)
     update_users(src_context, dst_context)
-    update_categories(src_context, dst_context)
+    update_categories(dst_context)
     update_articles(src_context, dst_context)
 
 

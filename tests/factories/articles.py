@@ -14,7 +14,7 @@ class ArticleStoreDataEntityFactory(ModelFactory[ArticleStoreData]): ...
 
 class ArticleEntityFactory(ModelFactory[Article]):
     @classmethod
-    def build(cls, **kwargs: Any) -> Article:
+    def build(cls, factory_use_construct: bool = False, **kwargs: Any) -> Article:
         if "store_data" not in kwargs:
             kwargs["store_data"] = {
                 cls.__faker__.slug(): ArticleStoreDataEntityFactory.build()
