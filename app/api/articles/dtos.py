@@ -15,18 +15,19 @@ from app.domain.articles.utils import (
     extract_volume,
 )
 from app.domain.commons.entities import PricingGroup
+from app.domain.entities import DecimalType
 
 
 class PriceRequestDTO(BaseModel):
-    total_cost: float
-    vat_rate: float
+    total_cost: DecimalType
+    vat_rate: DecimalType
     pricing_group: PricingGroup
 
 
 class MarginsRequestDTO(BaseModel):
-    total_cost: float
-    vat_rate: float
-    gross_price: float
+    total_cost: DecimalType
+    vat_rate: DecimalType
+    gross_price: DecimalType
 
 
 class ArticleDTO(BaseModel):

@@ -1,8 +1,10 @@
-from typing import Any
+from decimal import Decimal
+from typing import Annotated, Any
 
 from pydantic import (
     BaseModel,
     NonNegativeInt,
+    PlainSerializer,
     PositiveInt,
 )
 
@@ -31,3 +33,6 @@ class PaginatedResponse[T: DomainEntity](BaseModel):
     total: NonNegativeInt
     total_pages: NonNegativeInt
     items: list[T]
+
+
+DecimalType = Annotated[Decimal, PlainSerializer(float)]

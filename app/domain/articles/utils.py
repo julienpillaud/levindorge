@@ -1,30 +1,32 @@
 import json
-import math
 from collections import defaultdict
+from decimal import Decimal
 from typing import Any
 
 from app.domain.articles.entities import ArticleMargins
 from app.domain.commons.entities import PricingGroup
-from app.domain.stores.entities import PricingConfig
+from app.domain.stores.entities import PricingConfig, RoundConfig
 
 SPIRIT_PRICE_THRESHOLD = 100
 SPIRIT_EXTRA_MARGIN = 10
-ROUND_STEP_CEIL_THRESHOLD = 0.1
 
 
-def apply_rounding(value: float, round_step: float) -> float:
-    factor = 1 / round_step
-    if round_step < ROUND_STEP_CEIL_THRESHOLD:
-        return math.ceil(value * factor) / factor
-    return round(value * factor) / factor
+def apply_rounding(value: Decimal, round_config: RoundConfig) -> Decimal:
+    ratio = value / round_config.value
+    rounded_ratio = ratio.quantize(
+        Decimal("1"),
+        # mypy do not consider pydantic 'use_enum_values' config
+        rounding=round_config.rounding_mode,  # type: ignore
+    )
+    return rounded_ratio * round_config.value
 
 
 def compute_recommended_price(
-    total_cost: float,
-    vat_rate: float,
+    total_cost: Decimal,
+    vat_rate: Decimal,
     pricing_group: PricingGroup,
     pricing_config: PricingConfig,
-) -> float:
+) -> Decimal:
     value = pricing_config.value
     if pricing_group == PricingGroup.SPIRIT and total_cost >= SPIRIT_PRICE_THRESHOLD:
         value += SPIRIT_EXTRA_MARGIN
@@ -35,36 +37,34 @@ def compute_recommended_price(
     else:
         price = (total_cost * value) * vat_factor
 
-    return apply_rounding(value=price, round_step=pricing_config.round_step)
+    return apply_rounding(value=price, round_config=pricing_config.round_config)
 
 
 def compute_margin_amount(
-    total_cost: float,
-    vat_rate: float,
-    gross_price: float,
-) -> float:
+    total_cost: Decimal,
+    vat_rate: Decimal,
+    gross_price: Decimal,
+) -> Decimal:
     tax_factor = 1 + (vat_rate / 100)
-    margin_amount = (gross_price / tax_factor) - total_cost
-    return round(margin_amount, 2)
+    return (gross_price / tax_factor) - total_cost
 
 
 def compute_margin_rate(
-    vat_rate: float,
-    gross_price: float,
-    margin_amount: float,
-) -> float:
+    vat_rate: Decimal,
+    gross_price: Decimal,
+    margin_amount: Decimal,
+) -> Decimal:
     if gross_price == 0:
-        return 0
+        return Decimal("0")
 
     tax_factor = 1 + (vat_rate / 100)
-    margin_rate = margin_amount / (gross_price / tax_factor) * 100
-    return round(margin_rate)
+    return margin_amount / (gross_price / tax_factor) * 100
 
 
 def compute_article_margins(
-    total_cost: float,
-    tax_rate: float,
-    gross_price: float,
+    total_cost: Decimal,
+    tax_rate: Decimal,
+    gross_price: Decimal,
 ) -> ArticleMargins:
     margin_amount = compute_margin_amount(
         total_cost=total_cost,
@@ -76,7 +76,10 @@ def compute_article_margins(
         gross_price=gross_price,
         margin_amount=margin_amount,
     )
-    return ArticleMargins(margin_amount=margin_amount, margin_rate=margin_rate)
+    return ArticleMargins(
+        margin_amount=margin_amount.quantize(Decimal("1.00")),
+        margin_rate=margin_rate.quantize(Decimal("1")),
+    )
 
 
 def extract_name(data: dict[str, Any]) -> None:

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, status
@@ -146,7 +147,7 @@ def delete_article(
 async def recommended_prices(
     current_user: Annotated[User, Depends(get_current_user)],
     data: PriceRequestDTO,
-) -> dict[str, float]:
+) -> dict[str, Decimal]:
     return {
         store.slug: compute_recommended_price(
             total_cost=data.total_cost,
