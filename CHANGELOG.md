@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.0](https://github.com/julienpillaud/levindorge/compare/0.6.0...0.7.0) (2025-11-20)
+
+
+### Features
+
+* add tests for articles ([#46](https://github.com/julienpillaud/levindorge/issues/46)) ([eb8effa](https://github.com/julienpillaud/levindorge/commit/eb8effafb9602051dc871d01db166edf8a482779))
+* add tests for categories ([#45](https://github.com/julienpillaud/levindorge/issues/45)) ([8312501](https://github.com/julienpillaud/levindorge/commit/831250180e8f79a289df6d5be5d94b444125a3cd))
+* add tests for stores ([#43](https://github.com/julienpillaud/levindorge/issues/43)) ([ced701b](https://github.com/julienpillaud/levindorge/commit/ced701be5bd5415f2ba3091ac3c73dfbadfdd902))
+* add tests for users ([#44](https://github.com/julienpillaud/levindorge/issues/44)) ([0afc90e](https://github.com/julienpillaud/levindorge/commit/0afc90e2ad55af30aad4cf07aecaff734dc6fd94))
+* refactor category groups ([#47](https://github.com/julienpillaud/levindorge/issues/47)) ([b3b66a3](https://github.com/julienpillaud/levindorge/commit/b3b66a3b7ff2b5a0f8862adbf1b022f6cca2ae60))
+* refactor entities ([#40](https://github.com/julienpillaud/levindorge/issues/40)) ([d5e9fac](https://github.com/julienpillaud/levindorge/commit/d5e9fac207362dadff80df4bc3ca78e770b2e31a))
+* rename app to api ([#42](https://github.com/julienpillaud/levindorge/issues/42)) ([a70d1b1](https://github.com/julienpillaud/levindorge/commit/a70d1b1e0fc4f3964fc7cbe6bf13ca351d30e64b))
+
 ## [0.6.0](https://github.com/julienpillaud/levindorge/compare/0.5.1...0.6.0) (2025-11-12)
 
 
