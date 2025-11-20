@@ -1,6 +1,5 @@
 from typing import Any, Protocol
 
-from app.domain.category_groups.entities import CategoryGroup
 from app.domain.commons.entities import ArticleType, DisplayGroup
 from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId
@@ -22,13 +21,6 @@ class ArticleTypeRepositoryProtocol(Protocol):
         self,
         display_group: DisplayGroup,
     ) -> list[ArticleType]: ...
-
-    def get_category_group(self, slug: str) -> CategoryGroup: ...
-
-    def get_category_group_by_category(
-        self,
-        category_name: str,
-    ) -> CategoryGroup: ...
 
 
 class ItemRepositoryProtocol(Protocol):

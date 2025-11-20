@@ -18,7 +18,7 @@ LARGE_LABELS_CATEGORY = {
     PricingGroup.WINE,
     PricingGroup.BIB,
     PricingGroup.BOX,
-    PricingGroup.OTHERS,
+    PricingGroup.OTHER,
 }
 SMALL_LABEL_CATEGORY = {
     PricingGroup.SPIRIT,

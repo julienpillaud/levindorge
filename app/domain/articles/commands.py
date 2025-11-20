@@ -45,8 +45,8 @@ def create_article_command(
     if not context.category_repository.get_by_name(data.category):
         raise NotFoundError()
 
-    for store in data.store_data:
-        if not context.store_repository.get_by_slug(store):
+    for store_slug in data.store_data:
+        if not context.store_repository.get_by_slug(store_slug):
             raise NotFoundError()
 
     current_time = datetime.datetime.now(datetime.UTC)
@@ -75,8 +75,8 @@ def update_article_command(
     if not context.category_repository.get_by_name(data.category):
         raise NotFoundError()
 
-    for store in data.store_data:
-        if not context.store_repository.get_by_slug(store):
+    for store_slug in data.store_data:
+        if not context.store_repository.get_by_slug(store_slug):
             raise NotFoundError()
 
     existing_article = context.article_repository.get_by_id(article_id)

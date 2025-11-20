@@ -41,12 +41,12 @@ class Context(BaseContext):
         return MongoRepository(database=self.database)
 
     @property
-    def user_repository(self) -> UserRepository:
-        return UserRepository(database=self.database)
-
-    @property
     def store_repository(self) -> StoreRepository:
         return StoreRepository(database=self.database)
+
+    @property
+    def user_repository(self) -> UserRepository:
+        return UserRepository(database=self.database)
 
     @property
     def category_repository(self) -> CategoryRepository:

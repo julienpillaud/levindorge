@@ -31,7 +31,7 @@ class PricingGroup(StrEnum):
     WINE = "wine"
     BIB = "bib"
     BOX = "box"
-    OTHERS = "others"
+    OTHER = "other"
 
 
 class ArticleType(BaseModel):

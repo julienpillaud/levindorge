@@ -12,7 +12,7 @@ def update_users(src_context: Context, dst_context: Context) -> None:
             name=user["name"],
             email=user["email"],
             hashed_password=user["password"],
-            stores=[stores_map[store] for store in user["shops"]],
+            stores=[stores_map[store_slug] for store_slug in user["shops"]],
             role=user["role"],
         )
         for user in src_users

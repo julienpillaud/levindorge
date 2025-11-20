@@ -8,10 +8,9 @@ from app.domain.articles.commands import (
     get_articles_command,
     update_article_command,
 )
+from app.domain.categories.commands import get_category_by_name_command
 from app.domain.commons.commands import (
     get_article_type_command,
-    get_category_group_by_category_command,
-    get_category_group_command,
     get_view_data_command,
 )
 from app.domain.context import ContextProtocol
@@ -53,10 +52,9 @@ class Domain(BaseDomain[ContextProtocol]):
     # common
     get_view_data = CommandHandler(get_view_data_command)
     get_article_type = CommandHandler(get_article_type_command)
-    get_category_group = CommandHandler(get_category_group_command)
-    get_category_group_by_category = CommandHandler(
-        get_category_group_by_category_command
-    )
+
+    # categories
+    get_category_by_name = CommandHandler(get_category_by_name_command)
 
     # items
     get_items = CommandHandler(get_items_command)

@@ -1,20 +1,29 @@
-from typing import Any, ClassVar
+from decimal import Decimal
+from typing import Any
 
+from polyfactory import Use
 from polyfactory.factories.pydantic_factory import ModelFactory
 
 from app.domain.commons.entities import PricingGroup
-from app.domain.stores.entities import PricingConfig, Store
+from app.domain.stores.entities import PricingConfig, RoundConfig, RoundingMode, Store
 from app.infrastructure.repository.stores import StoreRepository
 from tests.factories.base import BaseMongoFactory
 
 
-class PricingConfigEntityFactory(ModelFactory[PricingConfig]): ...
-
-
 class StoreEntityFactory(ModelFactory[Store]):
-    pricing_configs: ClassVar[dict[PricingGroup, PricingConfig]] = {
-        group: PricingConfigEntityFactory.build() for group in PricingGroup
-    }
+    # return only one PricingGroup: polyfactory do not handle Decimal correctly
+    pricing_configs = Use(
+        lambda: {
+            PricingGroup.BEER: PricingConfig(
+                value=Decimal("1.7"),
+                operator="*",
+                round_config=RoundConfig(
+                    value=Decimal("0.05"),
+                    rounding_mode=RoundingMode.ROUND_CEILING,
+                ),
+            )
+        }
+    )
 
 
 class StoreFactory(BaseMongoFactory[Store]):

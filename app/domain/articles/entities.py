@@ -1,15 +1,17 @@
 import datetime
+from decimal import Decimal
 from enum import StrEnum
 from typing import Literal
 
 from pydantic import (
     BaseModel,
+    Field,
     NonNegativeFloat,
     NonNegativeInt,
     PositiveFloat,
 )
 
-from app.domain.entities import DomainEntity
+from app.domain.entities import DecimalType, DomainEntity
 from app.domain.stores.entities import StoreSlug
 
 LITER_TO_CENTILITER = 100
@@ -57,25 +59,27 @@ class ArticleDeposit(BaseModel):
 
 
 class ArticleMargins(BaseModel):
-    margin_amount: NonNegativeFloat
-    margin_rate: NonNegativeFloat
+    margin_amount: DecimalType = Field(ge=0, decimal_places=2)
+    margin_rate: DecimalType = Field(ge=0, le=100, decimal_places=0)
 
 
 class ArticleStoreData(BaseModel):
-    gross_price: PositiveFloat
-    bar_price: NonNegativeFloat
+    gross_price: DecimalType = Field(gt=0, decimal_places=2)
+    bar_price: DecimalType = Field(ge=0, decimal_places=2)
     stock_quantity: int
-    recommended_price: PositiveFloat
+    recommended_price: DecimalType = Field(gt=0, decimal_places=2)
     margins: ArticleMargins
 
 
 class BaseArticle(BaseModel):
     category: str
     name: ArticleName
-    cost_price: PositiveFloat
-    excise_duty: NonNegativeFloat = 0.0
-    social_security_contribution: NonNegativeFloat = 0.0
-    vat_rate: float
+    cost_price: DecimalType = Field(gt=0, decimal_places=4)
+    excise_duty: DecimalType = Field(ge=0, decimal_places=4, default=Decimal(0))
+    social_security_contribution: DecimalType = Field(
+        ge=0, decimal_places=4, default=Decimal(0)
+    )
+    vat_rate: DecimalType = Field(ge=0, le=100, decimal_places=2)
     distributor: str
     barcode: str = ""
     region: str = ""
@@ -87,14 +91,11 @@ class BaseArticle(BaseModel):
     deposit: ArticleDeposit
 
     @property
-    def total_cost(self) -> float:
-        total_cost_sum = sum(
-            [self.cost_price, self.excise_duty, self.social_security_contribution]
-        )
-        return round(total_cost_sum, 4)
+    def total_cost(self) -> Decimal:
+        return self.cost_price + self.excise_duty + self.social_security_contribution
 
-    def inventory_value(self, stock_quantity: int) -> float:
-        return round((self.total_cost * stock_quantity), 2)
+    def inventory_value(self, stock_quantity: int) -> Decimal:
+        return self.total_cost * stock_quantity
 
     def deposit_value(self, stock_quantity: int) -> float:
         if self.deposit.unit == 0:

@@ -41,5 +41,5 @@ def current_user(user_factory: UserFactory, store: Store) -> User:
 
 
 @pytest.fixture(scope="session")
-def context(settings: Settings):
+def context(settings: Settings) -> Context:
     return Context(settings=settings)
