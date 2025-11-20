@@ -27,6 +27,7 @@ class CategoryGroup(DomainEntity):
     taste: bool
     volume: bool
     alcohol_by_volume: bool
+
     # recommended_price: bool = True
     # distributor: bool = True
     # packaging: bool = False
@@ -36,6 +37,16 @@ class CategoryGroup(DomainEntity):
 CATEGORY_GROUPS_MAP = {
     CategoryGroupName.BEER: CategoryGroup(
         name=CategoryGroupName.BEER,
+        producer="Brasserie",
+        product="Bière",
+        region="Pays",
+        color=True,
+        taste=False,
+        volume=True,
+        alcohol_by_volume=True,
+    ),
+    CategoryGroupName.KEG: CategoryGroup(
+        name=CategoryGroupName.KEG,
         producer="Brasserie",
         product="Bière",
         region="Pays",
