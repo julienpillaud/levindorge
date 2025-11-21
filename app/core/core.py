@@ -13,6 +13,7 @@ from app.infrastructure.event_publisher import FastStreamEventPublisher
 from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.base import MongoRepository
 from app.infrastructure.repository.categories import CategoryRepository
+from app.infrastructure.repository.producers import ProducerRepository
 from app.infrastructure.repository.stores import StoreRepository
 from app.infrastructure.repository.users import UserRepository
 from app.infrastructure.tactill.manager import TactillManager
@@ -55,6 +56,10 @@ class Context(BaseContext):
     @property
     def article_repository(self) -> ArticleRepository:
         return ArticleRepository(database=self.database)
+
+    @property
+    def producer_repository(self) -> ProducerRepository:
+        return ProducerRepository(database=self.database)
 
     @property
     def pos_manager(self) -> TactillManager:

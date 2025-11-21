@@ -3,14 +3,14 @@
   {% if category_group.producer %}
   <div class="join w-full">
     <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.producer }}</span>
-    <input type="text" class="input input-bordered join-item w-full" value="{{ article.name.name1 }}" />
+    <input type="text" class="input input-bordered join-item w-full" value="{{ article.producer }}" />
   </div>
   {% endif %}
 
   {% if category_group.product %}
   <div class="join w-full">
     <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.product }}</span>
-    <input type="text" class="input input-bordered join-item w-full" value="{{ article.name.name2 }}" />
+    <input type="text" class="input input-bordered join-item w-full" value="{{ article.product }}" />
   </div>
   {% endif %}
 

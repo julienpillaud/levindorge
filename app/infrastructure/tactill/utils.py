@@ -64,8 +64,8 @@ COLORS_MAPPING = {
 
 
 def define_name(display_group: DisplayGroup, article: Article) -> str:
-    name1 = article.name.name1
-    name2 = article.name.name2
+    name1 = article.producer
+    name2 = article.product
     volume = article.formated_volume()
     color = article.color
 
@@ -90,7 +90,7 @@ def define_name(display_group: DisplayGroup, article: Article) -> str:
             else:
                 return f"{name1} {color} {volume}"
         case DisplayGroup.BOX | DisplayGroup.MISC | DisplayGroup.FOOD:
-            return name1
+            return name2
         case _:
             raise ValueError()
 

@@ -30,7 +30,7 @@
             {% for article in result.items %}
               <tr class="hover cursor-pointer" data-id="{{ article.id }}">
                 <td class="text-nowrap">
-                  {{ article.name.name1 }} {{ article.name.name2 }} {{ article.volume.value | strip_zeros }}
+                  {{ article.producer }} {{ article.product }} {{ article.volume.value | strip_zeros }}
                   {{ article.volume.unit }}
                 </td>
                 <td class="text-nowrap">{{ article.region }}</td>

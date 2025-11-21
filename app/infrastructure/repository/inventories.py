@@ -4,9 +4,9 @@ from bson import ObjectId
 from cleanstack.exceptions import NotFoundError
 from pymongo import ASCENDING
 
+from app.domain._shared.protocols.repository import InventoryRepositoryProtocol
 from app.domain.entities import EntityId
 from app.domain.inventories.entities import Inventory, InventoryRecord, InventoryReport
-from app.domain.protocols.repository import InventoryRepositoryProtocol
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 

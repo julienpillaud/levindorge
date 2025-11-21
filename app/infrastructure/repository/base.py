@@ -3,8 +3,8 @@ from typing import Any
 from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo.database import Database
 
+from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.items.entities import ItemType
-from app.domain.protocols.repository import RepositoryProtocol
 from app.infrastructure.repository.deposits import DepositRepository
 from app.infrastructure.repository.inventories import InventoryRepository
 from app.infrastructure.repository.items import ItemRepository

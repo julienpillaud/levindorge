@@ -2,8 +2,8 @@ from bson import ObjectId
 from cleanstack.exceptions import NotFoundError
 from pymongo import ASCENDING
 
+from app.domain._shared.protocols.repository import VolumeRepositoryProtocol
 from app.domain.entities import EntityId
-from app.domain.protocols.repository import VolumeRepositoryProtocol
 from app.domain.volumes.entities import Volume
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 

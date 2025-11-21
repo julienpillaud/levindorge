@@ -7,6 +7,7 @@ from app.core.config import Settings
 from app.core.core import Context
 from scripts.migration.articles import update_articles
 from scripts.migration.categories import update_categories
+from scripts.migration.producers import update_producers
 from scripts.migration.stores import update_stores
 from scripts.migration.users import update_users
 
@@ -33,6 +34,7 @@ def main(
     update_users(src_context, dst_context)
     update_categories(dst_context)
     update_articles(src_context, dst_context)
+    update_producers(dst_context)
 
 
 if __name__ == "__main__":
