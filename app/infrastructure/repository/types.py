@@ -1,7 +1,7 @@
 from cleanstack.exceptions import NotFoundError
 
+from app.domain._shared.protocols.repository import ArticleTypeRepositoryProtocol
 from app.domain.commons.entities import ArticleType, DisplayGroup
-from app.domain.protocols.repository import ArticleTypeRepositoryProtocol
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 

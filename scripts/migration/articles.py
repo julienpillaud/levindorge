@@ -4,13 +4,15 @@ from typing import Any
 from app.core.core import Context
 from app.domain.articles.entities import Article, ArticleStoreData
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
+from app.domain.categories.entities import Category
 from app.domain.commons.entities import PricingGroup
 from app.domain.stores.entities import Store, StoreSlug
 
 
 def update_articles(src_context: Context, dst_context: Context) -> None:
     stores = dst_context.store_repository.get_all()
-    categories = dst_context.category_repository.get_all()
+    categories = dst_context.category_repository.get_all(limit=100)
+    categories_map = {category.name: category for category in categories.items}
     pricing_groups_map = {
         category.name: category.pricing_group for category in categories.items
     }
@@ -18,9 +20,14 @@ def update_articles(src_context: Context, dst_context: Context) -> None:
     src_articles = src_context.database["articles"].find()
     dst_articles: list[Article] = []
     for article in src_articles:
+        producer, product = get_producer_and_product(
+            article=article,
+            categories_map=categories_map,
+        )
         dst_article = Article(
             category=article["type"],
-            name=article["name"],
+            producer=producer,
+            product=product,
             cost_price=to_decimal(article["buy_price"]),
             excise_duty=to_decimal(article["excise_duty"]),
             social_security_contribution=to_decimal(article["social_security_levy"]),
@@ -45,6 +52,16 @@ def update_articles(src_context: Context, dst_context: Context) -> None:
         dst_articles.append(dst_article)
 
     dst_context.article_repository.create_many(dst_articles)
+
+
+def get_producer_and_product(
+    article: dict[str, Any],
+    categories_map: dict[str, Category],
+) -> tuple[str | None, str]:
+    category = categories_map[article["type"]]
+    if category.producer_type:
+        return article["name"]["name1"], article["name"]["name2"]
+    return None, article["name"]["name1"]
 
 
 def get_store_data(

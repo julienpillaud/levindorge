@@ -134,7 +134,7 @@ def write_large_price_labels(
             file.write(f'<div class="nameInfClass">{name_inf_wine}</div>\n')
 
     elif pricing_group in {"box", "food", "misc", "others"}:
-        name_tag = article.name.name1
+        name_tag = article.product
         file.write('<div class="nameBoxContainer">\n')
         file.write(f'<div class="nameBoxClass brandonClass">{name_tag}</div>\n')
         file.write("</div>\n")

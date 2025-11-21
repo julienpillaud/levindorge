@@ -4,7 +4,6 @@ from pydantic import BaseModel, field_validator, model_validator
 
 from app.domain.articles.entities import (
     ArticleDeposit,
-    ArticleName,
     ArticleStoreData,
     ArticleVolume,
 )
@@ -32,7 +31,8 @@ class MarginsRequestDTO(BaseModel):
 
 class ArticleDTO(BaseModel):
     type: str
-    name: ArticleName
+    producer: str | None
+    product: str
     buy_price: float
     excise_duty: float = 0.0
     social_security_levy: float = 0.0

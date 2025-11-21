@@ -2,9 +2,9 @@ from bson import ObjectId
 from cleanstack.exceptions import NotFoundError
 from pymongo import ASCENDING, DESCENDING
 
+from app.domain._shared.protocols.repository import DepositRepositoryProtocol
 from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId
-from app.domain.protocols.repository import DepositRepositoryProtocol
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 DEPOSIT_TYPE_MAPPING = {"Unitaire": "unit", "Caisse": "case"}

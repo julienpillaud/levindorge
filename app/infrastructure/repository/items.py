@@ -3,9 +3,9 @@ from cleanstack.exceptions import NotFoundError
 from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo.collection import Collection
 
+from app.domain._shared.protocols.repository import ItemRepositoryProtocol
 from app.domain.entities import EntityId
 from app.domain.items.entities import Item, ItemType
-from app.domain.protocols.repository import ItemRepositoryProtocol
 from app.domain.volumes.entities import Volume
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 

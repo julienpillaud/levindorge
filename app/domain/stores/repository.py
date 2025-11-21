@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from app.domain.protocols.base_repository import RepositoryProtocol
+from app.domain._shared.protocols.base_repository import RepositoryProtocol
 from app.domain.stores.entities import Store, StoreSlug
 
 

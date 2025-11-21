@@ -43,11 +43,6 @@ class ArticleTaste(StrEnum):
     HERBAL = "Végétal"
 
 
-class ArticleName(BaseModel):
-    name1: str
-    name2: str
-
-
 class ArticleVolume(BaseModel):
     value: PositiveFloat
     unit: Literal["cL", "L"]
@@ -73,7 +68,8 @@ class ArticleStoreData(BaseModel):
 
 class BaseArticle(BaseModel):
     category: str
-    name: ArticleName
+    producer: str | None = None
+    product: str
     cost_price: DecimalType = Field(gt=0, decimal_places=4)
     excise_duty: DecimalType = Field(ge=0, decimal_places=4, default=Decimal(0))
     social_security_contribution: DecimalType = Field(
