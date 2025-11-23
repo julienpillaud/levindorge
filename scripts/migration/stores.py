@@ -6,7 +6,9 @@ from app.domain.stores.entities import PricingConfig, RoundConfig, RoundingMode,
 
 
 def update_stores(src_context: Context, dst_context: Context) -> None:
+    # Get previous stores
     src_stores = src_context.database["shops"].find()
+    # Create stores with the new entity model
     dst_stores = [
         Store(
             name=store["name"],
@@ -16,7 +18,7 @@ def update_stores(src_context: Context, dst_context: Context) -> None:
         )
         for store in src_stores
     ]
-
+    # Save stores in the database
     dst_context.store_repository.create_many(dst_stores)
 
 

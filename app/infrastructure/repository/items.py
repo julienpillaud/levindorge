@@ -10,8 +10,6 @@ from app.domain.volumes.entities import Volume
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
 FIELD_MAP = {
-    ItemType.BREWERIES: "name.name1",
-    ItemType.DISTILLERIES: "name.name1",
     ItemType.DISTRIBUTORS: "distributor",
     ItemType.COUNTRIES: "region",
     ItemType.REGIONS: "region",

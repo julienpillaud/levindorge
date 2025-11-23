@@ -92,7 +92,7 @@ def update_article_view(
     article = domain.get_article(article_id=article_id)
     category = domain.get_category_by_name(article.category)
     category_group = CATEGORY_GROUPS_MAP[category.category_group]
-    # domain.get_view_data(name=article.category)
+    data = domain.get_view_data(category=category)
     return templates.TemplateResponse(
         request=request,
         name="articles/_article.html",
@@ -100,6 +100,7 @@ def update_article_view(
             "current_user": current_user,
             "article": article,
             "category_group": category_group,
+            "data": data,
         },
     )
 

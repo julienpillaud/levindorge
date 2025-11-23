@@ -1,49 +1,32 @@
 from app.core.core import Context
-from app.domain._shared.entities import ProducerType
-from app.domain.articles.entities import Article
 from app.domain.producers.entities import Producer
 from scripts.migration.categories import CATEGORIES
 
 
 def update_producers(dst_context: Context) -> None:
     articles = dst_context.article_repository.get_all(limit=3000)
-    breweries = [
-        Producer(name=name, type=ProducerType.BREWERY)
-        for name in get_breweries(articles.items)
-    ]
-    distilleries = [
-        Producer(name=name, type=ProducerType.DISTILLERY)
-        for name in get_distilleries(articles.items)
-    ]
+    categories_map = {
+        category.name: category for category in CATEGORIES if category.producer_type
+    }
+    producers: list[Producer] = []
+    seen_names: set[str] = set()
+    for article in articles.items:
+        if not article.producer:
+            continue
 
-    dst_context.producer_repository.create_many(breweries + distilleries)
+        if article.producer in seen_names:
+            continue
 
+        category = categories_map.get(article.category)
+        if not category:
+            continue
 
-def get_category_names(producer_type: ProducerType) -> list[str]:
-    return [
-        category.name
-        for category in CATEGORIES
-        if category.producer_type == producer_type
-    ]
+        seen_names.add(article.producer)
+        producers.append(
+            Producer(
+                name=article.producer,
+                type=category.producer_type,
+            )
+        )
 
-
-def get_breweries(articles: list[Article]) -> list[str]:
-    return sorted(
-        {
-            article.producer
-            for article in articles
-            if article.category in get_category_names(ProducerType.BREWERY)
-            and article.producer
-        }
-    )
-
-
-def get_distilleries(articles: list[Article]) -> list[str]:
-    return sorted(
-        {
-            article.producer
-            for article in articles
-            if article.category in get_category_names(ProducerType.DISTILLERY)
-            and article.producer
-        }
-    )
+    dst_context.producer_repository.create_many(producers)

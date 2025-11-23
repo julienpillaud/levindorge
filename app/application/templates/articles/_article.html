@@ -1,38 +1,46 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mx-auto">
 
   {% if category_group.producer %}
-  <div class="join w-full">
-    <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.producer }}</span>
-    <input type="text" class="input input-bordered join-item w-full" value="{{ article.producer }}" />
-  </div>
+    <div class="join w-full">
+      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.producer.display_name }}</span>
+      <select class="select">
+        {% for producer in data.producers %}
+          {% if article.producer == producer.name %}
+            <option selected>{{ producer.name }}</option>
+          {% else %}
+            <option>{{ producer.name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
   {% endif %}
 
   {% if category_group.product %}
-  <div class="join w-full">
-    <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.product }}</span>
-    <input type="text" class="input input-bordered join-item w-full" value="{{ article.product }}" />
-  </div>
+    <div class="join w-full">
+      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.product }}</span>
+      <input type="text" class="input input-bordered join-item w-full" value="{{ article.product }}"/>
+    </div>
   {% endif %}
 
   {% if category_group.region %}
-  <div class="join w-full">
-    <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.region }}</span>
-    <input type="text" class="input input-bordered join-item w-full" value="{{ article.region }}" />
-  </div>
+    <div class="join w-full">
+      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.region }}</span>
+      <input type="text" class="input input-bordered join-item w-full" value="{{ article.region }}"/>
+    </div>
   {% endif %}
 
   {% if category_group.color %}
-  <div class="join w-full">
-    <span class="join-item btn btn-active btn-soft btn-primary cursor-default">Couleur</span>
-    <input type="text" class="input input-bordered join-item w-full" value="{{ article.color }}" />
-  </div>
+    <div class="join w-full">
+      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">Couleur</span>
+      <input type="text" class="input input-bordered join-item w-full" value="{{ article.color }}"/>
+    </div>
   {% endif %}
 
   {% if category_group.taste %}
-  <div class="join w-full">
-    <span class="join-item btn btn-active btn-soft btn-primary cursor-default">Saveur</span>
-    <input type="text" class="input input-bordered join-item w-full" />
-  </div>
+    <div class="join w-full">
+      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">Saveur</span>
+      <input type="text" class="input input-bordered join-item w-full"/>
+    </div>
   {% endif %}
 
   {% include "articles/_article_price.html" %}

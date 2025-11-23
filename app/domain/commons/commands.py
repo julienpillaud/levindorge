@@ -1,26 +1,30 @@
-from app.domain.commons.entities import ArticleType, DisplayGroup, ViewData
+from app.domain.categories.entities import Category
+from app.domain.commons.entities import ArticleType, ViewData
 from app.domain.context import ContextProtocol
+from app.domain.producers.entities import Producer
 
 
 def get_view_data_command(
     context: ContextProtocol,
-    name: str | None = None,
-    display_group: DisplayGroup | None = None,
+    category: Category,
 ) -> ViewData:
-    article_types = context.repository.get_article_types(
-        name=name,
-        display_group=display_group,
+    return ViewData(producers=get_producers(context=context, category=category))
+
+
+def get_producers(
+    context: ContextProtocol,
+    category: Category,
+) -> list[Producer]:
+    if not category.producer_type:
+        return []
+
+    results = context.producer_repository.get_all(
+        filters={"type": category.producer_type},
+        limit=300,
     )
-    article_type = article_types[0]
-    items = context.repository.get_items_dict(
-        volume_category=article_type.volume_category
-    )
-    return ViewData(
-        display_group=article_type.display_group,
-        pricing_group=article_type.pricing_group,
-        article_type_names=[x.name for x in article_types],
-        items=items,
-    )
+    producers = results.items
+    producers.append(Producer(name="", type=category.producer_type))
+    return producers
 
 
 def get_article_type_command(context: ContextProtocol, name: str) -> ArticleType:
