@@ -27,8 +27,6 @@ class MongoRepository(
         return {
             "country_list": self.get_items(ItemType.COUNTRIES),
             "region_list": self.get_items(ItemType.REGIONS),
-            "brewery_list": self.get_items(ItemType.BREWERIES),
-            "distillery_list": self.get_items(ItemType.DISTILLERIES),
             "distributor_list": self.get_items(ItemType.DISTRIBUTORS),
             "volumes": self.get_volumes_by_category(volume_category),
             "deposits": self.get_deposits(),

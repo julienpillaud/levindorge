@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from fastapi.requests import Request
+from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
 
 from app.api.auth.dependencies import get_current_user
@@ -25,7 +26,7 @@ def get_producers(
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     producer_type: ProducerType,
-):
+) -> Response:
     producers = domain.get_producers(producer_type=producer_type)
     return templates.TemplateResponse(
         request=request,

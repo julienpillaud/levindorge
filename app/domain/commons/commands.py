@@ -1,6 +1,7 @@
 from app.domain.categories.entities import Category
 from app.domain.commons.entities import ArticleType, ViewData
 from app.domain.context import ContextProtocol
+from app.domain.producers.commands import get_producers_command
 from app.domain.producers.entities import Producer
 
 
@@ -18,9 +19,9 @@ def get_producers(
     if not category.producer_type:
         return []
 
-    results = context.producer_repository.get_all(
-        filters={"type": category.producer_type},
-        limit=300,
+    results = get_producers_command(
+        context=context,
+        producer_type=category.producer_type,
     )
     producers = results.items
     producers.append(Producer(name="", type=category.producer_type))
