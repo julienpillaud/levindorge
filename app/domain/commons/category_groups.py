@@ -2,6 +2,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
+from app.domain._shared.entities import ProducerType
 from app.domain.entities import DomainEntity
 
 
@@ -13,6 +14,11 @@ class CategoryGroupName(StrEnum):
     OTHER = "other"
 
 
+class ProducerData(BaseModel):
+    display_name: str
+    type: ProducerType | None = None
+
+
 class DepositField(BaseModel):
     case: bool
     unit: bool
@@ -20,7 +26,7 @@ class DepositField(BaseModel):
 
 class CategoryGroup(DomainEntity):
     name: CategoryGroupName
-    producer: str
+    producer: ProducerData | None
     product: str | None
     region: str | None
     color: bool
@@ -37,7 +43,10 @@ class CategoryGroup(DomainEntity):
 CATEGORY_GROUPS_MAP = {
     CategoryGroupName.BEER: CategoryGroup(
         name=CategoryGroupName.BEER,
-        producer="Brasserie",
+        producer=ProducerData(
+            display_name="Brasserie",
+            type=ProducerType.BREWERY,
+        ),
         product="Bière",
         region="Pays",
         color=True,
@@ -47,7 +56,10 @@ CATEGORY_GROUPS_MAP = {
     ),
     CategoryGroupName.KEG: CategoryGroup(
         name=CategoryGroupName.KEG,
-        producer="Brasserie",
+        producer=ProducerData(
+            display_name="Brasserie",
+            type=ProducerType.BREWERY,
+        ),
         product="Bière",
         region="Pays",
         color=True,
@@ -57,7 +69,10 @@ CATEGORY_GROUPS_MAP = {
     ),
     CategoryGroupName.SPIRIT: CategoryGroup(
         name=CategoryGroupName.SPIRIT,
-        producer="Distillerie",
+        producer=ProducerData(
+            display_name="Distillerie",
+            type=ProducerType.DISTILLERY,
+        ),
         product="Spiritueux",
         region="Pays",
         color=False,
@@ -67,7 +82,7 @@ CATEGORY_GROUPS_MAP = {
     ),
     CategoryGroupName.WINE: CategoryGroup(
         name=CategoryGroupName.WINE,
-        producer="Appellation",
+        producer=ProducerData(display_name="Appellation"),
         product="Vin",
         region="Région",
         color=True,
@@ -77,7 +92,7 @@ CATEGORY_GROUPS_MAP = {
     ),
     CategoryGroupName.OTHER: CategoryGroup(
         name=CategoryGroupName.OTHER,
-        producer="Désignation",
+        producer=None,
         product=None,
         region=None,
         color=False,

@@ -6,8 +6,6 @@ from app.domain.entities import DomainEntity
 
 
 class ItemType(StrEnum):
-    BREWERIES = "breweries"
-    DISTILLERIES = "distilleries"
     DISTRIBUTORS = "distributors"
     COUNTRIES = "countries"
     REGIONS = "regions"

@@ -96,16 +96,6 @@ navbar_categories = [
 
 navbar_items = [
     NavbarItem(
-        label="Brasseries",
-        item_type=ItemType.BREWERIES,
-        endpoint="get_items_view",
-    ),
-    NavbarItem(
-        label="Distilleries",
-        item_type=ItemType.DISTILLERIES,
-        endpoint="get_items_view",
-    ),
-    NavbarItem(
         label="Fournisseurs",
         item_type=ItemType.DISTRIBUTORS,
         endpoint="get_items_view",

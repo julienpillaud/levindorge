@@ -6,13 +6,13 @@ from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pydantic import PositiveInt
 from pymongo.database import Database
 
+from app.domain._shared.protocols.base_repository import RepositoryProtocol
 from app.domain.entities import (
     DEFAULT_PAGINATION_SIZE,
     DomainEntity,
     EntityId,
     PaginatedResponse,
 )
-from app.domain.protocols.base_repository import RepositoryProtocol
 from app.infrastructure.repository.exceptions import MongoRepositoryError
 from app.utils.utils import iter_dicts
 

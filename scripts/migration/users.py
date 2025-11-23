@@ -3,10 +3,13 @@ from app.domain.users.entities import Role, User
 
 
 def update_users(src_context: Context, dst_context: Context) -> None:
+    # New stores must be created before users
     stores = dst_context.store_repository.get_all()
     stores_map = {store.slug: store for store in stores.items}
 
+    # Get previous users
     src_users = src_context.database["users"].find()
+    # Create users with the new entity model
     dst_users = [
         User(
             name=user["name"],
@@ -26,5 +29,5 @@ def update_users(src_context: Context, dst_context: Context) -> None:
             role=Role.SUPERADMIN,
         )
     )
-
+    # Save users in the database
     dst_context.user_repository.create_many(dst_users)

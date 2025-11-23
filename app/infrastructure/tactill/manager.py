@@ -11,11 +11,11 @@ from tactill.entities.catalog.tax import Tax
 from tactill.entities.stock.movement import ArticleMovement, MovementCreation
 from tactill.utils import get_query_filter
 
+from app.domain._shared.protocols.pos_manager import POSManagerProtocol
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import DisplayGroup
 from app.domain.exceptions import POSManagerError
 from app.domain.pos.entities import POSArticle
-from app.domain.protocols.pos_manager import POSManagerProtocol
 from app.domain.stores.entities import Store
 from app.infrastructure.tactill.utils import (
     CATEGORIES_MAPPING,

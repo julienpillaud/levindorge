@@ -31,7 +31,8 @@ def test_create_article(
 
     assert is_str_object_id(article.id)
     assert article.category == data.category
-    assert article.name == data.name
+    assert article.producer == data.producer
+    assert article.product == data.product
     assert article.cost_price == data.cost_price
     assert article.excise_duty == data.excise_duty
     assert article.social_security_contribution == data.social_security_contribution

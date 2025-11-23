@@ -14,8 +14,6 @@ from app.domain.users.entities import User
 router = APIRouter(prefix="/items")
 
 ITEMS_TITLE_MAPPING = {
-    "breweries": "Brasseries",
-    "distilleries": "Distilleries",
     "distributors": "Fournisseurs",
     "countries": "Pays",
     "regions": "Régions",

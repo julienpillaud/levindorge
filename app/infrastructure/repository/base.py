@@ -3,8 +3,8 @@ from typing import Any
 from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo.database import Database
 
+from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.items.entities import ItemType
-from app.domain.protocols.repository import RepositoryProtocol
 from app.infrastructure.repository.deposits import DepositRepository
 from app.infrastructure.repository.inventories import InventoryRepository
 from app.infrastructure.repository.items import ItemRepository
@@ -27,8 +27,6 @@ class MongoRepository(
         return {
             "country_list": self.get_items(ItemType.COUNTRIES),
             "region_list": self.get_items(ItemType.REGIONS),
-            "brewery_list": self.get_items(ItemType.BREWERIES),
-            "distillery_list": self.get_items(ItemType.DISTILLERIES),
             "distributor_list": self.get_items(ItemType.DISTRIBUTORS),
             "volumes": self.get_volumes_by_category(volume_category),
             "deposits": self.get_deposits(),

@@ -3,7 +3,7 @@ from typing import Any
 
 from faststream.redis import RedisBroker
 
-from app.domain.protocols.event_publisher import EventPublisherProtocol
+from app.domain._shared.protocols.event_publisher import EventPublisherProtocol
 
 
 class FastStreamEventPublisher(EventPublisherProtocol):

@@ -110,8 +110,8 @@ def define_beer_name(
     article: Article,
     font: FreeTypeFont,
 ) -> tuple[str | None, str | None, str | None]:
-    name1 = article.name.name1
-    name2 = article.name.name2
+    name1 = article.producer
+    name2 = article.product
 
     if name1:
         return None, name1, name2
@@ -136,8 +136,8 @@ def define_beer_name(
 
 
 def define_name(article: Article) -> tuple[str | None, str | None, str | None]:
-    name1 = article.name.name1
-    name2 = article.name.name2
+    name1 = article.producer
+    name2 = article.product
 
     if name1 == "":
         name = name2

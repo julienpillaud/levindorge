@@ -40,6 +40,7 @@ from app.domain.price_labels.commands import (
     create_price_labels_command,
     get_price_labels_files_command,
 )
+from app.domain.producers.commands import get_producers_command
 from app.domain.users.commands import get_user_by_email_command, update_user_command
 from app.domain.volumes.commands import (
     create_volume_command,
@@ -55,6 +56,9 @@ class Domain(BaseDomain[ContextProtocol]):
 
     # categories
     get_category_by_name = CommandHandler(get_category_by_name_command)
+
+    # producers
+    get_producers = CommandHandler(get_producers_command)
 
     # items
     get_items = CommandHandler(get_items_command)

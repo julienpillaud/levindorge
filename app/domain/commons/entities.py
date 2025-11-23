@@ -1,7 +1,8 @@
 from enum import StrEnum
-from typing import Any
 
 from pydantic import BaseModel, Field
+
+from app.domain.producers.entities import Producer
 
 
 class DisplayGroup(StrEnum):
@@ -45,7 +46,4 @@ class ArticleType(BaseModel):
 
 
 class ViewData(BaseModel):
-    display_group: DisplayGroup
-    pricing_group: PricingGroup
-    article_type_names: list[str]
-    items: dict[str, Any]
+    producers: list[Producer]

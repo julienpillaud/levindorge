@@ -27,6 +27,12 @@
   <details>
     <summary>Gestion</summary>
     <ul class="p-2 bg-primary w-max">
+      <li>
+        <a href="{{ url_for("get_producers", producer_type="brewery") }}">Brasseries</a>
+      </li>
+      <li>
+        <a href="{{ url_for("get_producers", producer_type="distillery") }}">Distilleries</a>
+      </li>
       {% for item in navbar_items %}
         {% set href = url_for(item.endpoint, item_type=item.item_type) if item.item_type else url_for(item.endpoint) %}
         <li>
