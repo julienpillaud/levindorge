@@ -28,7 +28,7 @@ class CategoryGroup(DomainEntity):
     name: CategoryGroupName
     producer: ProducerData | None
     product: str | None
-    region: str | None
+    origin: bool
     color: bool
     taste: bool
     volume: bool
@@ -48,7 +48,7 @@ CATEGORY_GROUPS_MAP = {
             type=ProducerType.BREWERY,
         ),
         product="Bière",
-        region="Pays",
+        origin=True,
         color=True,
         taste=False,
         volume=True,
@@ -61,7 +61,7 @@ CATEGORY_GROUPS_MAP = {
             type=ProducerType.BREWERY,
         ),
         product="Bière",
-        region="Pays",
+        origin=True,
         color=True,
         taste=False,
         volume=True,
@@ -74,7 +74,7 @@ CATEGORY_GROUPS_MAP = {
             type=ProducerType.DISTILLERY,
         ),
         product="Spiritueux",
-        region="Pays",
+        origin=True,
         color=False,
         taste=True,
         volume=True,
@@ -84,7 +84,7 @@ CATEGORY_GROUPS_MAP = {
         name=CategoryGroupName.WINE,
         producer=ProducerData(display_name="Appellation"),
         product="Vin",
-        region="Région",
+        origin=True,
         color=True,
         taste=False,
         volume=True,
@@ -94,7 +94,7 @@ CATEGORY_GROUPS_MAP = {
         name=CategoryGroupName.OTHER,
         producer=None,
         product=None,
-        region=None,
+        origin=False,
         color=False,
         taste=False,
         volume=False,

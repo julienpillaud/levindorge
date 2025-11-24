@@ -1,15 +1,14 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mx-auto">
 
   {% if category_group.producer %}
+    {% set current_producer = article.producer or '' %}
+
     <div class="join w-full">
       <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.producer.display_name }}</span>
       <select class="select">
+        <option {% if current_producer == '' %}selected{% endif %}></option>
         {% for producer in data.producers %}
-          {% if article.producer == producer.name %}
-            <option selected>{{ producer.name }}</option>
-          {% else %}
-            <option>{{ producer.name }}</option>
-          {% endif %}
+          <option {% if current_producer == producer.name %}selected{% endif %}>{{ producer.name }}</option>
         {% endfor %}
       </select>
     </div>
@@ -22,10 +21,14 @@
     </div>
   {% endif %}
 
-  {% if category_group.region %}
+  {% if category_group.origin %}
     <div class="join w-full">
-      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">{{ category_group.region }}</span>
-      <input type="text" class="input input-bordered join-item w-full" value="{{ article.region }}"/>
+      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">Pays / Région</span>
+      <select class="select">
+        {% for origin in data.origins %}
+          <option {% if article.origin == origin.name %}selected{% endif %}>{{ origin.name }}</option>
+        {% endfor %}
+      </select>
     </div>
   {% endif %}
 

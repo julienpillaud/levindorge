@@ -25,8 +25,6 @@ class MongoRepository(
 
     def get_items_dict(self, volume_category: str | None) -> dict[str, Any]:
         return {
-            "country_list": self.get_items(ItemType.COUNTRIES),
-            "region_list": self.get_items(ItemType.REGIONS),
             "distributor_list": self.get_items(ItemType.DISTRIBUTORS),
             "volumes": self.get_volumes_by_category(volume_category),
             "deposits": self.get_deposits(),

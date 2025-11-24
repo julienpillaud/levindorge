@@ -158,13 +158,13 @@ class PriceTag:
         # ----------------------------------------------------------
         if article.ratio_category in {"beer", "keg", "mini_keg"}:
             volume = self.convert_volume(article=article)
-            demonym = regions[article.region].demonym
+            demonym = regions[article.origin].demonym
             top_line = f"{color} - {volume} - {demonym}"
             f.write(f'<div class="toplinebeerClass brandonClass">{top_line}</div>\n')
 
         elif article.ratio_category in {"wine", "sparkling_wine", "bib"}:
             if article.type in {"Vin", "Vin effervescent", "BIB"}:
-                top_line = f"{color} - {article.region}"
+                top_line = f"{color} - {article.origin}"
             else:
                 top_line = f"{color} - {article.type}"
             f.write(f'<div class="toplinewineClass">{top_line}</div>\n')
@@ -264,7 +264,7 @@ class PriceTag:
         sell_price_tag = f"{sell_price:.0f}".replace(".", ", ")
         f.write(f'<div class="priceClass">{sell_price_tag} €</div>')
         # ----------------------------------------------------------
-        flag_class = unidecode.unidecode(article.region.replace(" ", "_"))
+        flag_class = unidecode.unidecode(article.origin.replace(" ", "_"))
         f.write(f'<div class="flagClass {flag_class}"></div>\n')
         # ----------------------------------------------------------
         f.write("</div>\n")

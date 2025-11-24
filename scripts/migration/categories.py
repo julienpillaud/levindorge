@@ -1,3 +1,5 @@
+from rich import print
+
 from app.core.core import Context
 from app.domain._shared.entities import ProducerType
 from app.domain.categories.entities import Category
@@ -5,8 +7,11 @@ from app.domain.commons.category_groups import CategoryGroupName
 from app.domain.commons.entities import PricingGroup
 
 
-def update_categories(dst_context: Context) -> None:
-    dst_context.category_repository.create_many(CATEGORIES)
+def create_categories(dst_context: Context) -> list[Category]:
+    result = dst_context.category_repository.create_many(CATEGORIES)
+    count = len(result)
+    print(f"Created {count} categories")
+    return dst_context.category_repository.get_all(limit=count).items
 
 
 CATEGORIES = [

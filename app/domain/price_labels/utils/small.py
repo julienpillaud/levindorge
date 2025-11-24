@@ -1,7 +1,5 @@
 from typing import TextIO
 
-import unidecode
-
 from app.core.config import Settings
 from app.domain.articles.entities import Article
 from app.domain.price_labels.entities import PriceLabelWrapper
@@ -97,7 +95,9 @@ def write_small_price_labels(
     sell_price_tag = f"{sell_price:.0f}".replace(".", ", ")
     file.write(f'<div class="priceClass">{sell_price_tag} €</div>')
     # ----------------------------------------------------------
-    flag_class = unidecode.unidecode(article.region.replace(" ", "_"))
+    # TODO: get flag from external API
+    flag_class = ""
+    # flag_class = unidecode.unidecode(article.origin.replace(" ", "_"))
     file.write(f'<div class="flagClass {flag_class}"></div>\n')
     # ----------------------------------------------------------
     file.write("</div>\n")

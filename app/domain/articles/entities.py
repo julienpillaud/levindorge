@@ -68,7 +68,7 @@ class ArticleStoreData(BaseModel):
 
 class BaseArticle(BaseModel):
     category: str
-    producer: str | None = None
+    producer: str | None = Field(min_length=1, default=None)
     product: str
     cost_price: DecimalType = Field(gt=0, decimal_places=4)
     excise_duty: DecimalType = Field(ge=0, decimal_places=4, default=Decimal(0))
@@ -78,13 +78,22 @@ class BaseArticle(BaseModel):
     vat_rate: DecimalType = Field(ge=0, le=100, decimal_places=2)
     distributor: str
     barcode: str = ""
-    region: str = ""
+    origin: str | None = None
     color: ArticleColor = ArticleColor.UNDEFINED
     taste: ArticleTaste = ArticleTaste.UNDEFINED
     volume: ArticleVolume | None
     alcohol_by_volume: NonNegativeFloat = 0.0
     packaging: NonNegativeInt = 0
     deposit: ArticleDeposit
+
+    @property
+    def display_name(self) -> str:
+        name = self.product
+        if self.producer:
+            name = f"{self.producer} {name}"
+        if self.volume:
+            name = f"{name} {self.formated_volume(separator=',')}"
+        return name
 
     @property
     def total_cost(self) -> Decimal:
@@ -113,7 +122,7 @@ class BaseArticle(BaseModel):
             unit = "L"
 
         formatted_value = str(value).rstrip("0").rstrip(".").replace(".", separator)
-        return f"{formatted_value}{unit}"
+        return f"{formatted_value} {unit}"
 
 
 class ArticleCreateOrUpdate(BaseArticle):

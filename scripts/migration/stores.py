@@ -1,28 +1,39 @@
 from decimal import Decimal
+from typing import Any
+
+from rich import print
 
 from app.core.core import Context
 from app.domain.commons.entities import PricingGroup
 from app.domain.stores.entities import PricingConfig, RoundConfig, RoundingMode, Store
 
 
-def update_stores(src_context: Context, dst_context: Context) -> None:
+def create_stores(src_context: Context, dst_context: Context) -> list[Store]:
     # Get previous stores
     src_stores = src_context.database["shops"].find()
     # Create stores with the new entity model
-    dst_stores = [
+    dst_stores = create_store_entities(list(src_stores))
+
+    # Save stores in the database
+    result = dst_context.store_repository.create_many(dst_stores)
+    count = len(result)
+    print(f"Created {count} stores")
+    return dst_context.store_repository.get_all(limit=count).items
+
+
+def create_store_entities(src_stores: list[dict[str, Any]]) -> list[Store]:
+    return [
         Store(
             name=store["name"],
             slug=store["username"],
             tactill_api_key=store["tactill_api_key"],
-            pricing_configs=pricing_config,
+            pricing_configs=PRICING_CONFIG,
         )
         for store in src_stores
     ]
-    # Save stores in the database
-    dst_context.store_repository.create_many(dst_stores)
 
 
-pricing_config = {
+PRICING_CONFIG = {
     PricingGroup.BEER: PricingConfig(
         value=Decimal("1.7"),
         operator="*",

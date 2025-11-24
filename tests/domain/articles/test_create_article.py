@@ -39,7 +39,7 @@ def test_create_article(
     assert article.vat_rate == data.vat_rate
     assert article.distributor == data.distributor
     assert article.barcode == data.barcode
-    assert article.region == data.region
+    assert article.origin == data.origin
     assert article.color == data.color
     assert article.taste == data.taste
     assert article.volume == data.volume

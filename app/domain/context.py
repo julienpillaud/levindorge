@@ -7,6 +7,7 @@ from app.domain._shared.protocols.pos_manager import POSManagerProtocol
 from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.categories.repository import CategoryRepositoryProtocol
+from app.domain.origins.repository import OriginRepositoryProtocol
 from app.domain.producers.repository import ProducerRepositoryProtocol
 from app.domain.stores.repository import StoreRepositoryProtocol
 from app.domain.users.repository import UserRepositoryProtocol
@@ -30,6 +31,9 @@ class ContextProtocol(UnitOfWorkProtocol, Protocol):
 
     @property
     def producer_repository(self) -> ProducerRepositoryProtocol: ...
+
+    @property
+    def origin_repository(self) -> OriginRepositoryProtocol: ...
 
     @property
     def pos_manager(self) -> POSManagerProtocol: ...
