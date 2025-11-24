@@ -101,16 +101,6 @@ navbar_items = [
         endpoint="get_items_view",
     ),
     NavbarItem(
-        label="Pays",
-        item_type=ItemType.COUNTRIES,
-        endpoint="get_items_view",
-    ),
-    NavbarItem(
-        label="Régions",
-        item_type=ItemType.REGIONS,
-        endpoint="get_items_view",
-    ),
-    NavbarItem(
         label="Volumes",
         endpoint="get_volumes_view",
     ),

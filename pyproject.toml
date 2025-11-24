@@ -66,6 +66,4 @@ exclude = [
     '^app/config.py$',
     '^app/worker.py$',
     '^app/main.py$',
-
-    '^scripts/',
 ]

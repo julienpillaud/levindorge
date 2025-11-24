@@ -9,11 +9,7 @@ from app.domain.items.entities import Item, ItemType
 from app.domain.volumes.entities import Volume
 from app.infrastructure.repository.protocol import MongoRepositoryProtocol
 
-FIELD_MAP = {
-    ItemType.DISTRIBUTORS: "distributor",
-    ItemType.COUNTRIES: "region",
-    ItemType.REGIONS: "region",
-}
+FIELD_MAP = {ItemType.DISTRIBUTORS: "distributor"}
 
 
 class ItemRepository(MongoRepositoryProtocol, ItemRepositoryProtocol):

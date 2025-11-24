@@ -2,6 +2,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
+from app.domain.origins.entities import Origin
 from app.domain.producers.entities import Producer
 
 
@@ -47,3 +48,4 @@ class ArticleType(BaseModel):
 
 class ViewData(BaseModel):
     producers: list[Producer]
+    origins: list[Origin]

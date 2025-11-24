@@ -5,11 +5,12 @@ from rich.console import Console
 
 from app.core.config import Settings
 from app.core.core import Context
-from scripts.migration.articles import update_articles
-from scripts.migration.categories import update_categories
-from scripts.migration.producers import update_producers
-from scripts.migration.stores import update_stores
-from scripts.migration.users import update_users
+from scripts.migration.articles import create_articles
+from scripts.migration.categories import create_categories
+from scripts.migration.origins import create_origins
+from scripts.migration.producers import create_producers
+from scripts.migration.stores import create_stores
+from scripts.migration.users import create_users
 
 app = typer.Typer(no_args_is_help=True)
 console = Console()
@@ -30,11 +31,27 @@ def main(
         for collection_name in dst_context.database.list_collection_names():
             dst_context.database[collection_name].drop()
 
-    update_stores(src_context, dst_context)
-    update_users(src_context, dst_context)
-    update_categories(dst_context)
-    update_articles(src_context, dst_context)
-    update_producers(dst_context)
+    stores = create_stores(src_context=src_context, dst_context=dst_context)
+
+    create_users(
+        src_context=src_context,
+        dst_context=dst_context,
+        stores=stores,
+    )
+
+    categories = create_categories(dst_context=dst_context)
+
+    origins = create_origins(dst_context=dst_context)
+
+    articles = create_articles(
+        src_context=src_context,
+        dst_context=dst_context,
+        stores=stores,
+        categories=categories,
+        origins=origins,
+    )
+
+    create_producers(dst_context=dst_context, articles=articles)
 
 
 if __name__ == "__main__":

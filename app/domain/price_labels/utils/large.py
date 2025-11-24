@@ -1,4 +1,4 @@
-from typing import TextIO
+from typing import Any, TextIO
 
 from PIL import ImageFont
 
@@ -6,7 +6,7 @@ from app.core.config import Settings
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
 from app.domain.context import ContextProtocol
-from app.domain.items.entities import Item, ItemType
+from app.domain.items.entities import Item
 from app.domain.price_labels.entities import PriceLabelWrapper
 from app.domain.price_labels.utils.common import (
     chunk_price_labels,
@@ -26,10 +26,12 @@ def create_large_price_labels(
     current_store: Store,
     price_labels: list[PriceLabelWrapper],
 ) -> None:
-    regions_mapping = {
-        region.name: region
-        for region in context.repository.get_items(ItemType.COUNTRIES)
-    }
+    # TODO: get from new 'origins' repository
+    regions_mapping: dict[str, Any] = {}
+    # regions_mapping = {
+    #     region.name: region
+    #     for region in context.repository.get_items(ItemType.COUNTRIES)
+    # }
 
     for file_index, labels in enumerate(
         chunk_price_labels(
@@ -103,13 +105,13 @@ def write_large_price_labels(
     # top line
     if pricing_group in {"beer", "keg", "mini_keg"}:
         volume = article.formated_volume(",")
-        demonym = regions_mapping[article.region].demonym
+        demonym = ""  # TODO: replace by country name
         top_line = f"{color} - {volume} - {demonym}"
         file.write(f'<div class="toplinebeerClass brandonClass">{top_line}</div>\n')
 
     elif pricing_group in {"wine", "sparkling_wine", "bib"}:
         if article.category in {"Vin", "Vin effervescent", "BIB"}:
-            top_line = f"{color} - {article.region}"
+            top_line = f"{color} - {article.origin}"
         else:
             top_line = f"{color} - {article.category}"
         file.write(f'<div class="toplinewineClass">{top_line}</div>\n')
