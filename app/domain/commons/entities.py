@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from app.domain.origins.entities import Origin
 from app.domain.producers.entities import Producer
+from app.domain.volumes.entities import Volume
 
 
 class DisplayGroup(StrEnum):
@@ -49,3 +50,4 @@ class ArticleType(BaseModel):
 class ViewData(BaseModel):
     producers: list[Producer]
     origins: list[Origin]
+    volumes: list[Volume]

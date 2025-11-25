@@ -1,7 +1,6 @@
 import datetime
 from decimal import Decimal
 from enum import StrEnum
-from typing import Literal
 
 from pydantic import (
     BaseModel,
@@ -13,6 +12,7 @@ from pydantic import (
 
 from app.domain.entities import DecimalType, DomainEntity
 from app.domain.stores.entities import StoreSlug
+from app.domain.volumes.entities import VolumeUnit
 
 LITER_TO_CENTILITER = 100
 
@@ -45,7 +45,11 @@ class ArticleTaste(StrEnum):
 
 class ArticleVolume(BaseModel):
     value: PositiveFloat
-    unit: Literal["cL", "L"]
+    unit: VolumeUnit
+
+    def __str__(self) -> str:
+        formatted_value = str(self.value).rstrip("0").rstrip(".").replace(".", ",")
+        return f"{formatted_value} {self.unit}"
 
 
 class ArticleDeposit(BaseModel):
@@ -92,7 +96,7 @@ class BaseArticle(BaseModel):
         if self.producer:
             name = f"{self.producer} {name}"
         if self.volume:
-            name = f"{name} {self.formated_volume(separator=',')}"
+            name = f"{name} {self.volume}"
         return name
 
     @property
@@ -111,18 +115,6 @@ class BaseArticle(BaseModel):
             return round(value, 2)
 
         return self.deposit.unit * stock_quantity
-
-    def formated_volume(self, /, separator: str = ".") -> str:
-        if not self.volume:
-            return ""
-
-        value, unit = self.volume.value, self.volume.unit
-        if unit == "cL" and value > LITER_TO_CENTILITER:
-            value = value / 100
-            unit = "L"
-
-        formatted_value = str(value).rstrip("0").rstrip(".").replace(".", separator)
-        return f"{formatted_value} {unit}"
 
 
 class ArticleCreateOrUpdate(BaseArticle):

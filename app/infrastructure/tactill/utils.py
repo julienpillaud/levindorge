@@ -66,7 +66,7 @@ COLORS_MAPPING = {
 def define_name(display_group: DisplayGroup, article: Article) -> str:
     name1 = article.producer
     name2 = article.product
-    volume = article.formated_volume()
+    volume = article.volume
     color = article.color
 
     match display_group:

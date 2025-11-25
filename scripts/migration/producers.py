@@ -6,10 +6,7 @@ from app.domain.producers.entities import Producer
 from scripts.migration.categories import CATEGORIES
 
 
-def create_producers(
-    dst_context: Context,
-    articles: list[Article],
-) -> None:
+def create_producers(dst_context: Context, articles: list[Article]) -> None:
     dst_producers = create_producer_entities(articles=articles)
     result = dst_context.producer_repository.create_many(dst_producers)
     count = len(result)

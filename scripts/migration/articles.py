@@ -4,7 +4,7 @@ from typing import Any
 from rich import print
 
 from app.core.core import Context
-from app.domain.articles.entities import Article, ArticleStoreData
+from app.domain.articles.entities import Article, ArticleStoreData, ArticleVolume
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
 from app.domain.categories.entities import Category
 from app.domain.commons.entities import PricingGroup
@@ -73,7 +73,7 @@ def create_article_entities(
             origin=get_origin(value=article["region"], origins_map=origins_map),
             color=article["color"],
             taste=article["taste"],
-            volume=article["volume"],
+            volume=get_volume(article=article),
             alcohol_by_volume=article["alcohol_by_volume"],
             packaging=article["packaging"],
             deposit=article["deposit"],
@@ -118,6 +118,24 @@ def get_origin(value: str, origins_map: dict[str, Origin]) -> str | None:
 
     print(f"[bold red]No origin found for {value}[/bold red]")
     return value
+
+
+def convert_volume(value: float, unit: str) -> tuple[float, str]:
+    if unit == "cL" and value >= 100:  # noqa: PLR2004
+        value /= 100
+        unit = "L"
+    return value, unit
+
+
+def get_volume(article: dict[str, Any]) -> ArticleVolume | None:
+    if not article["volume"]:
+        return None
+
+    volume_value, volume_unit = convert_volume(
+        value=article["volume"]["value"],
+        unit=article["volume"]["unit"],
+    )
+    return ArticleVolume(value=volume_value, unit=volume_unit)
 
 
 def get_store_data(

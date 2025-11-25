@@ -5,7 +5,6 @@ from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId
 from app.domain.inventories.entities import Inventory, InventoryRecord, InventoryReport
 from app.domain.items.entities import Item, ItemType
-from app.domain.volumes.entities import Volume
 
 
 class ArticleTypeRepositoryProtocol(Protocol):
@@ -35,20 +34,6 @@ class ItemRepositoryProtocol(Protocol):
     def delete_item(self, item_type: ItemType, item: Item) -> None: ...
 
     def item_is_used(self, item_type: ItemType, item: Item) -> bool: ...
-
-
-class VolumeRepositoryProtocol(Protocol):
-    def get_volumes(self) -> list[Volume]: ...
-
-    def get_volume(self, volume_id: EntityId) -> Volume | None: ...
-
-    def volume_exists(self, volume: Volume) -> bool: ...
-
-    def create_volume(self, volume: Volume) -> Volume: ...
-
-    def delete_volume(self, volume: Volume) -> None: ...
-
-    def volume_is_used(self, volume: Volume) -> bool: ...
 
 
 class DepositRepositoryProtocol(Protocol):
@@ -91,7 +76,6 @@ class InventoryRepositoryProtocol(Protocol):
 class RepositoryProtocol(
     ArticleTypeRepositoryProtocol,
     ItemRepositoryProtocol,
-    VolumeRepositoryProtocol,
     DepositRepositoryProtocol,
     InventoryRepositoryProtocol,
     Protocol,

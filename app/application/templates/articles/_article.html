@@ -46,6 +46,26 @@
     </div>
   {% endif %}
 
+  {% if category_group.volume %}
+    <div class="join w-full">
+      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">Volume</span>
+      <select class="select">
+        {% for volume in data.volumes %}
+          <option {% if article.volume.value == volume.value and article.volume.unit == volume.unit %}selected{% endif %}>
+            {{ volume }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+  {% endif %}
+
+  {% if category_group.alcohol_by_volume %}
+    <div class="join w-full">
+      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">Alc. %</span>
+      <input type="text" class="input input-bordered join-item w-full" value="{{ article.alcohol_by_volume }}"/>
+    </div>
+  {% endif %}
+
   {% include "articles/_article_price.html" %}
 
 </div>

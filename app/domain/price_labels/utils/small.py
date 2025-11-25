@@ -88,8 +88,7 @@ def write_small_price_labels(
     # ----------------------------------------------------------
     file.write('<div class="bottomlineClass">\n')
     # ----------------------------------------------------------
-    volume = article.formated_volume(",")
-    file.write(f'<div class="bottleClass">{volume}</div>')
+    file.write(f'<div class="bottleClass">{article.volume}</div>')
     # ----------------------------------------------------------
     sell_price = article.store_data[store.slug].gross_price
     sell_price_tag = f"{sell_price:.0f}".replace(".", ", ")

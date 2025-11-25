@@ -104,9 +104,8 @@ def write_large_price_labels(
 
     # top line
     if pricing_group in {"beer", "keg", "mini_keg"}:
-        volume = article.formated_volume(",")
         demonym = ""  # TODO: replace by country name
-        top_line = f"{color} - {volume} - {demonym}"
+        top_line = f"{color} - {article.volume} - {demonym}"
         file.write(f'<div class="toplinebeerClass brandonClass">{top_line}</div>\n')
 
     elif pricing_group in {"wine", "sparkling_wine", "bib"}:
@@ -154,7 +153,6 @@ def write_large_price_labels(
     elif pricing_group == "mini_keg":
         file.write('<div class="consigneClass">Consigne : 7, 50 €</div>\n')
     elif pricing_group in {"wine", "sparkling_wine", "bib"}:
-        volume = article.formated_volume(",")
-        file.write(f'<div class="volumeClass">{volume}</div>\n')
+        file.write(f'<div class="volumeClass">{article.volume}</div>\n')
 
     file.write("</div>\n")
