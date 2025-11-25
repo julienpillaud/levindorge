@@ -17,6 +17,7 @@ from app.infrastructure.repository.origins import OriginRepository
 from app.infrastructure.repository.producers import ProducerRepository
 from app.infrastructure.repository.stores import StoreRepository
 from app.infrastructure.repository.users import UserRepository
+from app.infrastructure.repository.volumes import VolumeRepository
 from app.infrastructure.tactill.manager import TactillManager
 
 
@@ -65,6 +66,10 @@ class Context(BaseContext):
     @property
     def origin_repository(self) -> OriginRepository:
         return OriginRepository(database=self.database)
+
+    @property
+    def volume_repository(self) -> VolumeRepository:
+        return VolumeRepository(database=self.database)
 
     @property
     def pos_manager(self) -> TactillManager:

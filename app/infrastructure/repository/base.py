@@ -9,14 +9,12 @@ from app.infrastructure.repository.deposits import DepositRepository
 from app.infrastructure.repository.inventories import InventoryRepository
 from app.infrastructure.repository.items import ItemRepository
 from app.infrastructure.repository.types import ArticleTypeRepository
-from app.infrastructure.repository.volumes import VolumeRepository
 
 
 class MongoRepository(
     RepositoryProtocol,
     ArticleTypeRepository,
     ItemRepository,
-    VolumeRepository,
     DepositRepository,
     InventoryRepository,
 ):
@@ -26,6 +24,5 @@ class MongoRepository(
     def get_items_dict(self, volume_category: str | None) -> dict[str, Any]:
         return {
             "distributor_list": self.get_items(ItemType.DISTRIBUTORS),
-            "volumes": self.get_volumes_by_category(volume_category),
             "deposits": self.get_deposits(),
         }

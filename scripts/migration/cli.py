@@ -11,6 +11,7 @@ from scripts.migration.origins import create_origins
 from scripts.migration.producers import create_producers
 from scripts.migration.stores import create_stores
 from scripts.migration.users import create_users
+from scripts.migration.volumes import create_volume
 
 app = typer.Typer(no_args_is_help=True)
 console = Console()
@@ -52,6 +53,12 @@ def main(
     )
 
     create_producers(dst_context=dst_context, articles=articles)
+
+    create_volume(
+        dst_context=dst_context,
+        categories=categories,
+        articles=articles,
+    )
 
 
 if __name__ == "__main__":

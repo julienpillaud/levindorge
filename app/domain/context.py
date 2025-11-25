@@ -11,6 +11,7 @@ from app.domain.origins.repository import OriginRepositoryProtocol
 from app.domain.producers.repository import ProducerRepositoryProtocol
 from app.domain.stores.repository import StoreRepositoryProtocol
 from app.domain.users.repository import UserRepositoryProtocol
+from app.domain.volumes.repository import VolumeRepositoryProtocol
 
 
 class ContextProtocol(UnitOfWorkProtocol, Protocol):
@@ -34,6 +35,9 @@ class ContextProtocol(UnitOfWorkProtocol, Protocol):
 
     @property
     def origin_repository(self) -> OriginRepositoryProtocol: ...
+
+    @property
+    def volume_repository(self) -> VolumeRepositoryProtocol: ...
 
     @property
     def pos_manager(self) -> POSManagerProtocol: ...

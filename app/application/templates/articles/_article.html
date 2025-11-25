@@ -46,6 +46,19 @@
     </div>
   {% endif %}
 
+  {% if category_group.volume %}
+    <div class="join w-full">
+      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">Volume</span>
+      <select class="select">
+        {% for volume in data.volumes %}
+          <option {% if article.volume.value == volume.value and article.volume.unit == volume.unit %}selected{% endif %}>
+            {{ volume }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+  {% endif %}
+
   {% include "articles/_article_price.html" %}
 
 </div>
