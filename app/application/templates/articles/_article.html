@@ -59,6 +59,13 @@
     </div>
   {% endif %}
 
+  {% if category_group.alcohol_by_volume %}
+    <div class="join w-full">
+      <span class="join-item btn btn-active btn-soft btn-primary cursor-default">Alc. %</span>
+      <input type="text" class="input input-bordered join-item w-full" value="{{ article.alcohol_by_volume }}"/>
+    </div>
+  {% endif %}
+
   {% include "articles/_article_price.html" %}
 
 </div>
