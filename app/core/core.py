@@ -1,7 +1,6 @@
 from collections.abc import Iterator
 from contextlib import contextmanager
 
-from cleanstack.infrastructure.mongo.entities import MongoDocument
 from fastapi import FastAPI
 from faststream.redis import RedisBroker
 from pymongo import MongoClient
@@ -13,6 +12,7 @@ from app.infrastructure.event_publisher import FastStreamEventPublisher
 from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.base import MongoRepository
 from app.infrastructure.repository.categories import CategoryRepository
+from app.infrastructure.repository.mongo_repository import MongoDocument
 from app.infrastructure.repository.origins import OriginRepository
 from app.infrastructure.repository.producers import ProducerRepository
 from app.infrastructure.repository.stores import StoreRepository

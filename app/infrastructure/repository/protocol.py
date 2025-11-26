@@ -1,7 +1,8 @@
 from typing import Protocol
 
-from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo.database import Database
+
+from app.infrastructure.repository.mongo_repository import MongoDocument
 
 
 class MongoRepositoryProtocol(Protocol):

@@ -1,11 +1,11 @@
 from collections.abc import Iterator
 
 import pytest
-from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo import MongoClient
 from pymongo.database import Database
 
 from app.core.config import Settings
+from app.infrastructure.repository.mongo_repository import MongoDocument
 
 
 @pytest.fixture

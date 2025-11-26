@@ -1,11 +1,13 @@
 from typing import Any
 
-from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pymongo.synchronous.database import Database
 
 from app.domain._shared.protocols.base_repository import RepositoryProtocol
 from app.domain.entities import DomainEntity
-from app.infrastructure.repository.mongo_repository import MongoRepository
+from app.infrastructure.repository.mongo_repository import (
+    MongoDocument,
+    MongoRepository,
+)
 
 
 class BaseFactory[T: DomainEntity]:

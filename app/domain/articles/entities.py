@@ -1,12 +1,15 @@
 import datetime
+import uuid
 from decimal import Decimal
 from enum import StrEnum
+from typing import Annotated
 
 from pydantic import (
     BaseModel,
     Field,
     NonNegativeFloat,
     NonNegativeInt,
+    PlainSerializer,
     PositiveFloat,
 )
 
@@ -71,6 +74,9 @@ class ArticleStoreData(BaseModel):
 
 
 class BaseArticle(BaseModel):
+    reference: Annotated[uuid.UUID, PlainSerializer(str)] = Field(
+        default_factory=uuid.uuid7
+    )
     category: str
     producer: str | None = Field(min_length=1, default=None)
     product: str

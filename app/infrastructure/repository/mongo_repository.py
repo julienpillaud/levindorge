@@ -2,7 +2,6 @@ from typing import Any
 
 from bson import ObjectId
 from cleanstack.exceptions import NotFoundError
-from cleanstack.infrastructure.mongo.entities import MongoDocument
 from pydantic import PositiveInt
 from pymongo.database import Database
 
@@ -15,6 +14,8 @@ from app.domain.entities import (
 )
 from app.infrastructure.repository.exceptions import MongoRepositoryError
 from app.utils.utils import iter_dicts
+
+type MongoDocument = dict[str, Any]
 
 
 class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
