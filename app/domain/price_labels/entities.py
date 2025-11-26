@@ -38,7 +38,7 @@ class PriceLabelFile(BaseModel):
     file: str
 
     @classmethod
-    def from_path(cls, path: Path) -> "PriceLabelFile":
+    def from_path(cls, path: Path) -> PriceLabelFile:
         number_of_parts = 5
         parts = path.stem.split("_")
         if len(parts) != number_of_parts:

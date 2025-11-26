@@ -1,10 +1,11 @@
 from typing import TypedDict
 
-from cleanstack.infrastructure.mongo.entities import MongoDocument
-
 from app.domain.users.entities import Role, User
 from app.domain.users.repository import UserRepositoryProtocol
-from app.infrastructure.repository.mongo_repository import MongoRepository
+from app.infrastructure.repository.mongo_repository import (
+    MongoDocument,
+    MongoRepository,
+)
 
 
 class UserDocument(TypedDict):

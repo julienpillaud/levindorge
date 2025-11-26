@@ -1,3 +1,4 @@
+import datetime
 from decimal import Decimal
 from typing import Any
 
@@ -54,6 +55,7 @@ def create_article_entities(
     }
     origins_map = {origin.name: origin for origin in origins}
 
+    current_date = datetime.datetime.now(datetime.UTC)
     dst_articles: list[Article] = []
     for article in src_articles:
         producer, product = get_producer_and_product(
@@ -77,8 +79,8 @@ def create_article_entities(
             alcohol_by_volume=article["alcohol_by_volume"],
             packaging=article["packaging"],
             deposit=article["deposit"],
-            created_at=article["created_at"],
-            updated_at=article["updated_at"],
+            created_at=current_date,
+            updated_at=current_date,
             store_data=get_store_data(
                 article=article,
                 pricing_groups_map=pricing_groups_map,
