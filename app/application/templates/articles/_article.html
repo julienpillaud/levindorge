@@ -68,4 +68,15 @@
 
   {% include "articles/_article_price.html" %}
 
+  <div class="join w-full">
+    <span class="join-item btn btn-active btn-soft btn-primary cursor-default">Fournisseur</span>
+    <select class="select">
+      {% for distributor in data.distributors %}
+        <option {% if article.distributor == distributor.name %}selected{% endif %}>
+          {{ distributor.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
 </div>
