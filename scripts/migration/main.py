@@ -13,12 +13,12 @@ from scripts.migration.stores import create_stores
 from scripts.migration.users import create_users
 from scripts.migration.volumes import create_volume
 
-app = typer.Typer(no_args_is_help=True)
+app = typer.Typer()
 console = Console()
 
 
 @app.command()
-def main(
+def migrate(
     source: Annotated[str, typer.Argument()] = "dashboard",
     destination: Annotated[str, typer.Argument()] = "temp",
     delete_destination: Annotated[bool, typer.Option("--delete", "-d")] = True,
