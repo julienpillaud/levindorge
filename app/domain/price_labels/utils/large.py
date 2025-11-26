@@ -6,7 +6,6 @@ from app.core.config import Settings
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
 from app.domain.context import ContextProtocol
-from app.domain.items.entities import Item
 from app.domain.price_labels.entities import PriceLabelWrapper
 from app.domain.price_labels.utils.common import (
     chunk_price_labels,
@@ -66,7 +65,7 @@ def write_large_labels_file(
     file: TextIO,
     price_labels: list[PriceLabelWrapper],
     store: Store,
-    regions_mapping: dict[str, Item],
+    regions_mapping: dict[str, Any],
 ) -> None:
     for index, price_label in enumerate(price_labels):
         write_large_price_labels(
@@ -87,7 +86,7 @@ def write_large_price_labels(
     pricing_group: PricingGroup,
     article: Article,
     store: Store,
-    regions_mapping: dict[str, Item],
+    regions_mapping: dict[str, Any],
 ) -> None:
     font_file = settings.app_path.fonts / "localbrewerytwo-bold.otf"
     font = ImageFont.truetype(str(font_file), 23)

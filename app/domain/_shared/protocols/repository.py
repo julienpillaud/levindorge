@@ -1,10 +1,9 @@
-from typing import Any, Protocol
+from typing import Protocol
 
 from app.domain.commons.entities import ArticleType, DisplayGroup
 from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId
 from app.domain.inventories.entities import Inventory, InventoryRecord, InventoryReport
-from app.domain.items.entities import Item, ItemType
 
 
 class ArticleTypeRepositoryProtocol(Protocol):
@@ -20,20 +19,6 @@ class ArticleTypeRepositoryProtocol(Protocol):
         self,
         display_group: DisplayGroup,
     ) -> list[ArticleType]: ...
-
-
-class ItemRepositoryProtocol(Protocol):
-    def get_items(self, item_type: ItemType) -> list[Item]: ...
-
-    def get_item(self, item_type: ItemType, item_id: EntityId) -> Item | None: ...
-
-    def item_exists(self, item_type: ItemType, item: Item) -> bool: ...
-
-    def create_item(self, item_type: ItemType, item: Item) -> Item: ...
-
-    def delete_item(self, item_type: ItemType, item: Item) -> None: ...
-
-    def item_is_used(self, item_type: ItemType, item: Item) -> bool: ...
 
 
 class DepositRepositoryProtocol(Protocol):
@@ -75,9 +60,7 @@ class InventoryRepositoryProtocol(Protocol):
 
 class RepositoryProtocol(
     ArticleTypeRepositoryProtocol,
-    ItemRepositoryProtocol,
     DepositRepositoryProtocol,
     InventoryRepositoryProtocol,
     Protocol,
-):
-    def get_items_dict(self, volume_category: str | None) -> dict[str, Any]: ...
+): ...

@@ -1,6 +1,8 @@
 from app.domain.categories.entities import Category
 from app.domain.commons.entities import ArticleType, ViewData
 from app.domain.context import ContextProtocol
+from app.domain.distributors.commands import get_distributors_command
+from app.domain.distributors.entities import Distributor
 from app.domain.origins.commands import get_origins_command
 from app.domain.origins.entities import Origin
 from app.domain.producers.commands import get_producers_command
@@ -15,6 +17,7 @@ def get_view_data_command(
 ) -> ViewData:
     return ViewData(
         producers=get_producers(context=context, category=category),
+        distributors=get_distributors(context=context),
         origins=get_origins(context=context),
         volumes=get_volumes(context=context, category=category),
     )
@@ -28,6 +31,11 @@ def get_producers(context: ContextProtocol, category: Category) -> list[Producer
         context=context,
         producer_type=category.producer_type,
     )
+    return result.items
+
+
+def get_distributors(context: ContextProtocol) -> list[Distributor]:
+    result = get_distributors_command(context=context)
     return result.items
 
 

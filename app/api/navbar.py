@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
 from app.domain.commons.entities import DisplayGroup
-from app.domain.items.entities import ItemType
 
 
 class NavbarCategory(BaseModel):
@@ -12,7 +11,6 @@ class NavbarCategory(BaseModel):
 
 class NavbarItem(BaseModel):
     label: str
-    item_type: ItemType | None = None
     endpoint: str
 
 
@@ -95,11 +93,6 @@ navbar_categories = [
 ]
 
 navbar_items = [
-    NavbarItem(
-        label="Fournisseurs",
-        item_type=ItemType.DISTRIBUTORS,
-        endpoint="get_items_view",
-    ),
     NavbarItem(
         label="Volumes",
         endpoint="get_volumes_view",

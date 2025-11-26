@@ -7,6 +7,7 @@ from app.core.config import Settings
 from app.core.core import Context
 from scripts.migration.articles import create_articles
 from scripts.migration.categories import create_categories
+from scripts.migration.distributors import create_distributors
 from scripts.migration.origins import create_origins
 from scripts.migration.producers import create_producers
 from scripts.migration.stores import create_stores
@@ -53,6 +54,7 @@ def migrate(
     )
 
     create_producers(dst_context=dst_context, articles=articles)
+    create_distributors(dst_context=dst_context, articles=articles)
 
     create_volume(
         dst_context=dst_context,

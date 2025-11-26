@@ -25,11 +25,6 @@ from app.domain.inventories.commands import (
     get_inventories_command,
     get_inventory_command,
 )
-from app.domain.items.commands import (
-    create_item_command,
-    delete_item_command,
-    get_items_command,
-)
 from app.domain.pos.commands import (
     create_pos_article_command,
     delete_pos_article_command,
@@ -59,11 +54,6 @@ class Domain(BaseDomain[ContextProtocol]):
 
     # producers
     get_producers = CommandHandler(get_producers_command)
-
-    # items
-    get_items = CommandHandler(get_items_command)
-    create_item = CommandHandler(create_item_command)
-    delete_item = CommandHandler(delete_item_command)
 
     # volumes
     get_volumes = CommandHandler(get_volumes_command)
