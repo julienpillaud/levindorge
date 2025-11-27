@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/julienpillaud/levindorge/compare/0.7.0...0.8.0) (2025-11-27)
+
+
+### Features
+
+* bump Python base image to 3.14 ([#56](https://github.com/julienpillaud/levindorge/issues/56)) ([b2ed9cf](https://github.com/julienpillaud/levindorge/commit/b2ed9cf13eade62cd53adeb9379002b773a9c2aa))
+
 ## [0.7.0](https://github.com/julienpillaud/levindorge/compare/0.6.0...0.7.0) (2025-11-27)
 
 
