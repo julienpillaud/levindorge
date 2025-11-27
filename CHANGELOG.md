@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.7.0](https://github.com/julienpillaud/levindorge/compare/0.6.0...0.7.0) (2025-11-27)
+
+
+### Features
+
+* add clean script ([#51](https://github.com/julienpillaud/levindorge/issues/51)) ([5d26f8c](https://github.com/julienpillaud/levindorge/commit/5d26f8cba9521361f1f305c758a1956423d2074d))
+* add deposit repository ([#54](https://github.com/julienpillaud/levindorge/issues/54)) ([c59de40](https://github.com/julienpillaud/levindorge/commit/c59de40e2086254e8c4e6693d8e7599921cf65d4))
+* add distributor entity ([5c76373](https://github.com/julienpillaud/levindorge/commit/5c7637396253ac1b2360dd89e14b9d8e13558fa5))
+* add origin entities ([f8834a7](https://github.com/julienpillaud/levindorge/commit/f8834a722fe74e09278561473d1a9e6811af7b48))
+* add producer entities ([#48](https://github.com/julienpillaud/levindorge/issues/48)) ([9087229](https://github.com/julienpillaud/levindorge/commit/90872299e38369cc7d3b9a81c086d1c13817bdad))
+* add tests for articles ([#46](https://github.com/julienpillaud/levindorge/issues/46)) ([eb8effa](https://github.com/julienpillaud/levindorge/commit/eb8effafb9602051dc871d01db166edf8a482779))
+* add tests for categories ([#45](https://github.com/julienpillaud/levindorge/issues/45)) ([8312501](https://github.com/julienpillaud/levindorge/commit/831250180e8f79a289df6d5be5d94b444125a3cd))
+* add tests for stores ([#43](https://github.com/julienpillaud/levindorge/issues/43)) ([ced701b](https://github.com/julienpillaud/levindorge/commit/ced701be5bd5415f2ba3091ac3c73dfbadfdd902))
+* add tests for users ([#44](https://github.com/julienpillaud/levindorge/issues/44)) ([0afc90e](https://github.com/julienpillaud/levindorge/commit/0afc90e2ad55af30aad4cf07aecaff734dc6fd94))
+* bump python to 3.14 ([#52](https://github.com/julienpillaud/levindorge/issues/52)) ([b59fe5e](https://github.com/julienpillaud/levindorge/commit/b59fe5ef53ae16e32a116e65a0c3eeaf8c1cbad7))
+* refactor category groups ([#47](https://github.com/julienpillaud/levindorge/issues/47)) ([b3b66a3](https://github.com/julienpillaud/levindorge/commit/b3b66a3b7ff2b5a0f8862adbf1b022f6cca2ae60))
+* refactor entities ([#40](https://github.com/julienpillaud/levindorge/issues/40)) ([d5e9fac](https://github.com/julienpillaud/levindorge/commit/d5e9fac207362dadff80df4bc3ca78e770b2e31a))
+* refactor volume handling ([#50](https://github.com/julienpillaud/levindorge/issues/50)) ([7d0c0eb](https://github.com/julienpillaud/levindorge/commit/7d0c0ebc80379cd5f8f72cf40ca6ea7ce246a7ed))
+* remove flask related files ([#55](https://github.com/julienpillaud/levindorge/issues/55)) ([412dc3a](https://github.com/julienpillaud/levindorge/commit/412dc3a743f7812c30faa275f5a8ca89fdaba20d))
+* rename app to api ([#42](https://github.com/julienpillaud/levindorge/issues/42)) ([a70d1b1](https://github.com/julienpillaud/levindorge/commit/a70d1b1e0fc4f3964fc7cbe6bf13ca351d30e64b))
+
 ## [0.6.0](https://github.com/julienpillaud/levindorge/compare/0.5.1...0.6.0) (2025-11-12)
 
 
