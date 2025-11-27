@@ -59,15 +59,3 @@ ignore = [
 [tool.mypy]
 strict = true
 plugins = ['pydantic.mypy']
-exclude = [
-    '^app/blueprints/',
-    '^app/entities/',
-    '^app/interfaces/',
-    '^app/logging/',
-    '^app/repository/',
-    '^app/use_cases/',
-    '^app/utils/',
-    '^app/config.py$',
-    '^app/worker.py$',
-    '^app/main.py$',
-]

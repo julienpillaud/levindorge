@@ -11,7 +11,6 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.api.filters import (
     article_shops_to_json,
     create_local_timezone_filter,
-    get_navbar_category_title,
     strip_zeros,
 )
 from app.api.navbar import navbar_categories, navbar_items
@@ -26,7 +25,6 @@ def init_templates(settings: Settings) -> Jinja2Templates:
     templates.env.globals["app_version"] = settings.app_version
 
     templates.env.filters["strip_zeros"] = strip_zeros
-    templates.env.filters["get_navbar_category_title"] = get_navbar_category_title
     templates.env.filters["local_timezone"] = create_local_timezone_filter(
         zone_info=settings.zone_info
     )

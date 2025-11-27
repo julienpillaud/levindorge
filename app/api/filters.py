@@ -3,20 +3,11 @@ import json
 from collections.abc import Callable
 from zoneinfo import ZoneInfo
 
-from app.data import navbar_categories
 from app.domain.articles.entities import ArticleStoreData
 
 
 def strip_zeros(value: float) -> str:
     return str(value).rstrip("0").rstrip(".")
-
-
-def get_navbar_category_title(list_category: str) -> str:
-    for _, categories in navbar_categories.items():
-        for category in categories:
-            if category.code == list_category:
-                return category.plural_name
-    return list_category
 
 
 def create_local_timezone_filter(
