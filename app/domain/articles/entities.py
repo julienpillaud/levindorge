@@ -88,13 +88,13 @@ class BaseArticle(BaseModel):
     vat_rate: DecimalType = Field(ge=0, le=100, decimal_places=2)
     distributor: str
     barcode: str = ""
-    origin: str | None = None
+    origin: str | None
     color: ArticleColor = ArticleColor.UNDEFINED
     taste: ArticleTaste = ArticleTaste.UNDEFINED
     volume: ArticleVolume | None
     alcohol_by_volume: NonNegativeFloat = 0.0
     packaging: NonNegativeInt = 0
-    deposit: ArticleDeposit
+    deposit: ArticleDeposit | None
 
     @property
     def display_name(self) -> str:
@@ -112,7 +112,10 @@ class BaseArticle(BaseModel):
     def inventory_value(self, stock_quantity: int) -> Decimal:
         return self.total_cost * stock_quantity
 
-    def deposit_value(self, stock_quantity: int) -> float:
+    def deposit_value(self, stock_quantity: int) -> float | None:
+        if not self.deposit:
+            return None
+
         if self.deposit.unit == 0:
             return 0
 

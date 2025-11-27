@@ -1,6 +1,8 @@
 from app.domain.categories.entities import Category
-from app.domain.commons.entities import ArticleType, ViewData
+from app.domain.commons.entities import ViewData
 from app.domain.context import ContextProtocol
+from app.domain.deposits.commands import get_deposits_command
+from app.domain.deposits.entities import Deposit
 from app.domain.distributors.commands import get_distributors_command
 from app.domain.distributors.entities import Distributor
 from app.domain.origins.commands import get_origins_command
@@ -20,6 +22,7 @@ def get_view_data_command(
         distributors=get_distributors(context=context),
         origins=get_origins(context=context),
         volumes=get_volumes(context=context, category=category),
+        deposits=get_deposits(context=context, category=category),
     )
 
 
@@ -58,5 +61,15 @@ def get_volumes(
     return result.items
 
 
-def get_article_type_command(context: ContextProtocol, name: str) -> ArticleType:
-    return context.repository.get_article_type_by_name(name=name)
+def get_deposits(
+    context: ContextProtocol,
+    category: Category,
+) -> list[Deposit]:
+    if not category.deposit_category:
+        return []
+
+    result = get_deposits_command(
+        context=context,
+        deposit_category=category.deposit_category,
+    )
+    return result.items

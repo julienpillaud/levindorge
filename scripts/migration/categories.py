@@ -5,6 +5,7 @@ from app.domain._shared.entities import ProducerType
 from app.domain.categories.entities import Category
 from app.domain.commons.category_groups import CategoryGroupName
 from app.domain.commons.entities import PricingGroup
+from app.domain.deposits.entities import DepositCategory
 from app.domain.volumes.entities import VolumeCategory
 
 
@@ -23,6 +24,7 @@ CATEGORIES = [
         category_group=CategoryGroupName.BEER,
         producer_type=ProducerType.BREWERY,
         volume_category=VolumeCategory.BEER,
+        deposit_category=DepositCategory.BEER,
         tactill_category="BIÈRE",
     ),
     Category(
@@ -31,6 +33,7 @@ CATEGORIES = [
         category_group=CategoryGroupName.BEER,
         producer_type=ProducerType.BREWERY,
         volume_category=VolumeCategory.BEER,
+        deposit_category=DepositCategory.BEER,
         tactill_category="CIDRE",
     ),
     Category(
@@ -39,6 +42,7 @@ CATEGORIES = [
         category_group=CategoryGroupName.KEG,
         producer_type=ProducerType.BREWERY,
         volume_category=VolumeCategory.KEG,
+        deposit_category=DepositCategory.KEG,
         tactill_category="FÛT",
     ),
     Category(
@@ -47,6 +51,7 @@ CATEGORIES = [
         category_group=CategoryGroupName.KEG,
         producer_type=ProducerType.BREWERY,
         volume_category=VolumeCategory.MINI_KEG,
+        deposit_category=DepositCategory.MINI_KEG,
         tactill_category="MINI-FÛT",
     ),
     # ----- spirit -----

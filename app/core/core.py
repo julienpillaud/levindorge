@@ -12,6 +12,7 @@ from app.infrastructure.event_publisher import FastStreamEventPublisher
 from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.base import MongoRepository
 from app.infrastructure.repository.categories import CategoryRepository
+from app.infrastructure.repository.deposits import DepositRepository
 from app.infrastructure.repository.distributors import DistributorRepository
 from app.infrastructure.repository.mongo_repository import MongoDocument
 from app.infrastructure.repository.origins import OriginRepository
@@ -75,6 +76,10 @@ class Context(BaseContext):
     @property
     def volume_repository(self) -> VolumeRepository:
         return VolumeRepository(database=self.database)
+
+    @property
+    def deposit_repository(self) -> DepositRepository:
+        return DepositRepository(database=self.database)
 
     @property
     def pos_manager(self) -> TactillManager:

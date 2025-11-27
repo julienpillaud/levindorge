@@ -2,6 +2,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
+from app.domain.deposits.entities import Deposit
 from app.domain.distributors.entities import Distributor
 from app.domain.origins.entities import Origin
 from app.domain.producers.entities import Producer
@@ -53,3 +54,4 @@ class ViewData(BaseModel):
     distributors: list[Distributor]
     origins: list[Origin]
     volumes: list[Volume]
+    deposits: list[Deposit]
