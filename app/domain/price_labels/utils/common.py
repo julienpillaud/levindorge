@@ -2,6 +2,7 @@ import datetime
 import itertools
 from collections.abc import Iterator
 from pathlib import Path
+from typing import Any
 
 from PIL.ImageFont import FreeTypeFont
 
@@ -53,10 +54,12 @@ def split_by_size(
     context: ContextProtocol,
     price_labels: list[PriceLabelCreate],
 ) -> tuple[list[PriceLabelWrapper], list[PriceLabelWrapper]]:
-    article_types_mapping = {
-        article_type.name: article_type
-        for article_type in context.repository.get_article_types()
-    }
+    # TODO : get from category repository
+    article_types_mapping: dict[str, Any] = {}
+    # article_types_mapping = {
+    #     article_type.name: article_type
+    #     for article_type in context.repository.get_article_types()
+    # }
 
     large_labels = []
     small_labels = []

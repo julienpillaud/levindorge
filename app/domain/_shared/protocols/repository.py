@@ -1,38 +1,7 @@
 from typing import Protocol
 
-from app.domain.commons.entities import ArticleType, DisplayGroup
-from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId
 from app.domain.inventories.entities import Inventory, InventoryRecord, InventoryReport
-
-
-class ArticleTypeRepositoryProtocol(Protocol):
-    def get_article_types(
-        self,
-        name: str | None = None,
-        display_group: DisplayGroup | None = None,
-    ) -> list[ArticleType]: ...
-
-    def get_article_type_by_name(self, name: str) -> ArticleType: ...
-
-    def get_article_types_by_list(
-        self,
-        display_group: DisplayGroup,
-    ) -> list[ArticleType]: ...
-
-
-class DepositRepositoryProtocol(Protocol):
-    def get_deposits(self) -> list[Deposit]: ...
-
-    def get_deposit(self, deposit_id: EntityId) -> Deposit | None: ...
-
-    def deposit_exists(self, deposit: Deposit) -> bool: ...
-
-    def create_deposit(self, deposit: Deposit) -> Deposit: ...
-
-    def delete_deposit(self, deposit: Deposit) -> None: ...
-
-    def deposit_is_used(self, deposit: Deposit) -> bool: ...
 
 
 class InventoryRepositoryProtocol(Protocol):
@@ -58,9 +27,4 @@ class InventoryRepositoryProtocol(Protocol):
     def delete_inventory_records(self, inventory_id: EntityId) -> None: ...
 
 
-class RepositoryProtocol(
-    ArticleTypeRepositoryProtocol,
-    DepositRepositoryProtocol,
-    InventoryRepositoryProtocol,
-    Protocol,
-): ...
+class RepositoryProtocol(InventoryRepositoryProtocol, Protocol): ...

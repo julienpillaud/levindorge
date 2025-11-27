@@ -145,9 +145,9 @@ def write_large_price_labels(
     file.write(f'<div class="priceClass">{sell_price_tag} €</div>\n')
 
     # ----------------------------------------------------------
-    if pricing_group == "beer" and article.deposit.unit == 0:
+    if pricing_group == "beer" and article.deposit and article.deposit.unit == 0:
         file.write('<div class="consigneClass"></div>\n')
-    elif pricing_group == "beer" and article.deposit.case != 0:
+    elif pricing_group == "beer" and article.deposit and article.deposit.case != 0:
         file.write('<div class="consigneClass">Consigne : 0, 15 €</div>\n')
     elif pricing_group == "mini_keg":
         file.write('<div class="consigneClass">Consigne : 7, 50 €</div>\n')

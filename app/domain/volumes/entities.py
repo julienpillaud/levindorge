@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, computed_field
+from pydantic import computed_field
 
 from app.domain.entities import DomainEntity
 
@@ -39,9 +39,3 @@ class Volume(DomainEntity):
     def __str__(self) -> str:
         formatted_value = str(self.value).rstrip("0").rstrip(".").replace(".", ",")
         return f"{formatted_value} {self.unit}"
-
-
-class VolumeCreate(BaseModel):
-    value: float
-    unit: VolumeUnit
-    category: VolumeCategory

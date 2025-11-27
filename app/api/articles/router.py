@@ -51,16 +51,12 @@ def create_article_view(
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     display_group: DisplayGroup,
 ) -> Response:
-    view_data = domain.get_view_data(display_group=display_group)
     return templates.TemplateResponse(
         request=request,
         name="articles/article.html",
         context={
             "current_user": current_user,
             "list_category": display_group,
-            "ratio_category": view_data.pricing_group,
-            "type_list": view_data.article_type_names,
-            **view_data.items,
         },
     )
 
@@ -76,7 +72,7 @@ def create_article(
     article_create = ArticleCreateOrUpdate(**form_data.model_dump())
     domain.create_article(current_user=current_user, data=article_create)
     return RedirectResponse(
-        url=request.url_for("get_articles_view", display_group=display_group),
+        url=request.url_for("get_articles"),
         status_code=status.HTTP_302_FOUND,
     )
 
@@ -114,17 +110,13 @@ def update_article(
     article_id: str,
 ) -> Response:
     article_update = ArticleCreateOrUpdate(**form_data.model_dump())
-    article = domain.update_article(
+    domain.update_article(
         current_user=current_user,
         article_id=article_id,
         data=article_update,
     )
-    article_type = domain.get_article_type(name=article.category)
     return RedirectResponse(
-        url=request.url_for(
-            "get_articles_view",
-            display_group=article_type.display_group,
-        ),
+        url=request.url_for("get_articles"),
         status_code=status.HTTP_302_FOUND,
     )
 

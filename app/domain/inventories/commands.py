@@ -1,5 +1,6 @@
 import datetime
 from collections import defaultdict
+from typing import Any
 
 from cleanstack.exceptions import NotFoundError
 
@@ -32,10 +33,12 @@ def get_inventory_command(
 def create_inventory_command(context: ContextProtocol, store: Store) -> Inventory:
     results = context.article_repository.get_all(sort={"type": 1}, page=1, limit=1000)
     articles = results.items
-    article_types_mapping = {
-        article_type.name: article_type
-        for article_type in context.repository.get_article_types()
-    }
+    # TODO : get from category repository
+    article_types_mapping: dict[str, Any] = {}
+    # article_types_mapping = {
+    #     article_type.name: article_type
+    #     for article_type in context.repository.get_article_types()
+    # }
     pos_articles = context.pos_manager.get_articles(store)
     stock_quantity_mapping = {
         article.reference: article.stock_quantity
@@ -53,7 +56,7 @@ def create_inventory_command(context: ContextProtocol, store: Store) -> Inventor
             InventoryRecord(
                 inventory_id="",
                 article_id=article.id,
-                article_name=article.name,
+                article_name=article.display_name,
                 article_volume=article.volume.value if article.volume else 0.0,
                 article_packaging=article.packaging,
                 article_deposit=article.deposit,

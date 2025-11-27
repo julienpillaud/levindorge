@@ -10,15 +10,10 @@ from app.domain.articles.commands import (
 )
 from app.domain.categories.commands import get_category_by_name_command
 from app.domain.commons.commands import (
-    get_article_type_command,
     get_view_data_command,
 )
 from app.domain.context import ContextProtocol
-from app.domain.deposits.commands import (
-    create_deposit_command,
-    delete_deposit_command,
-    get_deposits_command,
-)
+from app.domain.deposits.commands import get_deposits_command
 from app.domain.inventories.commands import (
     create_inventory_command,
     delete_inventory_command,
@@ -37,38 +32,23 @@ from app.domain.price_labels.commands import (
 )
 from app.domain.producers.commands import get_producers_command
 from app.domain.users.commands import get_user_by_email_command, update_user_command
-from app.domain.volumes.commands import (
-    create_volume_command,
-    delete_volume_command,
-    get_volumes_command,
-)
+from app.domain.volumes.commands import get_volumes_command
 
 
 class Domain(BaseDomain[ContextProtocol]):
     # common
     get_view_data = CommandHandler(get_view_data_command)
-    get_article_type = CommandHandler(get_article_type_command)
-
     # categories
     get_category_by_name = CommandHandler(get_category_by_name_command)
-
     # producers
     get_producers = CommandHandler(get_producers_command)
-
     # volumes
     get_volumes = CommandHandler(get_volumes_command)
-    create_volume = CommandHandler(create_volume_command)
-    delete_volume = CommandHandler(delete_volume_command)
-
     # deposits
     get_deposits = CommandHandler(get_deposits_command)
-    create_deposit = CommandHandler(create_deposit_command)
-    delete_deposit = CommandHandler(delete_deposit_command)
-
     # users
     get_user_by_email = CommandHandler(get_user_by_email_command)
     update_user = CommandHandler(update_user_command)
-
     # articles
     get_articles = CommandHandler(get_articles_command)
     get_articles_by_display_group = CommandHandler(
@@ -78,17 +58,14 @@ class Domain(BaseDomain[ContextProtocol]):
     create_article = CommandHandler(create_article_command)
     update_article = CommandHandler(update_article_command)
     delete_article = CommandHandler(delete_article_command)
-
     # POS article
     create_pos_article = CommandHandler(create_pos_article_command)
     update_pos_article = CommandHandler(update_pos_article_command)
     delete_pos_article = CommandHandler(delete_pos_article_command)
     reset_pos_stocks = CommandHandler(reset_pos_stocks_command)
-
     # price_labels
     create_price_labels = CommandHandler(create_price_labels_command)
     get_price_labels_files = CommandHandler(get_price_labels_files_command)
-
     # inventories
     get_inventories = CommandHandler(get_inventories_command)
     get_inventory = CommandHandler(get_inventory_command)

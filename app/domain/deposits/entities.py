@@ -1,21 +1,28 @@
-from typing import Literal
+from enum import StrEnum
 
 from pydantic import BaseModel
 
 from app.domain.entities import DomainEntity
 
 
-class DepositCreate(BaseModel):
-    category: Literal["Bière", "Fût", "Mini-fût"]
-    deposit_type: Literal["Unitaire", "Caisse"]
-    value: float
+class DepositType(StrEnum):
+    UNIT = "unit"
+    CASE = "case"
+
+
+class DepositCategory(StrEnum):
+    BEER = "beer"
+    KEG = "keg"
+    MINI_KEG = "mini_keg"
 
 
 class Deposit(DomainEntity):
-    category: Literal["Bière", "Fût", "Mini-fût"]
-    deposit_type: Literal["Unitaire", "Caisse"]
     value: float
+    type: DepositType
+    category: DepositCategory
 
-    @property
-    def name(self) -> str:
-        return f"Consigne {self.category} {self.value:g} {self.deposit_type}"
+
+class DepositCreate(BaseModel):
+    value: float
+    type: DepositType
+    category: DepositCategory

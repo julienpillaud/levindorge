@@ -7,6 +7,7 @@ from app.domain._shared.protocols.pos_manager import POSManagerProtocol
 from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.categories.repository import CategoryRepositoryProtocol
+from app.domain.deposits.repository import DepositRepositoryProtocol
 from app.domain.distributors.repository import DistributorRepositoryProtocol
 from app.domain.origins.repository import OriginRepositoryProtocol
 from app.domain.producers.repository import ProducerRepositoryProtocol
@@ -42,6 +43,9 @@ class ContextProtocol(UnitOfWorkProtocol, Protocol):
 
     @property
     def volume_repository(self) -> VolumeRepositoryProtocol: ...
+
+    @property
+    def deposit_repository(self) -> DepositRepositoryProtocol: ...
 
     @property
     def pos_manager(self) -> POSManagerProtocol: ...
