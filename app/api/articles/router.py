@@ -35,7 +35,7 @@ def get_articles(
     result = domain.get_articles(search=search, page=page, limit=limit)
     return templates.TemplateResponse(
         request=request,
-        name="articles/articles_global.html",
+        name="articles/articles.html",
         context={
             "current_user": current_user,
             "result": result,
@@ -152,10 +152,10 @@ async def recommended_prices(
     }
 
 
-@router.post("/margins", dependencies=[Depends(get_current_user)])
+@router.post("/margins")
 async def margins(data: MarginsRequestDTO) -> ArticleMargins:
     return compute_article_margins(
         total_cost=data.total_cost,
-        tax_rate=data.vat_rate,
+        vat_rate=data.vat_rate,
         gross_price=data.gross_price,
     )

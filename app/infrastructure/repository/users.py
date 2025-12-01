@@ -22,12 +22,7 @@ class UserRepository(MongoRepository[User], UserRepositoryProtocol):
     collection_name = "users"
 
     def get_by_email(self, email: str, /) -> User | None:
-        user = self.collection.find_one({"email": email})
-        if not user:
-            return None
-
-        user["stores"] = list(self.database["stores"].find().sort("name"))
-        return User(**user)
+        return self.get_one({"email": email})
 
     @staticmethod
     def _to_database_entity(entity: User, /) -> MongoDocument:

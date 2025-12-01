@@ -14,7 +14,7 @@ from app.domain.articles.utils import (
     extract_volume,
 )
 from app.domain.commons.entities import PricingGroup
-from app.domain.entities import DecimalType
+from app.domain.types import DecimalType
 
 
 class PriceRequestDTO(BaseModel):

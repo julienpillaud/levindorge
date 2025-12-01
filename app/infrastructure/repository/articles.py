@@ -8,13 +8,14 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
     domain_entity_type = Article
     collection_name = "articles"
     searchable_fields = (
+        "reference",
+        "category",
         "producer",
         "product",
+        "distributor",
+        "origin",
         "color",
         "taste",
-        "region",
-        "distributor",
-        "category",
     )
 
     def get_by_display_group(

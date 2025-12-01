@@ -20,24 +20,20 @@ class ProducerData(BaseModel):
 
 
 class DepositField(BaseModel):
-    case: bool
     unit: bool
+    case: bool
+    packaging: bool
 
 
 class CategoryGroup(DomainEntity):
     name: CategoryGroupName
     producer: ProducerData | None
-    product: str | None
     origin: bool
     color: bool
     taste: bool
     volume: bool
     alcohol_by_volume: bool
-
-    # recommended_price: bool = True
-    # distributor: bool = True
-    # packaging: bool = False
-    # deposit: DepositField | None = None
+    deposit: DepositField | None = None
 
 
 CATEGORY_GROUPS_MAP = {
@@ -47,12 +43,12 @@ CATEGORY_GROUPS_MAP = {
             display_name="Brasserie",
             type=ProducerType.BREWERY,
         ),
-        product="Bière",
         origin=True,
         color=True,
         taste=False,
         volume=True,
         alcohol_by_volume=True,
+        deposit=DepositField(unit=True, case=True, packaging=True),
     ),
     CategoryGroupName.KEG: CategoryGroup(
         name=CategoryGroupName.KEG,
@@ -60,12 +56,12 @@ CATEGORY_GROUPS_MAP = {
             display_name="Brasserie",
             type=ProducerType.BREWERY,
         ),
-        product="Bière",
         origin=True,
         color=True,
         taste=False,
         volume=True,
         alcohol_by_volume=True,
+        deposit=DepositField(unit=True, case=False, packaging=False),
     ),
     CategoryGroupName.SPIRIT: CategoryGroup(
         name=CategoryGroupName.SPIRIT,
@@ -73,7 +69,6 @@ CATEGORY_GROUPS_MAP = {
             display_name="Distillerie",
             type=ProducerType.DISTILLERY,
         ),
-        product="Spiritueux",
         origin=True,
         color=False,
         taste=True,
@@ -83,7 +78,6 @@ CATEGORY_GROUPS_MAP = {
     CategoryGroupName.WINE: CategoryGroup(
         name=CategoryGroupName.WINE,
         producer=ProducerData(display_name="Appellation"),
-        product="Vin",
         origin=True,
         color=True,
         taste=False,
@@ -93,7 +87,6 @@ CATEGORY_GROUPS_MAP = {
     CategoryGroupName.OTHER: CategoryGroup(
         name=CategoryGroupName.OTHER,
         producer=None,
-        product=None,
         origin=False,
         color=False,
         taste=False,

@@ -1,8 +1,8 @@
-{% extends "base_daisyui.html" %}
+{% extends "base.html" %}
 {% block content %}
   {% include 'inventories/_reset_stocks.html' %}
   <div class="h-dvh flex flex-col">
-    {% include '_includes/_navbar.html' %}
+    {% include '_includes/../../../templates/_includes/_navbar.html' %}
     <div class="flex flex-col flex-1 px-10 py-6 gap-6 min-h-0">
       <div class="card bg-base-200 shadow-sm">
         <div class="card-body flex flex-col md:flex-row justify-between md:items-center gap-4">

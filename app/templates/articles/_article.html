@@ -1,0 +1,124 @@
+<div class="grid grid-cols-1 justify-items-center p-2">
+  <div
+    class="badge badge-soft badge-primary badge-lg w-36"
+    id="article-category"
+    data-category="{{ article.category }}"
+  >
+    {{ article.category }}
+  </div>
+</div>
+
+{# ------------------------------------------------------------------------ #}
+
+<div class="card shadow border border-base-300">
+  <div class="card-body pt-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 md:gap-x-4">
+
+      {% if category_group.producer %}
+        {% set current_producer = article.producer or '' %}
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">{{ category_group.producer.display_name }}</legend>
+          <select class="select select-sm w-full" name="producer">
+            <option {% if current_producer == '' %}selected{% endif %}></option>
+            {% for producer in data.producers %}
+              <option {% if current_producer == producer.name %}selected{% endif %}>{{ producer.name }}</option>
+            {% endfor %}
+          </select>
+        </fieldset>
+      {% endif %}
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Désignation</legend>
+        <input type="text" class="input input-sm w-full" name="product" value="{{ article.product }}"/>
+      </fieldset>
+
+      {% if category_group.volume %}
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Volume</legend>
+          <select class="select select-sm w-full" name="volume">
+            {% for volume in data.volumes %}
+              <option
+                value='{"value":"{{ volume.value }}","unit":"{{ volume.unit }}"}'
+                {% if article.volume.value == volume.value and article.volume.unit == volume.unit %}selected{% endif %}
+              >
+                {{ volume }}
+              </option>
+            {% endfor %}
+          </select>
+        </fieldset>
+      {% endif %}
+
+      {% if category_group.origin %}
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Pays / Région</legend>
+          <select class="select select-sm w-full" name="origin">
+            {% for origin in data.origins %}
+              <option {% if article.origin == origin.name %}selected{% endif %}>{{ origin.name }}</option>
+            {% endfor %}
+          </select>
+        </fieldset>
+      {% endif %}
+
+      {% if category_group.color %}
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Couleur</legend>
+          <select class="select select-sm w-full" name="color">
+            {% for color in data.colors %}
+              <option {% if article.color == color %}selected{% endif %}>{{ color }}</option>
+            {% endfor %}
+          </select>
+        </fieldset>
+      {% endif %}
+
+      {% if category_group.taste %}
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Saveur</legend>
+          <select class="select select-sm w-full" name="taste">
+            {% for taste in data.tastes %}
+              <option {% if article.taste == taste %}selected{% endif %}>{{ taste }}</option>
+            {% endfor %}
+          </select>
+        </fieldset>
+      {% endif %}
+
+      {% if category_group.alcohol_by_volume %}
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Alc. %</legend>
+          <input type="number" step="0.1" class="input input-sm w-full" name="alcohol_by_volume" value="{{ article.alcohol_by_volume }}"/>
+        </fieldset>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{# ------------------------------------------------------------------------ #}
+{% include "articles/_article_price.html" %}
+{# ------------------------------------------------------------------------ #}
+
+<div class="card shadow border border-base-300">
+  <div class="card-body pt-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 md:gap-x-4">
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Fournisseur</legend>
+        <select class="select select-sm w-full" name="distributor">
+          {% for distributor in data.distributors %}
+            <option {% if article.distributor == distributor.name %}selected{% endif %}>
+              {{ distributor.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Code-barres</legend>
+        <input type="text" class="input input-sm w-full" name="barcode" value="{{ article.barcode }}"/>
+      </fieldset>
+
+    </div>
+
+    {% include "articles/_article_deposits.html" %}
+
+  </div>
+</div>

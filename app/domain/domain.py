@@ -8,7 +8,10 @@ from app.domain.articles.commands import (
     get_articles_command,
     update_article_command,
 )
-from app.domain.categories.commands import get_category_by_name_command
+from app.domain.categories.commands import (
+    get_categories_command,
+    get_category_by_name_command,
+)
 from app.domain.commons.commands import (
     get_view_data_command,
 )
@@ -31,6 +34,7 @@ from app.domain.price_labels.commands import (
     get_price_labels_files_command,
 )
 from app.domain.producers.commands import get_producers_command
+from app.domain.stores.commands import get_stores_command
 from app.domain.users.commands import get_user_by_email_command, update_user_command
 from app.domain.volumes.commands import get_volumes_command
 
@@ -38,7 +42,10 @@ from app.domain.volumes.commands import get_volumes_command
 class Domain(BaseDomain[ContextProtocol]):
     # common
     get_view_data = CommandHandler(get_view_data_command)
+    # stores
+    get_stores = CommandHandler(get_stores_command)
     # categories
+    get_categories = CommandHandler(get_categories_command)
     get_category_by_name = CommandHandler(get_category_by_name_command)
     # producers
     get_producers = CommandHandler(get_producers_command)

@@ -1,3 +1,4 @@
+from app.domain.articles.entities import ArticleColor, ArticleTaste
 from app.domain.categories.entities import Category
 from app.domain.commons.entities import ViewData
 from app.domain.context import ContextProtocol
@@ -20,6 +21,8 @@ def get_view_data_command(
     return ViewData(
         producers=get_producers(context=context, category=category),
         distributors=get_distributors(context=context),
+        colors=get_colors(category=category),
+        tastes=get_tastes(),
         origins=get_origins(context=context),
         volumes=get_volumes(context=context, category=category),
         deposits=get_deposits(context=context, category=category),
@@ -40,6 +43,15 @@ def get_producers(context: ContextProtocol, category: Category) -> list[Producer
 def get_distributors(context: ContextProtocol) -> list[Distributor]:
     result = get_distributors_command(context=context)
     return result.items
+
+
+def get_colors(category: Category) -> list[ArticleColor]:
+    prefix = category.category_group.name
+    return [color for color in ArticleColor if color.name.endswith(prefix)]
+
+
+def get_tastes() -> list[ArticleTaste]:
+    return list(ArticleTaste)
 
 
 def get_origins(context: ContextProtocol) -> list[Origin]:

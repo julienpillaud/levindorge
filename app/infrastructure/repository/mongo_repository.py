@@ -67,6 +67,15 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
             items=[self._to_domain_entity(item) for item in items_db],
         )
 
+    def get_one(self, filters: dict[str, Any] | None = None) -> T | None:
+        pipeline = []
+        if filters:
+            pipeline.extend([{"$match": filters}])
+        pipeline.extend(self._aggregation_pipeline())
+
+        result = next(self.collection.aggregate(pipeline), None)
+        return self._to_domain_entity(result) if result else None
+
     def get_by_id(self, entity_id: str, /) -> T | None:
         result = self._get_by_id(entity_id)
         return self._to_domain_entity(result) if result else None

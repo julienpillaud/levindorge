@@ -1,7 +1,8 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
+from app.domain.articles.entities import ArticleColor, ArticleTaste
 from app.domain.deposits.entities import Deposit
 from app.domain.distributors.entities import Distributor
 from app.domain.origins.entities import Origin
@@ -39,19 +40,11 @@ class PricingGroup(StrEnum):
     OTHER = "other"
 
 
-class ArticleType(BaseModel):
-    name: str
-    category: str
-    tax: float
-    pricing_group: PricingGroup = Field(alias="ratio_category")
-    display_group: DisplayGroup = Field(alias="list_category")
-    volume_category: str | None = None
-    tactill_category: str
-
-
 class ViewData(BaseModel):
     producers: list[Producer]
     distributors: list[Distributor]
+    colors: list[ArticleColor]
+    tastes: list[ArticleTaste]
     origins: list[Origin]
     volumes: list[Volume]
     deposits: list[Deposit]

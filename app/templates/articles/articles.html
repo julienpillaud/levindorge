@@ -1,18 +1,19 @@
-{% extends "base_daisyui.html" %}
+{% extends "base.html" %}
 {% block content %}
   <div class="h-dvh flex flex-col">
     {% include '_includes/_navbar.html' %}
     <div class="flex flex-col flex-1 px-10 py-6 gap-6 min-h-0">
+      {# -------------------------------------------------------------------- #}
       <div class="card bg-base-200 shadow-sm">
         <div class="card-body flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div class="flex items-center gap-4">
             <h1 class="card-title text-2xl">Articles</h1>
             <div id="items-count" class="badge badge-soft badge-primary">{{ result.total }}</div>
           </div>
-          <div class="">{% include "_includes/_pagination.html" %}</div>
+          <div id="pagination">{% include "_includes/_pagination.html" %}</div>
         </div>
       </div>
-
+      {# -------------------------------------------------------------------- #}
       <div class="overflow-x-auto rounded-lg shadow-sm">
         <table class="table table-pin-rows table-sm" id="articles-table">
           <thead>
@@ -30,9 +31,9 @@
             {% for article in result.items %}
               <tr class="hover cursor-pointer" data-id="{{ article.id }}">
                 <td class="text-nowrap">{{ article.display_name }}</td>
-                <td class="text-nowrap">{{ article.origin }}</td>
-                <td class="text-nowrap">{{ article.color }}</td>
-                <td class="text-nowrap">{{ article.taste }}</td>
+                <td class="text-nowrap">{{ article.origin if article.origin }}</td>
+                <td class="text-nowrap">{{ article.color if article.color }}</td>
+                <td class="text-nowrap">{{ article.taste if article.taste }}</td>
                 <td class="text-nowrap">{{ article.alcohol_by_volume | strip_zeros if article.alcohol_by_volume }}</td>
                 <td class="text-nowrap">{{ article.distributor }}</td>
                 <td class="text-nowrap">{{ article.category }}</td>
@@ -41,11 +42,19 @@
           </tbody>
         </table>
       </div>
+      {# -------------------------------------------------------------------- #}
     </div>
   </div>
 
   <dialog id="article-modal" class="modal">
-    <div class="modal-box flex justify-center w-11/12 max-w-5xl">
+    <div class="modal-box max-w-4xl max-h-[90vh] bg-base-200">
+      <form id="article-form">
+        <div id="article-modal-content" class="grid gap-2"></div>
+        <div class="modal-action flex justify-between">
+          <button type="button" id="article-modal-close" class="btn btn-soft">Annuler</button>
+          <button type="submit" class="btn btn-outline btn-primary">Valider</button>
+        </div>
+      </form>
     </div>
   </dialog>
 

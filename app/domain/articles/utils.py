@@ -63,16 +63,16 @@ def compute_margin_rate(
 
 def compute_article_margins(
     total_cost: Decimal,
-    tax_rate: Decimal,
+    vat_rate: Decimal,
     gross_price: Decimal,
 ) -> ArticleMargins:
     margin_amount = compute_margin_amount(
         total_cost=total_cost,
-        vat_rate=tax_rate,
+        vat_rate=vat_rate,
         gross_price=gross_price,
     )
     margin_rate = compute_margin_rate(
-        vat_rate=tax_rate,
+        vat_rate=vat_rate,
         gross_price=gross_price,
         margin_amount=margin_amount,
     )
