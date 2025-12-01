@@ -1,11 +1,11 @@
 // -----------------------------------------------------------------------------
-export async function fetchArticleTemplate(articleId) {
+export const fetchArticleTemplate = async (articleId) => {
   const response = await fetch(`/articles/update/${articleId}`);
   return await response.text();
 }
 
 // -----------------------------------------------------------------------------
-export function getTotalCost() {
+export const getTotalCost = () => {
   const costPrice = parseFloat(document.getElementById("cost_price").value) || 0;
   const exciseDuty = parseFloat(document.getElementById("excise_duty").value) || 0;
   const socialSecurityContribution = parseFloat(document.getElementById("social_security_contribution").value) || 0;
@@ -13,41 +13,41 @@ export function getTotalCost() {
 }
 
 // -----------------------------------------------------------------------------
-export async function fetchRecommendedPrices({totalCost, vatRate, pricingGroup}) {
+export const fetchRecommendedPrices = async ({totalCost, vatRate, pricingGroup}) => {
   const options = {
-    method: "POST",
+    body: JSON.stringify({
+      pricing_group: pricingGroup,  // eslint-disable-line
+      total_cost: totalCost,  // eslint-disable-line
+      vat_rate: vatRate,  // eslint-disable-line
+    }),
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      total_cost: totalCost,
-      vat_rate: vatRate,
-      pricing_group: pricingGroup
-    })
+    method: "POST",
   }
   const response = await fetch("/articles/recommended_prices", options);
   return  await response.json();
 }
 
 // -----------------------------------------------------------------------------
-export async function fetchMargins({totalCost, vatRate, grossPrice}) {
+export const fetchMargins = async ({totalCost, vatRate, grossPrice}) => {
   const options = {
-    method: "POST",
+    body: JSON.stringify({
+      gross_price: grossPrice,  // eslint-disable-line
+      total_cost: totalCost,  // eslint-disable-line
+      vat_rate: vatRate,  // eslint-disable-line
+    }),
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      total_cost: totalCost,
-      vat_rate: vatRate,
-      gross_price: grossPrice
-    })
+    method: "POST",
   }
   const response = await fetch("/articles/margins", options);
   return  await response.json();
 }
 
 // -----------------------------------------------------------------------------
-export function updateRecommendedPrice(storeSlug, value) {
+export const updateRecommendedPrice = (storeSlug, value) => {
   const storeCard = document.querySelector(`[data-store="${storeSlug}"]`);
 
   const selector = '[data-store-field="recommended_price"]';
@@ -59,7 +59,7 @@ export function updateRecommendedPrice(storeSlug, value) {
 
 
 // -----------------------------------------------------------------------------
-export function updateMargins(storeSlug, margins) {
+export const updateMargins = (storeSlug, margins) => {
   const storeCard = document.querySelector(`[data-store="${storeSlug}"]`);
 
   // Margin amount
@@ -76,7 +76,7 @@ export function updateMargins(storeSlug, margins) {
 }
 
 // -----------------------------------------------------------------------------
-export function colorGrossPrices() {
+export const colorGrossPrices = () => {
   const storeCards = document.querySelectorAll('[data-store]');
   storeCards.forEach(card => {
     const grossPriceInput = card.querySelector('input[data-store-field="gross_price"]');
@@ -93,7 +93,9 @@ export function colorGrossPrices() {
     }
 
     const difference = grossPriceValue - recommendedPriceValue;
-    if (difference === 0) return;
+    if (difference === 0) {
+      return;
+    }
 
     const sign = difference > 0 ? '+' : '';
     const badgeClass = difference > 0 ? 'badge-success' : 'badge-error';
@@ -107,7 +109,7 @@ export function colorGrossPrices() {
 }
 
 // -----------------------------------------------------------------------------
-export function colorMarginRates() {
+export const colorMarginRates = () => {
   const selector = '[data-store-field="margin_rate"]';
   const storeCards = document.querySelectorAll('[data-store]');
 

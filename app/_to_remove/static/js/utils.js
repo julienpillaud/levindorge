@@ -15,7 +15,7 @@ export function searchTable(query) {
     let url = "/articles";
 
     if (trimmed) {
-      url += "?search=" + encodeURIComponent(trimmed);
+      url += `?search=${  encodeURIComponent(trimmed)}`;
     }
 
     window.location = url;

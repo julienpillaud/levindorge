@@ -1,9 +1,11 @@
 import {calculationOnCostChange, calculationOnPriceChange, fillAndShowModal} from "./main.js";
 import {getCategories} from "../categories.js";
 
-export function initArticles() {
+export const initArticles = () => {
   const modal = document.getElementById("article-modal");
-  if (!modal) return;
+  if (!modal) {
+    return;
+  }
 
   initArticlesTable(modal);
   initModalClose(modal);
@@ -12,28 +14,27 @@ export function initArticles() {
 }
 
 // -----------------------------------------------------------------------------
-function initArticlesTable(modal) {
+const initArticlesTable = (modal) => {
   const table = document.getElementById("articles-table");
-  table.addEventListener("click", async (event) => {
+  table.addEventListener("click", (event) => {
     const row = event.target.closest("tbody tr");
-    if (!row) return;
+    if (!row) {return;}
 
     fillAndShowModal(row, modal);
   });
 }
 
 // -----------------------------------------------------------------------------
-function initModalClose(modal) {
+const initModalClose = (modal) => {
   const closeButton = modal.querySelector("#article-modal-close");
   closeButton.addEventListener("click", () => modal.close());
 }
 
 // -----------------------------------------------------------------------------
-function initFormSubmit(modal) {
+const initFormSubmit = (modal) => {
   const form = document.getElementById("article-form");
-  form.addEventListener("submit", async (event) => {
+  form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const form = event.target;
     const data = Object.fromEntries(new FormData(form).entries());
     console.log(data);
     // TODO
@@ -41,7 +42,7 @@ function initFormSubmit(modal) {
 }
 
 // -----------------------------------------------------------------------------
-async function initFormCalculations(modal) {
+const initFormCalculations = async (modal) => {
   const categories = await getCategories();
   modal.addEventListener("input", (event) => {
     const input = event.target;

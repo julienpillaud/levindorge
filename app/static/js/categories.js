@@ -2,7 +2,7 @@ import {getCachedData, setCachedData} from "./localStorage.js";
 
 const CACHE_KEY = "categories";
 
-export async function getCategories() {
+export const getCategories = async () => {
   const cached = getCachedData(CACHE_KEY);
   if (cached) {
     return cached;
@@ -13,7 +13,7 @@ export async function getCategories() {
   return fresh;
 }
 
-async function fetchCategories() {
+const fetchCategories = async () => {
   const result = await fetch('/categories');
   const categories = await result.json();
 

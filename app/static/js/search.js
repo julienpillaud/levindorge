@@ -1,57 +1,62 @@
+let searchTimer = null;
+
 // -----------------------------------------------------------------------------
-export function initSearch() {
+export const initSearch = () => {
   const searchInputs = document.querySelectorAll(
     "#search-mobile, #search-desktop",
   );
-  let searchTimer;
-  setupSearch(searchInputs, searchTimer);
-  setupClearSearch(searchInputs, searchTimer);
+  setupSearch(searchInputs);
+  setupClearSearch(searchInputs);
 }
 
 // -----------------------------------------------------------------------------
 // Add event listeners to the search inputs
-function setupSearch(inputs, timer) {
+const setupSearch = (inputs) => {
   inputs.forEach((input) => {
     input.addEventListener("keyup", (event) => {
-      performSearch(event.target.value, timer);
+      performSearch(event.target.value);
     });
   });
 }
 
 // -----------------------------------------------------------------------------
 // Add event listeners to the clear search buttons
-function setupClearSearch(inputs, timer) {
+const setupClearSearch = (inputs) => {
   const clearButtons = document.querySelectorAll(
     "#clear-search-mobile, #clear-search-desktop"
   );
 
   clearButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      inputs.forEach(input => input.value = "");
-      performSearch("", timer);
+      inputs.forEach((input) => {
+        input.value = ""
+      });
+      performSearch("");
     });
   });
 }
 
 // -----------------------------------------------------------------------------
-function performSearch(query, timer) {
-  clearTimeout(timer);
+const performSearch = (query) => {
+  clearTimeout(searchTimer);
 
-  timer = setTimeout(() => {
+  searchTimer = setTimeout(() => {
     const url = buildSearchUrl(query);
     updatePage(url);
   }, 300);
 }
 
 // -----------------------------------------------------------------------------
-function buildSearchUrl(query) {
+const buildSearchUrl = (query) => {
   const trimmed = query.trim();
-  if (!trimmed) return "/articles";
+  if (!trimmed) {
+    return "/articles";
+  }
   return `/articles?search=${encodeURIComponent(trimmed)}`;
 }
 
 // -----------------------------------------------------------------------------
-async function updatePage(url) {
+const updatePage = async (url) => {
   const res = await fetch(url);
   const html = await res.text();
   const parser = new DOMParser();
@@ -65,7 +70,7 @@ async function updatePage(url) {
 }
 
 // -----------------------------------------------------------------------------
-function updateElement(selector, newDoc) {
+const updateElement = (selector, newDoc) => {
   const newElement = newDoc.querySelector(selector);
   const currentElement = document.querySelector(selector);
 

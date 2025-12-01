@@ -1,7 +1,7 @@
-import {fetchArticleTemplate, getTotalCost, fetchRecommendedPrices, fetchMargins, updateMargins, colorGrossPrices, colorMarginRates, updateRecommendedPrice} from "./utils.js";
+import {colorGrossPrices, colorMarginRates, fetchArticleTemplate, fetchMargins, fetchRecommendedPrices, getTotalCost, updateMargins, updateRecommendedPrice} from "./utils.js";
 
 // -----------------------------------------------------------------------------
-export async function fillAndShowModal(row, modal) {
+export const fillAndShowModal = async (row, modal) => {
   const modalContent = document.getElementById("article-modal-content");
   modalContent.innerHTML = await fetchArticleTemplate(row.dataset.id);
   modal.showModal();
@@ -10,32 +10,36 @@ export async function fillAndShowModal(row, modal) {
 }
 
 // -----------------------------------------------------------------------------
-export async function calculationOnCostChange(categories) {
+export const calculationOnCostChange =  async (categories) => {
   // Total cost
   const totalCost = getTotalCost();
   document.getElementById("total_cost").value = `${parseFloat(totalCost.toFixed(4))} €`;
 
   // Recommended price
   const articleCategory = document.getElementById('article-category').dataset.category;
-  const pricingGroup = categories[articleCategory]["pricing_group"];
+  const pricingGroup = categories[articleCategory].pricing_group;
   const vatRate = parseFloat(document.getElementById("vat_rate").value);
 
   const recommendedPrices = await fetchRecommendedPrices({
-    totalCost: totalCost,
-    vatRate: vatRate,
-    pricingGroup: pricingGroup
+    pricingGroup,
+    totalCost,
+    vatRate,
   })
 
   // Margins
-  for (const [storeSlug, value] of Object.entries(recommendedPrices)) {
+  const entries = Object.entries(recommendedPrices);
+
+  const promises = entries.map(async ([storeSlug, value]) => {
     updateRecommendedPrice(storeSlug, value);
     const margins = await fetchMargins({
-      totalCost: totalCost,
-      vatRate: vatRate,
-      grossPrice: value
+      grossPrice: value,
+      totalCost,
+      vatRate,
     });
     updateMargins(storeSlug, margins);
-  }
+  });
+
+  await Promise.all(promises);
 
   // Colors
   colorGrossPrices();
@@ -46,15 +50,15 @@ export async function calculationOnCostChange(categories) {
 /**
  * Update margins for a given store
  */
-export async function calculationOnPriceChange(storeCard, value) {
+export const calculationOnPriceChange = async (storeCard, value) => {
   const storeSlug = storeCard.dataset.store;
   const totalCost = getTotalCost();
   const vatRate = parseFloat(document.getElementById("vat_rate").value) || 0;
 
   const margins = await fetchMargins({
-    totalCost: totalCost,
-    vatRate: vatRate,
-    grossPrice: value
+    grossPrice: value,
+    totalCost,
+    vatRate,
   });
 
   updateMargins(storeSlug, margins);

@@ -9,7 +9,7 @@ import {
 export function initDeletePriceLabels() {
   const table = document.querySelector('table[data-scope="price-labels"]');
   const deleteButton = table.querySelector('[data-role="delete"]');
-  if (!table || !deleteButton) return;
+  if (!table || !deleteButton) {return;}
 
   deleteButton.addEventListener("click", async () => {
     await handleDeletePriceLabels(table, deleteButton);
