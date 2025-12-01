@@ -13,7 +13,6 @@
 <div class="card shadow border border-base-300">
   <div class="card-body pt-4">
     <div class="grid grid-cols-1 md:grid-cols-3 md:gap-x-4">
-
       {% if category_group.producer %}
         {% set current_producer = article.producer or '' %}
         <fieldset class="fieldset">
@@ -29,7 +28,7 @@
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Désignation</legend>
-        <input type="text" class="input input-sm w-full" name="product" value="{{ article.product }}"/>
+        <input type="text" class="input input-sm w-full" name="product" value="{{ article.product }}" />
       </fieldset>
 
       {% if category_group.volume %}
@@ -84,10 +83,15 @@
       {% if category_group.alcohol_by_volume %}
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Alc. %</legend>
-          <input type="number" step="0.1" class="input input-sm w-full" name="alcohol_by_volume" value="{{ article.alcohol_by_volume }}"/>
+          <input
+            type="number"
+            step="0.1"
+            class="input input-sm w-full"
+            name="alcohol_by_volume"
+            value="{{ article.alcohol_by_volume }}"
+          />
         </fieldset>
       {% endif %}
-
     </div>
   </div>
 </div>
@@ -99,26 +103,21 @@
 <div class="card shadow border border-base-300">
   <div class="card-body pt-4">
     <div class="grid grid-cols-1 md:grid-cols-3 md:gap-x-4">
-
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Fournisseur</legend>
         <select class="select select-sm w-full" name="distributor">
           {% for distributor in data.distributors %}
-            <option {% if article.distributor == distributor.name %}selected{% endif %}>
-              {{ distributor.name }}
-            </option>
+            <option {% if article.distributor == distributor.name %}selected{% endif %}>{{ distributor.name }}</option>
           {% endfor %}
         </select>
       </fieldset>
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Code-barres</legend>
-        <input type="text" class="input input-sm w-full" name="barcode" value="{{ article.barcode }}"/>
+        <input type="text" class="input input-sm w-full" name="barcode" value="{{ article.barcode }}" />
       </fieldset>
-
     </div>
 
     {% include "articles/_article_deposits.html" %}
-
   </div>
 </div>

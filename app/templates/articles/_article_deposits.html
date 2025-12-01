@@ -1,48 +1,38 @@
 {% if category_group.deposit %}
-
   <div class="grid grid-cols-1 md:grid-cols-3 md:gap-x-4">
-
-  <fieldset class="fieldset">
-    <legend class="fieldset-legend">Consigne</legend>
-    <select class="select select-sm" name="deposit.unit">
-      {% for deposit in data.deposits %}
-        {% if deposit.type == "unit" %}
-          <option {% if article.deposit.unit == deposit.value %}selected{% endif %}>
-            {{ deposit.value }}
-          </option>
-        {% endif %}
-      {% endfor %}
-    </select>
-  </fieldset>
-
-  {% if category_group.deposit.case %}
     <fieldset class="fieldset">
-      <legend class="fieldset-legend">Consigne caisse</legend>
-      <select class="select select-sm" name="deposit.case">
+      <legend class="fieldset-legend">Consigne</legend>
+      <select class="select select-sm" name="deposit.unit">
         {% for deposit in data.deposits %}
-          {% if deposit.type == "case" %}
-            <option {% if article.deposit.case == deposit.value %}selected{% endif %}>
-              {{ deposit.value }}
-            </option>
+          {% if deposit.type == "unit" %}
+            <option {% if article.deposit.unit == deposit.value %}selected{% endif %}>{{ deposit.value }}</option>
           {% endif %}
         {% endfor %}
       </select>
     </fieldset>
-  {% endif %}
 
-  {% if category_group.deposit.packaging %}
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Conditionnement</legend>
-      <select class="select select-sm" name="deposit.packaging">
-        {% for value in [6, 12, 20, 24] %}
-          <option {% if article.deposit.packaging == value %}selected{% endif %}>
-            {{ value }}
-          </option>
-        {% endfor %}
-      </select>
-    </fieldset>
-  {% endif %}
+    {% if category_group.deposit.case %}
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Consigne caisse</legend>
+        <select class="select select-sm" name="deposit.case">
+          {% for deposit in data.deposits %}
+            {% if deposit.type == "case" %}
+              <option {% if article.deposit.case == deposit.value %}selected{% endif %}>{{ deposit.value }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </fieldset>
+    {% endif %}
 
+    {% if category_group.deposit.packaging %}
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Conditionnement</legend>
+        <select class="select select-sm" name="deposit.packaging">
+          {% for value in [6, 12, 20, 24] %}
+            <option {% if article.deposit.packaging == value %}selected{% endif %}>{{ value }}</option>
+          {% endfor %}
+        </select>
+      </fieldset>
+    {% endif %}
   </div>
-
 {% endif %}

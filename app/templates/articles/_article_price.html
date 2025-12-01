@@ -1,7 +1,6 @@
 <div class="card shadow border border-base-300">
   <div class="card-body pt-4">
     <div class="grid grid-cols-1 md:grid-cols-3 md:gap-x-4">
-
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Tarif HT (€)</legend>
         <input
@@ -56,24 +55,22 @@
           value="{{ article.social_security_contribution }}"
         />
       </fieldset>
-
     </div>
   </div>
 </div>
 
-
 <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
   {% for store_slug, store_data in article.store_data.items() %}
     <div class="card shadow border border-base-300" data-store="{{ store_slug }}">
-
       <div class="card-body">
-
         <div class="flex justify-between items-start">
           <h2 class="card-title text-lg">{{ store_slug }}</h2>
           <div class="stats shadow bg-base-300">
             <div class="stat p-2 place-items-center">
               <div class="stat-title">Stock</div>
-              <div class="stat-value text-base font-mono {% if store_data.stock_quantity > 0 %}text-success{% else %}text-error{% endif %}">
+              <div
+                class="stat-value text-base font-mono {% if store_data.stock_quantity > 0 %}text-success{% else %}text-error{% endif %}"
+              >
                 {{ store_data.stock_quantity }}
               </div>
             </div>
@@ -81,39 +78,30 @@
         </div>
 
         <div class="flex flex-col">
-
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Prix cave (€)</legend>
             <label class="input input-sm">
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              class="grow"
-              data-store-field="gross_price"
-              value="{{ store_data.gross_price }}"
-            />
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                class="grow"
+                data-store-field="gross_price"
+                value="{{ store_data.gross_price }}"
+              />
             </label>
           </fieldset>
 
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Prix bar (€)</legend>
-            <input
-              type="number"
-              class="input input-sm w-full"
-              value="{{ store_data.bar_price }}"
-            />
+            <input type="number" class="input input-sm w-full" value="{{ store_data.bar_price }}" />
           </fieldset>
-
         </div>
 
         <div class="stats shadow bg-base-300">
           <div class="stat p-2 place-items-center">
             <div class="stat-title">PVC</div>
-            <div
-              class="stat-value text-base font-mono"
-              data-store-field="recommended_price"
-            >
+            <div class="stat-value text-base font-mono" data-store-field="recommended_price">
               {{ store_data.recommended_price }} €
             </div>
             <input
@@ -121,15 +109,12 @@
               name="store_data[{{ store_slug }}][recommended_price]"
               data-store-field="recommended_price"
               value="{{ store_data.recommended_price }}"
-            >
+            />
           </div>
 
           <div class="stat p-2 place-items-center">
             <div class="stat-title">Marge</div>
-            <div
-              class="stat-value text-base font-mono"
-              data-store-field="margin_amount"
-            >
+            <div class="stat-value text-base font-mono" data-store-field="margin_amount">
               {{ store_data.margins.margin_amount }} €
             </div>
             <input
@@ -137,15 +122,12 @@
               name="store_data[{{ store_slug }}][margin_amount]"
               data-store-field="margin_amount"
               value="{{ store_data.margins.margin_amount }}"
-            >
+            />
           </div>
 
           <div class="stat p-2 place-items-center">
             <div class="stat-title">Taux</div>
-            <div
-              class="stat-value text-base font-mono"
-              data-store-field="margin_rate"
-            >
+            <div class="stat-value text-base font-mono" data-store-field="margin_rate">
               {{ store_data.margins.margin_rate }} %
             </div>
             <input
@@ -153,12 +135,10 @@
               name="store_data[{{ store_slug }}][margin_rate]"
               data-store-field="margin_rate"
               value="{{ store_data.margins.margin_rate }}"
-            >
+            />
           </div>
         </div>
-
       </div>
     </div>
   {% endfor %}
-
 </div>
