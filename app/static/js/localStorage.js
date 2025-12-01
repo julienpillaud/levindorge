@@ -13,12 +13,12 @@ export const getCachedData = (key, duration = CACHE_DURATION) => {
     return data;
   }
   return null;
-}
+};
 
 export const setCachedData = (key, data) => {
   const item = {
     data,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   };
   localStorage.setItem(key, JSON.stringify(item));
-}
+};

@@ -1,4 +1,13 @@
-import {colorGrossPrices, colorMarginRates, fetchArticleTemplate, fetchMargins, fetchRecommendedPrices, getTotalCost, updateMargins, updateRecommendedPrice} from "./utils.js";
+import {
+  colorGrossPrices,
+  colorMarginRates,
+  fetchArticleTemplate,
+  fetchMargins,
+  fetchRecommendedPrices,
+  getTotalCost,
+  updateMargins,
+  updateRecommendedPrice,
+} from "./utils.js";
 
 // -----------------------------------------------------------------------------
 export const fillAndShowModal = async (row, modal) => {
@@ -7,16 +16,18 @@ export const fillAndShowModal = async (row, modal) => {
   modal.showModal();
   colorGrossPrices();
   colorMarginRates();
-}
+};
 
 // -----------------------------------------------------------------------------
-export const calculationOnCostChange =  async (categories) => {
+export const calculationOnCostChange = async (categories) => {
   // Total cost
   const totalCost = getTotalCost();
-  document.getElementById("total_cost").value = `${parseFloat(totalCost.toFixed(4))} €`;
+  document.getElementById("total_cost").value =
+    `${parseFloat(totalCost.toFixed(4))} €`;
 
   // Recommended price
-  const articleCategory = document.getElementById('article-category').dataset.category;
+  const articleCategory =
+    document.getElementById("article-category").dataset.category;
   const pricingGroup = categories[articleCategory].pricing_group;
   const vatRate = parseFloat(document.getElementById("vat_rate").value);
 
@@ -24,7 +35,7 @@ export const calculationOnCostChange =  async (categories) => {
     pricingGroup,
     totalCost,
     vatRate,
-  })
+  });
 
   // Margins
   const entries = Object.entries(recommendedPrices);
@@ -44,7 +55,7 @@ export const calculationOnCostChange =  async (categories) => {
   // Colors
   colorGrossPrices();
   colorMarginRates();
-}
+};
 
 // -----------------------------------------------------------------------------
 /**
@@ -64,4 +75,4 @@ export const calculationOnPriceChange = async (storeCard, value) => {
   updateMargins(storeSlug, margins);
   colorGrossPrices();
   colorMarginRates();
-}
+};

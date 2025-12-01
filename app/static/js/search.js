@@ -7,7 +7,7 @@ export const initSearch = () => {
   );
   setupSearch(searchInputs);
   setupClearSearch(searchInputs);
-}
+};
 
 // -----------------------------------------------------------------------------
 // Add event listeners to the search inputs
@@ -17,24 +17,24 @@ const setupSearch = (inputs) => {
       performSearch(event.target.value);
     });
   });
-}
+};
 
 // -----------------------------------------------------------------------------
 // Add event listeners to the clear search buttons
 const setupClearSearch = (inputs) => {
   const clearButtons = document.querySelectorAll(
-    "#clear-search-mobile, #clear-search-desktop"
+    "#clear-search-mobile, #clear-search-desktop",
   );
 
   clearButtons.forEach((button) => {
     button.addEventListener("click", () => {
       inputs.forEach((input) => {
-        input.value = ""
+        input.value = "";
       });
       performSearch("");
     });
   });
-}
+};
 
 // -----------------------------------------------------------------------------
 const performSearch = (query) => {
@@ -44,7 +44,7 @@ const performSearch = (query) => {
     const url = buildSearchUrl(query);
     updatePage(url);
   }, 300);
-}
+};
 
 // -----------------------------------------------------------------------------
 const buildSearchUrl = (query) => {
@@ -53,21 +53,21 @@ const buildSearchUrl = (query) => {
     return "/articles";
   }
   return `/articles?search=${encodeURIComponent(trimmed)}`;
-}
+};
 
 // -----------------------------------------------------------------------------
 const updatePage = async (url) => {
   const res = await fetch(url);
   const html = await res.text();
   const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
+  const doc = parser.parseFromString(html, "text/html");
 
-  updateElement('#articles-table', doc);
-  updateElement('#items-count', doc);
-  updateElement('#pagination', doc);
+  updateElement("#articles-table", doc);
+  updateElement("#items-count", doc);
+  updateElement("#pagination", doc);
 
-  history.pushState(null, '', url);
-}
+  history.pushState(null, "", url);
+};
 
 // -----------------------------------------------------------------------------
 const updateElement = (selector, newDoc) => {
@@ -77,4 +77,4 @@ const updateElement = (selector, newDoc) => {
   if (newElement && currentElement) {
     currentElement.innerHTML = newElement.innerHTML;
   }
-}
+};

@@ -1,4 +1,4 @@
-import {getCachedData, setCachedData} from "./localStorage.js";
+import { getCachedData, setCachedData } from "./localStorage.js";
 
 const CACHE_KEY = "stores";
 
@@ -11,13 +11,11 @@ export const getStores = async () => {
   const fresh = await fetchStores();
   setCachedData(CACHE_KEY, fresh);
   return fresh;
-}
+};
 
 const fetchStores = async () => {
-  const result = await fetch('/stores');
+  const result = await fetch("/stores");
   const stores = await result.json();
 
-  return Object.fromEntries(
-    stores.map(store => [store.slug, store])
-  );
-}
+  return Object.fromEntries(stores.map((store) => [store.slug, store]));
+};
