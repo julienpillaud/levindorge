@@ -1,5 +1,6 @@
 import {
-  colorGrossPrices, colorMarginAmounts,
+  colorGrossPrices,
+  colorMarginAmounts,
   colorMarginRates,
   fetchArticleTemplate,
   fetchMargins,

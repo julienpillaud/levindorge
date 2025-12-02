@@ -137,8 +137,8 @@ export const colorMarginAmounts = () => {
     } else {
       div.classList.add("text-error");
     }
-  })
-}
+  });
+};
 
 // -----------------------------------------------------------------------------
 export const colorMarginRates = () => {
