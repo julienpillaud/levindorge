@@ -9,7 +9,7 @@ import {
   updateMargins,
   updateRecommendedPrice,
 } from "./utils.js";
-import {showToast} from "../utils.js";
+import { showToast } from "../utils.js";
 
 // -----------------------------------------------------------------------------
 export const fillAndShowModal = async (row, modal) => {
@@ -92,8 +92,6 @@ export const updateArticle = async (form) => {
   };
   const response = await fetch(`/articles/update/${articleId}`, options);
   if (!response.ok) {
-    const error = await response.text();
-    console.log(error);
     showToast("Erreur lors de la lise à jour");
     return;
   }

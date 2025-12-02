@@ -1,7 +1,7 @@
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId
+from app.domain.types import EntityId
 from app.domain.users.entities import User, UserUpdate
 
 

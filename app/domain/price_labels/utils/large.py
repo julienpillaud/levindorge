@@ -91,7 +91,7 @@ def write_large_price_labels(
     font_file = settings.app_path.fonts / "localbrewerytwo-bold.otf"
     font = ImageFont.truetype(str(font_file), 23)
 
-    color = article.color
+    color = article.color or ""
 
     # background
     background = (

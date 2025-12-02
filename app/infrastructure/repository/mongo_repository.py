@@ -9,9 +9,9 @@ from app.domain._shared.protocols.base_repository import RepositoryProtocol
 from app.domain.entities import (
     DEFAULT_PAGINATION_SIZE,
     DomainEntity,
-    EntityId,
     PaginatedResponse,
 )
+from app.domain.types import EntityId
 from app.infrastructure.repository.exceptions import MongoRepositoryError
 from app.utils.utils import iter_dicts
 

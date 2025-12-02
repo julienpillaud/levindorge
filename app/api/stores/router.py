@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
 
@@ -10,7 +10,11 @@ from app.domain.domain import Domain
 router = APIRouter(prefix="/stores", tags=["Stores"])
 
 
-@router.get("", dependencies=[Depends(get_current_user)])
-def get_stores(domain: Annotated[Domain, Depends(get_domain)]) -> list[StoreDTO]:
+@router.get(
+    "",
+    response_model=list[StoreDTO],
+    dependencies=[Depends(get_current_user)],
+)
+def get_stores(domain: Annotated[Domain, Depends(get_domain)]) -> Any:
     stores = domain.get_stores()
     return stores.items

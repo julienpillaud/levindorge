@@ -8,4 +8,4 @@ export const showToast = (message, type = "error", timeout = 5000) => {
   setTimeout(() => {
     toast.remove();
   }, timeout);
-}
+};

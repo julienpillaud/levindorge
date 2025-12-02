@@ -15,7 +15,8 @@ from app.domain.articles.utils import compute_article_margins, compute_recommend
 from app.domain.categories.entities import Category
 from app.domain.commons.entities import PricingGroup
 from app.domain.origins.entities import Origin
-from app.domain.stores.entities import Store, StoreSlug
+from app.domain.stores.entities import Store
+from app.domain.types import StoreSlug
 
 NON_MATCH_ORIGINS_MAP = {
     "Ecosse": "Écosse",

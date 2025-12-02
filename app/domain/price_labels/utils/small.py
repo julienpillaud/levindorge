@@ -76,7 +76,7 @@ def write_small_price_labels(
         if name_spirit_inf:
             file.write(f'<div class="spiritNamesClass grey">{name_spirit_inf}</div>\n')
     else:
-        taste_class = normalize_attribute(article.taste)
+        taste_class = normalize_attribute(article.taste or "")
         file.write(f'<div class="bgClass bgClass{index + 1} {taste_class}">\n')
         if name_spirit:
             file.write(f'<div class="spiritNameClass">{name_spirit}</div>\n')

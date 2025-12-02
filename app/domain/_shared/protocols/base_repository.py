@@ -5,9 +5,9 @@ from pydantic import PositiveInt
 from app.domain.entities import (
     DEFAULT_PAGINATION_SIZE,
     DomainEntity,
-    EntityId,
     PaginatedResponse,
 )
+from app.domain.types import EntityId
 
 
 class RepositoryProtocol[T: DomainEntity](Protocol):
