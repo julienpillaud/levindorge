@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/julienpillaud/levindorge/compare/0.9.0...0.9.1) (2025-12-02)
+
+
+### Bug Fixes
+
+* move function to fix imports ([375e858](https://github.com/julienpillaud/levindorge/commit/375e858d6a12e7580658b9a240f26929e40f540f))
+
 ## [0.9.0](https://github.com/julienpillaud/levindorge/compare/0.8.0...0.9.0) (2025-12-02)
 
 
