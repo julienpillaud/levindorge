@@ -139,7 +139,7 @@ def define_beer_name(
 
 
 def define_name(article: Article) -> tuple[str | None, str | None, str | None]:
-    name1 = article.producer
+    name1 = article.producer or ""
     name2 = article.product
 
     if name1 == "":

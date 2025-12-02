@@ -1,10 +1,11 @@
 import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, NonNegativeInt, PositiveFloat, field_serializer
+from pydantic import BaseModel, PositiveFloat, field_serializer
 
 from app.domain.articles.entities import ArticleDeposit
-from app.domain.entities import DomainEntity, EntityId
+from app.domain.entities import DomainEntity
+from app.domain.types import EntityId
 
 
 class InventoryRecord(BaseModel):
@@ -12,7 +13,6 @@ class InventoryRecord(BaseModel):
     article_id: EntityId
     article_name: str
     article_volume: float = 0.0
-    article_packaging: NonNegativeInt = 0
     article_deposit: ArticleDeposit
     article_type: str
     taxfree_price: PositiveFloat

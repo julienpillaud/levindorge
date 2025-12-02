@@ -1,0 +1,155 @@
+<div class="card shadow border border-base-300">
+  <div class="card-body pt-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 md:gap-x-4">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Tarif HT (€)</legend>
+        <input
+          type="number"
+          class="input input-sm w-full"
+          id="cost_price"
+          name="cost_price"
+          value="{{ article.cost_price }}"
+        />
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">TVA (%)</legend>
+        <input
+          type="number"
+          class="input input-sm w-full"
+          id="vat_rate"
+          name="vat_rate"
+          value="{{ article.vat_rate }}"
+        />
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Tarif HT DI</legend>
+        <input
+          type="text"
+          class="input input-sm w-full font-mono font-bold bg-base-300 cursor-not-allowed"
+          id="total_cost"
+          value="{{ article.total_cost }}"
+          readonly
+        />
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Droit d'accice (€)</legend>
+        <input
+          type="number"
+          class="input input-sm w-full"
+          id="excise_duty"
+          name="excise_duty"
+          value="{{ article.excise_duty }}"
+        />
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Cotisation SS (€)</legend>
+        <input
+          type="number"
+          class="input input-sm w-full"
+          id="social_security_contribution"
+          name="social_security_contribution"
+          value="{{ article.social_security_contribution }}"
+        />
+      </fieldset>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+  {% for store_slug, store_data in article.store_data.items() | sort %}
+    <div class="card shadow border border-base-300" data-store="{{ store_slug }}">
+      <div class="card-body">
+        <div class="flex justify-between items-start">
+          <h2 class="card-title text-lg">{{ stores[store_slug].name }}</h2>
+          <div class="stats shadow bg-base-300">
+            <div class="stat p-2 place-items-center">
+              <div class="stat-title">Stock</div>
+              <div
+                class="stat-value text-base font-mono {% if store_data.stock_quantity > 0 %}text-success{% else %}text-error{% endif %}"
+              >
+                {{ store_data.stock_quantity }}
+              </div>
+              <input
+                type="hidden"
+                name="store_data.{{ store_slug }}.stock_quantity"
+                value="{{ store_data.stock_quantity }}"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">Prix cave (€)</legend>
+            <label class="input input-sm w-full">
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                class="grow"
+                data-store-field="gross_price"
+                name="store_data.{{ store_slug }}.gross_price"
+                value="{{ store_data.gross_price }}"
+              />
+            </label>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">Prix bar (€)</legend>
+            <input
+              type="number"
+              class="input input-sm w-full"
+              name="store_data.{{ store_slug }}.bar_price"
+              value="{{ store_data.bar_price }}"
+            />
+          </fieldset>
+        </div>
+
+        <div class="stats shadow bg-base-300">
+          <div class="stat p-2 place-items-center">
+            <div class="stat-title">PVC</div>
+            <div class="stat-value text-base font-mono" data-store-field="recommended_price">
+              {{ store_data.recommended_price }} €
+            </div>
+            <input
+              type="hidden"
+              name="store_data.{{ store_slug }}.recommended_price"
+              data-store-field="recommended_price"
+              value="{{ store_data.recommended_price }}"
+            />
+          </div>
+
+          <div class="stat p-2 place-items-center">
+            <div class="stat-title">Marge</div>
+            <div class="stat-value text-base font-mono" data-store-field="margin_amount">
+              {{ store_data.margins.margin_amount }} €
+            </div>
+            <input
+              type="hidden"
+              name="store_data.{{ store_slug }}.margins.margin_amount"
+              data-store-field="margin_amount"
+              value="{{ store_data.margins.margin_amount }}"
+            />
+          </div>
+
+          <div class="stat p-2 place-items-center">
+            <div class="stat-title">Taux</div>
+            <div class="stat-value text-base font-mono" data-store-field="margin_rate">
+              {{ store_data.margins.margin_rate }} %
+            </div>
+            <input
+              type="hidden"
+              name="store_data.{{ store_slug }}.margins.margin_rate"
+              data-store-field="margin_rate"
+              value="{{ store_data.margins.margin_rate }}"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>

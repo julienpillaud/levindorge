@@ -5,12 +5,18 @@ from typing import Any
 from rich import print
 
 from app.core.core import Context
-from app.domain.articles.entities import Article, ArticleStoreData, ArticleVolume
+from app.domain.articles.entities import (
+    Article,
+    ArticleDeposit,
+    ArticleStoreData,
+    ArticleVolume,
+)
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
 from app.domain.categories.entities import Category
 from app.domain.commons.entities import PricingGroup
 from app.domain.origins.entities import Origin
-from app.domain.stores.entities import Store, StoreSlug
+from app.domain.stores.entities import Store
+from app.domain.types import StoreSlug
 
 NON_MATCH_ORIGINS_MAP = {
     "Ecosse": "Écosse",
@@ -73,12 +79,11 @@ def create_article_entities(
             distributor=article["distributor"],
             barcode=article["barcode"],
             origin=get_origin(value=article["region"], origins_map=origins_map),
-            color=article["color"],
-            taste=article["taste"],
+            color=empty_to_none(article["color"]),
+            taste=empty_to_none(article["taste"]),
             volume=get_volume(article=article),
-            alcohol_by_volume=article["alcohol_by_volume"],
-            packaging=article["packaging"],
-            deposit=article["deposit"],
+            alcohol_by_volume=empty_to_none(article["alcohol_by_volume"]),
+            deposit=get_deposit(article),
             created_at=current_date,
             updated_at=current_date,
             store_data=get_store_data(
@@ -122,6 +127,10 @@ def get_origin(value: str, origins_map: dict[str, Origin]) -> str | None:
     return value
 
 
+def empty_to_none(value: Any) -> str | None:
+    return value or None
+
+
 def convert_volume(value: float, unit: str) -> tuple[float, str]:
     if unit == "cL" and value >= 100:  # noqa: PLR2004
         value /= 100
@@ -140,6 +149,16 @@ def get_volume(article: dict[str, Any]) -> ArticleVolume | None:
     return ArticleVolume(value=volume_value, unit=volume_unit)
 
 
+def get_deposit(article: dict[str, Any]) -> ArticleDeposit | None:
+    unit = None if article["deposit"]["unit"] == 0 else article["deposit"]["unit"]
+    case = None if article["deposit"]["case"] == 0 else article["deposit"]["case"]
+    packaging = None if article["packaging"] == 0 else article["packaging"]
+    if not unit and not case:
+        return None
+
+    return ArticleDeposit(unit=unit, case=case, packaging=packaging)
+
+
 def get_store_data(
     article: dict[str, Any],
     pricing_groups_map: dict[str, PricingGroup],
@@ -151,7 +170,7 @@ def get_store_data(
         store.slug: ArticleStoreData(
             gross_price=to_decimal(article["shops"][store.slug]["sell_price"]),
             bar_price=to_decimal(article["shops"][store.slug]["bar_price"]),
-            stock_quantity=article["shops"][store.slug]["stock_quantity"],
+            stock_quantity=int(article["shops"][store.slug]["stock_quantity"]),
             recommended_price=compute_recommended_price(
                 total_cost=total_cost,
                 vat_rate=to_decimal(article["tax"]),
@@ -160,7 +179,7 @@ def get_store_data(
             ),
             margins=compute_article_margins(
                 total_cost=total_cost,
-                tax_rate=to_decimal(article["tax"]),
+                vat_rate=to_decimal(article["tax"]),
                 gross_price=to_decimal(article["shops"][store.slug]["sell_price"]),
             ),
         )

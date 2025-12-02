@@ -5,9 +5,8 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict
 
 from app.domain.commons.entities import PricingGroup
-from app.domain.entities import DecimalType, DomainEntity
-
-type StoreSlug = str
+from app.domain.entities import DomainEntity
+from app.domain.types import DecimalType, StoreSlug
 
 
 class RoundingMode(Enum):

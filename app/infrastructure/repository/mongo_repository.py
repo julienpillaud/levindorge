@@ -9,9 +9,9 @@ from app.domain._shared.protocols.base_repository import RepositoryProtocol
 from app.domain.entities import (
     DEFAULT_PAGINATION_SIZE,
     DomainEntity,
-    EntityId,
     PaginatedResponse,
 )
+from app.domain.types import EntityId
 from app.infrastructure.repository.exceptions import MongoRepositoryError
 from app.utils.utils import iter_dicts
 
@@ -67,6 +67,15 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
             items=[self._to_domain_entity(item) for item in items_db],
         )
 
+    def get_one(self, filters: dict[str, Any] | None = None) -> T | None:
+        pipeline = []
+        if filters:
+            pipeline.extend([{"$match": filters}])
+        pipeline.extend(self._aggregation_pipeline())
+
+        result = next(self.collection.aggregate(pipeline), None)
+        return self._to_domain_entity(result) if result else None
+
     def get_by_id(self, entity_id: str, /) -> T | None:
         result = self._get_by_id(entity_id)
         return self._to_domain_entity(result) if result else None
@@ -92,7 +101,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
     def update(self, entity: T, /) -> T:
         db_entity = self._to_database_entity(entity)
 
-        result = self.collection.replace_one({"_id": entity.id}, db_entity)
+        result = self.collection.replace_one({"_id": ObjectId(entity.id)}, db_entity)
         if not result.modified_count:
             raise MongoRepositoryError()
 

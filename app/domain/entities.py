@@ -1,16 +1,14 @@
-from decimal import Decimal
-from typing import Annotated, Any
+from typing import Any
 
 from pydantic import (
     BaseModel,
     NonNegativeInt,
-    PlainSerializer,
     PositiveInt,
 )
 
-DEFAULT_PAGINATION_SIZE = 50
+from app.domain.types import EntityId
 
-type EntityId = str
+DEFAULT_PAGINATION_SIZE = 50
 
 
 class DomainEntity(BaseModel):
@@ -33,6 +31,3 @@ class PaginatedResponse[T: DomainEntity](BaseModel):
     total: NonNegativeInt
     total_pages: NonNegativeInt
     items: list[T]
-
-
-DecimalType = Annotated[Decimal, PlainSerializer(float)]

@@ -107,6 +107,9 @@ def define_icon_text(article: Article) -> str:
 
 
 def define_color(display_group: DisplayGroup, article: Article) -> TactillColor:
+    if not article.color:
+        raise ValueError()
+
     match display_group:
         case (
             DisplayGroup.BEER

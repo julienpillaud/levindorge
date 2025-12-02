@@ -1,5 +1,6 @@
 import { colorStockQuantities, searchTable, setCursor } from "./utils.js";
 import {
+  initArticleFormListener,
   initArticleModalListener,
   initCreateInventoryListener,
   initCreateItemListener,
@@ -38,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   // ---------------------------------------------------------------------------
+  initArticleFormListener();
   initArticleModalListener();
   initSelectShopListener();
   colorStockQuantities();

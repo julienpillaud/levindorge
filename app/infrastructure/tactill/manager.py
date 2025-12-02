@@ -129,7 +129,7 @@ class TactillManager(POSManagerProtocol):
         display_group: DisplayGroup,
     ) -> POSArticle:
         category = self._get_category(category_name)
-        tactill_tax = self.get_tax(tax_rate=article.vat_rate)
+        tactill_tax = self.get_tax(tax_rate=float(article.vat_rate))
 
         article_creation = ArticleCreation(
             category_id=category.id,
@@ -157,7 +157,7 @@ class TactillManager(POSManagerProtocol):
         tactill_article = self.get_article_by_reference(reference=article.id)
 
         category = self._get_category(category_name)
-        tactill_tax = self.get_tax(tax_rate=article.vat_rate)
+        tactill_tax = self.get_tax(tax_rate=float(article.vat_rate))
 
         article_modification = ArticleModification(
             category_id=category.id,

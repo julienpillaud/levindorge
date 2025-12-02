@@ -15,7 +15,7 @@ class AppPaths(BaseModel):
 
     @property
     def templates(self) -> Path:
-        return self.root / "application/templates"
+        return self.root / "templates"
 
     @property
     def price_labels(self) -> Path:

@@ -5,7 +5,8 @@ from pydantic import PositiveInt
 
 from app.domain.articles.entities import Article, ArticleCreateOrUpdate
 from app.domain.context import ContextProtocol
-from app.domain.entities import DEFAULT_PAGINATION_SIZE, EntityId, PaginatedResponse
+from app.domain.entities import DEFAULT_PAGINATION_SIZE, PaginatedResponse
+from app.domain.types import EntityId
 from app.domain.users.entities import User
 
 

@@ -17,12 +17,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Listen for the 'htmx:responseError' event on the entire document body.
   // This event is triggered by HTMX whenever a request results in an error status code (4xx or 5xx).
-  document.body.addEventListener("htmx:responseError", function (event) {
+  document.body.addEventListener("htmx:responseError", (event) => {
     // Find the container element where all toasts will be displayed.
     const toastContainer = document.getElementById("toast-container");
 
     // Take the HTML content from the server's error response (e.g., the toast's markup)
-    // and insert it just inside the container, after any existing toasts.
+    // And insert it just inside the container, after any existing toasts.
     // 'beforeend' is what allows the toasts to stack.
     toastContainer.insertAdjacentHTML(
       "beforeend",

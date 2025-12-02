@@ -8,20 +8,19 @@ from pydantic import (
     BaseModel,
     Field,
     NonNegativeFloat,
-    NonNegativeInt,
     PlainSerializer,
     PositiveFloat,
+    PositiveInt,
 )
 
-from app.domain.entities import DecimalType, DomainEntity
-from app.domain.stores.entities import StoreSlug
+from app.domain.entities import DomainEntity
+from app.domain.types import DecimalType, StoreSlug
 from app.domain.volumes.entities import VolumeUnit
 
 LITER_TO_CENTILITER = 100
 
 
 class ArticleColor(StrEnum):
-    UNDEFINED = ""
     # beer
     AMBER_BEER = "Ambrée"
     WHITE_BEER = "Blanche"
@@ -35,7 +34,6 @@ class ArticleColor(StrEnum):
 
 
 class ArticleTaste(StrEnum):
-    UNDEFINED = ""
     OAKY = "Boisé"
     SPICY = "Epicé"
     FLORAL = "Floral"
@@ -56,13 +54,14 @@ class ArticleVolume(BaseModel):
 
 
 class ArticleDeposit(BaseModel):
-    unit: NonNegativeFloat
-    case: NonNegativeFloat
+    unit: PositiveFloat
+    case: PositiveFloat | None
+    packaging: PositiveInt | None
 
 
 class ArticleMargins(BaseModel):
-    margin_amount: DecimalType = Field(ge=0, decimal_places=2)
-    margin_rate: DecimalType = Field(ge=0, le=100, decimal_places=0)
+    margin_amount: DecimalType = Field(decimal_places=2)
+    margin_rate: DecimalType = Field(decimal_places=0)
 
 
 class ArticleStoreData(BaseModel):
@@ -89,11 +88,10 @@ class BaseArticle(BaseModel):
     distributor: str
     barcode: str = ""
     origin: str | None
-    color: ArticleColor = ArticleColor.UNDEFINED
-    taste: ArticleTaste = ArticleTaste.UNDEFINED
+    color: ArticleColor | None
+    taste: ArticleTaste | None
     volume: ArticleVolume | None
-    alcohol_by_volume: NonNegativeFloat = 0.0
-    packaging: NonNegativeInt = 0
+    alcohol_by_volume: NonNegativeFloat | None
     deposit: ArticleDeposit | None
 
     @property
@@ -116,11 +114,8 @@ class BaseArticle(BaseModel):
         if not self.deposit:
             return None
 
-        if self.deposit.unit == 0:
-            return 0
-
-        if self.packaging > 0:
-            value = self.deposit.case * (stock_quantity / self.packaging)
+        if self.deposit.case and self.deposit.packaging:
+            value = self.deposit.case * (stock_quantity / self.deposit.packaging)
             return round(value, 2)
 
         return self.deposit.unit * stock_quantity

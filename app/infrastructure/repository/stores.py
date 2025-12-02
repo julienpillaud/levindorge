@@ -1,5 +1,6 @@
-from app.domain.stores.entities import Store, StoreSlug
+from app.domain.stores.entities import Store
 from app.domain.stores.repository import StoreRepositoryProtocol
+from app.domain.types import StoreSlug
 from app.infrastructure.repository.mongo_repository import MongoRepository
 
 

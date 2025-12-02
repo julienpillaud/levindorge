@@ -30,6 +30,7 @@ def test_create_article(
     )
 
     assert is_str_object_id(article.id)
+    assert article.reference == data.reference
     assert article.category == data.category
     assert article.producer == data.producer
     assert article.product == data.product
@@ -44,7 +45,6 @@ def test_create_article(
     assert article.taste == data.taste
     assert article.volume == data.volume
     assert article.alcohol_by_volume == data.alcohol_by_volume
-    assert article.packaging == data.packaging
     assert article.deposit == data.deposit
     assert article.created_at
     assert article.updated_at

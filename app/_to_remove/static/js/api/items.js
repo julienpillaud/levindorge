@@ -1,4 +1,4 @@
-import { swapDeleteButton, showToast } from "../utils.js";
+import { showToast, swapDeleteButton } from "../utils.js";
 
 function updateCountBadge() {
   const table = document.getElementById("items-table");
@@ -48,7 +48,7 @@ export async function deleteItems(category) {
   const checkboxes = Array.from(
     table.querySelectorAll('input[type="checkbox"]:checked'),
   );
-  for (let checkbox of checkboxes) {
+  for (const checkbox of checkboxes) {
     const row = checkbox.closest("tr");
     const { id } = row.dataset;
 

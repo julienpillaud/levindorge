@@ -35,7 +35,7 @@ def get_articles(
     result = domain.get_articles(search=search, page=page, limit=limit)
     return templates.TemplateResponse(
         request=request,
-        name="articles/articles_global.html",
+        name="articles/articles.html",
         context={
             "current_user": current_user,
             "result": result,
@@ -85,6 +85,7 @@ def update_article_view(
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     article_id: str,
 ) -> Response:
+    stores = domain.get_stores()
     article = domain.get_article(article_id=article_id)
     category = domain.get_category_by_name(article.category)
     category_group = CATEGORY_GROUPS_MAP[category.category_group]
@@ -94,6 +95,7 @@ def update_article_view(
         name="articles/_article.html",
         context={
             "current_user": current_user,
+            "stores": {store.slug: store for store in stores.items},
             "article": article,
             "category_group": category_group,
             "data": data,
@@ -106,18 +108,20 @@ def update_article(
     request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
     form_data: Annotated[ArticleDTO, Form()],
     article_id: str,
 ) -> Response:
     article_update = ArticleCreateOrUpdate(**form_data.model_dump())
-    domain.update_article(
+    article = domain.update_article(
         current_user=current_user,
         article_id=article_id,
         data=article_update,
     )
-    return RedirectResponse(
-        url=request.url_for("get_articles"),
-        status_code=status.HTTP_302_FOUND,
+    return templates.TemplateResponse(
+        request=request,
+        name="articles/_article_row.html",
+        context={"article": article},
     )
 
 
@@ -152,10 +156,10 @@ async def recommended_prices(
     }
 
 
-@router.post("/margins", dependencies=[Depends(get_current_user)])
+@router.post("/margins")
 async def margins(data: MarginsRequestDTO) -> ArticleMargins:
     return compute_article_margins(
         total_cost=data.total_cost,
-        tax_rate=data.vat_rate,
+        vat_rate=data.vat_rate,
         gross_price=data.gross_price,
     )

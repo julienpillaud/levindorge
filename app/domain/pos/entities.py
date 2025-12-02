@@ -3,8 +3,8 @@ import datetime
 from pydantic import BaseModel
 
 from app.domain.articles.entities import Article
-from app.domain.entities import EntityId
 from app.domain.stores.entities import Store
+from app.domain.types import EntityId
 
 
 class POSArticleCreateOrUpdate(BaseModel):

@@ -5,7 +5,6 @@ from typing import Any
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId
 from app.domain.inventories.entities import (
     Inventory,
     InventoryDetail,
@@ -13,6 +12,7 @@ from app.domain.inventories.entities import (
     InventoryReport,
 )
 from app.domain.stores.entities import Store
+from app.domain.types import EntityId
 
 
 def get_inventories_command(context: ContextProtocol) -> list[Inventory]:
@@ -58,7 +58,6 @@ def create_inventory_command(context: ContextProtocol, store: Store) -> Inventor
                 article_id=article.id,
                 article_name=article.display_name,
                 article_volume=article.volume.value if article.volume else 0.0,
-                article_packaging=article.packaging,
                 article_deposit=article.deposit,
                 article_type=article.category,
                 taxfree_price=article.total_cost,

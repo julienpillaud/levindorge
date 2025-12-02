@@ -1,7 +1,7 @@
 from typing import Protocol
 
-from app.domain.entities import EntityId
 from app.domain.inventories.entities import Inventory, InventoryRecord, InventoryReport
+from app.domain.types import EntityId
 
 
 class InventoryRepositoryProtocol(Protocol):

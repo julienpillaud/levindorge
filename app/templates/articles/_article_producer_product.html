@@ -1,0 +1,19 @@
+<div class="grid grid-cols-1 md:grid-cols-2 md:gap-6">
+  {% if category_group.producer %}
+    {% set current_producer = article.producer or '' %}
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">{{ category_group.producer.display_name }}</legend>
+      <select class="select select-sm w-full">
+        <option {% if current_producer == '' %}selected{% endif %}></option>
+        {% for producer in data.producers %}
+          <option {% if current_producer == producer.name %}selected{% endif %}>{{ producer.name }}</option>
+        {% endfor %}
+      </select>
+    </fieldset>
+  {% endif %}
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Désignation</legend>
+    <input type="text" class="input input-sm w-full" value="{{ article.product }}" />
+  </fieldset>
+</div>
