@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/julienpillaud/levindorge/compare/0.8.0...0.9.0) (2025-12-02)
+
+
+### Features
+
+* refactor articles view ([#60](https://github.com/julienpillaud/levindorge/issues/60)) ([47623a1](https://github.com/julienpillaud/levindorge/commit/47623a1c615465a3a86f74c0d48ed44bebf841af))
+
 ## [0.8.0](https://github.com/julienpillaud/levindorge/compare/0.7.0...0.8.0) (2025-11-27)
 
 
