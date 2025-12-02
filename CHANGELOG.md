@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/julienpillaud/levindorge/compare/0.10.0...0.10.1) (2025-12-02)
+
+
+### Bug Fixes
+
+* clean up .dockerignore file ([#67](https://github.com/julienpillaud/levindorge/issues/67)) ([cf1cec6](https://github.com/julienpillaud/levindorge/commit/cf1cec6b6a38cabbc8bafdf7f53c6cb445d4bcab))
+
 ## [0.10.0](https://github.com/julienpillaud/levindorge/compare/0.9.1...0.10.0) (2025-12-02)
 
 
