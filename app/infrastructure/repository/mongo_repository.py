@@ -101,7 +101,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
     def update(self, entity: T, /) -> T:
         db_entity = self._to_database_entity(entity)
 
-        result = self.collection.replace_one({"_id": entity.id}, db_entity)
+        result = self.collection.replace_one({"_id": ObjectId(entity.id)}, db_entity)
         if not result.modified_count:
             raise MongoRepositoryError()
 

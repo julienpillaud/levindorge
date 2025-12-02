@@ -60,11 +60,11 @@
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-  {% for store_slug, store_data in article.store_data.items() %}
+  {% for store_slug, store_data in article.store_data.items() | sort %}
     <div class="card shadow border border-base-300" data-store="{{ store_slug }}">
       <div class="card-body">
         <div class="flex justify-between items-start">
-          <h2 class="card-title text-lg">{{ store_slug }}</h2>
+          <h2 class="card-title text-lg">{{ stores[store_slug].name }}</h2>
           <div class="stats shadow bg-base-300">
             <div class="stat p-2 place-items-center">
               <div class="stat-title">Stock</div>
@@ -73,6 +73,11 @@
               >
                 {{ store_data.stock_quantity }}
               </div>
+              <input
+                type="hidden"
+                name="store_data.{{ store_slug }}.stock_quantity"
+                value="{{ store_data.stock_quantity }}"
+              />
             </div>
           </div>
         </div>
@@ -80,13 +85,14 @@
         <div class="flex flex-col">
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Prix cave (€)</legend>
-            <label class="input input-sm">
+            <label class="input input-sm w-full">
               <input
                 type="number"
                 min="0"
                 step="0.01"
                 class="grow"
                 data-store-field="gross_price"
+                name="store_data.{{ store_slug }}.gross_price"
                 value="{{ store_data.gross_price }}"
               />
             </label>
@@ -94,7 +100,12 @@
 
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Prix bar (€)</legend>
-            <input type="number" class="input input-sm w-full" value="{{ store_data.bar_price }}" />
+            <input
+              type="number"
+              class="input input-sm w-full"
+              name="store_data.{{ store_slug }}.bar_price"
+              value="{{ store_data.bar_price }}"
+            />
           </fieldset>
         </div>
 
@@ -106,7 +117,7 @@
             </div>
             <input
               type="hidden"
-              name="store_data[{{ store_slug }}][recommended_price]"
+              name="store_data.{{ store_slug }}.recommended_price"
               data-store-field="recommended_price"
               value="{{ store_data.recommended_price }}"
             />
@@ -119,7 +130,7 @@
             </div>
             <input
               type="hidden"
-              name="store_data[{{ store_slug }}][margin_amount]"
+              name="store_data.{{ store_slug }}.margins.margin_amount"
               data-store-field="margin_amount"
               value="{{ store_data.margins.margin_amount }}"
             />
@@ -132,7 +143,7 @@
             </div>
             <input
               type="hidden"
-              name="store_data[{{ store_slug }}][margin_rate]"
+              name="store_data.{{ store_slug }}.margins.margin_rate"
               data-store-field="margin_rate"
               value="{{ store_data.margins.margin_rate }}"
             />

@@ -2,6 +2,7 @@ import {
   calculationOnCostChange,
   calculationOnPriceChange,
   fillAndShowModal,
+  updateArticle,
 } from "./main.js";
 import { getCategories } from "../categories.js";
 
@@ -41,9 +42,8 @@ const initFormSubmit = (modal) => {
   const form = document.getElementById("article-form");
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
-    console.log(data);
-    // TODO
+    updateArticle(form);
+    modal.close();
   });
 };
 

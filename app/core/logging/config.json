@@ -21,6 +21,11 @@
       "handlers": ["console", "logfire"],
       "propagate": false
     },
+    "python_multipart": {
+      "level": "INFO",
+      "handlers": ["console", "logfire"],
+      "propagate": false
+    },
     "urllib3": {
       "level": "INFO",
       "handlers": ["console", "logfire"],

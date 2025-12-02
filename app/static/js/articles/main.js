@@ -1,5 +1,5 @@
 import {
-  colorGrossPrices,
+  colorGrossPrices, colorMarginAmounts,
   colorMarginRates,
   fetchArticleTemplate,
   fetchMargins,
@@ -15,6 +15,7 @@ export const fillAndShowModal = async (row, modal) => {
   modalContent.innerHTML = await fetchArticleTemplate(row.dataset.id);
   modal.showModal();
   colorGrossPrices();
+  colorMarginAmounts();
   colorMarginRates();
 };
 
@@ -54,6 +55,7 @@ export const calculationOnCostChange = async (categories) => {
 
   // Colors
   colorGrossPrices();
+  colorMarginAmounts();
   colorMarginRates();
 };
 
@@ -74,5 +76,24 @@ export const calculationOnPriceChange = async (storeCard, value) => {
 
   updateMargins(storeSlug, margins);
   colorGrossPrices();
+  colorMarginAmounts();
   colorMarginRates();
+};
+
+// -----------------------------------------------------------------------------
+export const updateArticle = async (form) => {
+  const articleId = document.getElementById("article-id").value;
+  const formData = new FormData(form);
+  const options = {
+    body: formData,
+    method: "POST",
+  };
+  const response = await fetch(`/articles/update/${articleId}`, options);
+  const html = await response.text();
+
+  const oldRow = document.querySelector(`tr[data-id="${articleId}"]`);
+  const temp = document.createElement("tbody");
+  temp.innerHTML = html.trim();
+  const newRow = temp.firstElementChild;
+  oldRow.replaceWith(newRow);
 };

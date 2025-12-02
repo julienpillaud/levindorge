@@ -82,13 +82,6 @@ def compute_article_margins(
     )
 
 
-def extract_name(data: dict[str, Any]) -> None:
-    data["name"] = {
-        "name1": data.pop("name1", ""),
-        "name2": data.pop("name2", ""),
-    }
-
-
 def extract_volume(data: dict[str, Any]) -> None:
     volume_data = data.pop("volume", None)
     if not volume_data:
@@ -104,30 +97,25 @@ def extract_volume(data: dict[str, Any]) -> None:
 
 def extract_deposit(data: dict[str, Any]) -> None:
     data["deposit"] = {
-        "unit": data.pop("unit", 0),
-        "case": data.pop("case", 0),
+        "unit": data.pop("deposit.unit"),
+        "case": data.pop("deposit.case"),
+        "packaging": data.pop("deposit.packaging"),
     }
 
 
 def extract_shops(data: dict[str, Any]) -> None:
-    shops: dict[str, dict[str, Any]] = defaultdict(dict)
+    store_data: dict[str, dict[str, Any]] = defaultdict(dict)
 
     for key, value in data.items():
-        if "_price_" in key:
-            field, _, shop = key.partition("_price_")
-            shops[shop][f"{field}_price"] = float(value)
-            shops[shop]["stock_quantity"] = 0
+        if "store_data" not in key:
+            continue
 
-        elif key.startswith("margin_"):
-            _, shop = key.split("_", 1)
-            shops[shop].setdefault("margins", {})
-            shops[shop]["margins"]["margin"] = float(value)
-            shops[shop]["stock_quantity"] = 0
+        parts = key.split(".")
+        store_slug = parts[1]
+        if "margins" in parts:
+            store_data[store_slug].setdefault("margins", {})
+            store_data[store_slug]["margins"][parts[3]] = float(value)
+            continue
+        store_data[store_slug][parts[2]] = float(value)
 
-        elif key.startswith("profit_"):
-            _, shop = key.split("_", 1)
-            shops[shop].setdefault("margins", {})
-            shops[shop]["margins"]["markup"] = float(value)
-            shops[shop]["stock_quantity"] = 0
-
-    data["shops"] = shops
+    data["store_data"] = store_data

@@ -121,6 +121,26 @@ export const colorGrossPrices = () => {
 };
 
 // -----------------------------------------------------------------------------
+export const colorMarginAmounts = () => {
+  const selector = '[data-store-field="margin_amount"]';
+  const storeCards = document.querySelectorAll("[data-store]");
+
+  storeCards.forEach((card) => {
+    const div = card.querySelector(`div${selector}`);
+    const input = card.querySelector(`input${selector}`);
+
+    // Reset classes
+    div.classList.remove("text-success", "text-error");
+
+    if (input.value > 0) {
+      div.classList.add("text-success");
+    } else {
+      div.classList.add("text-error");
+    }
+  })
+}
+
+// -----------------------------------------------------------------------------
 export const colorMarginRates = () => {
   const selector = '[data-store-field="margin_rate"]';
   const storeCards = document.querySelectorAll("[data-store]");

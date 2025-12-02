@@ -72,9 +72,6 @@ def update_article_command(
     article_id: EntityId,
     data: ArticleCreateOrUpdate,
 ) -> Article:
-    if not context.category_repository.get_by_name(data.category):
-        raise NotFoundError()
-
     for store_slug in data.store_data:
         if not context.store_repository.get_by_slug(store_slug):
             raise NotFoundError()
@@ -85,6 +82,7 @@ def update_article_command(
 
     article = Article(
         id=existing_article.id,
+        category=existing_article.category,
         **data.model_dump(),
         created_at=existing_article.created_at,
         updated_at=datetime.datetime.now(datetime.UTC),

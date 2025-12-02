@@ -9,12 +9,11 @@ from app.domain.articles.entities import (
 )
 from app.domain.articles.utils import (
     extract_deposit,
-    extract_name,
     extract_shops,
     extract_volume,
 )
 from app.domain.commons.entities import PricingGroup
-from app.domain.types import DecimalType
+from app.domain.types import DecimalType, StoreSlug
 
 
 class PriceRequestDTO(BaseModel):
@@ -30,36 +29,47 @@ class MarginsRequestDTO(BaseModel):
 
 
 class ArticleDTO(BaseModel):
-    type: str
     producer: str | None
     product: str
-    buy_price: float
+    cost_price: float
     excise_duty: float = 0.0
-    social_security_levy: float = 0.0
-    tax: float
+    social_security_contribution: float = 0.0
+    vat_rate: float
     distributor: str
     barcode: str = ""
-    region: str = ""
-    color: str = ""
-    taste: str = ""
-    volume: ArticleVolume | None
-    alcohol_by_volume: float = 0.0
-    packaging: int = 0
-    deposit: ArticleDeposit
-    food_pairing: list[str] = []
-    biodynamic: str = ""
-    shops: dict[str, ArticleStoreData]
+    origin: str | None = None
+    color: str | None = None
+    taste: str | None = None
+    volume: ArticleVolume | None = None
+    alcohol_by_volume: float | None = None
+    deposit: ArticleDeposit | None = None
+    store_data: dict[StoreSlug, ArticleStoreData]
 
     @model_validator(mode="before")
     @classmethod
     def extract_fields(cls, data: dict[str, Any]) -> dict[str, Any]:
-        extract_name(data)
         extract_volume(data)
         extract_deposit(data)
         extract_shops(data)
         return data
 
-    @field_validator("excise_duty", "social_security_levy", mode="before")
+    @field_validator(
+        "excise_duty",
+        "social_security_contribution",
+        mode="before",
+    )
     @classmethod
     def empty_string_to_zero(cls, value: str) -> float:
         return float(value) if value else 0.0
+
+    @field_validator(
+        "producer",
+        "origin",
+        "color",
+        "taste",
+        "alcohol_by_volume",
+        mode="before",
+    )
+    @classmethod
+    def empty_string_to_none(cls, value: str) -> str | None:
+        return value or None
