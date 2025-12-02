@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/julienpillaud/levindorge/compare/0.9.1...0.10.0) (2025-12-02)
+
+
+### Features
+
+* add login template ([#65](https://github.com/julienpillaud/levindorge/issues/65)) ([17d6c2a](https://github.com/julienpillaud/levindorge/commit/17d6c2ab36b48f980bc59d25409dd5e3f6e4f33e))
+
 ## [0.9.1](https://github.com/julienpillaud/levindorge/compare/0.9.0...0.9.1) (2025-12-02)
 
 
