@@ -29,7 +29,8 @@ class MarginsRequestDTO(BaseModel):
 
 
 class ArticleDTO(BaseModel):
-    producer: str | None
+    category: str
+    producer: str | None = None
     product: str
     cost_price: float
     excise_duty: float = 0.0

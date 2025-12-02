@@ -9,6 +9,7 @@ import {
   updateMargins,
   updateRecommendedPrice,
 } from "./utils.js";
+import {showToast} from "../utils.js";
 
 // -----------------------------------------------------------------------------
 export const fillAndShowModal = async (row, modal) => {
@@ -90,6 +91,12 @@ export const updateArticle = async (form) => {
     method: "POST",
   };
   const response = await fetch(`/articles/update/${articleId}`, options);
+  if (!response.ok) {
+    const error = await response.text();
+    console.log(error);
+    showToast("Erreur lors de la lise à jour");
+    return;
+  }
   const html = await response.text();
 
   const oldRow = document.querySelector(`tr[data-id="${articleId}"]`);
@@ -97,4 +104,6 @@ export const updateArticle = async (form) => {
   temp.innerHTML = html.trim();
   const newRow = temp.firstElementChild;
   oldRow.replaceWith(newRow);
+
+  showToast("Produit mis à jour !", "success");
 };

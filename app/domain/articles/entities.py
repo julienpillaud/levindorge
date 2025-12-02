@@ -73,6 +73,10 @@ class ArticleStoreData(BaseModel):
 
 
 class BaseArticle(BaseModel):
+    reference: Annotated[uuid.UUID, PlainSerializer(str)] = Field(
+        default_factory=uuid.uuid7
+    )
+    category: str
     producer: str | None = Field(min_length=1, default=None)
     product: str
     cost_price: DecimalType = Field(gt=0, decimal_places=4)
@@ -122,10 +126,6 @@ class ArticleCreateOrUpdate(BaseArticle):
 
 
 class Article(DomainEntity, BaseArticle):
-    reference: Annotated[uuid.UUID, PlainSerializer(str)] = Field(
-        default_factory=uuid.uuid7
-    )
-    category: str
     created_at: datetime.datetime
     updated_at: datetime.datetime
     store_data: dict[StoreSlug, ArticleStoreData]

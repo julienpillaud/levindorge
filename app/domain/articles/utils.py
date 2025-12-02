@@ -96,10 +96,14 @@ def extract_volume(data: dict[str, Any]) -> None:
 
 
 def extract_deposit(data: dict[str, Any]) -> None:
+    if "deposit.unit" not in data:
+        data["deposit"] = None
+        return
+
     data["deposit"] = {
         "unit": data.pop("deposit.unit"),
-        "case": data.pop("deposit.case"),
-        "packaging": data.pop("deposit.packaging"),
+        "case": data.pop("deposit.case", None),
+        "packaging": data.pop("deposit.packaging", None),
     }
 
 
