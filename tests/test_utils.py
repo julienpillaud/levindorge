@@ -1,4 +1,4 @@
-from app.utils.utils import iter_dicts
+from app.infrastructure.utils import iter_dicts
 
 
 def test_iter_dicts_simple() -> None:

@@ -13,7 +13,7 @@ from app.domain.entities import (
 )
 from app.domain.types import EntityId
 from app.infrastructure.repository.exceptions import MongoRepositoryError
-from app.utils.utils import iter_dicts
+from app.infrastructure.utils import iter_dicts
 
 type MongoDocument = dict[str, Any]
 
