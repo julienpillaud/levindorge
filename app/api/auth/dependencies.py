@@ -40,15 +40,10 @@ def _get_user_from_token(
     if not email:
         return None
 
-    user = request.session.get("current_user")
-    if user:
-        return User(**user)
-
     user = domain.get_user_by_email(email=email)
     if not user:
         return None
 
-    request.session["current_user"] = user.model_dump()
     return user
 
 

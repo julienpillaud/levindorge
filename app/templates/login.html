@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="flex justify-center items-center min-h-screen">
+    <form action="/" method="post">
+      <div class="card bg-base-200 w-sm shadow">
+        <div class="card-body">
+          <div class="grid gap-6">
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Adresse email</legend>
+              <label class="input input-lg w-full validator">
+                <i class="bi bi-envelope text-lg"></i>
+                <input type="email" class="grow" name="username" />
+              </label>
+              <div class="validator-hint hidden">Le format de l’adresse email est incorrect</div>
+            </fieldset>
+
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Mot de passe</legend>
+              <label class="input input-lg w-full validator">
+                <i class="bi bi-key text-lg"></i>
+                <input type="password" class="grow" name="password" />
+              </label>
+            </fieldset>
+
+            {% if error %}
+              <div role="alert" class="alert alert-error alert-soft">
+                <i class="bi bi-x-circle"></i>
+                <span>{{ error }}</span>
+              </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-lg btn-primary">Connexion</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock %}
