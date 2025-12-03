@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.2](https://github.com/julienpillaud/levindorge/compare/0.10.1...0.10.2) (2025-12-03)
+
+
+### Bug Fixes
+
+* handle login errors with session and redirect unauthorized users ([#69](https://github.com/julienpillaud/levindorge/issues/69)) ([b17b0e0](https://github.com/julienpillaud/levindorge/commit/b17b0e0bc209b1681d1f768bc7bb1321e4e92bcd))
+
 ## [0.10.1](https://github.com/julienpillaud/levindorge/compare/0.10.0...0.10.1) (2025-12-02)
 
 
