@@ -1,8 +1,10 @@
+import logging
+
 from cleanstack.exceptions import ConflictError, DomainError
 from fastapi import FastAPI, status
-from fastapi.exceptions import HTTPException as StarletteHTTPException
 from fastapi.requests import Request
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse, RedirectResponse, Response
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.dependencies import get_templates
 from app.core.config import Settings
@@ -11,12 +13,23 @@ from app.domain.exceptions import (
     UserUnauthorizedError,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def add_exception_handler(app: FastAPI, settings: Settings) -> None:
     templates = get_templates(settings=settings)
 
-    @app.exception_handler(DomainError)
     @app.exception_handler(StarletteHTTPException)
+    async def http_exception_handler(
+        request: Request, _: StarletteHTTPException
+    ) -> Response:
+        # TODO: implement error pages (404.html, ...)
+        return RedirectResponse(
+            url=request.url_for("home"),
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
+    @app.exception_handler(DomainError)
     async def generic_handler(request: Request, _: Exception) -> Response:
         return templates.TemplateResponse(
             request=request,
@@ -27,7 +40,7 @@ def add_exception_handler(app: FastAPI, settings: Settings) -> None:
     async def user_not_authorized_handler(request: Request, _: Exception) -> Response:
         return templates.TemplateResponse(
             request=request,
-            name="errors/401.html",
+            name="login.html",
         )
 
     @app.exception_handler(ConflictError)

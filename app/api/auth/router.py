@@ -13,6 +13,8 @@ from app.core.config import Settings
 from app.domain.domain import Domain
 from app.domain.users.entities import User, UserUpdate
 
+LOGIN_ERROR_MESSAGE = "Email ou mot de passe incorrect"
+
 router = APIRouter()
 
 
@@ -29,7 +31,12 @@ def home(
             status_code=status.HTTP_302_FOUND,
         )
 
-    return templates.TemplateResponse(request=request, name="login.html")
+    error = request.session.pop("login_error", None)
+    return templates.TemplateResponse(
+        request=request,
+        name="login.html",
+        context={"error": error},
+    )
 
 
 @router.post("/")
@@ -38,14 +45,13 @@ def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     settings: Annotated[Settings, Depends(get_settings)],
     domain: Annotated[Domain, Depends(get_domain)],
-    templates: Annotated[Jinja2Templates, Depends(get_templates)],
 ) -> Response:
     user = domain.get_user_by_email(email=form_data.username)
     if not user:
-        return templates.TemplateResponse(
-            request=request,
-            name="login.html",
-            context={"error": "Email ou mot de passe incorrect"},
+        request.session["login_error"] = LOGIN_ERROR_MESSAGE
+        return RedirectResponse(
+            url=request.url_for("home"),
+            status_code=status.HTTP_303_SEE_OTHER,
         )
 
     valid_password, updated_hash = verify_password(
@@ -57,10 +63,10 @@ def login(
         domain.update_user(user_id=user.id, user_update=user_update)
 
     if not valid_password:
-        return templates.TemplateResponse(
-            request=request,
-            name="login.html",
-            context={"error": "Email ou mot de passe incorrect"},
+        request.session["login_error"] = LOGIN_ERROR_MESSAGE
+        return RedirectResponse(
+            url=request.url_for("home"),
+            status_code=status.HTTP_303_SEE_OTHER,
         )
 
     access_token = create_access_token(sub=user.email, secret_key=settings.secret_key)
