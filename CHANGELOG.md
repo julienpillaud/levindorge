@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/julienpillaud/levindorge/compare/0.10.2...0.11.0) (2025-12-04)
+
+
+### Features
+
+* refactor security functionalities ([#71](https://github.com/julienpillaud/levindorge/issues/71)) ([e171eea](https://github.com/julienpillaud/levindorge/commit/e171eea70bce04abccc3d32cd8bbf6979f240c90))
+
 ## [0.10.2](https://github.com/julienpillaud/levindorge/compare/0.10.1...0.10.2) (2025-12-03)
 
 
