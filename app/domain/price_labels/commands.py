@@ -1,6 +1,6 @@
 from operator import attrgetter
 
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.domain.context import ContextProtocol
 from app.domain.price_labels.entities import (
     PriceLabelCreate,

@@ -9,9 +9,9 @@ from app.api.inventories.router import router as inventories_router
 from app.api.price_labels.router import router as tags_router
 from app.api.producers.router import router as producers_router
 from app.api.stores.router import router as stores_router
-from app.api.utils import add_session_middleware, mount_static
+from app.api.utils import add_security_middleware, add_session_middleware, mount_static
 from app.api.volumes.router import router as volumes_router
-from app.core.config import Settings
+from app.core.config.settings import Settings
 
 
 def create_app(settings: Settings) -> FastAPI:
@@ -21,6 +21,8 @@ def create_app(settings: Settings) -> FastAPI:
     )
 
     add_session_middleware(app=app, settings=settings)
+    add_security_middleware(app=app, settings=settings)
+
     add_exception_handler(app=app, settings=settings)
     mount_static(app=app, settings=settings)
 

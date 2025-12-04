@@ -4,7 +4,7 @@ import typer
 from pymongo import MongoClient
 from rich.console import Console
 
-from app.core.config import Settings
+from app.core.config.settings import Settings
 
 app = typer.Typer()
 console = Console()

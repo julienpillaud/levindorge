@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse, RedirectResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.dependencies import get_templates
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.domain.exceptions import (
     CannotDeleteError,
     UserUnauthorizedError,

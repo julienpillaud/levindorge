@@ -2,7 +2,7 @@ from typing import Any, TextIO
 
 from PIL import ImageFont
 
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
 from app.domain.context import ContextProtocol

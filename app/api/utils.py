@@ -1,3 +1,5 @@
+import logging
+from collections.abc import Awaitable, Callable
 from typing import Any
 from urllib.parse import urlencode
 
@@ -7,6 +9,7 @@ from fastapi.requests import Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
+from starlette.responses import Response
 
 from app.api.filters import (
     article_shops_to_json,
@@ -14,7 +17,10 @@ from app.api.filters import (
     strip_zeros,
 )
 from app.api.navbar import navbar_categories, navbar_items
-from app.core.config import Settings
+from app.api.security.token import create_access_from_refresh, decode_token_string
+from app.core.config.settings import Settings
+
+logger = logging.getLogger(__name__)
 
 
 def init_templates(settings: Settings) -> Jinja2Templates:
@@ -42,6 +48,48 @@ def mount_static(app: FastAPI, settings: Settings) -> None:
 
 def add_session_middleware(app: FastAPI, settings: Settings) -> None:
     app.add_middleware(SessionMiddleware, secret_key=settings.secret_key)
+
+
+def add_security_middleware(app: FastAPI, settings: Settings) -> None:
+    @app.middleware("http")
+    async def security_middleware(
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        request.state.new_access_token = None
+
+        # Access token is valid -> continue
+        access_token = request.cookies.get("access_token")
+        if decode_token_string(access_token, settings=settings):
+            return await call_next(request)
+
+        # Access token is invalid -> refresh it
+        refresh_token = request.cookies.get("refresh_token")
+        if decode_token_string(refresh_token, settings=settings):
+            logger.debug("Access token invalid - Trying to refresh")
+            new_access_token = create_access_from_refresh(
+                refresh_token,
+                settings=settings,
+            )
+            if not new_access_token:
+                logger.debug("Access token invalid - Failed to refresh")
+                return await call_next(request)
+
+            cookie = new_access_token.to_cookie(settings)
+            request.state.new_access_token = cookie.value
+            response = await call_next(request)
+            response.set_cookie(
+                key=cookie.key,
+                value=cookie.value,
+                max_age=cookie.max_age,
+                secure=cookie.secure,
+                httponly=cookie.httponly,
+                samesite=cookie.samesite,
+            )
+            return response
+
+        # Refresh token is invalid -> redirect to home
+        return await call_next(request)
 
 
 def url_for_with_query(

@@ -1,6 +1,6 @@
 import pytest
 
-from app.core.config import Settings
+from app.core.config.settings import AppEnvironment, Settings
 from app.core.core import Context
 from app.domain.stores.entities import Store
 from app.domain.users.entities import User
@@ -18,7 +18,7 @@ pytest_plugins = [
 def settings() -> Settings:
     return Settings(
         app_version="",
-        environment="test",
+        environment=AppEnvironment.TESTING,
         secret_key="",
         mongo_user="user",
         mongo_password="password",

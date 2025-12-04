@@ -6,8 +6,7 @@ from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 
-from app.api.auth.dependencies import get_current_user
-from app.api.dependencies import get_domain, get_templates
+from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.domain.domain import Domain
 from app.domain.stores.entities import Store
 from app.domain.users.entities import User

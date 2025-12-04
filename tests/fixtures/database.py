@@ -4,7 +4,7 @@ import pytest
 from pymongo import MongoClient
 from pymongo.database import Database
 
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.infrastructure.repository.mongo_repository import MongoDocument
 
 

@@ -1,9 +1,16 @@
+from enum import StrEnum
 from zoneinfo import ZoneInfo
 
 from pydantic import RedisDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from app.core.paths import AppPaths
+from app.core.config.paths import AppPaths
+
+
+class AppEnvironment(StrEnum):
+    DEVELOPMENT = "development"
+    TESTING = "testing"
+    PRODUCTION = "production"
 
 
 class Settings(BaseSettings):
@@ -15,8 +22,10 @@ class Settings(BaseSettings):
 
     project_name: str = "Le Vin d'Orge"
     app_version: str
-    environment: str
+    environment: AppEnvironment
     secret_key: str
+    access_token_expire: int = 15  # 15 minutes
+    refresh_token_expire: int = 7 * 24 * 60  # 7 days
     app_path: AppPaths = AppPaths()
     zone_info: ZoneInfo = ZoneInfo("Europe/Paris")
     logfire_token: str = ""

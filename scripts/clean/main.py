@@ -4,7 +4,7 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.core.core import Context
 from app.infrastructure.tactill.utils import INCLUDED_CATEGORIES
 from scripts.clean.dashboard import (
