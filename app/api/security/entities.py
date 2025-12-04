@@ -5,7 +5,7 @@ from typing import Literal
 import jwt
 from pydantic import BaseModel
 
-from app.core.config.settings import Environment, Settings
+from app.core.config.settings import AppEnvironment, Settings
 
 ALGORITHM = "HS256"
 
@@ -60,9 +60,9 @@ class JWTToken(BaseModel):
             key=f"{self.type}_token",
             value=f"Bearer {self.token}",
             max_age=self.max_age,
-            secure=settings.environment == Environment.PRODUCTION,
+            secure=settings.environment == AppEnvironment.PRODUCTION,
             samesite="strict"
-            if settings.environment == Environment.PRODUCTION
+            if settings.environment == AppEnvironment.PRODUCTION
             else "lax",
         )
 

@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from app.core.config.paths import AppPaths
 
 
-class Environment(StrEnum):
+class AppEnvironment(StrEnum):
     DEVELOPMENT = "development"
     TESTING = "testing"
     PRODUCTION = "production"
@@ -22,7 +22,7 @@ class Settings(BaseSettings):
 
     project_name: str = "Le Vin d'Orge"
     app_version: str
-    environment: Environment
+    environment: AppEnvironment
     secret_key: str
     access_token_expire: int = 15  # 15 minutes
     refresh_token_expire: int = 7 * 24 * 60  # 7 days
