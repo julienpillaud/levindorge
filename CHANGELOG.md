@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/julienpillaud/levindorge/compare/0.11.0...0.11.1) (2025-12-04)
+
+
+### Bug Fixes
+
+* add logs to debug token handling ([#73](https://github.com/julienpillaud/levindorge/issues/73)) ([51301fd](https://github.com/julienpillaud/levindorge/commit/51301fd0bbfe63187c9ae1e3dd8d0c30ae9762f0))
+
 ## [0.11.0](https://github.com/julienpillaud/levindorge/compare/0.10.2...0.11.0) (2025-12-04)
 
 
