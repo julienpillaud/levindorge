@@ -6,10 +6,15 @@ from fastapi.responses import RedirectResponse, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
 
-from app.api.auth.dependencies import get_optional_current_user
-from app.api.dependencies import get_domain, get_settings, get_templates
-from app.api.security import create_access_token, verify_password
-from app.core.config import Settings
+from app.api.dependencies import (
+    get_domain,
+    get_optional_current_user,
+    get_settings,
+    get_templates,
+)
+from app.api.security.entities import JWTToken, TokenType
+from app.api.security.password import verify_password
+from app.core.config.settings import Settings
 from app.domain.domain import Domain
 from app.domain.users.entities import User, UserUpdate
 
@@ -69,16 +74,37 @@ def login(
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
-    access_token = create_access_token(sub=user.email, secret_key=settings.secret_key)
-
+    access_token = JWTToken.from_sub(
+        sub=user.email,
+        token_type=TokenType.ACCESS,
+        settings=settings,
+    )
+    refresh_token = JWTToken.from_sub(
+        sub=user.email,
+        token_type=TokenType.REFRESH,
+        settings=settings,
+    )
     response = RedirectResponse(
         url=request.url_for("get_articles"),
         status_code=status.HTTP_302_FOUND,
     )
+    access_cookie = access_token.to_cookie(settings)
     response.set_cookie(
-        key="access_token",
-        value=f"Bearer {access_token}",
-        httponly=True,
+        key=access_cookie.key,
+        value=access_cookie.value,
+        max_age=access_cookie.max_age,
+        secure=access_cookie.secure,
+        httponly=access_cookie.httponly,
+        samesite=access_cookie.samesite,
+    )
+    refresh_cookie = refresh_token.to_cookie(settings)
+    response.set_cookie(
+        key=refresh_cookie.key,
+        value=refresh_cookie.value,
+        max_age=refresh_cookie.max_age,
+        secure=refresh_cookie.secure,
+        httponly=refresh_cookie.httponly,
+        samesite=refresh_cookie.samesite,
     )
     return response
 
@@ -88,4 +114,5 @@ def logout(request: Request) -> Response:
     request.session.clear()
     response = RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
     response.delete_cookie(key="access_token")
+    response.delete_cookie(key="refresh_token")
     return response

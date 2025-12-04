@@ -5,7 +5,7 @@ from pydantic_settings import SettingsConfigDict
 
 
 class AppPaths(BaseModel):
-    root: Path = Path(__file__).resolve().parents[1]
+    root: Path = Path(__file__).resolve().parents[2]
 
     model_config = SettingsConfigDict(frozen=True)
 

@@ -9,8 +9,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import PositiveInt
 
 from app.api.articles.dtos import ArticleDTO, MarginsRequestDTO, PriceRequestDTO
-from app.api.auth.dependencies import get_current_user
-from app.api.dependencies import get_domain, get_templates
+from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.domain.articles.entities import ArticleCreateOrUpdate, ArticleMargins
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
 from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP

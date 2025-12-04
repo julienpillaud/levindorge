@@ -1,6 +1,6 @@
 import pytest
 
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.core.core import Context
 from app.domain.stores.entities import Store
 from app.domain.users.entities import User

@@ -3,7 +3,7 @@ from faststream import ContextRepo, FastStream
 from faststream.redis import RedisBroker
 from faststream.redis.opentelemetry import RedisTelemetryMiddleware
 
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.core.core import Context
 from app.core.logfire import scrubbing_callback
 from app.domain.domain import Domain

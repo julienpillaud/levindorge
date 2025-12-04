@@ -1,7 +1,7 @@
 import logfire
 
 from app.api.app import create_app
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.core.core import initialize_app
 from app.core.logfire import scrubbing_callback
 

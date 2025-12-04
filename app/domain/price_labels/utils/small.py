@@ -1,6 +1,6 @@
 from typing import TextIO
 
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.domain.articles.entities import Article
 from app.domain.price_labels.entities import PriceLabelWrapper
 from app.domain.price_labels.utils.common import (

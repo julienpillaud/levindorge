@@ -3,7 +3,7 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.core.core import Context
 from scripts.migration.articles import create_articles
 from scripts.migration.categories import create_categories

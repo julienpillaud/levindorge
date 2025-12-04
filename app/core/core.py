@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from faststream.redis import RedisBroker
 from pymongo import MongoClient
 
-from app.core.config import Settings
+from app.core.config.settings import Settings
 from app.domain.context import ContextProtocol
 from app.domain.domain import Domain
 from app.infrastructure.event_publisher import FastStreamEventPublisher
