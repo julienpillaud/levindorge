@@ -13,12 +13,8 @@ def decode_token_string(
     if not value:
         return None
 
-    scheme, _, param = value.partition(" ")
-    if scheme.lower() != "bearer":
-        return None
-
     try:
-        payload = jwt.decode(param, settings.secret_key, algorithms=[ALGORITHM])
+        payload = jwt.decode(value, settings.secret_key, algorithms=[ALGORITHM])
     except jwt.PyJWTError:
         return None
 
