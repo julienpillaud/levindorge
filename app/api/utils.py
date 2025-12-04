@@ -59,20 +59,26 @@ def add_security_middleware(app: FastAPI, settings: Settings) -> None:
         request.state.new_access_token = None
 
         # Access token is valid -> continue
-        access_token = request.cookies.get("access_token")
-        if decode_token_string(access_token, settings=settings):
+        access_token_str = request.cookies.get("access_token")
+        access_token = decode_token_string(access_token_str, settings=settings)
+        logger.debug("Access token", extra={"access_token": access_token})
+        if access_token:
             return await call_next(request)
 
         # Access token is invalid -> refresh it
-        refresh_token = request.cookies.get("refresh_token")
-        if decode_token_string(refresh_token, settings=settings):
-            logger.debug("Access token invalid - Trying to refresh")
+        refresh_token_str = request.cookies.get("refresh_token")
+        refresh_token = decode_token_string(refresh_token_str, settings=settings)
+        logger.debug("Refresh token", extra={"refresh_token": refresh_token})
+        if refresh_token:
             new_access_token = create_access_from_refresh(
-                refresh_token,
+                refresh_token_str,
                 settings=settings,
             )
+            logger.debug(
+                "New access token", extra={"new_access_token": new_access_token}
+            )
             if not new_access_token:
-                logger.debug("Access token invalid - Failed to refresh")
+                logger.debug("Failed to create new access token")
                 return await call_next(request)
 
             cookie = new_access_token.to_cookie(settings)

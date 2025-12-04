@@ -3,7 +3,7 @@ from enum import StrEnum
 from typing import Literal
 
 import jwt
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
 from app.core.config.settings import AppEnvironment, Settings
 
@@ -21,13 +21,18 @@ class Cookie(BaseModel):
     max_age: int
     secure: bool
     httponly: bool = True
-    samesite: Literal["lax", "strict", "none"]
+    samesite: Literal["lax", "strict", "none"] = "lax"
 
 
 class TokenPayload(BaseModel):
     sub: str
     exp: datetime.datetime
     type: TokenType
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def is_expired(self) -> bool:
+        return datetime.datetime.now(datetime.UTC) >= self.exp
 
 
 class JWTToken(BaseModel):
@@ -58,12 +63,9 @@ class JWTToken(BaseModel):
     def to_cookie(self, settings: Settings, /) -> Cookie:
         return Cookie(
             key=f"{self.type}_token",
-            value=f"Bearer {self.token}",
+            value=self.token,
             max_age=self.max_age,
             secure=settings.environment == AppEnvironment.PRODUCTION,
-            samesite="strict"
-            if settings.environment == AppEnvironment.PRODUCTION
-            else "lax",
         )
 
 
