@@ -1,4 +1,4 @@
-import {fetchWithCache} from "./local-storage.js";
+import { fetchWithCache } from "./local-storage.js";
 
 const CACHE_KEY = "categories";
 
@@ -11,5 +11,5 @@ export const getCategories = async () => {
 
 const fetchCategories = async () => {
   const result = await fetch("/categories");
-  return  await result.json();
+  return await result.json();
 };

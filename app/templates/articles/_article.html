@@ -1,9 +1,9 @@
-<input type="hidden" id="article-id" value="{{ article.id }}"/>
+<input type="hidden" id="article-id" value="{{ article.id }}" />
 
 <div class="grid grid-cols-1 justify-items-center">
-
   <div class="join w-full md:max-w-2xs">
-    <button class="
+    <button
+      class="
       btn
       btn-sm
       btn-soft
@@ -27,12 +27,13 @@
       <select class="select select-sm join-item w-full font-bold" name="category" required>
         <option disabled selected></option>
         {% for category in categories %}
-          <option {% if article.category == category.name %}selected{% endif %}>{{ category.name }}</option>
+          <option {% if article.category == category.name %}selected{% endif %}>
+            {{ category.name }}
+          </option>
         {% endfor %}
       </select>
     {% endif %}
   </div>
-
 </div>
 {# ------------------------------------------------------------------------ #}
 
@@ -59,10 +60,8 @@
 <div class="card shadow border border-base-300">
   <div class="card-body pt-4">
     <div class="grid grid-cols-1 md:grid-cols-3 md:gap-x-4">
-
       {% include "articles/_includes/_distributor.html" %}
       {% include "articles/_includes/_barcode.html" %}
-
     </div>
 
     {% include "articles/_includes/_deposit.html" %}

@@ -4,10 +4,12 @@
     {% if article %}
       {% set store_data = article.store_data[store.slug] %}
     {% else %}
-      {% set store_data = {
-        "stock_quantity": 0,
-        "margins": {"margin_amount": "", "margin_rate": ""},
-      } %}
+      {%
+        set store_data = {
+          "stock_quantity": 0,
+          "margins": {"margin_amount": "", "margin_rate": ""},
+        }
+      %}
     {% endif %}
 
     <div class="card shadow border border-base-300" data-store="{{ store.slug }}">

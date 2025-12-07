@@ -107,7 +107,6 @@ export const updateArticle = async (form) => {
 
 export const createArticle = async (form) => {
   const formData = new FormData(form);
-  console.log(Object.fromEntries(formData));
   const options = {
     body: formData,
     method: "POST",
@@ -127,4 +126,4 @@ export const createArticle = async (form) => {
   tbody.prepend(newRow);
 
   showToast("Produit créé !", "success");
-}
+};

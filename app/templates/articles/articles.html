@@ -34,7 +34,9 @@
                 <td class="text-nowrap">{{ article.origin if article.origin }}</td>
                 <td class="text-nowrap">{{ article.color if article.color }}</td>
                 <td class="text-nowrap">{{ article.taste if article.taste }}</td>
-                <td class="text-nowrap">{{ article.alcohol_by_volume | strip_zeros if article.alcohol_by_volume }}</td>
+                <td class="text-nowrap">
+                  {{ article.alcohol_by_volume | strip_zeros if article.alcohol_by_volume }}
+                </td>
                 <td class="text-nowrap">{{ article.distributor }}</td>
                 <td class="text-nowrap">{{ article.category }}</td>
               </tr>

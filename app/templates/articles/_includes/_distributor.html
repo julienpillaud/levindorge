@@ -3,7 +3,9 @@
   <select class="select select-sm w-full" name="distributor" required>
     <option disabled selected></option>
     {% for distributor in data.distributors %}
-      <option {% if article.distributor == distributor.name %}selected{% endif %}>{{ distributor.name }}</option>
+      <option {% if article.distributor == distributor.name %}selected{% endif %}>
+        {{ distributor.name }}
+      </option>
     {% endfor %}
   </select>
 </fieldset>

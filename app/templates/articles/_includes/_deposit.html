@@ -8,7 +8,9 @@
         <option selected></option>
         {% for deposit in data.deposits %}
           {% if deposit.type == "unit" %}
-            <option {% if deposits_exists and article.deposit.unit == deposit.value %}selected{% endif %}>
+            <option
+              {% if deposits_exists and article.deposit.unit == deposit.value %}selected{% endif %}
+            >
               {{ deposit.value }}
             </option>
           {% endif %}
@@ -23,7 +25,9 @@
           <option selected></option>
           {% for deposit in data.deposits %}
             {% if deposit.type == "case" %}
-              <option {% if deposits_exists and article.deposit.case == deposit.value %}selected{% endif %}>
+              <option
+                {% if deposits_exists and article.deposit.case == deposit.value %}selected{% endif %}
+              >
                 {{ deposit.value }}
               </option>
             {% endif %}
@@ -38,7 +42,9 @@
         <select class="select select-sm w-full" name="deposit.packaging">
           <option selected></option>
           {% for value in [6, 12, 20, 24] %}
-            <option {% if deposits_exists and article.deposit.packaging == value %}selected{% endif %}>
+            <option
+              {% if deposits_exists and article.deposit.packaging == value %}selected{% endif %}
+            >
               {{ value }}
             </option>
           {% endfor %}

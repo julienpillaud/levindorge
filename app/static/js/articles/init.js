@@ -1,6 +1,7 @@
 import {
   calculationOnCostChange,
-  calculationOnPriceChange, createArticle,
+  calculationOnPriceChange,
+  createArticle,
   fillAndShowModal,
   updateArticle,
 } from "./main.js";
@@ -42,7 +43,7 @@ const initFormSubmit = (modal) => {
   const form = document.getElementById("article-form");
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const {action} = event.submitter.dataset;
+    const { action } = event.submitter.dataset;
     if (action === "update") {
       updateArticle(form);
     } else {
