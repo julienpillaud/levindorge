@@ -1,0 +1,11 @@
+{% if category_group.origin %}
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Pays / Région</legend>
+    <select class="select select-sm w-full" name="origin" required>
+      <option disabled selected></option>
+      {% for origin in data.origins %}
+        <option {% if article.origin == origin.name %}selected{% endif %}>{{ origin.name }}</option>
+      {% endfor %}
+    </select>
+  </fieldset>
+{% endif %}

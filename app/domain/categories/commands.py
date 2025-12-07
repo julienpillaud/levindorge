@@ -1,12 +1,21 @@
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.categories.entities import Category
+from app.domain.commons.category_groups import CategoryGroupName
 from app.domain.context import ContextProtocol
 from app.domain.entities import PaginatedResponse
 
 
-def get_categories_command(context: ContextProtocol) -> PaginatedResponse[Category]:
-    return context.category_repository.get_all()
+def get_categories_command(
+    context: ContextProtocol,
+    category_group: CategoryGroupName | None = None,
+) -> PaginatedResponse[Category]:
+    filters = {"category_group": category_group} if category_group else {}
+    return context.category_repository.get_all(
+        filters=filters,
+        sort={"name": 1},
+        limit=300,
+    )
 
 
 def get_category_by_name_command(context: ContextProtocol, name: str) -> Category:

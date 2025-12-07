@@ -1,0 +1,65 @@
+<fieldset class="fieldset">
+  <legend class="fieldset-legend">Tarif HT (€)</legend>
+  <input
+    type="number"
+    min="0"
+    step="0.001"
+    class="input input-sm w-full"
+    id="cost_price"
+    name="cost_price"
+    value="{{ article.cost_price }}"
+    required
+  />
+</fieldset>
+
+<fieldset class="fieldset">
+  <legend class="fieldset-legend">TVA (%)</legend>
+  <input
+    type="number"
+    min="0"
+    max="100"
+    step="0.1"
+    class="input input-sm w-full"
+    id="vat_rate"
+    name="vat_rate"
+    value="{{ article.vat_rate }}"
+    required
+  />
+</fieldset>
+
+<fieldset class="fieldset">
+  <legend class="fieldset-legend">Tarif HT DI</legend>
+  <input
+    type="text"
+    class="input input-sm w-full font-mono font-bold bg-base-200 pointer-events-none"
+    id="total_cost"
+    value="{{ article.total_cost }}"
+    readonly
+  />
+</fieldset>
+
+<fieldset class="fieldset">
+  <legend class="fieldset-legend">Droit d'accice (€)</legend>
+  <input
+    type="number"
+    min="0"
+    step="0.001"
+    class="input input-sm w-full"
+    id="excise_duty"
+    name="excise_duty"
+    value="{{ article.excise_duty }}"
+  />
+</fieldset>
+
+<fieldset class="fieldset">
+  <legend class="fieldset-legend">Cotisation SS (€)</legend>
+  <input
+    type="number"
+    min="0"
+    step="0.001"
+    class="input input-sm w-full"
+    id="social_security_contribution"
+    name="social_security_contribution"
+    value="{{ article.social_security_contribution }}"
+  />
+</fieldset>

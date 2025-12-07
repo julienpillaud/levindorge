@@ -13,14 +13,14 @@ def create_users(
     stores: list[Store],
 ) -> list[User]:
     # Get previous users
-    src_users = src_context.database["users"].find()
+    src_users = list(src_context.database["users"].find())
     # Create users with the new entity model
-    dst_users = create_user_entities(src_users=list(src_users), stores=stores)
+    dst_users = create_user_entities(src_users=src_users, stores=stores)
 
     # Save users in the database
     result = dst_context.user_repository.create_many(dst_users)
     count = len(result)
-    print(f"Created {count} users")
+    print(f"Created {count} users ({len(src_users)})")
     return dst_context.user_repository.get_all(limit=count).items
 
 

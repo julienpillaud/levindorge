@@ -1,7 +1,7 @@
 import typer
 
-from .clean.main import app as clean_app
-from .migration.main import app as migration_app
+from scripts.clean.main import app as clean_app
+from scripts.migration.main import app as migration_app
 
 app = typer.Typer()
 

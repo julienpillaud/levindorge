@@ -1,12 +1,9 @@
 from rich import print
 
 from app.core.core import Context
-from app.domain._shared.entities import ProducerType
 from app.domain.categories.entities import Category
 from app.domain.commons.category_groups import CategoryGroupName
 from app.domain.commons.entities import PricingGroup
-from app.domain.deposits.entities import DepositCategory
-from app.domain.volumes.entities import VolumeCategory
 
 
 def create_categories(dst_context: Context) -> list[Category]:
@@ -22,36 +19,24 @@ CATEGORIES = [
         name="Bière",
         pricing_group=PricingGroup.BEER,
         category_group=CategoryGroupName.BEER,
-        producer_type=ProducerType.BREWERY,
-        volume_category=VolumeCategory.BEER,
-        deposit_category=DepositCategory.BEER,
         tactill_category="BIÈRE",
     ),
     Category(
         name="Cidre",
         pricing_group=PricingGroup.BEER,
         category_group=CategoryGroupName.BEER,
-        producer_type=ProducerType.BREWERY,
-        volume_category=VolumeCategory.BEER,
-        deposit_category=DepositCategory.BEER,
         tactill_category="CIDRE",
     ),
     Category(
         name="Fût",
         pricing_group=PricingGroup.KEG,
         category_group=CategoryGroupName.KEG,
-        producer_type=ProducerType.BREWERY,
-        volume_category=VolumeCategory.KEG,
-        deposit_category=DepositCategory.KEG,
         tactill_category="FÛT",
     ),
     Category(
         name="Mini-fût",
         pricing_group=PricingGroup.MINI_KEG,
         category_group=CategoryGroupName.KEG,
-        producer_type=ProducerType.BREWERY,
-        volume_category=VolumeCategory.MINI_KEG,
-        deposit_category=DepositCategory.MINI_KEG,
         tactill_category="MINI-FÛT",
     ),
     # ----- spirit -----
@@ -59,96 +44,72 @@ CATEGORIES = [
         name="Rhum",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="RHUM",
     ),
     Category(
         name="Whisky",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="WHISKY",
     ),
     Category(
         name="Rhum arrangé",
         pricing_group=PricingGroup.ARRANGED,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="RHUM ARRANGÉ",
     ),
     Category(
         name="Absinthe",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="ABSINTHE",
     ),
     Category(
         name="Anisé",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="ANISÉ",
     ),
     Category(
         name="Armagnac",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="ARMAGNAC",
     ),
     Category(
         name="Cachaça",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="CACHAÇA",
     ),
     Category(
         name="Cognac",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="COGNAC",
     ),
     Category(
         name="Gin",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="GIN",
     ),
     Category(
         name="Liqueur",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="LIQUEUR",
     ),
     Category(
         name="Mezcal",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="MEZCAL",
     ),
     Category(
         name="Vodka",
         pricing_group=PricingGroup.SPIRIT,
         category_group=CategoryGroupName.SPIRIT,
-        producer_type=ProducerType.DISTILLERY,
-        volume_category=VolumeCategory.SPIRIT,
         tactill_category="VODKA",
     ),
     # ----- wine -----
@@ -156,49 +117,42 @@ CATEGORIES = [
         name="Vin",
         pricing_group=PricingGroup.WINE,
         category_group=CategoryGroupName.WINE,
-        volume_category=VolumeCategory.WINE,
         tactill_category="VIN",
     ),
     Category(
         name="Madère",
         pricing_group=PricingGroup.WINE,
         category_group=CategoryGroupName.WINE,
-        volume_category=VolumeCategory.WINE,
         tactill_category="VIN MUTÉ",
     ),
     Category(
         name="Pineau",
         pricing_group=PricingGroup.WINE,
         category_group=CategoryGroupName.WINE,
-        volume_category=VolumeCategory.WINE,
         tactill_category="VIN MUTÉ",
     ),
     Category(
         name="Porto",
         pricing_group=PricingGroup.WINE,
         category_group=CategoryGroupName.WINE,
-        volume_category=VolumeCategory.WINE,
         tactill_category="VIN MUTÉ",
     ),
     Category(
         name="Xérès",
         pricing_group=PricingGroup.WINE,
         category_group=CategoryGroupName.WINE,
-        volume_category=VolumeCategory.WINE,
         tactill_category="VIN MUTÉ",
     ),
     Category(
         name="Vin effervescent",
         pricing_group=PricingGroup.WINE,
         category_group=CategoryGroupName.WINE,
-        volume_category=VolumeCategory.WINE,
         tactill_category="VIN EFFERVESCENT",
     ),
     Category(
         name="BIB",
         pricing_group=PricingGroup.BIB,
         category_group=CategoryGroupName.WINE,
-        volume_category=VolumeCategory.BIB,
         tactill_category="BIB",
     ),
     # ----- other -----

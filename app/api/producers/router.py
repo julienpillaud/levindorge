@@ -6,8 +6,8 @@ from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
 
 from app.api.dependencies import get_current_user, get_domain, get_templates
-from app.domain._shared.entities import ProducerType
 from app.domain.domain import Domain
+from app.domain.producers.entities import ProducerType
 from app.domain.users.entities import User
 
 TITLE_MAPPING = {

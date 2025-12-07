@@ -12,13 +12,12 @@ from app.api.articles.dtos import ArticleDTO, MarginsRequestDTO, PriceRequestDTO
 from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.domain.articles.entities import ArticleCreateOrUpdate, ArticleMargins
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
-from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP
-from app.domain.commons.entities import DisplayGroup
+from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP, CategoryGroupName
 from app.domain.domain import Domain
 from app.domain.entities import DEFAULT_PAGINATION_SIZE
 from app.domain.users.entities import User
 
-router = APIRouter(prefix="/articles")
+router = APIRouter(prefix="/articles", tags=["Articles"])
 
 
 @router.get("")
@@ -42,37 +41,46 @@ def get_articles(
     )
 
 
-@router.get("/create/{display_group}")
+@router.get("/create/{category_group_name}")
 def create_article_view(
     request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
-    display_group: DisplayGroup,
+    category_group_name: CategoryGroupName,
 ) -> Response:
+    stores = domain.get_stores()
+    categories = domain.get_categories(category_group=category_group_name)
+    category_group = CATEGORY_GROUPS_MAP[category_group_name]
+    data = domain.get_view_data(category_group=category_group)
     return templates.TemplateResponse(
         request=request,
-        name="articles/article.html",
+        name="articles/_article.html",
         context={
             "current_user": current_user,
-            "list_category": display_group,
+            "stores": stores.items,
+            "article": None,
+            "categories": categories.items,
+            "category_group": category_group,
+            "data": data,
         },
     )
 
 
-@router.post("/create/{display_group}")
+@router.post("/create")
 def create_article(
     request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
     form_data: Annotated[ArticleDTO, Form()],
-    display_group: DisplayGroup,
 ) -> Response:
     article_create = ArticleCreateOrUpdate(**form_data.model_dump())
-    domain.create_article(current_user=current_user, data=article_create)
-    return RedirectResponse(
-        url=request.url_for("get_articles"),
-        status_code=status.HTTP_302_FOUND,
+    article = domain.create_article(current_user=current_user, data=article_create)
+    return templates.TemplateResponse(
+        request=request,
+        name="articles/_article_row.html",
+        context={"article": article},
     )
 
 
@@ -88,13 +96,13 @@ def update_article_view(
     article = domain.get_article(article_id=article_id)
     category = domain.get_category_by_name(article.category)
     category_group = CATEGORY_GROUPS_MAP[category.category_group]
-    data = domain.get_view_data(category=category)
+    data = domain.get_view_data(category_group=category_group)
     return templates.TemplateResponse(
         request=request,
         name="articles/_article.html",
         context={
             "current_user": current_user,
-            "stores": {store.slug: store for store in stores.items},
+            "stores": stores.items,
             "article": article,
             "category_group": category_group,
             "data": data,

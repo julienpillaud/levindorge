@@ -120,6 +120,6 @@ def extract_shops(data: dict[str, Any]) -> None:
             store_data[store_slug].setdefault("margins", {})
             store_data[store_slug]["margins"][parts[3]] = float(value)
             continue
-        store_data[store_slug][parts[2]] = float(value)
+        store_data[store_slug][parts[2]] = float(value) if value else 0
 
     data["store_data"] = store_data

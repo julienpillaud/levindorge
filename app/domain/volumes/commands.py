@@ -5,6 +5,7 @@ from app.domain.volumes.entities import Volume, VolumeCategory
 
 def get_volumes_command(
     context: ContextProtocol,
+    /,
     volume_category: VolumeCategory | None = None,
 ) -> PaginatedResponse[Volume]:
     filters = {"category": volume_category} if volume_category else {}

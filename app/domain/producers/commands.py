@@ -1,15 +1,16 @@
-from app.domain._shared.entities import ProducerType
 from app.domain.context import ContextProtocol
 from app.domain.entities import PaginatedResponse
-from app.domain.producers.entities import Producer
+from app.domain.producers.entities import Producer, ProducerType
 
 
 def get_producers_command(
     context: ContextProtocol,
-    producer_type: ProducerType,
+    /,
+    producer_type: ProducerType | None = None,
 ) -> PaginatedResponse[Producer]:
+    filters = {"type": producer_type} if producer_type else None
     return context.producer_repository.get_all(
-        filters={"type": producer_type},
+        filters=filters,
         sort={"name": 1},
         limit=300,
     )

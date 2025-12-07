@@ -1,0 +1,20 @@
+{% set volume_exists = article is not none and article.volume %}
+
+{% if category_group.volume %}
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Volume</legend>
+    <select class="select select-sm w-full" name="volume" required>
+      <option disabled selected></option>
+      {% for volume in data.volumes %}
+        <option
+          value='{"value":"{{ volume.value }}","unit":"{{ volume.unit }}"}'
+          {% if volume_exists and article.volume.value == volume.value and article.volume.unit == volume.unit %}
+            selected
+          {% endif %}
+        >
+          {{ volume }}
+        </option>
+      {% endfor %}
+    </select>
+  </fieldset>
+{% endif %}

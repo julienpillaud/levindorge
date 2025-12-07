@@ -35,15 +35,12 @@ def migrate(
             dst_context.database[collection_name].drop()
 
     stores = create_stores(src_context=src_context, dst_context=dst_context)
-
     create_users(
         src_context=src_context,
         dst_context=dst_context,
         stores=stores,
     )
-
     categories = create_categories(dst_context=dst_context)
-
     origins = create_origins(dst_context=dst_context)
 
     articles = create_articles(
@@ -54,7 +51,11 @@ def migrate(
         origins=origins,
     )
 
-    create_producers(dst_context=dst_context, articles=articles)
+    create_producers(
+        dst_context=dst_context,
+        articles=articles,
+        categories=categories,
+    )
     create_distributors(dst_context=dst_context, articles=articles)
     create_volume(
         dst_context=dst_context,

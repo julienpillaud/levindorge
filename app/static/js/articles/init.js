@@ -1,10 +1,10 @@
 import {
   calculationOnCostChange,
-  calculationOnPriceChange,
+  calculationOnPriceChange, createArticle,
   fillAndShowModal,
   updateArticle,
 } from "./main.js";
-import { getCategories } from "../categories.js";
+import { getCategories } from "../cache/categories.js";
 
 export const initArticles = () => {
   const modal = document.getElementById("article-modal");
@@ -33,8 +33,8 @@ const initArticlesTable = (modal) => {
 
 // -----------------------------------------------------------------------------
 const initModalClose = (modal) => {
-  const closeButton = modal.querySelector("#article-modal-close");
-  closeButton.addEventListener("click", () => modal.close());
+  const form = document.getElementById("article-form");
+  form.addEventListener("reset", () => modal.close());
 };
 
 // -----------------------------------------------------------------------------
@@ -42,7 +42,12 @@ const initFormSubmit = (modal) => {
   const form = document.getElementById("article-form");
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    updateArticle(form);
+    const {action} = event.submitter.dataset;
+    if (action === "update") {
+      updateArticle(form);
+    } else {
+      createArticle(form);
+    }
     modal.close();
   });
 };

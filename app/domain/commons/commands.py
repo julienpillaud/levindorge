@@ -1,5 +1,5 @@
 from app.domain.articles.entities import ArticleColor, ArticleTaste
-from app.domain.categories.entities import Category
+from app.domain.commons.category_groups import CategoryGroup
 from app.domain.commons.entities import ViewData
 from app.domain.context import ContextProtocol
 from app.domain.deposits.commands import get_deposits_command
@@ -16,72 +16,75 @@ from app.domain.volumes.entities import Volume
 
 def get_view_data_command(
     context: ContextProtocol,
-    category: Category,
+    category_group: CategoryGroup,
 ) -> ViewData:
     return ViewData(
-        producers=get_producers(context=context, category=category),
-        distributors=get_distributors(context=context),
-        colors=get_colors(category=category),
+        producers=get_producers(context, category_group=category_group),
+        distributors=get_distributors(context),
+        colors=get_colors(category_group=category_group),
         tastes=get_tastes(),
-        origins=get_origins(context=context),
-        volumes=get_volumes(context=context, category=category),
-        deposits=get_deposits(context=context, category=category),
+        origins=get_origins(context),
+        volumes=get_volumes(context, category_group=category_group),
+        deposits=get_deposits(context, category_group=category_group),
     )
 
 
-def get_producers(context: ContextProtocol, category: Category) -> list[Producer]:
-    if not category.producer_type:
+def get_producers(
+    context: ContextProtocol,
+    /,
+    category_group: CategoryGroup,
+) -> list[Producer]:
+    if not category_group.producer:
         return []
 
     result = get_producers_command(
-        context=context,
-        producer_type=category.producer_type,
+        context,
+        producer_type=category_group.producer.type,
     )
     return result.items
 
 
-def get_distributors(context: ContextProtocol) -> list[Distributor]:
-    result = get_distributors_command(context=context)
+def get_distributors(context: ContextProtocol, /) -> list[Distributor]:
+    result = get_distributors_command(context)
     return result.items
 
 
-def get_colors(category: Category) -> list[ArticleColor]:
-    prefix = category.category_group.name
-    return [color for color in ArticleColor if color.name.endswith(prefix)]
+def get_colors(category_group: CategoryGroup) -> list[ArticleColor]:
+    prefix = category_group.name
+    return [color for color in ArticleColor if color.name.lower().endswith(prefix)]
 
 
 def get_tastes() -> list[ArticleTaste]:
     return list(ArticleTaste)
 
 
-def get_origins(context: ContextProtocol) -> list[Origin]:
-    result = get_origins_command(context=context)
+def get_origins(context: ContextProtocol, /) -> list[Origin]:
+    result = get_origins_command(context)
     return result.items
 
 
 def get_volumes(
     context: ContextProtocol,
-    category: Category,
+    /,
+    category_group: CategoryGroup,
 ) -> list[Volume]:
-    if not category.volume_category:
+    if not category_group.volume:
         return []
 
-    result = get_volumes_command(
-        context=context,
-        volume_category=category.volume_category,
-    )
+    result = get_volumes_command(context, volume_category=category_group.volume)
     return result.items
 
 
 def get_deposits(
     context: ContextProtocol,
-    category: Category,
+    /,
+    category_group: CategoryGroup,
 ) -> list[Deposit]:
-    if not category.deposit_category:
+    if not category_group.deposit:
         return []
 
     result = get_deposits_command(
         context=context,
-        deposit_category=category.deposit_category,
+        deposit_category=category_group.deposit.category,
     )
     return result.items

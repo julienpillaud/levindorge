@@ -13,6 +13,7 @@ from app.domain.articles.entities import (
 )
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
 from app.domain.categories.entities import Category
+from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP
 from app.domain.commons.entities import PricingGroup
 from app.domain.origins.entities import Origin
 from app.domain.stores.entities import Store
@@ -34,10 +35,10 @@ def create_articles(
     origins: list[Origin],
 ) -> list[Article]:
     # Get previous articles
-    src_articles = src_context.database["articles"].find()
+    src_articles = list(src_context.database["articles"].find())
     # Create articles with the new entity model
     dst_articles = create_article_entities(
-        src_articles=list(src_articles),
+        src_articles=src_articles,
         categories=categories,
         stores=stores,
         origins=origins,
@@ -45,7 +46,7 @@ def create_articles(
     # Save articles in the database
     result = dst_context.article_repository.create_many(dst_articles)
     count = len(result)
-    print(f"Created {count} articles")
+    print(f"Created {count} articles ({len(src_articles)})")
     return dst_context.article_repository.get_all(limit=count).items
 
 
@@ -102,7 +103,8 @@ def get_producer_and_product(
     categories_map: dict[str, Category],
 ) -> tuple[str | None, str]:
     category = categories_map[article["type"]]
-    if category.producer_type:
+    category_group = CATEGORY_GROUPS_MAP[category.category_group]
+    if category_group.producer:
         if article["name"]["name1"] == "":
             return None, article["name"]["name2"]
 

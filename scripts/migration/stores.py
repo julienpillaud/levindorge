@@ -10,14 +10,14 @@ from app.domain.stores.entities import PricingConfig, RoundConfig, RoundingMode,
 
 def create_stores(src_context: Context, dst_context: Context) -> list[Store]:
     # Get previous stores
-    src_stores = src_context.database["shops"].find()
+    src_stores = list(src_context.database["shops"].find())
     # Create stores with the new entity model
-    dst_stores = create_store_entities(list(src_stores))
+    dst_stores = create_store_entities(src_stores)
 
     # Save stores in the database
     result = dst_context.store_repository.create_many(dst_stores)
     count = len(result)
-    print(f"Created {count} stores")
+    print(f"Created {count} stores ({len(src_stores)})")
     return dst_context.store_repository.get_all(limit=count).items
 
 

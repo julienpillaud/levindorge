@@ -1,0 +1,14 @@
+{% if category_group.alcohol_by_volume %}
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Alc. %</legend>
+    <input
+      type="number"
+      min="0"
+      step="0.1"
+      class="input input-sm w-full"
+      name="alcohol_by_volume"
+      value="{{ article.alcohol_by_volume }}"
+      required
+    />
+  </fieldset>
+{% endif %}

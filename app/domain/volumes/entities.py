@@ -20,10 +20,8 @@ class VolumeUnit(StrEnum):
 class VolumeCategory(StrEnum):
     BEER = "beer"
     KEG = "keg"
-    MINI_KEG = "mini_keg"
     SPIRIT = "spirit"
     WINE = "wine"
-    BIB = "bib"
 
 
 class Volume(DomainEntity):
