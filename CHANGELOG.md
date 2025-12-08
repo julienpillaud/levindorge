@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/julienpillaud/levindorge/compare/0.11.1...0.12.0) (2025-12-08)
+
+
+### Features
+
+* article creation ([#75](https://github.com/julienpillaud/levindorge/issues/75)) ([a11db20](https://github.com/julienpillaud/levindorge/commit/a11db2051df6ef6cbbf388470ddacd1fe50ec096))
+
 ## [0.11.1](https://github.com/julienpillaud/levindorge/compare/0.11.0...0.11.1) (2025-12-04)
 
 
