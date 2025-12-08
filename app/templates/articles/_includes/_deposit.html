@@ -10,8 +10,9 @@
           {% if deposit.type == "unit" %}
             <option
               {% if deposits_exists and article.deposit.unit == deposit.value %}selected{% endif %}
+              value="{{ deposit.value }}"
             >
-              {{ deposit.value }}
+              {{ deposit.value | strip_zeros }}
             </option>
           {% endif %}
         {% endfor %}
@@ -27,8 +28,9 @@
             {% if deposit.type == "case" %}
               <option
                 {% if deposits_exists and article.deposit.case == deposit.value %}selected{% endif %}
+                value="{{ deposit.value }}"
               >
-                {{ deposit.value }}
+                {{ deposit.value | strip_zeros }}
               </option>
             {% endif %}
           {% endfor %}

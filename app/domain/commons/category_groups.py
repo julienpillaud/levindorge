@@ -2,6 +2,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
+from app.domain.articles.entities import ColorCategory
 from app.domain.deposits.entities import DepositCategory
 from app.domain.entities import DomainEntity
 from app.domain.producers.entities import ProducerType
@@ -21,6 +22,10 @@ class ProducerData(BaseModel):
     type: ProducerType | None = None
 
 
+class ColorData(BaseModel):
+    category: ColorCategory
+
+
 class DepositData(BaseModel):
     unit: bool
     case: bool
@@ -33,7 +38,7 @@ class CategoryGroup(DomainEntity):
     display_name: str
     producer: ProducerData | None
     origin: bool
-    color: bool
+    color: ColorData | None
     taste: bool
     volume: VolumeCategory | None = None
     alcohol_by_volume: bool
@@ -49,7 +54,7 @@ CATEGORY_GROUPS_MAP = {
             type=ProducerType.BREWERY,
         ),
         origin=True,
-        color=True,
+        color=ColorData(category=ColorCategory.BEER),
         taste=False,
         volume=VolumeCategory.BEER,
         alcohol_by_volume=True,
@@ -68,7 +73,7 @@ CATEGORY_GROUPS_MAP = {
             type=ProducerType.BREWERY,
         ),
         origin=True,
-        color=True,
+        color=ColorData(category=ColorCategory.BEER),
         taste=False,
         volume=VolumeCategory.KEG,
         alcohol_by_volume=True,
@@ -87,7 +92,7 @@ CATEGORY_GROUPS_MAP = {
             type=ProducerType.DISTILLERY,
         ),
         origin=True,
-        color=False,
+        color=None,
         taste=True,
         volume=VolumeCategory.SPIRIT,
         alcohol_by_volume=True,
@@ -97,7 +102,7 @@ CATEGORY_GROUPS_MAP = {
         display_name="Vin",
         producer=ProducerData(display_name="Appellation"),
         origin=True,
-        color=True,
+        color=ColorData(category=ColorCategory.WINE),
         taste=False,
         volume=VolumeCategory.WINE,
         alcohol_by_volume=False,
@@ -107,7 +112,7 @@ CATEGORY_GROUPS_MAP = {
         display_name="Autre",
         producer=None,
         origin=False,
-        color=False,
+        color=None,
         taste=False,
         alcohol_by_volume=False,
     ),

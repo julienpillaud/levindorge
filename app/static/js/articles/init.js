@@ -64,7 +64,7 @@ const initFormCalculations = async (modal) => {
         "#cost_price, #vat_rate, #excise_duty, #social_security_contribution",
       )
     ) {
-      calculationOnCostChange(categories);
+      calculationOnCostChange(categories, input);
     }
 
     if (input.matches('[data-store-field="gross_price"]')) {

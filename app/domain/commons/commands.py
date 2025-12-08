@@ -50,8 +50,10 @@ def get_distributors(context: ContextProtocol, /) -> list[Distributor]:
 
 
 def get_colors(category_group: CategoryGroup) -> list[ArticleColor]:
-    prefix = category_group.name
-    return [color for color in ArticleColor if color.name.lower().endswith(prefix)]
+    if not category_group.color:
+        return []
+
+    return ArticleColor.from_category(category_group.color.category)
 
 
 def get_tastes() -> list[ArticleTaste]:

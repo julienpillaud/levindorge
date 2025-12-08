@@ -33,7 +33,7 @@
     type="text"
     class="input input-sm w-full font-mono font-bold bg-base-200 pointer-events-none"
     id="total_cost"
-    value="{{ article.total_cost }}"
+    value="{{ article.total_cost | strip_zeros }}"
     readonly
   />
 </fieldset>
