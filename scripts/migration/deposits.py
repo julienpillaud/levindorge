@@ -3,6 +3,7 @@ from rich import print
 from app.core.core import Context
 from app.domain.articles.entities import Article
 from app.domain.categories.entities import Category
+from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP
 from app.domain.deposits.entities import Deposit, DepositType
 
 
@@ -31,11 +32,16 @@ def create_deposit_entities(
         if not article.deposit:
             continue
 
+        category = categories_map[article.category]
+        category_group = CATEGORY_GROUPS_MAP[category.category_group]
+        if not category_group.deposit:
+            continue
+
         if article.deposit.unit:
             deposit = Deposit(
                 value=article.deposit.unit,
                 type=DepositType.UNIT,
-                category=categories_map[article.category].deposit_category,
+                category=category_group.deposit.category,
             )
             if deposit not in dst_deposits:
                 dst_deposits.append(deposit)
@@ -43,7 +49,7 @@ def create_deposit_entities(
             deposit = Deposit(
                 value=article.deposit.case,
                 type=DepositType.CASE,
-                category=categories_map[article.category].deposit_category,
+                category=category_group.deposit.category,
             )
             if deposit not in dst_deposits:
                 dst_deposits.append(deposit)

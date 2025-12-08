@@ -1,0 +1,26 @@
+{% if category_group.producer %}
+  {% if category_group.producer.type %}
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">{{ category_group.producer.display_name }}</legend>
+      <select class="select select-sm w-full" name="producer">
+        <option selected></option>
+        {% for producer in data.producers %}
+          <option {% if article.producer == producer.name %}selected{% endif %}>
+            {{ producer.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </fieldset>
+  {% else %}
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">{{ category_group.producer.display_name }}</legend>
+      <input
+        type="text"
+        class="input input-sm w-full"
+        name="producer"
+        value="{{ article.producer }}"
+        required
+      />
+    </fieldset>
+  {% endif %}
+{% endif %}

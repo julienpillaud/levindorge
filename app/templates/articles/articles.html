@@ -34,7 +34,9 @@
                 <td class="text-nowrap">{{ article.origin if article.origin }}</td>
                 <td class="text-nowrap">{{ article.color if article.color }}</td>
                 <td class="text-nowrap">{{ article.taste if article.taste }}</td>
-                <td class="text-nowrap">{{ article.alcohol_by_volume | strip_zeros if article.alcohol_by_volume }}</td>
+                <td class="text-nowrap">
+                  {{ article.alcohol_by_volume | strip_zeros if article.alcohol_by_volume }}
+                </td>
                 <td class="text-nowrap">{{ article.distributor }}</td>
                 <td class="text-nowrap">{{ article.category }}</td>
               </tr>
@@ -49,12 +51,11 @@
   <dialog id="article-modal" class="modal">
     <div class="modal-box max-w-4xl max-h-[90vh] bg-base-200">
       <form id="article-form">
-        <div id="article-modal-content" class="grid gap-2"></div>
-        <div class="modal-action flex justify-between">
-          <button type="button" id="article-modal-close" class="btn btn-soft">Annuler</button>
-          <button type="submit" class="btn btn-outline btn-primary">Valider</button>
+        <div id="article-modal-content" class="grid gap-2">
+          {# fill dynamically with articles/_article.html #}
         </div>
       </form>
     </div>
+    <div class="toast toast-end z-9999" id="modal-toast-container"></div>
   </dialog>
 {% endblock %}

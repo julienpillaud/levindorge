@@ -9,6 +9,7 @@ class POSArticleContainer(BaseModel):
 
     client: TactillClient = Field(repr=False)
     article_id: str
+    name: str
     stock_quantity: int
 
 

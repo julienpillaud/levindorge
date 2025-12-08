@@ -20,17 +20,40 @@ from app.domain.volumes.entities import VolumeUnit
 LITER_TO_CENTILITER = 100
 
 
-class ArticleColor(StrEnum):
-    # beer
-    AMBER_BEER = "Ambrée"
-    WHITE_BEER = "Blanche"
-    BLONDE_BEER = "Blonde"
-    BROWN_BEER = "Brune"
-    FRUITY_BEER = "Fruitée"
-    # wine
-    WHITE_WINE = "Blanc"
-    ROSE_WINE = "Rosé"
-    RED_WINE = "Rouge"
+class ColorCategory(StrEnum):
+    BEER = "beer"
+    WINE = "wine"
+
+
+class CategorizedStrEnum(StrEnum):
+    _category: ColorCategory
+
+    def __new__(cls, value: str, category: ColorCategory) -> CategorizedStrEnum:
+        obj = str.__new__(cls, value)
+        obj._value_ = value
+        obj._category = category
+        return obj
+
+    @property
+    def category(self) -> ColorCategory:
+        return self._category
+
+    @classmethod
+    def from_category[T: CategorizedStrEnum](
+        cls: type[T], category: ColorCategory, /
+    ) -> list[T]:
+        return [item for item in cls if item.category == category]
+
+
+class ArticleColor(CategorizedStrEnum):
+    AMBER_BEER = ("Ambrée", ColorCategory.BEER)
+    WHITE_BEER = ("Blanche", ColorCategory.BEER)
+    BLONDE_BEER = ("Blonde", ColorCategory.BEER)
+    BROWN_BEER = ("Brune", ColorCategory.BEER)
+    FRUITY_BEER = ("Fruitée", ColorCategory.BEER)
+    WHITE_WINE = ("Blanc", ColorCategory.WINE)
+    ROSE_WINE = ("Rosé", ColorCategory.WINE)
+    RED_WINE = ("Rouge", ColorCategory.WINE)
 
 
 class ArticleTaste(StrEnum):
@@ -60,34 +83,40 @@ class ArticleDeposit(BaseModel):
 
 
 class ArticleMargins(BaseModel):
-    margin_amount: DecimalType = Field(decimal_places=2)
-    margin_rate: DecimalType = Field(decimal_places=0)
+    margin_amount: Annotated[DecimalType, Field(decimal_places=2)]
+    margin_rate: Annotated[DecimalType, Field(decimal_places=0)]
 
 
 class ArticleStoreData(BaseModel):
-    gross_price: DecimalType = Field(gt=0, decimal_places=2)
-    bar_price: DecimalType = Field(ge=0, decimal_places=2)
-    stock_quantity: int
-    recommended_price: DecimalType = Field(gt=0, decimal_places=2)
+    gross_price: Annotated[DecimalType, Field(gt=0, decimal_places=2)]
+    bar_price: Annotated[DecimalType, Field(ge=0, decimal_places=2)]
+    stock_quantity: int  # can be negative (handle by POS)
+    recommended_price: Annotated[DecimalType, Field(gt=0, decimal_places=2)]
     margins: ArticleMargins
 
 
 class BaseArticle(BaseModel):
-    reference: Annotated[uuid.UUID, PlainSerializer(str)] = Field(
-        default_factory=uuid.uuid7
-    )
+    reference: Annotated[
+        uuid.UUID,
+        PlainSerializer(str),
+        Field(default_factory=uuid.uuid7),
+    ]
     category: str
-    producer: str | None = Field(min_length=1, default=None)
+    producer: Annotated[str | None, Field(min_length=1, default=None)]
     product: str
-    cost_price: DecimalType = Field(gt=0, decimal_places=4)
-    excise_duty: DecimalType = Field(ge=0, decimal_places=4, default=Decimal(0))
-    social_security_contribution: DecimalType = Field(
-        ge=0, decimal_places=4, default=Decimal(0)
-    )
-    vat_rate: DecimalType = Field(ge=0, le=100, decimal_places=2)
+    cost_price: Annotated[DecimalType, Field(gt=0, decimal_places=4)]
+    excise_duty: Annotated[
+        DecimalType,
+        Field(ge=0, decimal_places=4, default=Decimal(0)),
+    ]
+    social_security_contribution: Annotated[
+        DecimalType,
+        Field(ge=0, decimal_places=4, default=Decimal(0)),
+    ]
+    vat_rate: Annotated[DecimalType, Field(ge=0, le=100, decimal_places=2)]
     distributor: str
     barcode: str = ""
-    origin: str | None
+    origin: Annotated[str | None, Field(min_length=1)]
     color: ArticleColor | None
     taste: ArticleTaste | None
     volume: ArticleVolume | None

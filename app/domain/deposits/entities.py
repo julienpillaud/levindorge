@@ -13,7 +13,6 @@ class DepositType(StrEnum):
 class DepositCategory(StrEnum):
     BEER = "beer"
     KEG = "keg"
-    MINI_KEG = "mini_keg"
 
 
 class Deposit(DomainEntity):

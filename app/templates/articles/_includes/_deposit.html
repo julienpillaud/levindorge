@@ -1,0 +1,57 @@
+{% set deposits_exists = article is not none and article.deposit %}
+
+{% if category_group.deposit %}
+  <div class="grid grid-cols-1 md:grid-cols-3 md:gap-x-4">
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Consigne</legend>
+      <select class="select select-sm w-full" name="deposit.unit">
+        <option selected></option>
+        {% for deposit in data.deposits %}
+          {% if deposit.type == "unit" %}
+            <option
+              {% if deposits_exists and article.deposit.unit == deposit.value %}selected{% endif %}
+              value="{{ deposit.value }}"
+            >
+              {{ deposit.value | strip_zeros }}
+            </option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </fieldset>
+
+    {% if category_group.deposit.case %}
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Consigne caisse</legend>
+        <select class="select select-sm w-full" name="deposit.case">
+          <option selected></option>
+          {% for deposit in data.deposits %}
+            {% if deposit.type == "case" %}
+              <option
+                {% if deposits_exists and article.deposit.case == deposit.value %}selected{% endif %}
+                value="{{ deposit.value }}"
+              >
+                {{ deposit.value | strip_zeros }}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </fieldset>
+    {% endif %}
+
+    {% if category_group.deposit.packaging %}
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Conditionnement</legend>
+        <select class="select select-sm w-full" name="deposit.packaging">
+          <option selected></option>
+          {% for value in [6, 12, 20, 24] %}
+            <option
+              {% if deposits_exists and article.deposit.packaging == value %}selected{% endif %}
+            >
+              {{ value }}
+            </option>
+          {% endfor %}
+        </select>
+      </fieldset>
+    {% endif %}
+  </div>
+{% endif %}

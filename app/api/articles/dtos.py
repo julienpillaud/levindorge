@@ -8,7 +8,7 @@ from app.domain.articles.entities import (
     ArticleVolume,
 )
 from app.domain.articles.utils import (
-    extract_deposit,
+    extract_deposit_data,
     extract_shops,
     extract_volume,
 )
@@ -50,7 +50,7 @@ class ArticleDTO(BaseModel):
     @classmethod
     def extract_fields(cls, data: dict[str, Any]) -> dict[str, Any]:
         extract_volume(data)
-        extract_deposit(data)
+        extract_deposit_data(data)
         extract_shops(data)
         return data
 

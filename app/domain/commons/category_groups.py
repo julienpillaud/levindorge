@@ -2,8 +2,11 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
-from app.domain._shared.entities import ProducerType
+from app.domain.articles.entities import ColorCategory
+from app.domain.deposits.entities import DepositCategory
 from app.domain.entities import DomainEntity
+from app.domain.producers.entities import ProducerType
+from app.domain.volumes.entities import VolumeCategory
 
 
 class CategoryGroupName(StrEnum):
@@ -19,78 +22,98 @@ class ProducerData(BaseModel):
     type: ProducerType | None = None
 
 
-class DepositField(BaseModel):
+class ColorData(BaseModel):
+    category: ColorCategory
+
+
+class DepositData(BaseModel):
     unit: bool
     case: bool
     packaging: bool
+    category: DepositCategory
 
 
 class CategoryGroup(DomainEntity):
     name: CategoryGroupName
+    display_name: str
     producer: ProducerData | None
     origin: bool
-    color: bool
+    color: ColorData | None
     taste: bool
-    volume: bool
+    volume: VolumeCategory | None = None
     alcohol_by_volume: bool
-    deposit: DepositField | None = None
+    deposit: DepositData | None = None
 
 
 CATEGORY_GROUPS_MAP = {
     CategoryGroupName.BEER: CategoryGroup(
         name=CategoryGroupName.BEER,
+        display_name="Bière / Cidre",
         producer=ProducerData(
             display_name="Brasserie",
             type=ProducerType.BREWERY,
         ),
         origin=True,
-        color=True,
+        color=ColorData(category=ColorCategory.BEER),
         taste=False,
-        volume=True,
+        volume=VolumeCategory.BEER,
         alcohol_by_volume=True,
-        deposit=DepositField(unit=True, case=True, packaging=True),
+        deposit=DepositData(
+            unit=True,
+            case=True,
+            packaging=True,
+            category=DepositCategory.BEER,
+        ),
     ),
     CategoryGroupName.KEG: CategoryGroup(
         name=CategoryGroupName.KEG,
+        display_name="Fût / Mini-fût",
         producer=ProducerData(
             display_name="Brasserie",
             type=ProducerType.BREWERY,
         ),
         origin=True,
-        color=True,
+        color=ColorData(category=ColorCategory.BEER),
         taste=False,
-        volume=True,
+        volume=VolumeCategory.KEG,
         alcohol_by_volume=True,
-        deposit=DepositField(unit=True, case=False, packaging=False),
+        deposit=DepositData(
+            unit=True,
+            case=False,
+            packaging=False,
+            category=DepositCategory.KEG,
+        ),
     ),
     CategoryGroupName.SPIRIT: CategoryGroup(
         name=CategoryGroupName.SPIRIT,
+        display_name="Spiritueux",
         producer=ProducerData(
             display_name="Distillerie",
             type=ProducerType.DISTILLERY,
         ),
         origin=True,
-        color=False,
+        color=None,
         taste=True,
-        volume=True,
+        volume=VolumeCategory.SPIRIT,
         alcohol_by_volume=True,
     ),
     CategoryGroupName.WINE: CategoryGroup(
         name=CategoryGroupName.WINE,
+        display_name="Vin",
         producer=ProducerData(display_name="Appellation"),
         origin=True,
-        color=True,
+        color=ColorData(category=ColorCategory.WINE),
         taste=False,
-        volume=True,
+        volume=VolumeCategory.WINE,
         alcohol_by_volume=False,
     ),
     CategoryGroupName.OTHER: CategoryGroup(
         name=CategoryGroupName.OTHER,
+        display_name="Autre",
         producer=None,
         origin=False,
-        color=False,
+        color=None,
         taste=False,
-        volume=False,
         alcohol_by_volume=False,
     ),
 }

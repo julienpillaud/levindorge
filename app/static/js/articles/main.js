@@ -22,17 +22,24 @@ export const fillAndShowModal = async (row, modal) => {
 };
 
 // -----------------------------------------------------------------------------
-export const calculationOnCostChange = async (categories) => {
+export const calculationOnCostChange = async (categories, input) => {
   // Total cost
   const totalCost = getTotalCost();
-  document.getElementById("total_cost").value =
-    `${parseFloat(totalCost.toFixed(4))} €`;
+  const totalCostInput = document.getElementById("total_cost");
+  totalCostInput.value = `${parseFloat(totalCost.toFixed(4))} €`;
 
   // Recommended price
-  const articleCategory =
-    document.getElementById("article-category").dataset.category;
+  const articleCategory = document.querySelector('[name="category"]').value;
+  if (!articleCategory) {
+    input.value = "";
+    totalCostInput.value = "";
+    showToast("Choisis une catégorie !", {
+      containerId: "modal-toast-container",
+    });
+    return;
+  }
   const pricingGroup = categories[articleCategory].pricing_group;
-  const vatRate = parseFloat(document.getElementById("vat_rate").value);
+  const vatRate = parseFloat(document.getElementById("vat_rate").value) || 0;
 
   const recommendedPrices = await fetchRecommendedPrices({
     pricingGroup,
@@ -92,7 +99,9 @@ export const updateArticle = async (form) => {
   };
   const response = await fetch(`/articles/update/${articleId}`, options);
   if (!response.ok) {
-    showToast("Erreur lors de la lise à jour");
+    showToast("Erreur lors de la mise à jour");
+    const error = await response.json();
+    console.error(error); // eslint-disable-line
     return;
   }
   const html = await response.text();
@@ -103,5 +112,33 @@ export const updateArticle = async (form) => {
   const newRow = temp.firstElementChild;
   oldRow.replaceWith(newRow);
 
-  showToast("Produit mis à jour !", "success");
+  showToast("Produit mis à jour !", { type: "success" });
+};
+
+export const createArticle = async (form) => {
+  const formData = new FormData(form);
+  const options = {
+    body: formData,
+    method: "POST",
+  };
+  const response = await fetch("/articles/create", options);
+  if (!response.ok) {
+    showToast("Erreur lors de la création");
+    const error = await response.json();
+    console.error(error); // eslint-disable-line
+    return;
+  }
+  const html = await response.text();
+
+  const temp = document.createElement("tbody");
+  temp.innerHTML = html.trim();
+  const newRow = temp.firstElementChild;
+
+  const tbody = document.querySelector("table tbody");
+  tbody.prepend(newRow);
+
+  const counter = document.getElementById("items-count");
+  counter.textContent = String(parseInt(counter.textContent, 10) + 1);
+
+  showToast("Produit créé !", { type: "success" });
 };

@@ -13,6 +13,7 @@ from app.domain.articles.entities import (
 )
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
 from app.domain.categories.entities import Category
+from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP, CategoryGroup
 from app.domain.commons.entities import PricingGroup
 from app.domain.origins.entities import Origin
 from app.domain.stores.entities import Store
@@ -34,10 +35,10 @@ def create_articles(
     origins: list[Origin],
 ) -> list[Article]:
     # Get previous articles
-    src_articles = src_context.database["articles"].find()
+    src_articles = list(src_context.database["articles"].find())
     # Create articles with the new entity model
     dst_articles = create_article_entities(
-        src_articles=list(src_articles),
+        src_articles=src_articles,
         categories=categories,
         stores=stores,
         origins=origins,
@@ -45,7 +46,7 @@ def create_articles(
     # Save articles in the database
     result = dst_context.article_repository.create_many(dst_articles)
     count = len(result)
-    print(f"Created {count} articles")
+    print(f"Created {count} articles ({len(src_articles)})")
     return dst_context.article_repository.get_all(limit=count).items
 
 
@@ -64,9 +65,12 @@ def create_article_entities(
     current_date = datetime.datetime.now(datetime.UTC)
     dst_articles: list[Article] = []
     for article in src_articles:
+        category = categories_map[article["type"]]
+        category_group = CATEGORY_GROUPS_MAP[category.category_group]
+
         producer, product = get_producer_and_product(
-            article=article,
-            categories_map=categories_map,
+            article,
+            category_group=category_group,
         )
         dst_article = Article(
             category=article["type"],
@@ -83,7 +87,7 @@ def create_article_entities(
             taste=empty_to_none(article["taste"]),
             volume=get_volume(article=article),
             alcohol_by_volume=empty_to_none(article["alcohol_by_volume"]),
-            deposit=get_deposit(article),
+            deposit=get_deposit(article, category_group=category_group),
             created_at=current_date,
             updated_at=current_date,
             store_data=get_store_data(
@@ -99,10 +103,10 @@ def create_article_entities(
 
 def get_producer_and_product(
     article: dict[str, Any],
-    categories_map: dict[str, Category],
+    /,
+    category_group: CategoryGroup,
 ) -> tuple[str | None, str]:
-    category = categories_map[article["type"]]
-    if category.producer_type:
+    if category_group.producer:
         if article["name"]["name1"] == "":
             return None, article["name"]["name2"]
 
@@ -149,14 +153,23 @@ def get_volume(article: dict[str, Any]) -> ArticleVolume | None:
     return ArticleVolume(value=volume_value, unit=volume_unit)
 
 
-def get_deposit(article: dict[str, Any]) -> ArticleDeposit | None:
-    unit = None if article["deposit"]["unit"] == 0 else article["deposit"]["unit"]
-    case = None if article["deposit"]["case"] == 0 else article["deposit"]["case"]
-    packaging = None if article["packaging"] == 0 else article["packaging"]
-    if not unit and not case:
+def get_deposit(
+    article: dict[str, Any],
+    /,
+    category_group: CategoryGroup,
+) -> ArticleDeposit | None:
+    if not category_group.deposit:
         return None
 
-    return ArticleDeposit(unit=unit, case=case, packaging=packaging)
+    unit = article["deposit"]["unit"]
+    if not unit:
+        return None
+
+    return ArticleDeposit(
+        unit=unit,
+        case=article["deposit"]["case"] or None,
+        packaging=article["packaging"] or None,
+    )
 
 
 def get_store_data(

@@ -7,7 +7,7 @@ from app.domain.articles.entities import ArticleStoreData
 
 
 def strip_zeros(value: float) -> str:
-    return str(value).rstrip("0").rstrip(".")
+    return str(value).rstrip("0").rstrip(".").replace(".", ",")
 
 
 def create_local_timezone_filter(
