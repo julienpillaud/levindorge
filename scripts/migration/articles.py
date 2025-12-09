@@ -72,7 +72,7 @@ def create_article_entities(
             article,
             category_group=category_group,
         )
-        dst_article = Article(
+        dst_article = Article(  # type: ignore[call-arg]
             category=article["type"],
             producer=producer,
             product=product,

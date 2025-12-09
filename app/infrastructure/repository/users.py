@@ -1,20 +1,9 @@
-from typing import TypedDict
-
-from app.domain.users.entities import Role, User
+from app.domain.users.entities import User
 from app.domain.users.repository import UserRepositoryProtocol
 from app.infrastructure.repository.mongo_repository import (
     MongoDocument,
     MongoRepository,
 )
-
-
-class UserDocument(TypedDict):
-    _id: str
-    name: str
-    email: str
-    hashed_password: str
-    stores: list[str]
-    role: Role
 
 
 class UserRepository(MongoRepository[User], UserRepositoryProtocol):
@@ -27,7 +16,7 @@ class UserRepository(MongoRepository[User], UserRepositoryProtocol):
     @staticmethod
     def _to_database_entity(entity: User, /) -> MongoDocument:
         document = entity.model_dump(exclude={"id"})
-        document["stores"] = [store.slug for store in entity.stores]
+        # document["stores"] = [store.slug for store in entity.stores]
         return document
 
     @staticmethod

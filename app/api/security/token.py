@@ -1,20 +1,27 @@
 import jwt
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
-from app.api.security.entities import ALGORITHM, JWTToken, TokenPayload, TokenType
 from app.core.config.settings import Settings
 
 
-def decode_token_string(
-    value: str | None,
-    /,
-    settings: Settings,
-) -> TokenPayload | None:
+class TokenPayload(BaseModel):
+    sub: str
+    exp: int
+    iat: int
+    email: str
+
+
+def decode_jwt(value: str, /, settings: Settings) -> TokenPayload | None:
     if not value:
         return None
 
     try:
-        payload = jwt.decode(value, settings.secret_key, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            value,
+            settings.jwt_secret,
+            algorithms=[settings.jwt_algorithm],
+            audience=settings.jwt_audience,
+        )
     except jwt.PyJWTError:
         return None
 
@@ -22,19 +29,3 @@ def decode_token_string(
         return TokenPayload(**payload)
     except ValidationError:
         return None
-
-
-def create_access_from_refresh(
-    value: str | None,
-    /,
-    settings: Settings,
-) -> JWTToken | None:
-    token = decode_token_string(value, settings=settings)
-    if not token:
-        return None
-
-    return JWTToken.from_sub(
-        sub=token.sub,
-        token_type=TokenType.ACCESS,
-        settings=settings,
-    )

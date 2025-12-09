@@ -3,6 +3,7 @@ from typing import Protocol
 from cleanstack.domain import UnitOfWorkProtocol
 
 from app.domain._shared.protocols.event_publisher import EventPublisherProtocol
+from app.domain._shared.protocols.identity_provider import IdentityProviderProtocol
 from app.domain._shared.protocols.pos_manager import POSManagerProtocol
 from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.articles.repository import ArticleRepositoryProtocol
@@ -17,6 +18,9 @@ from app.domain.volumes.repository import VolumeRepositoryProtocol
 
 
 class ContextProtocol(UnitOfWorkProtocol, Protocol):
+    @property
+    def identity_provider(self) -> IdentityProviderProtocol: ...
+
     @property
     def repository(self) -> RepositoryProtocol: ...
 

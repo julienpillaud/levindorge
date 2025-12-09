@@ -1,6 +1,6 @@
 import logging
 
-from cleanstack.exceptions import ConflictError, DomainError
+from cleanstack.exceptions import ConflictError
 from fastapi import FastAPI, status
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse, RedirectResponse, Response
@@ -29,12 +29,12 @@ def add_exception_handler(app: FastAPI, settings: Settings) -> None:
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
-    @app.exception_handler(DomainError)
-    async def generic_handler(request: Request, _: Exception) -> Response:
-        return templates.TemplateResponse(
-            request=request,
-            name="errors/error.html",
-        )
+    # @app.exception_handler(DomainError)
+    # async def generic_handler(request: Request, _: Exception) -> Response:
+    #     return templates.TemplateResponse(
+    #         request=request,
+    #         name="errors/error.html",
+    #     )
 
     @app.exception_handler(UserUnauthorizedError)
     async def user_not_authorized_handler(request: Request, _: Exception) -> Response:

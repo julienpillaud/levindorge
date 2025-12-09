@@ -7,7 +7,6 @@ from fastapi.responses import RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 
 from app.api.dependencies import (
-    get_current_store,
     get_current_user,
     get_domain,
     get_settings,
@@ -28,7 +27,6 @@ router = APIRouter(prefix="/price-labes")
 def create_price_labels_view(
     request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
-    current_store: Annotated[Store, Depends(get_current_store)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
 ) -> Response:
@@ -38,7 +36,6 @@ def create_price_labels_view(
         name="article_list_glob.html",
         context={
             "current_user": current_user,
-            "current_shop": current_store,
             "articles": articles,
         },
     )
@@ -48,7 +45,7 @@ def create_price_labels_view(
 def create_price_labels(
     request: Request,
     settings: Annotated[Settings, Depends(get_settings)],
-    current_store: Annotated[Store, Depends(get_current_store)],
+    current_store: Store,  # TODO: to refactor
     domain: Annotated[Domain, Depends(get_domain)],
     form_data: Annotated[PriceLabelRequest, Form()],
 ) -> Response:

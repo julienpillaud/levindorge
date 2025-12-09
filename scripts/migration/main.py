@@ -12,7 +12,6 @@ from scripts.migration.distributors import create_distributors
 from scripts.migration.origins import create_origins
 from scripts.migration.producers import create_producers
 from scripts.migration.stores import create_stores
-from scripts.migration.users import create_users
 from scripts.migration.volumes import create_volume
 
 app = typer.Typer()
@@ -35,11 +34,11 @@ def migrate(
             dst_context.database[collection_name].drop()
 
     stores = create_stores(src_context=src_context, dst_context=dst_context)
-    create_users(
-        src_context=src_context,
-        dst_context=dst_context,
-        stores=stores,
-    )
+    # create_users(
+    #     src_context=src_context,
+    #     dst_context=dst_context,
+    #     stores=stores,
+    # )
     categories = create_categories(dst_context=dst_context)
     origins = create_origins(dst_context=dst_context)
 

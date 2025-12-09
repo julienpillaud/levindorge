@@ -67,16 +67,15 @@ def create_article_view(
     )
 
 
-@router.post("/create")
+@router.post("/create", dependencies=[Depends(get_current_user)])
 def create_article(
     request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     form_data: Annotated[ArticleDTO, Form()],
 ) -> Response:
     article_create = ArticleCreateOrUpdate(**form_data.model_dump())
-    article = domain.create_article(current_user=current_user, data=article_create)
+    article = domain.create_article(data=article_create)
     return templates.TemplateResponse(
         request=request,
         name="articles/_article_row.html",
@@ -110,21 +109,16 @@ def update_article_view(
     )
 
 
-@router.post("/update/{article_id}")
+@router.post("/update/{article_id}", dependencies=[Depends(get_current_user)])
 def update_article(
     request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     form_data: Annotated[ArticleDTO, Form()],
     article_id: str,
 ) -> Response:
     article_update = ArticleCreateOrUpdate(**form_data.model_dump())
-    article = domain.update_article(
-        current_user=current_user,
-        article_id=article_id,
-        data=article_update,
-    )
+    article = domain.update_article(article_id=article_id, data=article_update)
     return templates.TemplateResponse(
         request=request,
         name="articles/_article_row.html",
@@ -132,14 +126,13 @@ def update_article(
     )
 
 
-@router.get("/delete/{article_id}")
+@router.get("/delete/{article_id}", dependencies=[Depends(get_current_user)])
 def delete_article(
     request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     article_id: str,
 ) -> Response:
-    domain.delete_article(current_user=current_user, article_id=article_id)
+    domain.delete_article(article_id=article_id)
     display_group = URL(request.headers["referer"]).path.split("/")[-1]
     return RedirectResponse(
         url=request.url_for("get_articles_view", display_group=display_group),
@@ -149,9 +142,10 @@ def delete_article(
 
 @router.post("/recommended_prices")
 async def recommended_prices(
-    current_user: Annotated[User, Depends(get_current_user)],
+    domain: Annotated[Domain, Depends(get_domain)],
     data: PriceRequestDTO,
 ) -> dict[str, Decimal]:
+    stores = domain.get_stores()
     return {
         store.slug: compute_recommended_price(
             total_cost=data.total_cost,
@@ -159,7 +153,7 @@ async def recommended_prices(
             pricing_group=data.pricing_group,
             pricing_config=store.pricing_configs[data.pricing_group],
         )
-        for store in current_user.stores
+        for store in stores.items
     }
 
 

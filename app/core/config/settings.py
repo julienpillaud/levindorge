@@ -24,11 +24,17 @@ class Settings(BaseSettings):
     app_version: str
     environment: AppEnvironment
     secret_key: str
-    access_token_expire: int = 15  # 15 minutes
-    refresh_token_expire: int = 7 * 24 * 60  # 7 days
+    access_token_expire: int = 3600  # 1 hour
+    refresh_token_expire: int = 7 * 24 * 60 * 60  # 7 days
     app_path: AppPaths = AppPaths()
     zone_info: ZoneInfo = ZoneInfo("Europe/Paris")
     logfire_token: str = ""
+
+    supabase_url: str
+    supabase_key: str
+    jwt_secret: str
+    jwt_algorithm: str = "HS256"
+    jwt_audience: str = "authenticated"
 
     mongo_user: str
     mongo_password: str
