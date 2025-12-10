@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/julienpillaud/levindorge/compare/0.12.0...0.13.0) (2025-12-10)
+
+
+### Features
+
+* implement identity provider ([#77](https://github.com/julienpillaud/levindorge/issues/77)) ([89ca176](https://github.com/julienpillaud/levindorge/commit/89ca1768752951b6af96239ac693d11d708388fe))
+
 ## [0.12.0](https://github.com/julienpillaud/levindorge/compare/0.11.1...0.12.0) (2025-12-08)
 
 
