@@ -1,12 +1,9 @@
 from collections.abc import Iterator
 from contextlib import contextmanager
-from functools import cached_property
 
 from fastapi import FastAPI
 from faststream.redis import RedisBroker
 from pymongo import MongoClient
-from supabase import Client
-from supabase.lib.client_options import SyncClientOptions
 
 from app.core.config.settings import Settings
 from app.domain.context import ContextProtocol
@@ -34,17 +31,6 @@ class BaseContext(ContextProtocol):
         self.database = self.client[settings.mongo_database]
         self.broker = RedisBroker(str(settings.redis_dsn))
 
-    @cached_property
-    def supabase_client(self) -> Client:
-        return Client(
-            supabase_url=self.settings.supabase_url,
-            supabase_key=self.settings.supabase_key,
-            options=SyncClientOptions(
-                auto_refresh_token=False,
-                persist_session=False,
-            ),
-        )
-
     @contextmanager
     def transaction(self) -> Iterator[None]:
         yield
@@ -59,7 +45,7 @@ class BaseContext(ContextProtocol):
 class Context(BaseContext):
     @property
     def identity_provider(self) -> SupabaseIdentityProvider:
-        return SupabaseIdentityProvider(client=self.supabase_client)
+        return SupabaseIdentityProvider(settings=self.settings)
 
     @property
     def repository(self) -> MongoRepository:

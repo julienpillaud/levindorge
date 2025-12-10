@@ -1,13 +1,43 @@
 from supabase import Client
+from supabase.lib.client_options import SyncClientOptions
 from supabase_auth.errors import AuthApiError
 
+from app.core.config.settings import Settings
 from app.domain._shared.protocols.identity_provider import IdentityProviderProtocol
 from app.domain.users.entities import User, UserCredentials, UserWithCredentials
 
 
 class SupabaseIdentityProvider(IdentityProviderProtocol):
-    def __init__(self, client: Client) -> None:
-        self.client = client
+    def __init__(self, settings: Settings) -> None:
+        self.settings = settings
+
+    @property
+    def client(self) -> Client:
+        return Client(
+            supabase_url=self.settings.supabase_url,
+            supabase_key=self.settings.supabase_key,
+            options=SyncClientOptions(
+                auto_refresh_token=False,
+                persist_session=False,
+            ),
+        )
+
+    def update_user_password(self, user_id: str, password: str) -> User | None:
+        try:
+            response = self.client.auth.admin.update_user_by_id(
+                user_id,
+                {"password": password},
+            )
+        except AuthApiError:
+            return None
+
+        if not response.user:
+            return None
+
+        return User(
+            id=response.user.id,
+            email=response.user.email or "",  # email should exist
+        )
 
     def sign_in_with_password(
         self,
@@ -26,24 +56,13 @@ class SupabaseIdentityProvider(IdentityProviderProtocol):
 
         return UserWithCredentials(
             id=response.user.id,
-            email=response.user.email,
+            email=response.user.email or "",  # email should exist
             credentials=UserCredentials(
                 access_token=response.session.access_token,
                 refresh_token=response.session.refresh_token,
                 expires_in=response.session.expires_in,
             ),
         )
-
-    def get_user(self, token: str) -> User | None:
-        try:
-            response = self.client.auth.get_user(jwt=token)
-        except AuthApiError:
-            return None
-
-        if not response:
-            return None
-
-        return User(id=response.user.id, email=response.user.email or "")
 
     def refresh_token(self, token: str) -> UserWithCredentials | None:
         try:
@@ -56,7 +75,7 @@ class SupabaseIdentityProvider(IdentityProviderProtocol):
 
         return UserWithCredentials(
             id=response.user.id,
-            email=response.user.email or "",
+            email=response.user.email or "",  # email should exist
             credentials=UserCredentials(
                 access_token=response.session.access_token,
                 refresh_token=response.session.refresh_token,
