@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Form, status
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
 from fastapi.security import OAuth2PasswordRequestForm
@@ -9,6 +9,7 @@ from fastapi.templating import Jinja2Templates
 from app.api.dependencies import (
     get_domain,
     get_optional_current_user,
+    get_optional_current_user_from_form,
     get_settings,
     get_templates,
 )
@@ -20,6 +21,40 @@ from app.domain.users.entities import User
 LOGIN_ERROR_MESSAGE = "Email ou mot de passe incorrect"
 
 router = APIRouter()
+
+
+@router.get("/auth/register")
+def register(
+    request: Request,
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
+    access_token: str | None = None,
+) -> Response:
+    return templates.TemplateResponse(
+        request=request,
+        name="register.html",
+        context={"access_token": access_token},
+    )
+
+
+@router.post("/auth/register")
+def set_password(
+    request: Request,
+    current_user: Annotated[User | None, Depends(get_optional_current_user_from_form)],
+    domain: Annotated[Domain, Depends(get_domain)],
+    password: Annotated[str, Form()],
+) -> Response:
+    if not current_user:
+        request.session["error_message"] = "Erreur enregistrement mot de passe"
+        return RedirectResponse(
+            url=request.url_for("home"),
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
+    domain.update_user_password(user_id=current_user.id, password=password)
+    return RedirectResponse(
+        url=request.url_for("home"),
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
 
 
 @router.get("/")
@@ -35,7 +70,7 @@ def home(
             status_code=status.HTTP_302_FOUND,
         )
 
-    error = request.session.pop("login_error", None)
+    error = request.session.pop("error_message", None)
     return templates.TemplateResponse(
         request=request,
         name="login.html",
@@ -55,7 +90,7 @@ def login(
         password=form_data.password,
     )
     if not user:
-        request.session["login_error"] = LOGIN_ERROR_MESSAGE
+        request.session["error_message"] = LOGIN_ERROR_MESSAGE
         return RedirectResponse(
             url=request.url_for("home"),
             status_code=status.HTTP_303_SEE_OTHER,

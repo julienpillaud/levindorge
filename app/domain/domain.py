@@ -35,16 +35,16 @@ from app.domain.price_labels.commands import (
 from app.domain.producers.commands import get_producers_command
 from app.domain.stores.commands import get_stores_command
 from app.domain.users.commands import (
-    get_user_command,
     refresh_token_command,
     sign_in_with_password_command,
+    update_user_password_command,
 )
 from app.domain.volumes.commands import get_volumes_command
 
 
 class Domain(BaseDomain[ContextProtocol]):
+    update_user_password = CommandHandler(update_user_password_command)
     sign_in_with_password = CommandHandler(sign_in_with_password_command)
-    get_user = CommandHandler(get_user_command)
     refresh_token = CommandHandler(refresh_token_command)
 
     # common

@@ -2,6 +2,18 @@ from app.domain.context import ContextProtocol
 from app.domain.users.entities import User, UserWithCredentials
 
 
+def update_user_password_command(
+    context: ContextProtocol,
+    /,
+    user_id: str,
+    password: str,
+) -> User | None:
+    return context.identity_provider.update_user_password(
+        user_id=user_id,
+        password=password,
+    )
+
+
 def sign_in_with_password_command(
     context: ContextProtocol,
     /,
@@ -12,10 +24,6 @@ def sign_in_with_password_command(
         email=email,
         password=password,
     )
-
-
-def get_user_command(context: ContextProtocol, token: str) -> User | None:
-    return context.identity_provider.get_user(token=token)
 
 
 def refresh_token_command(

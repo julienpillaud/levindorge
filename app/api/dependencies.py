@@ -2,7 +2,7 @@ import logging
 from functools import lru_cache
 from typing import Annotated, cast
 
-from fastapi import Depends
+from fastapi import Depends, Form
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    return Settings()
+    return Settings()  # ty:ignore[missing-argument]
 
 
 def get_domain(request: Request) -> Domain:
@@ -60,3 +60,17 @@ def get_optional_current_user(
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> User | None:
     return _get_user_from_token(request=request, settings=settings)
+
+
+def get_optional_current_user_from_form(
+    settings: Annotated[Settings, Depends(get_settings)],
+    access_token: Annotated[str, Form()],
+) -> User | None:
+    if not access_token:
+        return None
+
+    token = decode_jwt(access_token, settings=settings)
+    if not token:
+        return None
+
+    return User(id=token.sub, email=token.email)
