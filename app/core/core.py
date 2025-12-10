@@ -1,9 +1,12 @@
 from collections.abc import Iterator
 from contextlib import contextmanager
+from functools import cached_property
 
 from fastapi import FastAPI
 from faststream.redis import RedisBroker
 from pymongo import MongoClient
+from supabase import Client
+from supabase.lib.client_options import SyncClientOptions
 
 from app.core.config.settings import Settings
 from app.domain.context import ContextProtocol
@@ -20,14 +23,27 @@ from app.infrastructure.repository.producers import ProducerRepository
 from app.infrastructure.repository.stores import StoreRepository
 from app.infrastructure.repository.users import UserRepository
 from app.infrastructure.repository.volumes import VolumeRepository
+from app.infrastructure.supabase.identity_provider import SupabaseIdentityProvider
 from app.infrastructure.tactill.manager import TactillManager
 
 
 class BaseContext(ContextProtocol):
     def __init__(self, settings: Settings) -> None:
+        self.settings = settings
         self.client: MongoClient[MongoDocument] = MongoClient(settings.mongo_uri)
         self.database = self.client[settings.mongo_database]
         self.broker = RedisBroker(str(settings.redis_dsn))
+
+    @cached_property
+    def supabase_client(self) -> Client:
+        return Client(
+            supabase_url=self.settings.supabase_url,
+            supabase_key=self.settings.supabase_key,
+            options=SyncClientOptions(
+                auto_refresh_token=False,
+                persist_session=False,
+            ),
+        )
 
     @contextmanager
     def transaction(self) -> Iterator[None]:
@@ -41,6 +57,10 @@ class BaseContext(ContextProtocol):
 
 
 class Context(BaseContext):
+    @property
+    def identity_provider(self) -> SupabaseIdentityProvider:
+        return SupabaseIdentityProvider(client=self.supabase_client)
+
     @property
     def repository(self) -> MongoRepository:
         return MongoRepository(database=self.database)

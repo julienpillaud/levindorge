@@ -12,11 +12,10 @@ from app.api.dependencies import (
     get_settings,
     get_templates,
 )
-from app.api.security.entities import JWTToken, TokenType
-from app.api.security.password import verify_password
+from app.api.utils import set_cookie
 from app.core.config.settings import Settings
 from app.domain.domain import Domain
-from app.domain.users.entities import User, UserUpdate
+from app.domain.users.entities import User
 
 LOGIN_ERROR_MESSAGE = "Email ou mot de passe incorrect"
 
@@ -47,11 +46,14 @@ def home(
 @router.post("/")
 def login(
     request: Request,
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     settings: Annotated[Settings, Depends(get_settings)],
     domain: Annotated[Domain, Depends(get_domain)],
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Response:
-    user = domain.get_user_by_email(email=form_data.username)
+    user = domain.sign_in_with_password(
+        email=form_data.username,
+        password=form_data.password,
+    )
     if not user:
         request.session["login_error"] = LOGIN_ERROR_MESSAGE
         return RedirectResponse(
@@ -59,52 +61,21 @@ def login(
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
-    valid_password, updated_hash = verify_password(
-        plain_password=form_data.password,
-        hashed_password=user.hashed_password,
-    )
-    if updated_hash is not None:
-        user_update = UserUpdate(hashed_password=updated_hash)
-        domain.update_user(user_id=user.id, user_update=user_update)
-
-    if not valid_password:
-        request.session["login_error"] = LOGIN_ERROR_MESSAGE
-        return RedirectResponse(
-            url=request.url_for("home"),
-            status_code=status.HTTP_303_SEE_OTHER,
-        )
-
-    access_token = JWTToken.from_sub(
-        sub=user.email,
-        token_type=TokenType.ACCESS,
-        settings=settings,
-    )
-    refresh_token = JWTToken.from_sub(
-        sub=user.email,
-        token_type=TokenType.REFRESH,
-        settings=settings,
-    )
     response = RedirectResponse(
         url=request.url_for("get_articles"),
         status_code=status.HTTP_302_FOUND,
     )
-    access_cookie = access_token.to_cookie(settings)
-    response.set_cookie(
-        key=access_cookie.key,
-        value=access_cookie.value,
-        max_age=access_cookie.max_age,
-        secure=access_cookie.secure,
-        httponly=access_cookie.httponly,
-        samesite=access_cookie.samesite,
+    set_cookie(
+        response,
+        key="access_token",
+        value=user.credentials.access_token,
+        max_age=settings.access_token_expire,
     )
-    refresh_cookie = refresh_token.to_cookie(settings)
-    response.set_cookie(
-        key=refresh_cookie.key,
-        value=refresh_cookie.value,
-        max_age=refresh_cookie.max_age,
-        secure=refresh_cookie.secure,
-        httponly=refresh_cookie.httponly,
-        samesite=refresh_cookie.samesite,
+    set_cookie(
+        response,
+        key="refresh_token",
+        value=user.credentials.refresh_token,
+        max_age=settings.refresh_token_expire,
     )
     return response
 

@@ -4,7 +4,7 @@ from cleanstack.exceptions import NotFoundError
 from app.domain.articles.commands import create_article_command
 from app.domain.articles.entities import ArticleCreateOrUpdate
 from app.domain.context import ContextProtocol
-from app.domain.users.entities import User
+from app.domain.stores.entities import Store
 from tests.factories.articles import ArticleFactory
 from tests.factories.categories import CategoryFactory
 from tests.utils import is_str_object_id
@@ -12,22 +12,15 @@ from tests.utils import is_str_object_id
 
 def test_create_article(
     context: ContextProtocol,
-    current_user: User,
+    store: Store,
     category_factory: CategoryFactory,
     article_factory: ArticleFactory,
 ) -> None:
     category = category_factory.create_one()
-    article_data = article_factory.build(
-        category=category.name,
-        stores=current_user.stores,
-    )
+    article_data = article_factory.build(category=category.name, stores=[store])
     data = ArticleCreateOrUpdate(**article_data.model_dump())
 
-    article = create_article_command(
-        context=context,
-        current_user=current_user,
-        data=data,
-    )
+    article = create_article_command(context, data=data)
 
     assert is_str_object_id(article.id)
     assert article.reference == data.reference
@@ -53,26 +46,18 @@ def test_create_article(
 
 def test_create_article_category_not_found(
     context: ContextProtocol,
-    current_user: User,
+    store: Store,
     article_factory: ArticleFactory,
 ) -> None:
-    article_data = article_factory.build(
-        category="category",
-        stores=current_user.stores,
-    )
+    article_data = article_factory.build(category="category", stores=[store])
     data = ArticleCreateOrUpdate(**article_data.model_dump())
 
     with pytest.raises(NotFoundError):
-        create_article_command(
-            context=context,
-            current_user=current_user,
-            data=data,
-        )
+        create_article_command(context, data=data)
 
 
 def test_create_article_store_not_found(
     context: ContextProtocol,
-    current_user: User,
     category_factory: CategoryFactory,
     article_factory: ArticleFactory,
 ) -> None:
@@ -81,8 +66,4 @@ def test_create_article_store_not_found(
     data = ArticleCreateOrUpdate(**article_data.model_dump())
 
     with pytest.raises(NotFoundError):
-        create_article_command(
-            context=context,
-            current_user=current_user,
-            data=data,
-        )
+        create_article_command(context, data=data)

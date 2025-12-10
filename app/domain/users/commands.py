@@ -1,23 +1,26 @@
-from cleanstack.exceptions import NotFoundError
-
 from app.domain.context import ContextProtocol
-from app.domain.types import EntityId
-from app.domain.users.entities import User, UserUpdate
+from app.domain.users.entities import User, UserWithCredentials
 
 
-def get_user_by_email_command(context: ContextProtocol, email: str) -> User | None:
-    return context.user_repository.get_by_email(email)
-
-
-def update_user_command(
+def sign_in_with_password_command(
     context: ContextProtocol,
-    user_id: EntityId,
-    user_update: UserUpdate,
-) -> User:
-    user = context.user_repository.get_by_id(user_id)
-    if not user:
-        raise NotFoundError()
+    /,
+    email: str,
+    password: str,
+) -> UserWithCredentials | None:
+    return context.identity_provider.sign_in_with_password(
+        email=email,
+        password=password,
+    )
 
-    user.hashed_password = user_update.hashed_password
 
-    return context.user_repository.update(user)
+def get_user_command(context: ContextProtocol, token: str) -> User | None:
+    return context.identity_provider.get_user(token=token)
+
+
+def refresh_token_command(
+    context: ContextProtocol,
+    /,
+    token: str,
+) -> UserWithCredentials | None:
+    return context.identity_provider.refresh_token(token=token)

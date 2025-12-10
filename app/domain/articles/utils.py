@@ -96,14 +96,19 @@ def extract_volume(data: dict[str, Any]) -> None:
 
 
 def extract_deposit_data(data: dict[str, Any]) -> None:
-    deposit_data = {
-        key: data.pop(f"deposit.{key}", None) for key in ["unit", "case", "packaging"]
-    }
-    if not all(deposit_data.values()):
+    unit = data.pop("deposit.unit", None)
+    if not unit:
         data["deposit"] = None
         return
 
-    data["deposit"] = deposit_data
+    case = data.pop("deposit.case", None)
+    packaging = data.pop("packaging", None)
+
+    data["deposit"] = {
+        "unit": float(unit),
+        "case": float(case) if case else None,
+        "packaging": float(packaging) if packaging else None,
+    }
 
 
 def extract_deposit(data: dict[str, Any], key: str) -> float | None:

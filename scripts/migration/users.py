@@ -4,7 +4,7 @@ from rich import print
 
 from app.core.core import Context
 from app.domain.stores.entities import Store
-from app.domain.users.entities import Role, User
+from app.domain.users.entities import User
 
 
 def create_users(
@@ -28,24 +28,4 @@ def create_user_entities(
     src_users: list[dict[str, Any]],
     stores: list[Store],
 ) -> list[User]:
-    stores_map = {store.slug: store for store in stores}
-
-    dst_users = [
-        User(
-            name=user["name"],
-            email=user["email"],
-            hashed_password=user["password"],
-            stores=[stores_map[store_slug] for store_slug in user["shops"]],
-            role=user["role"],
-        )
-        for user in src_users
-    ]
-    super_admin_user = User(
-        name="Super Admin",
-        email="superadmin@levindorge.com",
-        hashed_password="$argon2id$v=19$m=65536,t=3,p=4$ndR3enkNQTou1m5vg12BYw$j76aDP0Z9/c60VtcybA+fUezK9T/0SJVyBpWa4DvEIA",
-        stores=stores,
-        role=Role.SUPERADMIN,
-    )
-    dst_users.append(super_admin_user)
-    return dst_users
+    return []

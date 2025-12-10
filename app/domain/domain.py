@@ -4,7 +4,6 @@ from app.domain.articles.commands import (
     create_article_command,
     delete_article_command,
     get_article_command,
-    get_articles_by_display_group_command,
     get_articles_command,
     update_article_command,
 )
@@ -35,11 +34,19 @@ from app.domain.price_labels.commands import (
 )
 from app.domain.producers.commands import get_producers_command
 from app.domain.stores.commands import get_stores_command
-from app.domain.users.commands import get_user_by_email_command, update_user_command
+from app.domain.users.commands import (
+    get_user_command,
+    refresh_token_command,
+    sign_in_with_password_command,
+)
 from app.domain.volumes.commands import get_volumes_command
 
 
 class Domain(BaseDomain[ContextProtocol]):
+    sign_in_with_password = CommandHandler(sign_in_with_password_command)
+    get_user = CommandHandler(get_user_command)
+    refresh_token = CommandHandler(refresh_token_command)
+
     # common
     get_view_data = CommandHandler(get_view_data_command)
     # stores
@@ -53,14 +60,8 @@ class Domain(BaseDomain[ContextProtocol]):
     get_volumes = CommandHandler(get_volumes_command)
     # deposits
     get_deposits = CommandHandler(get_deposits_command)
-    # users
-    get_user_by_email = CommandHandler(get_user_by_email_command)
-    update_user = CommandHandler(update_user_command)
     # articles
     get_articles = CommandHandler(get_articles_command)
-    get_articles_by_display_group = CommandHandler(
-        get_articles_by_display_group_command
-    )
     get_article = CommandHandler(get_article_command)
     create_article = CommandHandler(create_article_command)
     update_article = CommandHandler(update_article_command)

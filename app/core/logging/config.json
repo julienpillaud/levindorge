@@ -26,6 +26,16 @@
       "handlers": ["console", "logfire"],
       "propagate": false
     },
+    "httpcore": {
+      "level": "INFO",
+      "handlers": ["console", "logfire"],
+      "propagate": false
+    },
+    "hpack": {
+      "level": "INFO",
+      "handlers": ["console", "logfire"],
+      "propagate": false
+    },
     "urllib3": {
       "level": "INFO",
       "handlers": ["console", "logfire"],

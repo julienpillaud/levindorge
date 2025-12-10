@@ -1,6 +1,6 @@
 import logging
 from collections.abc import Awaitable, Callable
-from typing import Any
+from typing import Any, Literal
 from urllib.parse import urlencode
 
 from fastapi import FastAPI
@@ -17,7 +17,7 @@ from app.api.filters import (
     strip_zeros,
 )
 from app.api.navbar import navbar_categories, navbar_items
-from app.api.security.token import create_access_from_refresh, decode_token_string
+from app.api.security.token import decode_jwt
 from app.core.config.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -58,44 +58,59 @@ def add_security_middleware(app: FastAPI, settings: Settings) -> None:
     ) -> Response:
         request.state.new_access_token = None
 
+        access_token = request.cookies.get("access_token")
+        refresh_token = request.cookies.get("refresh_token")
+
         # Access token is valid -> continue
-        access_token_str = request.cookies.get("access_token")
-        access_token = decode_token_string(access_token_str, settings=settings)
-        logger.debug("Access token", extra={"access_token": access_token})
-        if access_token:
+        if access_token and decode_jwt(access_token, settings=settings):
+            return await call_next(request)
+
+        # No refresh token -> continue
+        if not refresh_token:
             return await call_next(request)
 
         # Access token is invalid -> refresh it
-        refresh_token_str = request.cookies.get("refresh_token")
-        refresh_token = decode_token_string(refresh_token_str, settings=settings)
-        logger.debug("Refresh token", extra={"refresh_token": refresh_token})
-        if refresh_token:
-            new_access_token = create_access_from_refresh(
-                refresh_token_str,
-                settings=settings,
-            )
-            logger.debug(
-                "New access token", extra={"new_access_token": new_access_token}
-            )
-            if not new_access_token:
-                logger.debug("Failed to create new access token")
-                return await call_next(request)
+        logger.debug("Refreshing access token...")
+        user = app.state.domain.refresh_token(token=refresh_token)
+        if not user:
+            logger.warning("Failed to refresh access token")
+            return await call_next(request)
 
-            cookie = new_access_token.to_cookie(settings)
-            request.state.new_access_token = cookie.value
-            response = await call_next(request)
-            response.set_cookie(
-                key=cookie.key,
-                value=cookie.value,
-                max_age=cookie.max_age,
-                secure=cookie.secure,
-                httponly=cookie.httponly,
-                samesite=cookie.samesite,
-            )
-            return response
+        request.state.new_access_token = user.credentials.access_token
+        response = await call_next(request)
+        set_cookie(
+            response,
+            key="access_token",
+            value=user.credentials.access_token,
+            max_age=settings.access_token_expire,
+        )
+        set_cookie(
+            response,
+            key="refresh_token",
+            value=user.credentials.refresh_token,
+            max_age=settings.refresh_token_expire,
+        )
+        return response
 
-        # Refresh token is invalid -> redirect to home
-        return await call_next(request)
+
+def set_cookie(
+    response: Response,
+    /,
+    key: str,
+    value: str,
+    max_age: int,
+    secure: bool = True,
+    httponly: bool = True,
+    samesite: Literal["lax", "strict", "none"] = "lax",
+) -> None:
+    response.set_cookie(
+        key=key,
+        value=value,
+        max_age=max_age,
+        secure=secure,
+        httponly=httponly,
+        samesite=samesite,
+    )
 
 
 def url_for_with_query(

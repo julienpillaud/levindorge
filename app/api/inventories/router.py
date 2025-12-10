@@ -1,6 +1,5 @@
 from typing import Annotated
 
-from cleanstack.exceptions import BadRequestError
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
@@ -12,16 +11,6 @@ from app.domain.stores.entities import Store
 from app.domain.users.entities import User
 
 router = APIRouter(prefix="/inventories")
-
-
-def get_shop_from_body(
-    current_user: Annotated[User, Depends(get_current_user)],
-    store: Annotated[str, Body()],
-) -> Store:
-    for user_store in current_user.stores:
-        if store == user_store.slug:
-            return user_store
-    raise BadRequestError("Invalid shop")
 
 
 @router.get("")
@@ -47,7 +36,7 @@ def create_inventory(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
-    store: Annotated[Store, Depends(get_shop_from_body)],
+    store: Store,  # TODO: to refactor
 ) -> Response:
     inventory = domain.create_inventory(store=store)
     return templates.TemplateResponse(
@@ -93,7 +82,7 @@ def delete_inventory(
 def reset_pos_stocks(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
-    store: Annotated[Store, Depends(get_shop_from_body)],
+    store: Store,  # TODO: to refactor
     category: Annotated[str, Body()],
 ) -> Response:
     domain.reset_pos_stocks(store=store, category=category)
