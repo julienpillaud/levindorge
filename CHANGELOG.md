@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/julienpillaud/levindorge/compare/0.13.0...0.14.0) (2025-12-10)
+
+
+### Features
+
+* add user password update flow and registration endpoint ([#79](https://github.com/julienpillaud/levindorge/issues/79)) ([f2ad7e8](https://github.com/julienpillaud/levindorge/commit/f2ad7e83f1e4007f08f0d870acb85a61c072cbad))
+
 ## [0.13.0](https://github.com/julienpillaud/levindorge/compare/0.12.0...0.13.0) (2025-12-10)
 
 
