@@ -5,9 +5,8 @@
   {% set search_query = '' %}
 {% endif %}
 
-{% set total_buttons = 5 %}
-{% set start_page = result.page - 2 %}
-{% set end_page = result.page + 2 %}
+{% set start_page = result.page - 1 %}
+{% set end_page = result.page + 1 %}
 
 {% if start_page < 1 %}
   {% set end_page = end_page + (1 - start_page) %}
@@ -25,35 +24,35 @@
 
 <div class="join">
   <a
-    class="join-item btn btn-soft btn-primary btn-xs md:btn-sm shadow-sm {% if result.page == 1 %}btn-disabled{% endif %}"
+    class="join-item btn btn-sm shadow-sm {% if result.page == 1 %}btn-disabled{% endif %}"
     href="{{ url_for('get_articles') }}?page=1{{ search_query }}"
   >
-    <<
+    <i class="bi bi-chevron-double-left"></i>
   </a>
   <a
-    class="join-item btn btn-soft btn-primary btn-xs md:btn-sm shadow-sm {% if result.page == 1 %}btn-disabled{% endif %}"
+    class="join-item btn btn-sm shadow-sm {% if result.page == 1 %}btn-disabled{% endif %}"
     href="{{ url_for('get_articles') }}?page={{ result.page - 1 }}{{ search_query }}"
   >
-    <
+    <i class="bi bi-chevron-left"></i>
   </a>
   {% for page in range(start_page, end_page + 1) %}
     <a
-      class="join-item btn btn-soft btn-primary btn-xs md:btn-sm shadow-sm {% if page == result.page %}btn-active{% endif %}"
+      class="join-item btn btn-sm shadow-sm {% if page == result.page %}btn-active{% endif %}"
       href="{{ url_for('get_articles') }}?page={{ page }}{{ search_query }}"
     >
       {{ page }}
     </a>
   {% endfor %}
   <a
-    class="join-item btn btn-soft btn-primary btn-xs md:btn-sm shadow-sm {% if result.page == result.total_pages %}btn-disabled{% endif %}"
+    class="join-item btn btn-sm shadow-sm {% if result.page == result.total_pages %}btn-disabled{% endif %}"
     href="{{ url_for('get_articles') }}?page={{ result.page + 1 }}{{ search_query }}"
   >
-    >
+    <i class="bi bi-chevron-right"></i>
   </a>
   <a
-    class="join-item btn btn-soft btn-primary btn-xs md:btn-sm shadow-sm {% if result.page == result.total_pages %}btn-disabled{% endif %}"
+    class="join-item btn btn-sm shadow-sm {% if result.page == result.total_pages %}btn-disabled{% endif %}"
     href="{{ url_for('get_articles') }}?page={{ result.total_pages }}{{ search_query }}"
   >
-    >>
+    <i class="bi bi-chevron-double-right"></i>
   </a>
 </div>
