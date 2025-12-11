@@ -8,7 +8,9 @@
         <div class="card-body flex flex-row p-4 justify-between">
           <div class="flex items-center gap-4">
             <h1 class="card-title text-2xl">Articles</h1>
-            <div id="items-count" class="badge badge-soft badge-accent badge-lg">{{ result.total }}</div>
+            <div id="items-count" class="badge badge-soft badge-accent badge-lg">
+              {{ result.total }}
+            </div>
           </div>
 
           <div class="dropdown dropdown-end dropdown-hover invisible" id="price-labels-dropdown">
@@ -21,45 +23,42 @@
               <div class="divider"></div>
             </ul>
           </div>
-
         </div>
       </div>
       {# -------------------------------------------------------------------- #}
-      <div class="self-center" id="pagination">
-        {% include "_includes/_pagination.html" %}
-      </div>
+      <div class="self-center" id="pagination">{% include "_includes/_pagination.html" %}</div>
       {# -------------------------------------------------------------------- #}
       <div class="overflow-x-auto rounded-box border border-base-300">
         <table class="table table-pin-rows table-sm" id="articles-table">
           <thead>
-          <tr>
-            <th></th>
-            <th>Nom</th>
-            <th>Région</th>
-            <th>Couleur</th>
-            <th>Saveur</th>
-            <th>Alc. %</th>
-            <th>Fournisseur</th>
-            <th>Catégorie</th>
-          </tr>
+            <tr>
+              <th></th>
+              <th>Nom</th>
+              <th>Région</th>
+              <th>Couleur</th>
+              <th>Saveur</th>
+              <th>Alc. %</th>
+              <th>Fournisseur</th>
+              <th>Catégorie</th>
+            </tr>
           </thead>
           <tbody>
-          {% for article in result.items %}
-            <tr class="hover cursor-pointer" data-id="{{ article.id }}">
-              <td class="hover cursor-default">
-                <label><input type="checkbox" class="checkbox"/></label>
-              </td>
-              <td class="text-nowrap">{{ article.display_name }}</td>
-              <td class="text-nowrap">{{ article.origin if article.origin }}</td>
-              <td class="text-nowrap">{{ article.color if article.color }}</td>
-              <td class="text-nowrap">{{ article.taste if article.taste }}</td>
-              <td class="text-nowrap">
-                {{ article.alcohol_by_volume | strip_zeros if article.alcohol_by_volume }}
-              </td>
-              <td class="text-nowrap">{{ article.distributor }}</td>
-              <td class="text-nowrap">{{ article.category }}</td>
-            </tr>
-          {% endfor %}
+            {% for article in result.items %}
+              <tr class="hover cursor-pointer" data-id="{{ article.id }}">
+                <td class="hover cursor-default">
+                  <label><input type="checkbox" class="checkbox" /></label>
+                </td>
+                <td class="text-nowrap">{{ article.display_name }}</td>
+                <td class="text-nowrap">{{ article.origin if article.origin }}</td>
+                <td class="text-nowrap">{{ article.color if article.color }}</td>
+                <td class="text-nowrap">{{ article.taste if article.taste }}</td>
+                <td class="text-nowrap">
+                  {{ article.alcohol_by_volume | strip_zeros if article.alcohol_by_volume }}
+                </td>
+                <td class="text-nowrap">{{ article.distributor }}</td>
+                <td class="text-nowrap">{{ article.category }}</td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
