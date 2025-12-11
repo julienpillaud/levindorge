@@ -1,4 +1,4 @@
-import {initializeCheckboxes} from "./checkboxes.js";
+import { initializeCheckboxes } from "./checkboxes.js";
 
 export const showToast = (message, options = {}) => {
   const {
@@ -28,7 +28,7 @@ export const updateArticlesPage = async (url) => {
   updateElement("#items-count", newDocument);
   updateElement("#pagination", newDocument);
   initializeCheckboxes();
-}
+};
 
 const updateElement = (selector, newDocument) => {
   const element = document.querySelector(selector);
@@ -36,4 +36,4 @@ const updateElement = (selector, newDocument) => {
   if (element && newElement) {
     element.innerHTML = newElement.innerHTML;
   }
-}
+};

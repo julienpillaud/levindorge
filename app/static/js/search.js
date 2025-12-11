@@ -1,4 +1,4 @@
-import {updateArticlesPage} from "./utils.js";
+import { updateArticlesPage } from "./utils.js";
 
 let searchTimer = null;
 
