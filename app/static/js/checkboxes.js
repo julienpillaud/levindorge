@@ -30,9 +30,8 @@ export const updateCheckedArticleIds = (event) => {
 };
 
 // -----------------------------------------------------------------------------
-export const getCheckedArticleIds = () => {
-  return JSON.parse(localStorage.getItem("checkedArticleIds") || "[]");
-};
+export const getCheckedArticleIds = () =>
+  JSON.parse(localStorage.getItem("checkedArticleIds") || "[]");
 
 // -----------------------------------------------------------------------------
 const setCheckedArticleIds = (ids) => {

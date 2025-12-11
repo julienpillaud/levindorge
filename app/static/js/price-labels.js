@@ -1,9 +1,9 @@
 import { getCheckedArticleIds } from "./checkboxes.js";
-import { updateArticlesPage } from "./utils.js";
 import { getStores } from "./cache/stores.js";
+import { updateArticlesPage } from "./utils.js";
 
 // -----------------------------------------------------------------------------
-export const showSelectedArticles = async () => {
+export const showSelectedArticles = () => {
   const ids = getCheckedArticleIds();
   const params = new URLSearchParams();
 
@@ -21,10 +21,10 @@ export const initializePriceTagsDropdown = async () => {
   const stores = await getStores();
   stores.forEach((store) => {
     const li = document.createElement("li");
-    const a = document.createElement("a");
-    a.dataset.slug = store.slug;
-    a.textContent = store.name;
-    li.appendChild(a);
+    const link = document.createElement("a");
+    link.dataset.slug = store.slug;
+    link.textContent = store.name;
+    li.appendChild(link);
     ul.appendChild(li);
   });
 };
