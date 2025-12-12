@@ -9,13 +9,13 @@ from app.domain.price_labels.entities import (
 from app.domain.price_labels.utils.common import split_by_size
 from app.domain.price_labels.utils.large import create_large_price_labels
 from app.domain.price_labels.utils.small import create_small_price_labels
-from app.domain.stores.entities import Store
+from app.domain.types import StoreSlug
 
 
 def create_price_labels_command(
     context: ContextProtocol,
     settings: Settings,
-    current_store: Store,
+    store_slug: StoreSlug,
     price_labels_create: list[PriceLabelCreate],
 ) -> None:
     large_price_labels, small_price_labels = split_by_size(
@@ -26,13 +26,13 @@ def create_price_labels_command(
         create_large_price_labels(
             context=context,
             settings=settings,
-            current_store=current_store,
+            store_slug=store_slug,
             price_labels=large_price_labels,
         )
     if small_price_labels:
         create_small_price_labels(
             settings=settings,
-            current_store=current_store,
+            store_slug=store_slug,
             price_labels=small_price_labels,
         )
 

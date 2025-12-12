@@ -9,14 +9,14 @@ from app.domain.price_labels.utils.common import (
     get_file_path,
     normalize_attribute,
 )
-from app.domain.stores.entities import Store
+from app.domain.types import StoreSlug
 
 MAX_SMALL_LABELS_PER_FILE = 40
 
 
 def create_small_price_labels(
     settings: Settings,
-    current_store: Store,
+    store_slug: StoreSlug,
     price_labels: list[PriceLabelWrapper],
 ) -> None:
     for file_index, labels in enumerate(
@@ -28,7 +28,7 @@ def create_small_price_labels(
         file_path = get_file_path(
             prefix="small",
             index=file_index,
-            store=current_store,
+            store_slug=store_slug,
             path=settings.app_path.price_labels,
         )
 
@@ -39,7 +39,7 @@ def create_small_price_labels(
             write_small_labels_file(
                 file=file,
                 price_labels=labels,
-                store=current_store,
+                store_slug=store_slug,
             )
 
             file.write("{% endblock %}\n")
@@ -48,14 +48,14 @@ def create_small_price_labels(
 def write_small_labels_file(
     file: TextIO,
     price_labels: list[PriceLabelWrapper],
-    store: Store,
+    store_slug: StoreSlug,
 ) -> None:
     for index, price_label in enumerate(price_labels):
         write_small_price_labels(
             file=file,
             index=index,
             article=price_label.article,
-            store=store,
+            store_slug=store_slug,
         )
 
 
@@ -63,7 +63,7 @@ def write_small_price_labels(
     file: TextIO,
     index: int,
     article: Article,
-    store: Store,
+    store_slug: StoreSlug,
 ) -> None:
     name_spirit, name_spirit_sup, name_spirit_inf = define_name(article=article)
 
@@ -90,7 +90,7 @@ def write_small_price_labels(
     # ----------------------------------------------------------
     file.write(f'<div class="bottleClass">{article.volume}</div>')
     # ----------------------------------------------------------
-    sell_price = article.store_data[store.slug].gross_price
+    sell_price = article.store_data[store_slug].gross_price
     sell_price_tag = f"{sell_price:.0f}".replace(".", ", ")
     file.write(f'<div class="priceClass">{sell_price_tag} €</div>')
     # ----------------------------------------------------------

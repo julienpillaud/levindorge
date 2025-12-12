@@ -5,7 +5,7 @@
       <div class="card bg-base-200 w-sm shadow">
         <div class="card-body">
           <div class="grid gap-6">
-            <input type="hidden" name="access_token" value="{{ access_token }}">
+            <input type="hidden" name="access_token" value="{{ access_token }}" />
 
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Choisis ton mot de passe</legend>
@@ -31,16 +31,16 @@
 {% endblock %}
 
 {% block script %}
-<script>
-  if (window.location.hash) {
-    console.log(window.location.hash)
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    const access_token = params.get('access_token');
-    console.log(access_token)
-    if (access_token) {
-      window.location.href = window.location.pathname + '?access_token=' + access_token
+  <script>
+    if (window.location.hash) {
+      console.log(window.location.hash);
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const access_token = params.get("access_token");
+      console.log(access_token);
+      if (access_token) {
+        window.location.href = window.location.pathname + "?access_token=" + access_token;
+      }
     }
-  }
-</script>
+  </script>
 {% endblock %}

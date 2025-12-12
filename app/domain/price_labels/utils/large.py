@@ -1,4 +1,4 @@
-from typing import Any, TextIO
+from typing import TextIO
 
 from PIL import ImageFont
 
@@ -14,7 +14,7 @@ from app.domain.price_labels.utils.common import (
     get_file_path,
     normalize_attribute,
 )
-from app.domain.stores.entities import Store
+from app.domain.types import StoreSlug
 
 MAX_LARGE_LABELS_PER_FILE = 9
 
@@ -22,16 +22,9 @@ MAX_LARGE_LABELS_PER_FILE = 9
 def create_large_price_labels(
     context: ContextProtocol,
     settings: Settings,
-    current_store: Store,
+    store_slug: StoreSlug,
     price_labels: list[PriceLabelWrapper],
 ) -> None:
-    # TODO: get from new 'origins' repository
-    regions_mapping: dict[str, Any] = {}
-    # regions_mapping = {
-    #     region.name: region
-    #     for region in context.repository.get_items(ItemType.COUNTRIES)
-    # }
-
     for file_index, labels in enumerate(
         chunk_price_labels(
             price_labels=price_labels,
@@ -41,20 +34,19 @@ def create_large_price_labels(
         file_path = get_file_path(
             prefix="large",
             index=file_index,
-            store=current_store,
+            store_slug=store_slug,
             path=settings.app_path.price_labels,
         )
 
         with open(file_path, "w", encoding="utf-8") as file:
-            file.write('{% extends "/price_labels/base_large.html" %}\n')
+            file.write('{% extends "/price-labels/base-large.html" %}\n')
             file.write("{% block content %}\n")
 
             write_large_labels_file(
                 settings=settings,
                 file=file,
                 price_labels=labels,
-                store=current_store,
-                regions_mapping=regions_mapping,
+                store_slug=store_slug,
             )
 
             file.write("{% endblock %}\n")
@@ -64,8 +56,7 @@ def write_large_labels_file(
     settings: Settings,
     file: TextIO,
     price_labels: list[PriceLabelWrapper],
-    store: Store,
-    regions_mapping: dict[str, Any],
+    store_slug: StoreSlug,
 ) -> None:
     for index, price_label in enumerate(price_labels):
         write_large_price_labels(
@@ -74,8 +65,7 @@ def write_large_labels_file(
             index=index,
             pricing_group=price_label.pricing_group,
             article=price_label.article,
-            store=store,
-            regions_mapping=regions_mapping,
+            store_slug=store_slug,
         )
 
 
@@ -85,8 +75,7 @@ def write_large_price_labels(
     index: int,
     pricing_group: PricingGroup,
     article: Article,
-    store: Store,
-    regions_mapping: dict[str, Any],
+    store_slug: StoreSlug,
 ) -> None:
     font_file = settings.app_path.fonts / "localbrewerytwo-bold.otf"
     font = ImageFont.truetype(str(font_file), 23)
@@ -103,8 +92,7 @@ def write_large_price_labels(
 
     # top line
     if pricing_group in {"beer", "keg", "mini_keg"}:
-        demonym = ""  # TODO: replace by country name
-        top_line = f"{color} - {article.volume} - {demonym}"
+        top_line = f"{color} - {article.volume} - {article.origin}"
         file.write(f'<div class="toplinebeerClass brandonClass">{top_line}</div>\n')
 
     elif pricing_group in {"wine", "sparkling_wine", "bib"}:
@@ -140,7 +128,7 @@ def write_large_price_labels(
         file.write("</div>\n")
 
     # ----------------------------------------------------------
-    sell_price = article.store_data[store.slug].gross_price
+    sell_price = article.store_data[store_slug].gross_price
     sell_price_tag = f"{sell_price:.2f}".replace(".", ", ")
     file.write(f'<div class="priceClass">{sell_price_tag} €</div>\n')
 

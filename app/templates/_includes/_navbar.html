@@ -1,34 +1,18 @@
-<div class="navbar bg-primary text-primary-content shadow-sm z-50">
+<div class="navbar bg-base-300 shadow-md z-99">
   {# Navbar start ----------------------------------------------------------- #}
   <div class="navbar-start">
     {# Menu burger visible until 'lg' (hidden on 'lg' and up) #}
     <div class="dropdown">
       <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h8m-8 6h16"
-          />
-        </svg>
+        <i class="bi bi-list text-2xl"></i>
       </div>
-      <ul
-        tabindex="-1"
-        class="menu dropdown-content bg-primary rounded-box z-1 mt-3 w-52 p-2 shadow"
-      >
+      <ul tabindex="-1" class="menu dropdown-content bg-base-300 rounded-box mt-4 w-max shadow">
         {% include '_includes/_menu.html' %}
       </ul>
     </div>
 
     {# Badge visible from 'md' onwards #}
-    <div class="badge badge-xl badge-accent font-bold ms-4 hidden md:flex">Le Vin d'Orge</div>
+    <div class="btn btn-ghost text-xl pointer-events-none hidden md:flex">Le Vin d'Orge</div>
   </div>
   {# ------------------------------------------------------------------------ #}
 

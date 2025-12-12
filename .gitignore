@@ -10,3 +10,4 @@ __pycache__/
 node_modules/
 
 app/application/templates/price_labels/temp/
+app/templates/price-labels-files/

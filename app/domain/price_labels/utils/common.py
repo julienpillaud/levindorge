@@ -2,7 +2,6 @@ import datetime
 import itertools
 from collections.abc import Iterator
 from pathlib import Path
-from typing import Any
 
 from PIL.ImageFont import FreeTypeFont
 
@@ -10,7 +9,7 @@ from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
 from app.domain.context import ContextProtocol
 from app.domain.price_labels.entities import PriceLabelCreate, PriceLabelWrapper
-from app.domain.stores.entities import Store
+from app.domain.types import StoreSlug
 
 LARGE_LABELS_CATEGORY = {
     PricingGroup.BEER,
@@ -54,12 +53,8 @@ def split_by_size(
     context: ContextProtocol,
     price_labels: list[PriceLabelCreate],
 ) -> tuple[list[PriceLabelWrapper], list[PriceLabelWrapper]]:
-    # TODO : get from category repository
-    article_types_mapping: dict[str, Any] = {}
-    # article_types_mapping = {
-    #     article_type.name: article_type
-    #     for article_type in context.repository.get_article_types()
-    # }
+    categories = context.category_repository.get_all(limit=300)
+    categories_map = {category.name: category for category in categories.items}
 
     large_labels = []
     small_labels = []
@@ -67,7 +62,7 @@ def split_by_size(
         article = context.article_repository.get_by_id(item.article_id)
         if not article:
             continue
-        pricing_group = article_types_mapping[article.category].pricing_group
+        pricing_group = categories_map[article.category].pricing_group
 
         wrapper = PriceLabelWrapper(
             article=article,
@@ -99,9 +94,9 @@ def chunk_price_labels(
         yield chunk
 
 
-def get_file_path(prefix: str, index: int, store: Store, path: Path) -> Path:
+def get_file_path(prefix: str, index: int, store_slug: StoreSlug, path: Path) -> Path:
     date = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d_%H-%M-%S")
-    file_name = f"{prefix}_{index + 1}_{store.slug}_{date}.html"
+    file_name = f"{prefix}_{index + 1}_{store_slug}_{date}.html"
     return path / file_name
 
 

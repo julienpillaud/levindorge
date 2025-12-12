@@ -3,6 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, status
 from fastapi.datastructures import URL
+from fastapi.params import Query
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
@@ -15,6 +16,7 @@ from app.domain.articles.utils import compute_article_margins, compute_recommend
 from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP, CategoryGroupName
 from app.domain.domain import Domain
 from app.domain.entities import DEFAULT_PAGINATION_SIZE
+from app.domain.types import EntityId
 from app.domain.users.entities import User
 
 router = APIRouter(prefix="/articles", tags=["Articles"])
@@ -31,6 +33,25 @@ def get_articles(
     limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
 ) -> Response:
     result = domain.get_articles(search=search, page=page, limit=limit)
+    return templates.TemplateResponse(
+        request=request,
+        name="articles/articles.html",
+        context={
+            "current_user": current_user,
+            "result": result,
+        },
+    )
+
+
+@router.get("/ids")
+def get_articles_by_ids(
+    request: Request,
+    current_user: Annotated[User, Depends(get_current_user)],
+    domain: Annotated[Domain, Depends(get_domain)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
+    article_ids: Annotated[list[EntityId], Query()],
+) -> Response:
+    result = domain.get_articles_by_ids(article_ids)
     return templates.TemplateResponse(
         request=request,
         name="articles/articles.html",

@@ -23,6 +23,10 @@ export const initArticles = () => {
 const initArticlesTable = (modal) => {
   const table = document.getElementById("articles-table");
   table.addEventListener("click", (event) => {
+    if (event.target.closest("td")?.querySelector('input[type="checkbox"]')) {
+      return;
+    }
+
     const row = event.target.closest("tbody tr");
     if (!row) {
       return;

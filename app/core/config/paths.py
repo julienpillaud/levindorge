@@ -19,8 +19,10 @@ class AppPaths(BaseModel):
 
     @property
     def price_labels(self) -> Path:
-        return self.templates / "price_labels/temp"
+        path = self.templates / "price-labels-files"
+        path.mkdir(parents=True, exist_ok=True)
+        return path
 
     @property
     def fonts(self) -> Path:
-        return self.root / "application/static/fonts"
+        return self.static / "fonts"
