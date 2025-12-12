@@ -1,10 +1,11 @@
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form, status
+from fastapi import APIRouter, Depends, status
 from fastapi.requests import Request
-from fastapi.responses import RedirectResponse, Response
+from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
+from starlette.responses import JSONResponse
 
 from app.api.dependencies import (
     get_current_user,
@@ -13,57 +14,33 @@ from app.api.dependencies import (
     get_templates,
 )
 from app.api.price_labels.dtos import PriceLabelRequest
-from app.api.utils import url_for_with_query
 from app.core.config.settings import Settings
 from app.domain.domain import Domain
 from app.domain.price_labels.entities import PriceLabelCreate
-from app.domain.stores.entities import Store
 from app.domain.users.entities import User
 
-router = APIRouter(prefix="/price-labes")
-
-
-@router.get("/create")
-def create_price_labels_view(
-    request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
-    domain: Annotated[Domain, Depends(get_domain)],
-    templates: Annotated[Jinja2Templates, Depends(get_templates)],
-) -> Response:
-    articles = domain.get_articles()
-    return templates.TemplateResponse(
-        request=request,
-        name="article_list_glob.html",
-        context={
-            "current_user": current_user,
-            "articles": articles,
-        },
-    )
+router = APIRouter(prefix="/price-labels", tags=["Price Labels"])
 
 
 @router.post("/create", dependencies=[Depends(get_current_user)])
 def create_price_labels(
-    request: Request,
     settings: Annotated[Settings, Depends(get_settings)],
-    current_store: Store,  # TODO: to refactor
     domain: Annotated[Domain, Depends(get_domain)],
-    form_data: Annotated[PriceLabelRequest, Form()],
+    price_labels_request: PriceLabelRequest,
 ) -> Response:
     price_labels_create = [
-        PriceLabelCreate(article_id=item.article_id, label_count=item.label_count)
-        for item in form_data.data
+        PriceLabelCreate(
+            article_id=item.article_id,
+            label_count=item.label_count,
+        )
+        for item in price_labels_request.data
     ]
     domain.create_price_labels(
         settings=settings,
-        current_store=current_store,
+        store_slug=price_labels_request.store_slug,
         price_labels_create=price_labels_create,
     )
-    url = url_for_with_query(
-        request,
-        name="create_price_labels_view",
-        query_params={"shop": current_store.slug},
-    )
-    return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
+    return JSONResponse(content={}, status_code=status.HTTP_201_CREATED)
 
 
 @router.get("/files")
@@ -77,7 +54,7 @@ def get_price_labels_files(
     files = domain.get_price_labels_files(settings=settings)
     return templates.TemplateResponse(
         request=request,
-        name="price_labels/price_labels.html",
+        name="price-labels/price-labels.html",
         context={
             "current_user": current_user,
             "files": files,
@@ -94,7 +71,7 @@ def get_price_labels_file(
 ) -> Response:
     return templates.TemplateResponse(
         request=request,
-        name=f"price_labels/temp/{file}",
+        name=f"price-labels-files/{file}.html",
         context={
             "current_user": current_user,
             "file": file,
