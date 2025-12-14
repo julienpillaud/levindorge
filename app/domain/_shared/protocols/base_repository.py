@@ -13,9 +13,9 @@ from app.domain.types import EntityId
 class RepositoryProtocol[T: DomainEntity](Protocol):
     def get_all(
         self,
-        filters: dict[str, Any] | None = None,
+        filters: Any | None = None,
         search: str | None = None,
-        sort: dict[str, int] | None = None,
+        sort: Any | None = None,
         page: PositiveInt = 1,
         limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
     ) -> PaginatedResponse[T]: ...

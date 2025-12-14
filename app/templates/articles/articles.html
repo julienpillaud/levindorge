@@ -2,22 +2,38 @@
 {% block content %}
   <div class="h-dvh flex flex-col">
     {% include '_includes/_navbar.html' %}
-    <div class="flex flex-col flex-1 px-10 py-6 gap-6 min-h-0">
+    <div class="flex flex-col flex-1 px-4 py-4 gap-4 min-h-0">
       {# -------------------------------------------------------------------- #}
       <div class="card bg-base-200 shadow-sm">
-        <div class="card-body flex flex-col md:flex-row justify-between md:items-center gap-4">
+        <div class="card-body flex flex-row p-4 justify-between">
           <div class="flex items-center gap-4">
             <h1 class="card-title text-2xl">Articles</h1>
-            <div id="items-count" class="badge badge-soft badge-primary">{{ result.total }}</div>
+            <div id="items-count" class="badge badge-soft badge-accent badge-lg">
+              {{ result.total }}
+            </div>
           </div>
-          <div id="pagination">{% include "_includes/_pagination.html" %}</div>
+
+          <div class="dropdown dropdown-end dropdown-hover invisible" id="price-labels-dropdown">
+            <div tabindex="0" role="button" class="btn m-1">Etiquettes</div>
+            <ul
+              tabindex="-1"
+              class="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm"
+            >
+              <li><a id="price-labels-selected">Afficher sélectionnées</a></li>
+              <li><a id="price-labels-unselect">Tout désélectionner</a></li>
+              <div class="divider"></div>
+            </ul>
+          </div>
         </div>
       </div>
       {# -------------------------------------------------------------------- #}
-      <div class="overflow-x-auto rounded-lg shadow-sm">
+      <div class="self-center" id="pagination">{% include "_includes/_pagination.html" %}</div>
+      {# -------------------------------------------------------------------- #}
+      <div class="overflow-x-auto rounded-box border border-base-300">
         <table class="table table-pin-rows table-sm" id="articles-table">
           <thead>
             <tr>
+              <th></th>
               <th>Nom</th>
               <th>Région</th>
               <th>Couleur</th>
@@ -30,6 +46,9 @@
           <tbody>
             {% for article in result.items %}
               <tr class="hover cursor-pointer" data-id="{{ article.id }}">
+                <td class="hover cursor-default">
+                  <label><input type="checkbox" class="checkbox" /></label>
+                </td>
                 <td class="text-nowrap">{{ article.display_name }}</td>
                 <td class="text-nowrap">{{ article.origin if article.origin }}</td>
                 <td class="text-nowrap">{{ article.color if article.color }}</td>

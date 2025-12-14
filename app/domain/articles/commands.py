@@ -27,6 +27,14 @@ def get_articles_command(
     )
 
 
+def get_articles_by_ids_command(
+    context: ContextProtocol,
+    /,
+    article_ids: list[EntityId],
+) -> PaginatedResponse[Article]:
+    return context.article_repository.get_by_ids(article_ids)
+
+
 def get_article_command(context: ContextProtocol, /, article_id: EntityId) -> Article:
     article = context.article_repository.get_by_id(article_id)
     if not article:

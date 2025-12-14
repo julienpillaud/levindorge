@@ -1,3 +1,5 @@
+import { updateArticlesPage } from "./utils.js";
+
 let searchTimer = null;
 
 // -----------------------------------------------------------------------------
@@ -42,7 +44,7 @@ const performSearch = (query) => {
 
   searchTimer = setTimeout(() => {
     const url = buildSearchUrl(query);
-    updatePage(url);
+    updateArticlesPage(url);
   }, 300);
 };
 
@@ -53,28 +55,4 @@ const buildSearchUrl = (query) => {
     return "/articles";
   }
   return `/articles?search=${encodeURIComponent(trimmed)}`;
-};
-
-// -----------------------------------------------------------------------------
-const updatePage = async (url) => {
-  const res = await fetch(url);
-  const html = await res.text();
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-
-  updateElement("#articles-table", doc);
-  updateElement("#items-count", doc);
-  updateElement("#pagination", doc);
-
-  history.pushState(null, "", url);
-};
-
-// -----------------------------------------------------------------------------
-const updateElement = (selector, newDoc) => {
-  const newElement = newDoc.querySelector(selector);
-  const currentElement = document.querySelector(selector);
-
-  if (newElement && currentElement) {
-    currentElement.innerHTML = newElement.innerHTML;
-  }
 };
