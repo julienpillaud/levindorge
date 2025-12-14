@@ -34,7 +34,7 @@ export const getCheckedArticleIds = () =>
   JSON.parse(localStorage.getItem("checkedArticleIds") || "[]");
 
 // -----------------------------------------------------------------------------
-const setCheckedArticleIds = (ids) => {
+export const setCheckedArticleIds = (ids) => {
   localStorage.setItem("checkedArticleIds", JSON.stringify(ids));
 };
 

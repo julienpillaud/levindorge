@@ -1,4 +1,4 @@
-import { getCheckedArticleIds } from "./checkboxes.js";
+import { getCheckedArticleIds, setCheckedArticleIds } from "./checkboxes.js";
 import { getStores } from "./cache/stores.js";
 import { showToast, updateArticlesPage } from "./utils.js";
 
@@ -11,6 +11,17 @@ export const showSelectedArticles = () => {
   const url = `/articles/ids?${params.toString()}`;
 
   updateArticlesPage(url);
+};
+
+// -----------------------------------------------------------------------------
+export const unselectArticles = () => {
+  const checkboxes = document.querySelectorAll("table tbody .checkbox");
+  checkboxes.forEach((checkbox) => (checkbox.checked = false));
+
+  const priceTagsDropdown = document.getElementById("price-labels-dropdown");
+  priceTagsDropdown.classList.add("invisible");
+
+  setCheckedArticleIds([]);
 };
 
 // -----------------------------------------------------------------------------
@@ -36,6 +47,10 @@ export const initializePriceTagsDropdown = async () => {
 
 const createPriceLabels = async (slug) => {
   const ids = getCheckedArticleIds();
+  if (ids.length === 0) {
+    showToast("Aucun produit sélectionné", { type: "warning" });
+    return;
+  }
   const body = {
     store_slug: slug,
     data: ids.map((id) => ({

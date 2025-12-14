@@ -6,6 +6,7 @@ import {
 import {
   initializePriceTagsDropdown,
   showSelectedArticles,
+  unselectArticles,
 } from "./price-labels.js";
 import { buildCreateDropdownMenu } from "./menu.js";
 import { initArticles } from "./articles/init.js";
@@ -30,6 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const priceTagsSelected = document.getElementById("price-labels-selected");
   priceTagsSelected.addEventListener("click", () => {
     showSelectedArticles();
+  });
+
+  const priceTagsUnselct = document.getElementById("price-labels-unselect");
+  priceTagsUnselct.addEventListener("click", () => {
+    unselectArticles();
   });
 
   initializePriceTagsDropdown();
