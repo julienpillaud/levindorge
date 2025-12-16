@@ -2,6 +2,7 @@ from operator import attrgetter
 
 from app.core.config.settings import Settings
 from app.domain.context import ContextProtocol
+from app.domain.origins.commands import get_origins_command
 from app.domain.price_labels.entities import (
     PriceLabelCreate,
     PriceLabelFile,
@@ -30,10 +31,13 @@ def create_price_labels_command(
             price_labels=large_price_labels,
         )
     if small_price_labels:
+        origins = get_origins_command(context)
+        origins_map = {origin.name: origin for origin in origins.items}
         create_small_price_labels(
             settings=settings,
             store_slug=store_slug,
             price_labels=small_price_labels,
+            origins_map=origins_map,
         )
 
 
@@ -41,8 +45,9 @@ def get_price_labels_files_command(
     context: ContextProtocol,
     settings: Settings,
 ) -> list[PriceLabelFile]:
+    stores = context.store_repository.get_all()
     files = [
-        PriceLabelFile.from_path(file)
+        PriceLabelFile.from_path(file, stores=stores.items)
         for file in settings.app_path.price_labels.glob("*.html")
     ]
     files = sorted(files, key=attrgetter("date", "id"))

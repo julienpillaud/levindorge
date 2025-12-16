@@ -1,0 +1,81 @@
+body {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+}
+/* Saveurs--------------------------------------------------------------------*/
+.iode {
+  background-color: rgba(0, 84, 147, 1);
+}
+.vegetal {
+  background-color: rgba(0, 84, 147, 1);
+}
+.tourbe {
+  background-color: rgba(148, 82, 0, 1);
+}
+.toaste {
+  background-color: rgba(148, 82, 0, 1);
+}
+.floral {
+  background-color: rgba(115, 250, 121, 1);
+}
+.boise {
+  background-color: rgba(0, 144, 81, 1);
+}
+.epice {
+  background-color: rgba(255, 147, 0, 1);
+}
+.fruite {
+  background-color: rgba(148, 17, 0, 1);
+}
+/*----------------------------------------------------------------------------*/
+.blanc {
+  color: rgb(120, 120, 120);
+  background-color: rgb(240, 240, 240);
+}
+.grey {
+  color: rgb(80, 80, 80);
+}
+/*----------------------------------------------------------------------------*/
+.bgClass {
+  position: absolute;
+  width: 270px;
+  height: 74px;
+}
+.spiritNamesClass {
+  text-align: center;
+  font-size: 15px;
+}
+.spiritNameClass {
+  text-align: center;
+  min-height: 38px;
+  line-height: 38px;
+  font-size: 15px;
+}
+/*----------------------------------------------------------------------------*/
+/* Bottom line */
+.bottomlineClass {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.bottleClass {
+  font-size: 15px;
+}
+.priceClass {
+  font-size: 30px;
+}
+.flagClass {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.flagClass img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

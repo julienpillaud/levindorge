@@ -4,4 +4,4 @@ from app.domain.origins.entities import Origin
 
 
 def get_origins_command(context: ContextProtocol, /) -> PaginatedResponse[Origin]:
-    return context.origin_repository.get_all(sort={"name": 1}, limit=200)
+    return context.origin_repository.get_all(sort={"name": 1}, limit=300)

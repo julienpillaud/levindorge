@@ -8,7 +8,7 @@ from pydantic import (
 
 from app.domain.types import EntityId
 
-DEFAULT_PAGINATION_SIZE = 50
+DEFAULT_PAGINATION_SIZE = 100
 
 
 class DomainEntity(BaseModel):

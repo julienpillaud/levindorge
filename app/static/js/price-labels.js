@@ -19,7 +19,7 @@ export const unselectArticles = () => {
   checkboxes.forEach((checkbox) => (checkbox.checked = false));
 
   const priceTagsDropdown = document.getElementById("price-labels-dropdown");
-  priceTagsDropdown.classList.add("invisible");
+  priceTagsDropdown.classList.add("hidden");
 
   setCheckedArticleIds([]);
 };

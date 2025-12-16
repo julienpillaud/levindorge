@@ -43,5 +43,5 @@ export const updateDropdownVisibility = () => {
   const priceTagsDropdown = document.getElementById("price-labels-dropdown");
   const ids = getCheckedArticleIds();
   const isVisible = ids.length > 0;
-  priceTagsDropdown.classList.toggle("invisible", !isVisible);
+  priceTagsDropdown.classList.toggle("hidden", !isVisible);
 };
