@@ -1,4 +1,7 @@
 <tr class="hover cursor-pointer" data-id="{{ article.id }}">
+  <td class="hover cursor-default">
+    <label><input type="checkbox" class="checkbox" /></label>
+  </td>
   <td class="text-nowrap">{{ article.display_name }}</td>
   <td class="text-nowrap">{{ article.origin if article.origin }}</td>
   <td class="text-nowrap">{{ article.color if article.color }}</td>

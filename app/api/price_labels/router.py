@@ -3,9 +3,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 from fastapi.requests import Request
-from fastapi.responses import Response
+from fastapi.responses import JSONResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
-from starlette.responses import JSONResponse
 
 from app.api.dependencies import (
     get_current_user,
@@ -71,7 +70,7 @@ def get_price_labels_file(
 ) -> Response:
     return templates.TemplateResponse(
         request=request,
-        name=f"price-labels-files/{file}.html",
+        name=f"price-labels-files/{file}",
         context={
             "current_user": current_user,
             "file": file,
@@ -79,9 +78,11 @@ def get_price_labels_file(
     )
 
 
-@router.delete("/files/delete/{file}", dependencies=[Depends(get_current_user)])
+@router.get("/files/delete/{file}", dependencies=[Depends(get_current_user)])
 def delete_price_labels_file(
+    request: Request,
     settings: Annotated[Settings, Depends(get_settings)],
     file: str,
-) -> None:
+) -> Response:
     Path.unlink(settings.app_path.price_labels / file)
+    return RedirectResponse(url=request.url_for("get_price_labels_files"))

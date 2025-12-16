@@ -5,7 +5,7 @@
     <div class="flex flex-col flex-1 px-4 py-4 gap-4 min-h-0">
       {# -------------------------------------------------------------------- #}
       <div class="card bg-base-200 shadow-sm">
-        <div class="card-body flex flex-row p-4 justify-between">
+        <div class="card-body md:flex md:flex-row justify-between md:items-center gap-4">
           <div class="flex items-center gap-4">
             <h1 class="card-title text-2xl">Articles</h1>
             <div id="items-count" class="badge badge-soft badge-accent badge-lg">
@@ -13,16 +13,27 @@
             </div>
           </div>
 
-          <div class="dropdown dropdown-end dropdown-hover invisible" id="price-labels-dropdown">
-            <div tabindex="0" role="button" class="btn m-1">Etiquettes</div>
-            <ul
-              tabindex="-1"
-              class="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm"
-            >
-              <li><a id="price-labels-selected">Afficher sélectionnées</a></li>
-              <li><a id="price-labels-unselect">Tout désélectionner</a></li>
-              <div class="divider"></div>
-            </ul>
+          <div>
+            <div class="dropdown dropdown-hover hidden" id="price-labels-dropdown">
+              <div tabindex="0" role="button" class="btn m-1">Etiquettes</div>
+              <ul
+                tabindex="-1"
+                class="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm"
+              >
+                <li><a id="price-labels-selected">Afficher sélectionnées</a></li>
+                <li><a id="price-labels-unselect">Tout désélectionner</a></li>
+                <div class="divider"></div>
+              </ul>
+            </div>
+
+            <div class="dropdown dropdown-hover dropdown-end">
+              <div tabindex="0" role="button" class="btn m-1">Nouveau</div>
+              <ul
+                tabindex="-1"
+                class="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm"
+                data-id="new-article-dropdown"
+              ></ul>
+            </div>
           </div>
         </div>
       </div>
@@ -45,20 +56,7 @@
           </thead>
           <tbody>
             {% for article in result.items %}
-              <tr class="hover cursor-pointer" data-id="{{ article.id }}">
-                <td class="hover cursor-default">
-                  <label><input type="checkbox" class="checkbox" /></label>
-                </td>
-                <td class="text-nowrap">{{ article.display_name }}</td>
-                <td class="text-nowrap">{{ article.origin if article.origin }}</td>
-                <td class="text-nowrap">{{ article.color if article.color }}</td>
-                <td class="text-nowrap">{{ article.taste if article.taste }}</td>
-                <td class="text-nowrap">
-                  {{ article.alcohol_by_volume | strip_zeros if article.alcohol_by_volume }}
-                </td>
-                <td class="text-nowrap">{{ article.distributor }}</td>
-                <td class="text-nowrap">{{ article.category }}</td>
-              </tr>
+              {% include "articles/_article_row.html" %}
             {% endfor %}
           </tbody>
         </table>

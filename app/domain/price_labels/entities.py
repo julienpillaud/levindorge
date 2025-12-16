@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
+from app.domain.stores.entities import Store
 
 
 class PriceLabelCreate(BaseModel):
@@ -24,21 +25,17 @@ class PriceLabelFileType(StrEnum):
     SMALL = "Spiritueux"
 
 
-class PriceLabelFileShop(StrEnum):
-    ANGOULEME = "Angoulême"
-    SAINTE_EULALIE = "Sainte-Eulalie"
-    PESSAC = "Pessac"
-
-
 class PriceLabelFile(BaseModel):
     id: int
     type: PriceLabelFileType
-    shop: PriceLabelFileShop
+    store_name: str
     date: datetime.datetime
     file: str
 
     @classmethod
-    def from_path(cls, path: Path) -> PriceLabelFile:
+    def from_path(cls, path: Path, /, stores: list[Store]) -> PriceLabelFile:
+        stores_map = {store.slug: store for store in stores}
+
         number_of_parts = 5
         parts = path.stem.split("_")
         if len(parts) != number_of_parts:
@@ -49,11 +46,11 @@ class PriceLabelFile(BaseModel):
             "%Y-%m-%d %H-%M-%S",
         )
         file_type = parts[0].upper()
-        shop = parts[2].replace("-", "_").upper()
+        shop = parts[2]
         return cls(
             id=int(parts[1]),
             type=PriceLabelFileType[file_type],
-            shop=PriceLabelFileShop[shop],
+            store_name=stores_map[shop].name,
             date=date,
             file=path.name,
         )
