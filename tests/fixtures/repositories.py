@@ -2,8 +2,8 @@ import pytest
 from pymongo.database import Database
 
 from app.infrastructure.repository.articles import ArticleRepository
+from app.infrastructure.repository.base import MongoDocument
 from app.infrastructure.repository.categories import CategoryRepository
-from app.infrastructure.repository.mongo_repository import MongoDocument
 from app.infrastructure.repository.stores import StoreRepository
 from app.infrastructure.repository.users import UserRepository
 

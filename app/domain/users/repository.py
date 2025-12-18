@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from app.domain._shared.protocols.base_repository import RepositoryProtocol
+from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.users.entities import User
 
 

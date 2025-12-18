@@ -4,5 +4,6 @@ from typing import Annotated
 from pydantic import PlainSerializer
 
 type EntityId = str
+type StoreName = str
 type StoreSlug = str
 DecimalType = Annotated[Decimal, PlainSerializer(str)]

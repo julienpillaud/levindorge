@@ -35,7 +35,7 @@ def clean(
             raise typer.Exit()
         name_or_names = category
 
-    settings = Settings(mongo_database="dashboard")
+    settings = Settings(mongo_database="dashboard")  # ty:ignore[missing-argument]
     context = Context(settings=settings)
 
     stores = get_stores(context=context)

@@ -11,6 +11,7 @@ import {
 import { buildCreateDropdownMenu } from "./menu.js";
 import { initArticles } from "./articles/init.js";
 import { initSearch } from "./search.js";
+import { initInventoriesTable } from "./inventories.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initSearch();
@@ -29,14 +30,22 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   // ---------------------------------------------------------------------------
   const priceTagsSelected = document.getElementById("price-labels-selected");
-  priceTagsSelected.addEventListener("click", () => {
-    showSelectedArticles();
-  });
+  if (priceTagsSelected) {
+    priceTagsSelected.addEventListener("click", () => {
+      showSelectedArticles();
+    });
+  }
 
   const priceTagsUnselct = document.getElementById("price-labels-unselect");
-  priceTagsUnselct.addEventListener("click", () => {
-    unselectArticles();
-  });
+  if (priceTagsUnselct) {
+    priceTagsUnselct.addEventListener("click", () => {
+      unselectArticles();
+    });
+  }
 
   initializePriceTagsDropdown();
+
+  // ---------------------------------------------------------------------------
+  // Inventories
+  initInventoriesTable();
 });

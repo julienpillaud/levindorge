@@ -1,6 +1,6 @@
 from app.domain.users.entities import User
 from app.domain.users.repository import UserRepositoryProtocol
-from app.infrastructure.repository.mongo_repository import (
+from app.infrastructure.repository.base import (
     MongoDocument,
     MongoRepository,
 )

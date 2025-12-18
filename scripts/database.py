@@ -11,7 +11,7 @@ console = Console()
 
 
 def get_settings() -> Settings:
-    return Settings(_env_file=".env")
+    return Settings(_env_file=".env")  # ty:ignore
 
 
 def get_client() -> MongoClient[dict[str, Any]]:

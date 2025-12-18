@@ -77,8 +77,8 @@ class ArticleVolume(BaseModel):
 
 
 class ArticleDeposit(BaseModel):
-    unit: PositiveFloat
-    case: PositiveFloat | None
+    unit: Annotated[DecimalType, Field(gt=0, decimal_places=2)]
+    case: Annotated[DecimalType | None, Field(gt=0, decimal_places=2)]
     packaging: PositiveInt | None
 
 
@@ -139,15 +139,16 @@ class BaseArticle(BaseModel):
     def inventory_value(self, stock_quantity: int) -> Decimal:
         return self.total_cost * stock_quantity
 
-    def deposit_value(self, stock_quantity: int) -> float | None:
+    def deposit_value(self, stock_quantity: int) -> Decimal | None:
         if not self.deposit:
             return None
 
         if self.deposit.case and self.deposit.packaging:
-            value = self.deposit.case * (stock_quantity / self.deposit.packaging)
-            return round(value, 2)
+            return self.deposit.case * (
+                Decimal(stock_quantity) / Decimal(self.deposit.packaging)
+            )
 
-        return self.deposit.unit * stock_quantity
+        return self.deposit.unit * Decimal(stock_quantity)
 
 
 class ArticleCreateOrUpdate(BaseArticle):

@@ -2,9 +2,9 @@ from typing import Any
 
 from pymongo.synchronous.database import Database
 
-from app.domain._shared.protocols.base_repository import RepositoryProtocol
+from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.entities import DomainEntity
-from app.infrastructure.repository.mongo_repository import (
+from app.infrastructure.repository.base import (
     MongoDocument,
     MongoRepository,
 )

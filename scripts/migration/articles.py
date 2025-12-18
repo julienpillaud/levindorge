@@ -18,6 +18,7 @@ from app.domain.commons.entities import PricingGroup
 from app.domain.origins.entities import Origin
 from app.domain.stores.entities import Store
 from app.domain.types import StoreSlug
+from app.domain.volumes.entities import VolumeUnit
 
 NON_MATCH_ORIGINS_MAP = {
     "Ecosse": "Écosse",
@@ -131,7 +132,7 @@ def get_origin(value: str, origins_map: dict[str, Origin]) -> str | None:
     return value
 
 
-def empty_to_none(value: Any) -> str | None:
+def empty_to_none(value: Any) -> Any | None:
     return value or None
 
 
@@ -150,7 +151,7 @@ def get_volume(article: dict[str, Any]) -> ArticleVolume | None:
         value=article["volume"]["value"],
         unit=article["volume"]["unit"],
     )
-    return ArticleVolume(value=volume_value, unit=volume_unit)
+    return ArticleVolume(value=volume_value, unit=VolumeUnit(volume_unit))
 
 
 def get_deposit(

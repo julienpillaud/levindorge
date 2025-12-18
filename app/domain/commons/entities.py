@@ -10,22 +10,22 @@ from app.domain.producers.entities import Producer
 from app.domain.volumes.entities import Volume
 
 
-class DisplayGroup(StrEnum):
-    BEER = "beer"
-    CIDER = "cider"
-    KEG = "keg"
-    MINI_KEG = "mini_keg"
-    RHUM = "rhum"
-    WHISKY = "whisky"
-    ARRANGED = "arranged"
-    SPIRIT = "spirit"
-    WINE = "wine"
-    FORTIFIED_WINE = "fortified_wine"
-    SPARKLING_WINE = "sparkling_wine"
-    BIB = "bib"
-    BOX = "box"
-    FOOD = "food"
-    MISC = "misc"
+class InventoryGroup(StrEnum):
+    BEER = "Bière"
+    CIDER = "Cidre"
+    KEG = "Fût"
+    MINI_KEG = "Mini-fût"
+    RUM = "Rhum"
+    WHISKY = "Whisky"
+    ARRANGED = "Arrangé"
+    SPIRIT = "Spiritueux"
+    WINE = "Vin"
+    FORTIFIED_WINE = "Vin muté"
+    SPARKLING_WINE = "Vin effervescent"
+    BIB = "BIB"
+    BOX = "Coffret"
+    FOOD = "Alimentation / BSA"
+    OTHER = "Accessoire / Emballage"
 
 
 class PricingGroup(StrEnum):

@@ -1,6 +1,6 @@
 from app.domain.categories.entities import Category
 from app.domain.categories.repository import CategoryRepositoryProtocol
-from app.infrastructure.repository.mongo_repository import MongoRepository
+from app.infrastructure.repository.base import MongoRepository
 
 
 class CategoryRepository(MongoRepository[Category], CategoryRepositoryProtocol):

@@ -8,15 +8,14 @@ from fastapi.templating import Jinja2Templates
 from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.domain.domain import Domain
 from app.domain.stores.entities import Store
-from app.domain.users.entities import User
+from app.domain.types import EntityId
 
-router = APIRouter(prefix="/inventories")
+router = APIRouter(prefix="/inventories", tags=["Inventories"])
 
 
-@router.get("")
-def get_inventories_view(
+@router.get("", dependencies=[Depends(get_current_user)])
+def get_inventories(
     request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
 ) -> Response:
@@ -24,10 +23,22 @@ def get_inventories_view(
     return templates.TemplateResponse(
         request=request,
         name="inventories/inventories.html",
-        context={
-            "current_user": current_user,
-            "inventories": inventories,
-        },
+        context={"result": inventories},
+    )
+
+
+@router.get("/{inventory_id}", dependencies=[Depends(get_current_user)])
+def get_inventory(
+    request: Request,
+    domain: Annotated[Domain, Depends(get_domain)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
+    inventory_id: EntityId,
+) -> Response:
+    inventory = domain.get_inventory(inventory_id=inventory_id)
+    return templates.TemplateResponse(
+        request=request,
+        name="inventories/inventory.html",
+        context={"inventory": inventory},
     )
 
 
@@ -43,25 +54,6 @@ def create_inventory(
         request=request,
         name="inventories/_inventory_row.html",
         context={"inventory": inventory},
-    )
-
-
-@router.get("/{inventory_id}")
-def get_inventory_view(
-    request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
-    domain: Annotated[Domain, Depends(get_domain)],
-    templates: Annotated[Jinja2Templates, Depends(get_templates)],
-    inventory_id: str,
-) -> Response:
-    inventory = domain.get_inventory(inventory_id=inventory_id)
-    return templates.TemplateResponse(
-        request=request,
-        name="inventories/inventory.html",
-        context={
-            "current_user": current_user,
-            "inventory": inventory,
-        },
     )
 
 

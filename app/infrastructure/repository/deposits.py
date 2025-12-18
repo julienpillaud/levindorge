@@ -1,6 +1,6 @@
 from app.domain.deposits.entities import Deposit
 from app.domain.deposits.repository import DepositRepositoryProtocol
-from app.infrastructure.repository.mongo_repository import MongoRepository
+from app.infrastructure.repository.base import MongoRepository
 
 
 class DepositRepository(MongoRepository[Deposit], DepositRepositoryProtocol):
