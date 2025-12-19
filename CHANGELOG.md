@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.15.0](https://github.com/julienpillaud/levindorge/compare/0.14.0...0.15.0) (2025-12-19)
+
+
+### Features
+
+* add checkbox management for articles selection ([#81](https://github.com/julienpillaud/levindorge/issues/81)) ([6cb4d7e](https://github.com/julienpillaud/levindorge/commit/6cb4d7ee582444cff0c49706b5d7e939dccf2ee6))
+* implement inventories ([#84](https://github.com/julienpillaud/levindorge/issues/84)) ([4121bdd](https://github.com/julienpillaud/levindorge/commit/4121bdd0a77d6393cda0975a74300ec9100c5a97))
+* improve price labels management ([#83](https://github.com/julienpillaud/levindorge/issues/83)) ([d3c69bd](https://github.com/julienpillaud/levindorge/commit/d3c69bd4db2d748342b6764bd35609e2b430bafd))
+
 ## [0.14.0](https://github.com/julienpillaud/levindorge/compare/0.13.0...0.14.0) (2025-12-10)
 
 
