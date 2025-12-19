@@ -1,6 +1,6 @@
 from app.domain.volumes.entities import Volume
 from app.domain.volumes.repository import VolumeRepositoryProtocol
-from app.infrastructure.repository.mongo_repository import MongoRepository
+from app.infrastructure.repository.base import MongoRepository
 
 
 class VolumeRepository(MongoRepository[Volume], VolumeRepositoryProtocol):

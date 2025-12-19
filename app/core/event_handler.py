@@ -9,7 +9,7 @@ from app.core.logfire import scrubbing_callback
 from app.domain.domain import Domain
 from app.event_handler.router import router
 
-settings = Settings()
+settings = Settings()  # ty:ignore[missing-argument]
 logfire.configure(
     send_to_logfire="if-token-present",
     token=settings.logfire_token,

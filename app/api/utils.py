@@ -16,7 +16,6 @@ from app.api.filters import (
     create_local_timezone_filter,
     strip_zeros,
 )
-from app.api.navbar import navbar_categories, navbar_items
 from app.api.security.token import decode_jwt
 from app.core.config.settings import Settings
 
@@ -26,8 +25,6 @@ logger = logging.getLogger(__name__)
 def init_templates(settings: Settings) -> Jinja2Templates:
     templates = Jinja2Templates(directory=settings.app_path.templates)
 
-    templates.env.globals["navbar_categories"] = navbar_categories
-    templates.env.globals["navbar_items"] = navbar_items
     templates.env.globals["app_version"] = settings.app_version
 
     templates.env.filters["strip_zeros"] = strip_zeros

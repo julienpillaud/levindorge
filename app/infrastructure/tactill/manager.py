@@ -6,14 +6,14 @@ from typing import Concatenate, Literal, ParamSpec, TypeVar
 from tactill import TactillClient
 from tactill.entities.catalog.article import Article as TactillArticle
 from tactill.entities.catalog.article import ArticleCreation, ArticleModification
-from tactill.entities.catalog.category import Category
+from tactill.entities.catalog.category import Category as TactillCategory
 from tactill.entities.catalog.tax import Tax
 from tactill.entities.stock.movement import ArticleMovement, MovementCreation
 from tactill.utils import get_query_filter
 
 from app.domain._shared.protocols.pos_manager import POSManagerProtocol
 from app.domain.articles.entities import Article
-from app.domain.commons.entities import DisplayGroup
+from app.domain.categories.entities import Category
 from app.domain.exceptions import POSManagerError
 from app.domain.pos.entities import POSArticle
 from app.domain.stores.entities import Store
@@ -55,7 +55,7 @@ class TactillManager(POSManagerProtocol):
         self,
         name_or_names: str | list[str],
         query_operator: Literal["in", "nin"] | None = None,
-    ) -> list[Category]:
+    ) -> list[TactillCategory]:
         if isinstance(name_or_names, str):
             filter_ = f"deprecated=false&is_default=false&name={name_or_names}"
         else:
@@ -73,7 +73,7 @@ class TactillManager(POSManagerProtocol):
 
         return self.client.get_categories(filter=filter_)
 
-    def _get_category(self, name: str) -> Category:
+    def _get_category(self, name: str) -> TactillCategory:
         categories = self._get_categories(name)
         if not categories:
             raise POSManagerError()
@@ -125,18 +125,17 @@ class TactillManager(POSManagerProtocol):
         store: Store,
         /,
         article: Article,
-        category_name: str,
-        display_group: DisplayGroup,
+        category: Category,
     ) -> POSArticle:
-        category = self._get_category(category_name)
+        tactill_category = self._get_category(category.tactill_category)
         tactill_tax = self.get_tax(tax_rate=float(article.vat_rate))
 
         article_creation = ArticleCreation(
-            category_id=category.id,
+            category_id=tactill_category.id,
             taxes=[tactill_tax.id],
-            name=define_name(display_group=display_group, article=article),
+            name=define_name(display_group=category.inventory_group, article=article),
             icon_text=define_icon_text(article=article),
-            color=define_color(display_group=display_group, article=article),
+            color=define_color(display_group=category.inventory_group, article=article),
             full_price=article.store_data[store.slug].gross_price,
             barcode=article.barcode,
             reference=article.id,
@@ -151,20 +150,19 @@ class TactillManager(POSManagerProtocol):
         store: Store,
         /,
         article: Article,
-        category_name: str,
-        display_group: DisplayGroup,
+        category: Category,
     ) -> None:
         tactill_article = self.get_article_by_reference(reference=article.id)
 
-        category = self._get_category(category_name)
+        tactill_category = self._get_category(category.tactill_category)
         tactill_tax = self.get_tax(tax_rate=float(article.vat_rate))
 
         article_modification = ArticleModification(
-            category_id=category.id,
+            category_id=tactill_category.id,
             taxes=[tactill_tax.id],
-            name=define_name(display_group=display_group, article=article),
+            name=define_name(display_group=category.inventory_group, article=article),
             icon_text=define_icon_text(article=article),
-            color=define_color(display_group=display_group, article=article),
+            color=define_color(display_group=category.inventory_group, article=article),
             full_price=article.store_data[store.slug].gross_price,
             barcode=article.barcode,
             in_stock=True,

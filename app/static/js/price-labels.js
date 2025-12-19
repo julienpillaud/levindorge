@@ -27,6 +27,7 @@ export const unselectArticles = () => {
 // -----------------------------------------------------------------------------
 export const initializePriceTagsDropdown = async () => {
   const dropdown = document.getElementById("price-labels-dropdown");
+  if (!dropdown) return;
   const ul = dropdown.querySelector("ul");
 
   const stores = await getStores();

@@ -1,7 +1,7 @@
 from app.domain.stores.entities import Store
 from app.domain.stores.repository import StoreRepositoryProtocol
 from app.domain.types import StoreSlug
-from app.infrastructure.repository.mongo_repository import MongoRepository
+from app.infrastructure.repository.base import MongoRepository
 
 
 class StoreRepository(MongoRepository[Store], StoreRepositoryProtocol):

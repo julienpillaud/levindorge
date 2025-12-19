@@ -1,7 +1,7 @@
 from typing import Protocol
 
 from app.domain.articles.entities import Article
-from app.domain.commons.entities import DisplayGroup
+from app.domain.categories.entities import Category
 from app.domain.pos.entities import POSArticle
 from app.domain.stores.entities import Store
 
@@ -14,8 +14,7 @@ class POSManagerProtocol(Protocol):
         store: Store,
         /,
         article: Article,
-        category_name: str,
-        display_group: DisplayGroup,
+        category: Category,
     ) -> POSArticle: ...
 
     def update_article(
@@ -23,8 +22,7 @@ class POSManagerProtocol(Protocol):
         store: Store,
         /,
         article: Article,
-        category_name: str,
-        display_group: DisplayGroup,
+        category: Category,
     ) -> None: ...
 
     def delete_article_by_reference(

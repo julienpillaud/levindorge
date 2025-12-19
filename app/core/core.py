@@ -10,11 +10,11 @@ from app.domain.context import ContextProtocol
 from app.domain.domain import Domain
 from app.infrastructure.event_publisher import FastStreamEventPublisher
 from app.infrastructure.repository.articles import ArticleRepository
-from app.infrastructure.repository.base import MongoRepository
+from app.infrastructure.repository.base import MongoDocument
 from app.infrastructure.repository.categories import CategoryRepository
 from app.infrastructure.repository.deposits import DepositRepository
 from app.infrastructure.repository.distributors import DistributorRepository
-from app.infrastructure.repository.mongo_repository import MongoDocument
+from app.infrastructure.repository.inventories import InventoryRepository
 from app.infrastructure.repository.origins import OriginRepository
 from app.infrastructure.repository.producers import ProducerRepository
 from app.infrastructure.repository.stores import StoreRepository
@@ -46,10 +46,6 @@ class Context(BaseContext):
     @property
     def identity_provider(self) -> SupabaseIdentityProvider:
         return SupabaseIdentityProvider(settings=self.settings)
-
-    @property
-    def repository(self) -> MongoRepository:
-        return MongoRepository(database=self.database)
 
     @property
     def store_repository(self) -> StoreRepository:
@@ -86,6 +82,10 @@ class Context(BaseContext):
     @property
     def deposit_repository(self) -> DepositRepository:
         return DepositRepository(database=self.database)
+
+    @property
+    def inventory_repository(self) -> InventoryRepository:
+        return InventoryRepository(database=self.database)
 
     @property
     def pos_manager(self) -> TactillManager:

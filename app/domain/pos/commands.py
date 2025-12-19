@@ -1,6 +1,5 @@
 from cleanstack.exceptions import NotFoundError
 
-from app.domain.commons.entities import DisplayGroup
 from app.domain.context import ContextProtocol
 from app.domain.pos.entities import POSArticleCreateOrUpdate, POSArticleDelete
 from app.domain.stores.entities import Store
@@ -17,9 +16,7 @@ def create_pos_article_command(
     context.pos_manager.create_article(
         data.store,
         article=data.article,
-        category_name=category.tactill_category,
-        # TODO
-        display_group=DisplayGroup.BEER,
+        category=category,
     )
 
 
@@ -34,9 +31,7 @@ def update_pos_article_command(
     context.pos_manager.update_article(
         data.store,
         article=data.article,
-        category_name=category.tactill_category,
-        # TODO
-        display_group=DisplayGroup.BEER,
+        category=category,
     )
 
 

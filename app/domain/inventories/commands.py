@@ -5,25 +5,24 @@ from typing import Any
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.context import ContextProtocol
-from app.domain.inventories.entities import (
-    Inventory,
-    InventoryDetail,
-    InventoryRecord,
-    InventoryReport,
-)
+from app.domain.entities import PaginatedResponse
+from app.domain.inventories.entities import Inventory, InventoryDetail, InventoryRecord
 from app.domain.stores.entities import Store
 from app.domain.types import EntityId
 
 
-def get_inventories_command(context: ContextProtocol) -> list[Inventory]:
-    return context.repository.get_inventories()
+def get_inventories_command(
+    context: ContextProtocol, /
+) -> PaginatedResponse[Inventory]:
+    return context.inventory_repository.get_all()
 
 
 def get_inventory_command(
     context: ContextProtocol,
+    /,
     inventory_id: EntityId,
-) -> InventoryReport:
-    inventory = context.repository.get_inventory_report(inventory_id=inventory_id)
+) -> Inventory:
+    inventory = context.inventory_repository.get_by_id(inventory_id)
     if not inventory:
         raise NotFoundError()
 
@@ -55,46 +54,46 @@ def create_inventory_command(context: ContextProtocol, store: Store) -> Inventor
         records.append(
             InventoryRecord(
                 inventory_id="",
-                article_id=article.id,
-                article_name=article.display_name,
-                article_volume=article.volume.value if article.volume else 0.0,
-                article_deposit=article.deposit,
-                article_type=article.category,
-                taxfree_price=article.total_cost,
+                category=article.category,
+                display_name=article.display_name,
+                total_cost=article.total_cost,
+                deposit=article.deposit,
                 stock_quantity=stock_quantity,
-                sale_value=article.inventory_value(stock_quantity),
+                inventory_value=article.inventory_value(stock_quantity),
                 deposit_value=article.deposit_value(stock_quantity),
             )
         )
 
     inventory_details: defaultdict[str, InventoryDetail] = defaultdict(InventoryDetail)
     for record in records:
-        article_type = article_types_mapping[record.article_type]
+        article_type = article_types_mapping[record.category]
         inventory_details[article_type.display_group].add(
-            inventory_value=record.sale_value,
+            inventory_value=record.inventory_value,
             deposit_value=record.deposit_value,
         )
 
     inventory_create = Inventory(
         id="",
         date=datetime.datetime.now(datetime.UTC),
-        shop=store.name,
+        store=store.name,
         inventory=inventory_details,
-        sale_value=sum(value.sale_value for value in inventory_details.values()),
+        inventory_value=sum(
+            value.inventory_value for value in inventory_details.values()
+        ),
         deposit_value=sum(value.deposit_value for value in inventory_details.values()),
     )
-    inventory = context.repository.create_inventory(inventory=inventory_create)
-    context.repository.create_inventory_records(
-        inventory_id=inventory.id,
-        records=records,
-    )
+    inventory = context.inventory_repository.create(inventory_create)
+    # context.inventory_repository.create_inventory_records(
+    #     inventory_id=inventory.id,
+    #     records=records,
+    # )
     return inventory
 
 
 def delete_inventory_command(context: ContextProtocol, inventory_id: EntityId) -> None:
-    inventory = context.repository.get_inventory(inventory_id=inventory_id)
+    inventory = context.inventory_repository.get_by_id(inventory_id)
     if not inventory:
         raise NotFoundError()
 
-    context.repository.delete_inventory(inventory=inventory)
-    context.repository.delete_inventory_records(inventory_id=inventory_id)
+    context.inventory_repository.delete(inventory)
+    # context.inventory_repository.delete(inventory_id)

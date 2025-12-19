@@ -1,30 +1,31 @@
-from typing import Protocol
+from typing import Any, Protocol
 
-from app.domain.inventories.entities import Inventory, InventoryRecord, InventoryReport
+from pydantic import PositiveInt
+
+from app.domain.entities import (
+    DEFAULT_PAGINATION_SIZE,
+    DomainEntity,
+    PaginatedResponse,
+)
 from app.domain.types import EntityId
 
 
-class InventoryRepositoryProtocol(Protocol):
-    def get_inventories(self) -> list[Inventory]: ...
-
-    def get_inventory(self, inventory_id: EntityId) -> Inventory | None: ...
-
-    def get_inventory_report(
+class RepositoryProtocol[T: DomainEntity](Protocol):
+    def get_all(
         self,
-        inventory_id: EntityId,
-    ) -> InventoryReport | None: ...
+        filters: Any | None = None,
+        search: str | None = None,
+        sort: Any | None = None,
+        page: PositiveInt = 1,
+        limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
+    ) -> PaginatedResponse[T]: ...
 
-    def create_inventory(self, inventory: Inventory) -> Inventory: ...
+    def get_by_id(self, entity_id: str, /) -> T | None: ...
 
-    def create_inventory_records(
-        self,
-        inventory_id: EntityId,
-        records: list[InventoryRecord],
-    ) -> list[InventoryRecord]: ...
+    def create(self, entity: T, /) -> T: ...
 
-    def delete_inventory(self, inventory: Inventory) -> None: ...
+    def create_many(self, entities: list[T], /) -> list[EntityId]: ...
 
-    def delete_inventory_records(self, inventory_id: EntityId) -> None: ...
+    def update(self, entity: T, /) -> T: ...
 
-
-class RepositoryProtocol(InventoryRepositoryProtocol, Protocol): ...
+    def delete(self, entity: T, /) -> None: ...

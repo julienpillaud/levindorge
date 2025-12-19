@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from app.domain._shared.protocols.base_repository import RepositoryProtocol
+from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.articles.entities import Article
 from app.domain.entities import PaginatedResponse
 from app.domain.types import EntityId

@@ -1,7 +1,7 @@
 import pytest
 from pymongo.database import Database
 
-from app.infrastructure.repository.mongo_repository import MongoDocument
+from app.infrastructure.repository.base import MongoDocument
 from tests.factories.articles import ArticleFactory
 from tests.factories.categories import CategoryFactory
 from tests.factories.stores import StoreFactory

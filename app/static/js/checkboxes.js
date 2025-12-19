@@ -41,6 +41,9 @@ export const setCheckedArticleIds = (ids) => {
 // -----------------------------------------------------------------------------
 export const updateDropdownVisibility = () => {
   const priceTagsDropdown = document.getElementById("price-labels-dropdown");
+  if (!priceTagsDropdown) {
+    return;
+  }
   const ids = getCheckedArticleIds();
   const isVisible = ids.length > 0;
   priceTagsDropdown.classList.toggle("hidden", !isVisible);

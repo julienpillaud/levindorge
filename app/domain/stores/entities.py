@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict
 
 from app.domain.commons.entities import PricingGroup
 from app.domain.entities import DomainEntity
-from app.domain.types import DecimalType, StoreSlug
+from app.domain.types import DecimalType, StoreName, StoreSlug
 
 
 class RoundingMode(Enum):
@@ -28,7 +28,7 @@ class PricingConfig(BaseModel):
 
 
 class Store(DomainEntity):
-    name: str
+    name: StoreName
     slug: StoreSlug
     tactill_api_key: str
     pricing_configs: dict[PricingGroup, PricingConfig]
