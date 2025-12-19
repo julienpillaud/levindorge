@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.2](https://github.com/julienpillaud/levindorge/compare/0.15.1...0.15.2) (2025-12-19)
+
+
+### Bug Fixes
+
+* include build-essential in Dockerfile dependencies ([#87](https://github.com/julienpillaud/levindorge/issues/87)) ([669f451](https://github.com/julienpillaud/levindorge/commit/669f451971fc4425e0a2b0b7bbcb912d66f1200d))
+
 ## [0.15.1](https://github.com/julienpillaud/levindorge/compare/0.15.0...0.15.1) (2025-12-19)
 
 
