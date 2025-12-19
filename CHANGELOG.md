@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/julienpillaud/levindorge/compare/0.15.0...0.15.1) (2025-12-19)
+
+
+### Bug Fixes
+
+* bump dependencies ([#85](https://github.com/julienpillaud/levindorge/issues/85)) ([9ede2fa](https://github.com/julienpillaud/levindorge/commit/9ede2fa27abceffeca8747fff2a9f6976e406780))
+
 ## [0.15.0](https://github.com/julienpillaud/levindorge/compare/0.14.0...0.15.0) (2025-12-19)
 
 
