@@ -10,13 +10,13 @@
           <div class="flex items-center gap-4 py-2">
             <h1 class="card-title text-2xl">Etiquettes</h1>
             <div id="items-count" class="badge badge-soft badge-accent badge-lg">
-              {{ files | length }}
+              {{ price_labels.total }}
             </div>
           </div>
         </div>
       </div>
       {# -------------------------------------------------------------------- #}
-      {% if files %}
+      {% if price_labels.items %}
         <div class="overflow-x-auto rounded-box border border-base-300 md:w-8/12 md:mx-auto">
           <table class="table table-pin-rows table-sm">
             <thead>
@@ -29,24 +29,28 @@
               </tr>
             </thead>
             <tbody>
-              {% for file in files %}
+              {% for price_label in price_labels.items %}
                 <tr>
-                  <td>{{ file.id }}</td>
-                  <td>{{ file.type }}</td>
-                  <td>{{ file.store_name }}</td>
-                  <td>{{ (file.date | local_timezone).strftime("%d / %m / %Y - %H:%M") }}</td>
+                  <td>{{ price_label.index }}</td>
+                  <td>{{ price_label.type }}</td>
+                  <td>{{ price_label.store_name }}</td>
+                  <td>
+                    {{ (price_label.date | local_timezone).strftime("%d / %m / %Y - %H:%M") }}
+                  </td>
                   <td class="w-40">
                     <button class="btn btn-soft btn-xs">
                       <a
                         target="_blank"
                         rel="noopener noreferrer"
-                        href="{{ url_for('get_price_labels_file', file=file.file) }}"
+                        href="{{ url_for('get_price_labels_sheet', price_labels_type=price_label.slug, price_labels_id=price_label.id) }}"
                       >
                         Ouvrir
                       </a>
                     </button>
                     <button class="btn btn-soft btn-xs btn-error">
-                      <a href="{{ url_for('delete_price_labels_file', file=file.file) }}">
+                      <a
+                        href="{{ url_for('delete_price_labels', price_labels_id=price_label.id) }}"
+                      >
                         Supprimer
                       </a>
                     </button>

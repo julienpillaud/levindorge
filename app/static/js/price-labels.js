@@ -64,7 +64,7 @@ const createPriceLabels = async (slug) => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
   };
-  const response = await fetch("/price-labels/create", options);
+  const response = await fetch("/price-labels", options);
   if (!response.ok) {
     showToast("Erreur lors de la création des étiquettes !");
     const error = await response.json();

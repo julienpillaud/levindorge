@@ -1,57 +1,64 @@
+import datetime
+from io import StringIO
 from typing import TextIO
 
-from app.core.config.settings import Settings
 from app.domain.articles.entities import Article
 from app.domain.origins.entities import Origin
-from app.domain.price_labels.entities import PriceLabelWrapper
+from app.domain.price_labels.entities import (
+    PriceLabelSheet,
+    PriceLabelType,
+    PriceLabelWrapper,
+)
 from app.domain.price_labels.utils.common import (
     chunk_price_labels,
     define_name,
-    get_file_path,
     normalize_attribute,
 )
-from app.domain.types import StoreSlug
+from app.domain.stores.entities import Store
 
 MAX_SMALL_LABELS_PER_FILE = 40
 
 
 def create_small_price_labels(
-    settings: Settings,
-    store_slug: StoreSlug,
-    price_labels: list[PriceLabelWrapper],
+    store: Store,
+    price_label_wrappers: list[PriceLabelWrapper],
     origins_map: dict[str, Origin],
-) -> None:
-    for file_index, labels in enumerate(
+) -> list[PriceLabelSheet]:
+    price_labels: list[PriceLabelSheet] = []
+    for index, labels in enumerate(
         chunk_price_labels(
-            price_labels=price_labels,
+            price_labels=price_label_wrappers,
             chunk_size=MAX_SMALL_LABELS_PER_FILE,
-        )
+        ),
+        start=1,
     ):
-        file_path = get_file_path(
-            prefix="small",
-            index=file_index,
-            store_slug=store_slug,
-            path=settings.app_path.price_labels,
+        buffer = StringIO()
+        write_small_labels_file(
+            file=buffer,
+            price_labels=labels,
+            store=store,
+            origins_map=origins_map,
+        )
+        content = buffer.getvalue()
+        buffer.close()
+
+        price_labels.append(
+            PriceLabelSheet(
+                type=PriceLabelType.SMALL,
+                store_name=store.name,
+                index=index,
+                date=datetime.datetime.now(datetime.UTC),
+                content=content,
+            )
         )
 
-        with open(file_path, "w", encoding="utf-8") as file:
-            file.write('{% extends "/price-labels/base-small.html" %}\n')
-            file.write("{% block content %}\n")
-
-            write_small_labels_file(
-                file=file,
-                price_labels=labels,
-                store_slug=store_slug,
-                origins_map=origins_map,
-            )
-
-            file.write("{% endblock %}\n")
+    return price_labels
 
 
 def write_small_labels_file(
+    store: Store,
     file: TextIO,
     price_labels: list[PriceLabelWrapper],
-    store_slug: StoreSlug,
     origins_map: dict[str, Origin],
 ) -> None:
     for index, price_label in enumerate(price_labels):
@@ -59,16 +66,16 @@ def write_small_labels_file(
             file=file,
             index=index,
             article=price_label.article,
-            store_slug=store_slug,
+            store=store,
             origins_map=origins_map,
         )
 
 
 def write_small_price_labels(
     file: TextIO,
+    store: Store,
     index: int,
     article: Article,
-    store_slug: StoreSlug,
     origins_map: dict[str, Origin],
 ) -> None:
     name_spirit, name_spirit_sup, name_spirit_inf = define_name(article=article)
@@ -96,7 +103,7 @@ def write_small_price_labels(
     # ----------------------------------------------------------
     file.write(f'<div class="bottleClass">{article.volume}</div>\n')
     # ----------------------------------------------------------
-    sell_price = article.store_data[store_slug].gross_price
+    sell_price = article.store_data[store.slug].gross_price
     sell_price_tag = f"{sell_price:.0f}".replace(".", ", ")
     file.write(f'<div class="priceClass">{sell_price_tag} €</div>\n')
     # ----------------------------------------------------------
