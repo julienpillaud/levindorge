@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/julienpillaud/levindorge/compare/0.15.2...0.16.0) (2025-12-20)
+
+
+### Features
+
+* update price labels handling ([#89](https://github.com/julienpillaud/levindorge/issues/89)) ([2706186](https://github.com/julienpillaud/levindorge/commit/27061868d1030821227103683aa2170f65d8db5d))
+
 ## [0.15.2](https://github.com/julienpillaud/levindorge/compare/0.15.1...0.15.2) (2025-12-19)
 
 
