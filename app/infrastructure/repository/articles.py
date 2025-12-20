@@ -21,7 +21,7 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
         "taste",
     )
 
-    def get_by_ids(self, article_ids: list[EntityId]) -> PaginatedResponse[Article]:
+    def get_by_ids(self, article_ids: list[EntityId], /) -> PaginatedResponse[Article]:
         return self.get_all(
             filters={"_id": {"$in": [ObjectId(id_) for id_ in article_ids]}},
             sort={"type": 1, "region": 1, "name.name1": 1, "name.name2": 1},

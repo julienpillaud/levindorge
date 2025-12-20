@@ -1,5 +1,4 @@
-from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, status
 from fastapi.requests import Request
@@ -16,12 +15,12 @@ from app.api.price_labels.dtos import PriceLabelRequest
 from app.core.config.settings import Settings
 from app.domain.domain import Domain
 from app.domain.price_labels.entities import PriceLabelCreate
-from app.domain.users.entities import User
+from app.domain.types import EntityId
 
 router = APIRouter(prefix="/price-labels", tags=["Price Labels"])
 
 
-@router.post("/create", dependencies=[Depends(get_current_user)])
+@router.post("", dependencies=[Depends(get_current_user)])
 def create_price_labels(
     settings: Annotated[Settings, Depends(get_settings)],
     domain: Annotated[Domain, Depends(get_domain)],
@@ -42,47 +41,44 @@ def create_price_labels(
     return JSONResponse(content={}, status_code=status.HTTP_201_CREATED)
 
 
-@router.get("/files")
-def get_price_labels_files(
+@router.get("", dependencies=[Depends(get_current_user)])
+def get_price_labels(
     request: Request,
-    settings: Annotated[Settings, Depends(get_settings)],
-    current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
 ) -> Response:
-    files = domain.get_price_labels_files(settings=settings)
+    price_labels = domain.get_price_labels()
     return templates.TemplateResponse(
         request=request,
         name="price-labels/price-labels.html",
-        context={
-            "current_user": current_user,
-            "files": files,
-        },
+        context={"price_labels": price_labels},
     )
 
 
-@router.get("/files/{file}")
-def get_price_labels_file(
+@router.get(
+    "/sheet/{price_labels_type}/{price_labels_id}",
+    dependencies=[Depends(get_current_user)],
+)
+def get_price_labels_sheet(
     request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
+    domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
-    file: str,
+    price_labels_type: Literal["large", "small"],
+    price_labels_id: EntityId,
 ) -> Response:
+    price_labels = domain.get_price_labels_sheet(price_labels_id=price_labels_id)
     return templates.TemplateResponse(
         request=request,
-        name=f"price-labels-files/{file}",
-        context={
-            "current_user": current_user,
-            "file": file,
-        },
+        name=f"price-labels/base-{price_labels_type}.html",
+        context={"content": price_labels.content},
     )
 
 
-@router.get("/files/delete/{file}", dependencies=[Depends(get_current_user)])
-def delete_price_labels_file(
+@router.get("/delete/{price_labels_id}", dependencies=[Depends(get_current_user)])
+def delete_price_labels(
     request: Request,
-    settings: Annotated[Settings, Depends(get_settings)],
-    file: str,
+    domain: Annotated[Domain, Depends(get_domain)],
+    price_labels_id: EntityId,
 ) -> Response:
-    Path.unlink(settings.app_path.price_labels / file)
-    return RedirectResponse(url=request.url_for("get_price_labels_files"))
+    domain.delete_price_labels(price_labels_id=price_labels_id)
+    return RedirectResponse(url=request.url_for("get_price_labels"))

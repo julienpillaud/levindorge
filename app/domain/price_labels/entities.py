@@ -1,16 +1,16 @@
 import datetime
 from enum import StrEnum
-from pathlib import Path
 
 from pydantic import BaseModel
 
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
-from app.domain.stores.entities import Store
+from app.domain.entities import DomainEntity
+from app.domain.types import EntityId, StoreName
 
 
 class PriceLabelCreate(BaseModel):
-    article_id: str
+    article_id: EntityId
     label_count: int
 
 
@@ -20,37 +20,18 @@ class PriceLabelWrapper(BaseModel):
     label_count: int
 
 
-class PriceLabelFileType(StrEnum):
+class PriceLabelType(StrEnum):
     LARGE = "Bières / Vins"
     SMALL = "Spiritueux"
 
 
-class PriceLabelFile(BaseModel):
-    id: int
-    type: PriceLabelFileType
-    store_name: str
+class PriceLabelSheet(DomainEntity):
+    type: PriceLabelType
+    store_name: StoreName
+    index: int
     date: datetime.datetime
-    file: str
+    content: str
 
-    @classmethod
-    def from_path(cls, path: Path, /, stores: list[Store]) -> PriceLabelFile:
-        stores_map = {store.slug: store for store in stores}
-
-        number_of_parts = 5
-        parts = path.stem.split("_")
-        if len(parts) != number_of_parts:
-            raise ValueError()
-
-        date = datetime.datetime.strptime(
-            f"{parts[3]} {parts[4]}",
-            "%Y-%m-%d %H-%M-%S",
-        )
-        file_type = parts[0].upper()
-        shop = parts[2]
-        return cls(
-            id=int(parts[1]),
-            type=PriceLabelFileType[file_type],
-            store_name=stores_map[shop].name,
-            date=date,
-            file=path.name,
-        )
+    @property
+    def slug(self) -> str:
+        return self.type.name.lower()

@@ -11,6 +11,7 @@ from app.domain.deposits.repository import DepositRepositoryProtocol
 from app.domain.distributors.repository import DistributorRepositoryProtocol
 from app.domain.inventories.repository import InventoryRepositoryProtocol
 from app.domain.origins.repository import OriginRepositoryProtocol
+from app.domain.price_labels.repository import PriceLabelRepositoryProtocol
 from app.domain.producers.repository import ProducerRepositoryProtocol
 from app.domain.stores.repository import StoreRepositoryProtocol
 from app.domain.users.repository import UserRepositoryProtocol
@@ -47,6 +48,9 @@ class ContextProtocol(UnitOfWorkProtocol, Protocol):
 
     @property
     def deposit_repository(self) -> DepositRepositoryProtocol: ...
+
+    @property
+    def price_label_repository(self) -> PriceLabelRepositoryProtocol: ...
 
     @property
     def inventory_repository(self) -> InventoryRepositoryProtocol: ...

@@ -16,6 +16,7 @@ from app.infrastructure.repository.deposits import DepositRepository
 from app.infrastructure.repository.distributors import DistributorRepository
 from app.infrastructure.repository.inventories import InventoryRepository
 from app.infrastructure.repository.origins import OriginRepository
+from app.infrastructure.repository.price_labels import PriceLabelRepository
 from app.infrastructure.repository.producers import ProducerRepository
 from app.infrastructure.repository.stores import StoreRepository
 from app.infrastructure.repository.users import UserRepository
@@ -82,6 +83,10 @@ class Context(BaseContext):
     @property
     def deposit_repository(self) -> DepositRepository:
         return DepositRepository(database=self.database)
+
+    @property
+    def price_label_repository(self) -> PriceLabelRepository:
+        return PriceLabelRepository(database=self.database)
 
     @property
     def inventory_repository(self) -> InventoryRepository:

@@ -1,7 +1,5 @@
-import datetime
 import itertools
 from collections.abc import Iterator
-from pathlib import Path
 
 from PIL.ImageFont import FreeTypeFont
 
@@ -9,7 +7,6 @@ from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
 from app.domain.context import ContextProtocol
 from app.domain.price_labels.entities import PriceLabelCreate, PriceLabelWrapper
-from app.domain.types import StoreSlug
 
 LARGE_LABELS_CATEGORY = {
     PricingGroup.BEER,
@@ -53,13 +50,17 @@ def split_by_size(
     context: ContextProtocol,
     price_labels: list[PriceLabelCreate],
 ) -> tuple[list[PriceLabelWrapper], list[PriceLabelWrapper]]:
+    articles = context.article_repository.get_by_ids(
+        [item.article_id for item in price_labels]
+    )
+    articles_map = {article.id: article for article in articles.items}
     categories = context.category_repository.get_all(limit=300)
     categories_map = {category.name: category for category in categories.items}
 
     large_labels = []
     small_labels = []
     for item in price_labels:
-        article = context.article_repository.get_by_id(item.article_id)
+        article = articles_map.get(item.article_id)
         if not article:
             continue
         pricing_group = categories_map[article.category].pricing_group
@@ -92,12 +93,6 @@ def chunk_price_labels(
         if not chunk:
             break
         yield chunk
-
-
-def get_file_path(prefix: str, index: int, store_slug: StoreSlug, path: Path) -> Path:
-    date = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d_%H-%M-%S")
-    file_name = f"{prefix}_{index + 1}_{store_slug}_{date}.html"
-    return path / file_name
 
 
 def normalize_attribute(attr: str) -> str:

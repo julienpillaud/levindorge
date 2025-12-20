@@ -31,7 +31,9 @@ from app.domain.pos.commands import (
 )
 from app.domain.price_labels.commands import (
     create_price_labels_command,
-    get_price_labels_files_command,
+    delete_price_labels_command,
+    get_price_labels_command,
+    get_price_labels_sheet_command,
 )
 from app.domain.producers.commands import get_producers_command
 from app.domain.stores.commands import get_stores_command
@@ -75,7 +77,9 @@ class Domain(BaseDomain[ContextProtocol]):
     reset_pos_stocks = CommandHandler(reset_pos_stocks_command)
     # price_labels
     create_price_labels = CommandHandler(create_price_labels_command)
-    get_price_labels_files = CommandHandler(get_price_labels_files_command)
+    get_price_labels = CommandHandler(get_price_labels_command)
+    get_price_labels_sheet = CommandHandler(get_price_labels_sheet_command)
+    delete_price_labels = CommandHandler(delete_price_labels_command)
     # inventories
     get_inventories = CommandHandler(get_inventories_command)
     get_inventory = CommandHandler(get_inventory_command)
