@@ -1,8 +1,10 @@
+from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
 from app.domain.deposits.entities import Deposit, DepositCategory
 from app.domain.entities import PaginatedResponse
 
 
+@cached_command(response_model=PaginatedResponse[Deposit], ttl=3600)
 def get_deposits_command(
     context: ContextProtocol,
     /,

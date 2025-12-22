@@ -36,6 +36,8 @@ def store(store_factory: StoreFactory) -> Store:
     return store_factory.create_one(name="Store Test", slug="store-test")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def context(settings: Settings) -> Context:
-    return Context(settings=settings)
+    ctx = Context(settings=settings)
+    ctx.cache_manager.flush()
+    return ctx

@@ -62,9 +62,20 @@ class Settings(BaseSettings):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
-    def redis_dsn(self) -> RedisDsn:
+    def redis_faststream_dsn(self) -> RedisDsn:
         return RedisDsn.build(
             host=self.redis_host,
             port=self.redis_port,
             scheme=self.redis_scheme,
+            path="0",
+        )
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def redis_cache_dsn(self) -> RedisDsn:
+        return RedisDsn.build(
+            host=self.redis_host,
+            port=self.redis_port,
+            scheme=self.redis_scheme,
+            path="1",
         )

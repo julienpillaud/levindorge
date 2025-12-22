@@ -1,0 +1,9 @@
+from typing import Any, Protocol
+
+
+class CacheManagerProtocol(Protocol):
+    def set(self, key: str, value: str, ttl: int = 3600) -> None: ...
+
+    def get(self, key: str) -> Any | None: ...
+
+    def flush(self) -> None: ...

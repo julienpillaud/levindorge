@@ -5,10 +5,9 @@ from typing import Any
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.context import ContextProtocol
-from app.domain.entities import PaginatedResponse
+from app.domain.entities import EntityId, PaginatedResponse
 from app.domain.inventories.entities import Inventory, InventoryDetail, InventoryRecord
 from app.domain.stores.entities import Store
-from app.domain.types import EntityId
 
 
 def get_inventories_command(

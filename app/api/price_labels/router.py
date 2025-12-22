@@ -14,8 +14,8 @@ from app.api.dependencies import (
 from app.api.price_labels.dtos import PriceLabelRequest
 from app.core.config.settings import Settings
 from app.domain.domain import Domain
+from app.domain.entities import EntityId
 from app.domain.price_labels.entities import PriceLabelCreate
-from app.domain.types import EntityId
 
 router = APIRouter(prefix="/price-labels", tags=["Price Labels"])
 

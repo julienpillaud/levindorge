@@ -1,8 +1,10 @@
+from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
 from app.domain.distributors.entities import Distributor
 from app.domain.entities import PaginatedResponse
 
 
+@cached_command(response_model=PaginatedResponse[Distributor], ttl=3600)
 def get_distributors_command(
     context: ContextProtocol,
     /,

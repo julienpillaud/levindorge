@@ -1,11 +1,13 @@
 from cleanstack.exceptions import NotFoundError
 
+from app.domain.caching import cached_command
 from app.domain.categories.entities import Category
 from app.domain.commons.category_groups import CategoryGroupName
 from app.domain.context import ContextProtocol
 from app.domain.entities import PaginatedResponse
 
 
+@cached_command(response_model=PaginatedResponse[Category], ttl=3600)
 def get_categories_command(
     context: ContextProtocol,
     /,

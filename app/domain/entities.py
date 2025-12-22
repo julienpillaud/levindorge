@@ -4,7 +4,7 @@ from pydantic import (
     PositiveInt,
 )
 
-from app.domain.types import EntityId
+type EntityId = str
 
 DEFAULT_PAGINATION_SIZE = 100
 

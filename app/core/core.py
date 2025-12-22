@@ -4,11 +4,13 @@ from contextlib import contextmanager
 from fastapi import FastAPI
 from faststream.redis import RedisBroker
 from pymongo import MongoClient
+from redis import Redis
 
 from app.core.config.settings import Settings
 from app.domain.context import ContextProtocol
 from app.domain.domain import Domain
 from app.infrastructure.event_publisher import FastStreamEventPublisher
+from app.infrastructure.redis.cache_manager import RedisCacheManager
 from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.base import MongoDocument
 from app.infrastructure.repository.categories import CategoryRepository
@@ -30,7 +32,11 @@ class BaseContext(ContextProtocol):
         self.settings = settings
         self.client: MongoClient[MongoDocument] = MongoClient(settings.mongo_uri)
         self.database = self.client[settings.mongo_database]
-        self.broker = RedisBroker(str(settings.redis_dsn))
+        self.broker = RedisBroker(str(settings.redis_faststream_dsn))
+        self.redis_client = Redis.from_url(
+            str(settings.redis_cache_dsn),
+            decode_responses=True,
+        )
 
     @contextmanager
     def transaction(self) -> Iterator[None]:
@@ -95,6 +101,10 @@ class Context(BaseContext):
     @property
     def pos_manager(self) -> TactillManager:
         return TactillManager()
+
+    @property
+    def cache_manager(self) -> RedisCacheManager:
+        return RedisCacheManager(client=self.redis_client)
 
     @property
     def event_publisher(self) -> FastStreamEventPublisher:

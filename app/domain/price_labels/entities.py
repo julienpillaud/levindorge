@@ -5,8 +5,8 @@ from pydantic import BaseModel
 
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
-from app.domain.entities import DomainEntity
-from app.domain.types import EntityId, StoreName
+from app.domain.entities import DomainEntity, EntityId
+from app.domain.types import StoreName
 
 
 class PriceLabelCreate(BaseModel):

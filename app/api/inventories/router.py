@@ -7,8 +7,8 @@ from fastapi.templating import Jinja2Templates
 
 from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.domain.domain import Domain
+from app.domain.entities import EntityId
 from app.domain.stores.entities import Store
-from app.domain.types import EntityId
 
 router = APIRouter(prefix="/inventories", tags=["Inventories"])
 
