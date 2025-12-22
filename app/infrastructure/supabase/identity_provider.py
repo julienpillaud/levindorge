@@ -3,7 +3,7 @@ from supabase.lib.client_options import SyncClientOptions
 from supabase_auth.errors import AuthApiError
 
 from app.core.config.settings import Settings
-from app.domain._shared.protocols.identity_provider import IdentityProviderProtocol
+from app.domain.protocols.identity_provider import IdentityProviderProtocol
 from app.domain.users.entities import User, UserCredentials, UserWithCredentials
 
 

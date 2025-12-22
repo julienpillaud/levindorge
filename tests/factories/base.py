@@ -2,8 +2,8 @@ from typing import Any
 
 from pymongo.synchronous.database import Database
 
-from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.entities import DomainEntity
+from app.domain.protocols.repository import RepositoryProtocol
 from app.infrastructure.repository.base import (
     MongoDocument,
     MongoRepository,

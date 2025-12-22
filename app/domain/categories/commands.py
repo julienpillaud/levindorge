@@ -8,6 +8,7 @@ from app.domain.entities import PaginatedResponse
 
 def get_categories_command(
     context: ContextProtocol,
+    /,
     category_group: CategoryGroupName | None = None,
 ) -> PaginatedResponse[Category]:
     filters = {"category_group": category_group} if category_group else {}
@@ -18,7 +19,7 @@ def get_categories_command(
     )
 
 
-def get_category_by_name_command(context: ContextProtocol, name: str) -> Category:
+def get_category_by_name_command(context: ContextProtocol, /, name: str) -> Category:
     category = context.category_repository.get_by_name(name=name)
     if not category:
         raise NotFoundError()

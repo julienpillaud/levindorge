@@ -1,7 +1,7 @@
 from typing import Protocol
 
-from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.inventories.entities import Inventory
+from app.domain.protocols.repository import RepositoryProtocol
 
 
 class InventoryRepositoryProtocol(RepositoryProtocol[Inventory], Protocol): ...

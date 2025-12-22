@@ -20,7 +20,7 @@ from app.domain.users.entities import User
 
 LOGIN_ERROR_MESSAGE = "Email ou mot de passe incorrect"
 
-router = APIRouter()
+router = APIRouter(tags=["Auth"])
 
 
 @router.get("/auth/register")

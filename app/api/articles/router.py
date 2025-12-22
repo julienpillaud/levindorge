@@ -17,15 +17,13 @@ from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP, CategoryGrou
 from app.domain.domain import Domain
 from app.domain.entities import DEFAULT_PAGINATION_SIZE
 from app.domain.types import EntityId
-from app.domain.users.entities import User
 
 router = APIRouter(prefix="/articles", tags=["Articles"])
 
 
-@router.get("")
+@router.get("", dependencies=[Depends(get_current_user)])
 def get_articles(
     request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     search: str | None = None,
@@ -36,17 +34,13 @@ def get_articles(
     return templates.TemplateResponse(
         request=request,
         name="articles/articles.html",
-        context={
-            "current_user": current_user,
-            "result": result,
-        },
+        context={"result": result},
     )
 
 
-@router.get("/ids")
+@router.get("/ids", dependencies=[Depends(get_current_user)])
 def get_articles_by_ids(
     request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     article_ids: Annotated[list[EntityId], Query()],
@@ -55,17 +49,13 @@ def get_articles_by_ids(
     return templates.TemplateResponse(
         request=request,
         name="articles/articles.html",
-        context={
-            "current_user": current_user,
-            "result": result,
-        },
+        context={"result": result},
     )
 
 
-@router.get("/create/{category_group_name}")
+@router.get("/create/{category_group_name}", dependencies=[Depends(get_current_user)])
 def create_article_view(
     request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     category_group_name: CategoryGroupName,
@@ -78,7 +68,6 @@ def create_article_view(
         request=request,
         name="articles/_article.html",
         context={
-            "current_user": current_user,
             "stores": stores.items,
             "article": None,
             "categories": categories.items,
@@ -104,10 +93,9 @@ def create_article(
     )
 
 
-@router.get("/update/{article_id}")
+@router.get("/update/{article_id}", dependencies=[Depends(get_current_user)])
 def update_article_view(
     request: Request,
-    current_user: Annotated[User, Depends(get_current_user)],
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     article_id: str,
@@ -121,7 +109,6 @@ def update_article_view(
         request=request,
         name="articles/_article.html",
         context={
-            "current_user": current_user,
             "stores": stores.items,
             "article": article,
             "category_group": category_group,
