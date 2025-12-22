@@ -103,7 +103,7 @@ def update_article_command(
     return updated_article
 
 
-def delete_article_command(context: ContextProtocol, article_id: EntityId) -> None:
+def delete_article_command(context: ContextProtocol, /, article_id: EntityId) -> None:
     article = context.article_repository.get_by_id(article_id)
     if not article:
         raise NotFoundError()

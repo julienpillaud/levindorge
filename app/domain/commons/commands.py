@@ -16,6 +16,7 @@ from app.domain.volumes.entities import Volume
 
 def get_view_data_command(
     context: ContextProtocol,
+    /,
     category_group: CategoryGroup,
 ) -> ViewData:
     return ViewData(
@@ -73,7 +74,7 @@ def get_volumes(
     if not category_group.volume:
         return []
 
-    result = get_volumes_command(context, volume_category=category_group.volume)
+    result = get_volumes_command(context, category=category_group.volume)
     return result.items
 
 
@@ -86,7 +87,7 @@ def get_deposits(
         return []
 
     result = get_deposits_command(
-        context=context,
-        deposit_category=category_group.deposit.category,
+        context,
+        category=category_group.deposit.category,
     )
     return result.items

@@ -1,7 +1,7 @@
 from typing import Protocol
 
-from app.domain._shared.protocols.repository import RepositoryProtocol
 from app.domain.categories.entities import Category
+from app.domain.protocols.repository import RepositoryProtocol
 
 
 class CategoryRepositoryProtocol(RepositoryProtocol[Category], Protocol):

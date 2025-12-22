@@ -12,7 +12,8 @@ from app.domain.types import EntityId
 
 
 def get_inventories_command(
-    context: ContextProtocol, /
+    context: ContextProtocol,
+    /,
 ) -> PaginatedResponse[Inventory]:
     return context.inventory_repository.get_all()
 
