@@ -2,13 +2,13 @@ from cleanstack.exceptions import NotFoundError
 
 from app.core.config.settings import Settings
 from app.domain.context import ContextProtocol
-from app.domain.entities import PaginatedResponse
+from app.domain.entities import EntityId, PaginatedResponse
 from app.domain.origins.commands import get_origins_command
 from app.domain.price_labels.entities import PriceLabelCreate, PriceLabelSheet
 from app.domain.price_labels.utils.common import split_by_size
 from app.domain.price_labels.utils.large import create_large_price_labels
 from app.domain.price_labels.utils.small import create_small_price_labels
-from app.domain.types import EntityId, StoreSlug
+from app.domain.types import StoreSlug
 
 
 def create_price_labels_command(

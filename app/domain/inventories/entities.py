@@ -6,8 +6,8 @@ from pydantic import BaseModel, Field, field_validator
 
 from app.domain.articles.entities import ArticleDeposit
 from app.domain.commons.entities import InventoryGroup
-from app.domain.entities import DomainEntity
-from app.domain.types import DecimalType, EntityId, StoreName
+from app.domain.entities import DomainEntity, EntityId
+from app.domain.types import DecimalType, StoreName
 
 
 class InventoryRecord(BaseModel):

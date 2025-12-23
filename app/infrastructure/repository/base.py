@@ -8,10 +8,10 @@ from pymongo.database import Database
 from app.domain.entities import (
     DEFAULT_PAGINATION_SIZE,
     DomainEntity,
+    EntityId,
     PaginatedResponse,
 )
 from app.domain.protocols.repository import RepositoryProtocol
-from app.domain.types import EntityId
 from app.infrastructure.repository.exceptions import MongoRepositoryError
 from app.infrastructure.utils import iter_dicts
 

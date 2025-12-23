@@ -25,7 +25,7 @@ app_context = Context(settings=settings)
 domain = Domain(context=app_context)
 
 broker = RedisBroker(
-    str(settings.redis_dsn),
+    str(settings.redis_faststream_dsn),
     middlewares=(RedisTelemetryMiddleware(),),
 )
 broker.include_router(router)

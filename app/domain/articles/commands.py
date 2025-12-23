@@ -8,9 +8,9 @@ from app.domain.articles.entities import (
     ArticleCreateOrUpdate,
 )
 from app.domain.context import ContextProtocol
-from app.domain.entities import DEFAULT_PAGINATION_SIZE, PaginatedResponse
+from app.domain.entities import DEFAULT_PAGINATION_SIZE, EntityId, PaginatedResponse
 from app.domain.stores.entities import Store
-from app.domain.types import EntityId, StoreSlug
+from app.domain.types import StoreSlug
 
 
 def get_articles_command(

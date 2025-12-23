@@ -15,8 +15,7 @@ from app.domain.articles.entities import ArticleCreateOrUpdate, ArticleMargins
 from app.domain.articles.utils import compute_article_margins, compute_recommended_price
 from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP, CategoryGroupName
 from app.domain.domain import Domain
-from app.domain.entities import DEFAULT_PAGINATION_SIZE
-from app.domain.types import EntityId
+from app.domain.entities import DEFAULT_PAGINATION_SIZE, EntityId
 
 router = APIRouter(prefix="/articles", tags=["Articles"])
 

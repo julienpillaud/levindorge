@@ -46,12 +46,14 @@ export const initializePriceTagsDropdown = async () => {
   });
 };
 
+// -----------------------------------------------------------------------------
 const createPriceLabels = async (slug) => {
   const ids = getCheckedArticleIds();
   if (ids.length === 0) {
     showToast("Aucun produit sélectionné", { type: "warning" });
     return;
   }
+
   const body = {
     store_slug: slug,
     data: ids.map((id) => ({
