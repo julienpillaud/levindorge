@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.0](https://github.com/julienpillaud/levindorge/compare/0.16.0...0.17.0) (2025-12-23)
+
+
+### Features
+
+* add tests ([#91](https://github.com/julienpillaud/levindorge/issues/91)) ([c7744f5](https://github.com/julienpillaud/levindorge/commit/c7744f5bdaff3279231e0d4383f44d3c88222fa8))
+* implement caching with redis ([#93](https://github.com/julienpillaud/levindorge/issues/93)) ([2e98196](https://github.com/julienpillaud/levindorge/commit/2e98196e0971398c368c276df716cc1543b50faa))
+
 ## [0.16.0](https://github.com/julienpillaud/levindorge/compare/0.15.2...0.16.0) (2025-12-20)
 
 
