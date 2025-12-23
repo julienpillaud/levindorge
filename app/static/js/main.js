@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   // ---------------------------------------------------------------------------
+  // Price labels
   const priceTagsSelected = document.getElementById("price-labels-selected");
   if (priceTagsSelected) {
     priceTagsSelected.addEventListener("click", () => {
@@ -36,9 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const priceTagsUnselct = document.getElementById("price-labels-unselect");
-  if (priceTagsUnselct) {
-    priceTagsUnselct.addEventListener("click", () => {
+  const priceTagsUnselect = document.getElementById("price-labels-unselect");
+  if (priceTagsUnselect) {
+    priceTagsUnselect.addEventListener("click", () => {
       unselectArticles();
     });
   }
