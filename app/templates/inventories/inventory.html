@@ -1,33 +1,32 @@
 <div class="card bg-base-200 shadow-sm mb-2">
-  <div class="card-body p-4 flex-row items-center">
-    <div class="flex-1">
-      <h2 class="card-title text-xl mb-1">{{ inventory.store }}</h2>
-      <div class="flex flex-col gap-1 opacity-60 text-xs font-medium">
-        <span class="flex items-center gap-2">
-          <i class="bi bi-calendar-event text-primary"></i>
-          {{ (inventory.date | local_timezone).strftime("%d/%m/%Y") }}
-        </span>
-        <span class="flex items-center gap-2">
-          <i class="bi bi-clock text-primary"></i>
-          {{ (inventory.date | local_timezone).strftime("%H:%M") }}
-        </span>
+  <div class="card-body p-4 flex flex-row justify-between">
+
+    <div class="flex flex-col gap-1">
+      <h2 class="card-title text-xl">{{ inventory.store }}</h2>
+
+      <div class="flex gap-2 opacity-50 text-xs font-medium">
+        <i class="bi bi-calendar-event text-primary"></i>
+        {{ (inventory.date | local_timezone).strftime("%d/%m/%Y") }}
+      </div>
+
+      <div class="flex gap-2 opacity-50 text-xs font-medium">
+        <i class="bi bi-clock text-primary"></i>
+        {{ (inventory.date | local_timezone).strftime("%H:%M") }}
       </div>
     </div>
 
-    <div class="stats shadow">
+    <div class="stats stats-vertical md:stats-horizontal shadow self-center">
       <div class="stat p-2">
         <div class="stat-title">Valeur marchande</div>
-        <div class="stat-value font-mono text-base text-accent">
-          {{ inventory.inventory_value }} €
-        </div>
+        <div class="stat-value text-lg text-accent">{{ inventory.inventory_value | strip_zeros }} €</div>
       </div>
+
       <div class="stat p-2">
         <div class="stat-title">Valeur consigne</div>
-        <div class="stat-value font-mono text-base text-accent">
-          {{ inventory.deposit_value }} €
-        </div>
+        <div class="stat-value text-lg text-accent">{{ inventory.deposit_value | strip_zeros }} €</div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -36,20 +35,20 @@
 <div class="overflow-x-auto rounded-box border border-base-300">
   <table class="table table-pin-rows table-sm">
     <thead>
-      <tr>
-        <th>Catégorie</th>
-        <th>Valeur marchande</th>
-        <th>Valeur consigne</th>
-      </tr>
+    <tr>
+      <th>Catégorie</th>
+      <th>Valeur marchande</th>
+      <th>Valeur consigne</th>
+    </tr>
     </thead>
     <tbody>
-      {% for category, values in inventory.inventory.items() %}
-        <tr>
-          <td>{{ category }}</td>
-          <td>{{ values.inventory_value }} €</td>
-          <td>{% if values.deposit_value %}{{ values.deposit_value }} €{% endif %}</td>
-        </tr>
-      {% endfor %}
+    {% for category, values in inventory.inventory.items() %}
+      <tr>
+        <td class="text-nowrap">{{ category }}</td>
+        <td>{{ values.inventory_value | strip_zeros }} €</td>
+        <td>{% if values.deposit_value %}{{ values.deposit_value | strip_zeros }} €{% endif %}</td>
+      </tr>
+    {% endfor %}
     </tbody>
   </table>
 </div>

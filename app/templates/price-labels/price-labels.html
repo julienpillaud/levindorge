@@ -9,7 +9,7 @@
         <div class="card-body flex flex-row p-4 justify-between">
           <div class="flex items-center gap-4 py-2">
             <h1 class="card-title text-2xl">Etiquettes</h1>
-            <div id="items-count" class="badge badge-soft badge-accent badge-lg">
+            <div id="items-count" class="badge badge-outline badge-accent badge-md">
               {{ price_labels.total }}
             </div>
           </div>
@@ -32,12 +32,12 @@
               {% for price_label in price_labels.items %}
                 <tr>
                   <td>{{ price_label.index }}</td>
-                  <td>{{ price_label.type }}</td>
-                  <td>{{ price_label.store_name }}</td>
-                  <td>
+                  <td class="text-nowrap">{{ price_label.type }}</td>
+                  <td class="text-nowrap">{{ price_label.store_name }}</td>
+                  <td class="text-nowrap">
                     {{ (price_label.date | local_timezone).strftime("%d / %m / %Y - %H:%M") }}
                   </td>
-                  <td class="w-40">
+                  <td class="text-nowrap">
                     <button class="btn btn-soft btn-xs">
                       <a
                         target="_blank"

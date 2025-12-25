@@ -9,7 +9,7 @@
         <div class="card-body flex flex-row p-4 justify-between">
           <div class="flex items-center gap-4 py-2">
             <h1 class="card-title text-2xl">Inventaires</h1>
-            <div id="items-count" class="badge badge-soft badge-accent badge-lg">
+            <div id="items-count" class="badge badge-outline badge-accent badge-md">
               {{ result.total }}
             </div>
           </div>
@@ -20,22 +20,22 @@
       <div class="overflow-x-auto rounded-box border border-base-300 md:w-8/12 md:mx-auto">
         <table class="table table-pin-rows table-sm" id="inventories-table">
           <thead>
-            <tr>
-              <th>Date</th>
-              <th>Magasin</th>
-              <th>Valeur marchande</th>
-              <th>Valeur consigne</th>
-            </tr>
+          <tr>
+            <th>Date</th>
+            <th>Magasin</th>
+            <th>Valeur marchande</th>
+            <th>Valeur consigne</th>
+          </tr>
           </thead>
           <tbody>
-            {% for inventory in result.items %}
-              <tr class="hover cursor-pointer" data-id="{{ inventory.id }}">
-                <td>{{ (inventory.date | local_timezone).strftime("%d/%m/%Y") }}</td>
-                <td>{{ inventory.store }}</td>
-                <td>{{ inventory.inventory_value | round }} €</td>
-                <td>{{ inventory.deposit_value | round }} €</td>
-              </tr>
-            {% endfor %}
+          {% for inventory in result.items %}
+            <tr class="hover cursor-pointer" data-id="{{ inventory.id }}">
+              <td>{{ (inventory.date | local_timezone).strftime("%d/%m/%Y") }}</td>
+              <td class="text-nowrap">{{ inventory.store }}</td>
+              <td>{{ inventory.inventory_value | round }} €</td>
+              <td>{{ inventory.deposit_value | round }} €</td>
+            </tr>
+          {% endfor %}
           </tbody>
         </table>
       </div>
@@ -46,6 +46,11 @@
   <dialog id="inventory-modal" class="modal">
     <div class="modal-box max-w-4xl max-h-[90vh] bg-base-200">
       <div id="inventory-modal-content"></div>
+      <div class="modal-action flex justify-start sticky bottom-0">
+        <button type="reset" class="btn btn-circle btn-error text-base-100" id="inventory-modal-close">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
     </div>
   </dialog>
 {% endblock %}
