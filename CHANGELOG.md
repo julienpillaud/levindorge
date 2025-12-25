@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0](https://github.com/julienpillaud/levindorge/compare/0.17.0...0.18.0) (2025-12-25)
+
+
+### Features
+
+* improve UI consistency ([b844545](https://github.com/julienpillaud/levindorge/commit/b844545a921701dc4691c80fa4bd735775393bd6))
+
 ## [0.17.0](https://github.com/julienpillaud/levindorge/compare/0.16.0...0.17.0) (2025-12-23)
 
 
