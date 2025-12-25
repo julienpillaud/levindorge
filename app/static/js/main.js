@@ -49,4 +49,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------------
   // Inventories
   initInventoriesTable();
+
+  const inventoryModalClose = document.getElementById("inventory-modal-close");
+  if (inventoryModalClose) {
+    inventoryModalClose.addEventListener("click", () => {
+      document.getElementById("inventory-modal").close();
+    });
+  }
 });

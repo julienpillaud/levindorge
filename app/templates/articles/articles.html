@@ -6,16 +6,23 @@
       {# -------------------------------------------------------------------- #}
       {# Card #}
       <div class="card bg-base-200 shadow-sm">
-        <div class="card-body md:flex md:flex-row justify-between md:items-center p-4">
-          <div class="flex items-center gap-4 py-2">
+        <div class="card-body flex flex-col md:flex-row md:justify-between gap-4 p-4">
+          <div class="flex items-center gap-4">
             <h1 class="card-title text-2xl">Articles</h1>
-            <div id="items-count" class="badge badge-soft badge-accent badge-lg">
+            <div id="items-count" class="badge badge-outline badge-accent badge-md">
               {{ result.total }}
             </div>
           </div>
-
           <div>
-            <div class="dropdown dropdown-hover hidden" id="price-labels-dropdown">
+            <div class="dropdown dropdown-hover md:dropdown-end">
+              <div tabindex="0" role="button" class="btn m-1">Nouveau</div>
+              <ul
+                tabindex="-1"
+                class="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm"
+                data-id="new-article-dropdown"
+              ></ul>
+            </div>
+            <div class="dropdown dropdown-hover md:dropdown-end hidden" id="price-labels-dropdown">
               <div tabindex="0" role="button" class="btn m-1">Etiquettes</div>
               <ul
                 tabindex="-1"
@@ -25,15 +32,6 @@
                 <li><a id="price-labels-unselect">Tout désélectionner</a></li>
                 <div class="divider"></div>
               </ul>
-            </div>
-
-            <div class="dropdown dropdown-hover dropdown-end">
-              <div tabindex="0" role="button" class="btn m-1">Nouveau</div>
-              <ul
-                tabindex="-1"
-                class="dropdown-content menu bg-base-100 rounded-box z-10 w-52 p-2 shadow-sm"
-                data-id="new-article-dropdown"
-              ></ul>
             </div>
           </div>
         </div>
