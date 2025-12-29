@@ -4,7 +4,7 @@ from app.domain.distributors.entities import Distributor
 from app.domain.entities import PaginatedResponse
 
 
-@cached_command(response_model=PaginatedResponse[Distributor], ttl=3600)
+@cached_command(response_model=PaginatedResponse[Distributor], tag="distributors")
 def get_distributors_command(
     context: ContextProtocol,
     /,

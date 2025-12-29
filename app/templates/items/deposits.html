@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="h-dvh flex flex-col">
+    {% include '_includes/_navbar.html' %}
+    <div class="flex flex-col flex-1 px-4 py-4 gap-4 min-h-0">
+      {# -------------------------------------------------------------------- #}
+      {# Card #}
+      <div class="card bg-base-200 shadow-sm">
+        <div class="card-body flex flex-row p-4 justify-between items-center">
+          <div class="flex items-center gap-4 py-2">
+            <h1 class="card-title text-2xl">Consignes</h1>
+            <div id="items-count" class="badge badge-outline badge-accent badge-md">
+              {{ result.total }}
+            </div>
+          </div>
+          <div><button class="btn">Nouveau</button></div>
+        </div>
+      </div>
+      {# -------------------------------------------------------------------- #}
+      {# Table #}
+      <div class="overflow-x-auto rounded-box border border-base-300 md:w-6/12 md:mx-auto">
+        <table class="table table-pin-rows table-sm">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Valeur</th>
+            <th>Type</th>
+            <th>Catégorie</th>
+          </tr>
+        </thead>
+          <tbody>
+          {% for item in result.items %}
+            <tr>
+              <td>
+                <label><input type="checkbox" class="checkbox" /></label>
+              </td>
+              <td>{{ item.value }}</td>
+              <td>{{ item.type }}</td>
+              <td>{{ item.category }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {# -------------------------------------------------------------------- #}
+    </div>
+  </div>
+{% endblock %}

@@ -7,7 +7,7 @@ from app.domain.context import ContextProtocol
 from app.domain.entities import PaginatedResponse
 
 
-@cached_command(response_model=PaginatedResponse[Category], ttl=3600)
+@cached_command(response_model=PaginatedResponse[Category], tag="categories")
 def get_categories_command(
     context: ContextProtocol,
     /,

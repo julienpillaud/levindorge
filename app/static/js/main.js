@@ -12,6 +12,7 @@ import { buildCreateDropdownMenu } from "./menu.js";
 import { initArticles } from "./articles/init.js";
 import { initSearch } from "./search.js";
 import { initInventoriesTable } from "./inventories.js";
+import {createProducer} from "./producers.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initSearch();
@@ -56,4 +57,29 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("inventory-modal").close();
     });
   }
+
+  // ---------------------------------------------------------------------------
+  // Items
+  const producerModal = document.getElementById("producer-modal");
+
+  const createProducerButton = document.getElementById("create-producer-button");
+  if (createProducerButton && producerModal) {
+    createProducerButton.addEventListener("click", () => {
+      producerModal.showModal();
+    });
+  }
+
+  const producerForm = document.getElementById("producer-form");
+  if (producerForm) {
+    producerForm.addEventListener("reset", (event) => {
+      producerModal.close();
+    });
+
+    producerForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      createProducer(producerForm);
+      producerModal.close();
+    })
+  }
+
 });

@@ -4,7 +4,7 @@ from app.domain.entities import PaginatedResponse
 from app.domain.volumes.entities import Volume, VolumeCategory
 
 
-@cached_command(response_model=PaginatedResponse[Volume], ttl=3600)
+@cached_command(response_model=PaginatedResponse[Volume], tag="volumes")
 def get_volumes_command(
     context: ContextProtocol,
     /,

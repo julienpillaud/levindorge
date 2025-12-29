@@ -6,6 +6,7 @@ from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
 
 from app.api.dependencies import get_current_user, get_domain, get_templates
+from app.api.producers.dtos import ProducerDTO
 from app.domain.domain import Domain
 from app.domain.producers.entities import ProducerType
 
@@ -24,12 +25,31 @@ def get_producers(
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     producer_type: ProducerType,
 ) -> Response:
-    producers = domain.get_producers(producer_type=producer_type)
+    result = domain.get_producers(producer_type=producer_type)
     return templates.TemplateResponse(
         request=request,
-        name="items/items.html",
+        name="items/producers.html",
         context={
-            "items": producers.items,
+            "result": result,
+            "producer_type": producer_type,
             "title": TITLE_MAPPING[producer_type],
         },
+    )
+
+
+@router.post("", dependencies=[Depends(get_current_user)])
+def create_producer(
+    request: Request,
+    domain: Annotated[Domain, Depends(get_domain)],
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
+    producer_create: ProducerDTO,
+) -> Response:
+    producer = domain.create_producer(
+        name=producer_create.name,
+        producer_type=producer_create.type,
+    )
+    return templates.TemplateResponse(
+        request=request,
+        name="items/_producer_row.html",
+        context={"item": producer},
     )

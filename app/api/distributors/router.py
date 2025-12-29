@@ -8,18 +8,18 @@ from fastapi.templating import Jinja2Templates
 from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.domain.domain import Domain
 
-router = APIRouter(prefix="/volumes", tags=["Volumes"])
+router = APIRouter(prefix="/distributors", tags=["Distributors"])
 
 
 @router.get("", dependencies=[Depends(get_current_user)])
-def get_volumes(
+def get_distributors(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
 ) -> Response:
-    result = domain.get_volumes()
+    result = domain.get_distributors()
     return templates.TemplateResponse(
         request=request,
-        name="items/volumes.html",
+        name="items/distributors.html",
         context={"result": result},
     )
