@@ -12,7 +12,7 @@ router = APIRouter(prefix="/deposits", tags=["Deposits"])
 
 
 @router.get("", dependencies=[Depends(get_current_user)])
-def get_deposits_view(
+def get_deposits(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
@@ -21,5 +21,5 @@ def get_deposits_view(
     return templates.TemplateResponse(
         request=request,
         name="items/deposits.html",
-        context={"deposits": result.items},
+        context={"result": result},
     )

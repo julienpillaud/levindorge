@@ -17,12 +17,14 @@ from app.domain.commons.commands import (
 )
 from app.domain.context import ContextProtocol
 from app.domain.deposits.commands import get_deposits_command
+from app.domain.distributors.commands import get_distributors_command
 from app.domain.inventories.commands import (
     create_inventory_command,
     delete_inventory_command,
     get_inventories_command,
     get_inventory_command,
 )
+from app.domain.origins.commands import get_origins_command
 from app.domain.pos.commands import (
     create_pos_article_command,
     delete_pos_article_command,
@@ -35,7 +37,7 @@ from app.domain.price_labels.commands import (
     get_price_labels_command,
     get_price_labels_sheet_command,
 )
-from app.domain.producers.commands import get_producers_command
+from app.domain.producers.commands import create_producer_command, get_producers_command
 from app.domain.stores.commands import get_stores_command
 from app.domain.users.commands import (
     refresh_token_command,
@@ -59,6 +61,11 @@ class Domain(BaseDomain[ContextProtocol]):
     get_category_by_name = CommandHandler(get_category_by_name_command)
     # producers
     get_producers = CommandHandler(get_producers_command)
+    create_producer = CommandHandler(create_producer_command)
+    # distributors
+    get_distributors = CommandHandler(get_distributors_command)
+    # origins
+    get_origins = CommandHandler(get_origins_command)
     # volumes
     get_volumes = CommandHandler(get_volumes_command)
     # deposits

@@ -5,7 +5,7 @@ dynamic = ["version"]
 requires-python = ">=3.14"
 dependencies = [
     "cleanstack",
-    "fastapi==0.127.0",
+    "fastapi==0.128.0",
     "faststream[cli,redis]==0.5.48",
     "itsdangerous==2.2.0",
     "jinja2==3.1.6",
@@ -29,7 +29,7 @@ dev = [
     "pytest==9.0.2",
     "pre-commit==4.5.1",
     "polyfactory==3.2.0",
-    "ty==0.0.5",
+    "ty==0.0.8",
 ]
 
 [tool.uv.sources]

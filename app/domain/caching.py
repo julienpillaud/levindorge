@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 def cached_command[**P, R: BaseModel](
     response_model: type[R],
     ttl: int = 3600,
+    tag: str | None = None,
 ) -> Callable[[Command[P, R]], Command[P, R]]:
     def decorator(func: Command[P, R]) -> Command[P, R]:
         @wraps(func)
@@ -31,7 +32,12 @@ def cached_command[**P, R: BaseModel](
                 return response_model.model_validate_json(cached)
 
             result = func(context, *args, **kwargs)
-            context.cache_manager.set(key=key, value=result.model_dump_json(), ttl=ttl)
+            context.cache_manager.set(
+                key=key,
+                value=result.model_dump_json(),
+                ttl=ttl,
+                tag=tag,
+            )
             return result
 
         return wrapper

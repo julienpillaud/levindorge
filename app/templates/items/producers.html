@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="h-dvh flex flex-col">
+    {% include '_includes/_navbar.html' %}
+    <div class="flex flex-col flex-1 px-4 py-4 gap-4 min-h-0">
+      {# -------------------------------------------------------------------- #}
+      {# Card #}
+      <div class="card bg-base-200 shadow-sm">
+        <div class="card-body flex flex-row p-4 justify-between items-center">
+          <div class="flex items-center gap-4 py-2">
+            <h1 class="card-title text-2xl">{{ title }}</h1>
+            <div id="items-count" class="badge badge-outline badge-accent badge-md">
+              {{ result.total }}
+            </div>
+          </div>
+          <div>
+            <button class="btn" id="create-producer-button">Nouveau</button>
+          </div>
+        </div>
+      </div>
+      {# -------------------------------------------------------------------- #}
+      {# Table #}
+      <div class="overflow-x-auto rounded-box border border-base-300 md:w-4/12 md:mx-auto">
+        <table class="table table-pin-rows table-sm" id="items-table">
+          <tbody>
+          {% for item in result.items %}
+            {% include "items/_producer_row.html" %}
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {# -------------------------------------------------------------------- #}
+    </div>
+  </div>
+
+  <dialog id="producer-modal" class="modal">
+    <div class="modal-box">
+      <form id="producer-form">
+        <div class="card shadow border border-base-300">
+          <div class="card-body pt-4">
+            <input type="hidden" name="type" value="{{ producer_type }}" />
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Nom</legend>
+              <input type="text" class="input w-full" name="name" required/>
+            </fieldset>
+            <div class="card-actions flex justify-between">
+              <button type="reset" class="btn btn-circle btn-error text-base-100">
+                <i class="bi bi-x-lg"></i>
+              </button>
+              <button type="submit" class="btn btn-circle btn-success text-base-100">
+                <i class="bi bi-check-lg"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+{% endblock %}
