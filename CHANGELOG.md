@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.19.0](https://github.com/julienpillaud/levindorge/compare/0.18.0...0.19.0) (2025-12-31)
+
+
+### Features
+
+* add producer creation ([#96](https://github.com/julienpillaud/levindorge/issues/96)) ([6e62e3c](https://github.com/julienpillaud/levindorge/commit/6e62e3cf4024955a5242e293faf1b06f088500ae))
+* implement producer deletion ([#98](https://github.com/julienpillaud/levindorge/issues/98)) ([131b83d](https://github.com/julienpillaud/levindorge/commit/131b83d7ba3c154594cfc0ca078e7c6e6794cef1))
+
 ## [0.18.0](https://github.com/julienpillaud/levindorge/compare/0.17.0...0.18.0) (2025-12-25)
 
 
