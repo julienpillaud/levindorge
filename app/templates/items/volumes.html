@@ -20,23 +20,23 @@
       {# Table #}
       <div class="overflow-x-auto rounded-box border border-base-300 md:w-6/12 md:mx-auto">
         <table class="table table-pin-rows table-sm">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Valeur</th>
-            <th>Catégorie</th>
-          </tr>
-        </thead>
-          <tbody>
-          {% for item in result.items %}
+          <thead>
             <tr>
-              <td>
-                <label><input type="checkbox" class="checkbox" /></label>
-              </td>
-              <td>{{ item.value }} {{ item.unit }}</td>
-              <td>{{ item.category }}</td>
+              <th></th>
+              <th>Valeur</th>
+              <th>Catégorie</th>
             </tr>
-          {% endfor %}
+          </thead>
+          <tbody>
+            {% for item in result.items %}
+              <tr>
+                <td>
+                  <label><input type="checkbox" class="checkbox" /></label>
+                </td>
+                <td>{{ item.value }} {{ item.unit }}</td>
+                <td>{{ item.category }}</td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

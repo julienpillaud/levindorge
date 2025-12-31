@@ -6,26 +6,29 @@
       {# -------------------------------------------------------------------- #}
       {# Card #}
       <div class="card bg-base-200 shadow-sm">
-        <div class="card-body flex flex-row p-4 justify-between items-center">
+        <div class="card-body flex flex-col md:flex-row md:justify-between md:items-center p-4">
           <div class="flex items-center gap-4 py-2">
             <h1 class="card-title text-2xl">{{ title }}</h1>
             <div id="items-count" class="badge badge-outline badge-accent badge-md">
               {{ result.total }}
             </div>
           </div>
-          <div>
+          <div class="flex gap-2">
             <button class="btn" id="create-producer-button">Nouveau</button>
+            <button class="btn btn-outline btn-error hidden" id="delete-producer-button">
+              Supprimer
+            </button>
           </div>
         </div>
       </div>
       {# -------------------------------------------------------------------- #}
       {# Table #}
       <div class="overflow-x-auto rounded-box border border-base-300 md:w-4/12 md:mx-auto">
-        <table class="table table-pin-rows table-sm" id="items-table">
+        <table class="table table-pin-rows table-sm" id="producers-table">
           <tbody>
-          {% for item in result.items %}
-            {% include "items/_producer_row.html" %}
-          {% endfor %}
+            {% for item in result.items %}
+              {% include "items/_producer_row.html" %}
+            {% endfor %}
           </tbody>
         </table>
       </div>
@@ -41,7 +44,7 @@
             <input type="hidden" name="type" value="{{ producer_type }}" />
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Nom</legend>
-              <input type="text" class="input w-full" name="name" required/>
+              <input type="text" class="input w-full" name="name" required />
             </fieldset>
             <div class="card-actions flex justify-between">
               <button type="reset" class="btn btn-circle btn-error text-base-100">
@@ -56,5 +59,4 @@
       </form>
     </div>
   </dialog>
-
 {% endblock %}

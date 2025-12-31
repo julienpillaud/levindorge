@@ -21,14 +21,14 @@
       <div class="overflow-x-auto rounded-box border border-base-300 md:w-4/12 md:mx-auto">
         <table class="table table-pin-rows table-sm">
           <tbody>
-          {% for item in result.items %}
-            <tr>
-              <td>
-                <label><input type="checkbox" class="checkbox" /></label>
-              </td>
-              <td>{{ item.name }}</td>
-            </tr>
-          {% endfor %}
+            {% for item in result.items %}
+              <tr>
+                <td>
+                  <label><input type="checkbox" class="checkbox" /></label>
+                </td>
+                <td>{{ item.name }}</td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

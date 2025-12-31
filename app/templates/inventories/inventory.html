@@ -1,6 +1,5 @@
 <div class="card bg-base-200 shadow-sm mb-2">
   <div class="card-body p-4 flex flex-row justify-between">
-
     <div class="flex flex-col gap-1">
       <h2 class="card-title text-xl">{{ inventory.store }}</h2>
 
@@ -18,15 +17,18 @@
     <div class="stats stats-vertical md:stats-horizontal shadow self-center">
       <div class="stat p-2">
         <div class="stat-title">Valeur marchande</div>
-        <div class="stat-value text-lg text-accent">{{ inventory.inventory_value | strip_zeros }} €</div>
+        <div class="stat-value text-lg text-accent">
+          {{ inventory.inventory_value | strip_zeros }} €
+        </div>
       </div>
 
       <div class="stat p-2">
         <div class="stat-title">Valeur consigne</div>
-        <div class="stat-value text-lg text-accent">{{ inventory.deposit_value | strip_zeros }} €</div>
+        <div class="stat-value text-lg text-accent">
+          {{ inventory.deposit_value | strip_zeros }} €
+        </div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -35,20 +37,22 @@
 <div class="overflow-x-auto rounded-box border border-base-300">
   <table class="table table-pin-rows table-sm">
     <thead>
-    <tr>
-      <th>Catégorie</th>
-      <th>Valeur marchande</th>
-      <th>Valeur consigne</th>
-    </tr>
+      <tr>
+        <th>Catégorie</th>
+        <th>Valeur marchande</th>
+        <th>Valeur consigne</th>
+      </tr>
     </thead>
     <tbody>
-    {% for category, values in inventory.inventory.items() %}
-      <tr>
-        <td class="text-nowrap">{{ category }}</td>
-        <td>{{ values.inventory_value | strip_zeros }} €</td>
-        <td>{% if values.deposit_value %}{{ values.deposit_value | strip_zeros }} €{% endif %}</td>
-      </tr>
-    {% endfor %}
+      {% for category, values in inventory.inventory.items() %}
+        <tr>
+          <td class="text-nowrap">{{ category }}</td>
+          <td>{{ values.inventory_value | strip_zeros }} €</td>
+          <td>
+            {% if values.deposit_value %}{{ values.deposit_value | strip_zeros }} €{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
     </tbody>
   </table>
 </div>

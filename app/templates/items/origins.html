@@ -21,21 +21,25 @@
       <div class="overflow-x-auto rounded-box border border-base-300 md:w-4/12 md:mx-auto">
         <table class="table table-pin-rows table-sm">
           <tbody>
-          {% for item in result.items %}
-            <tr>
-              <td>
-                <label><input type="checkbox" class="checkbox" /></label>
-              </td>
-              <td>{{ item.name }}</td>
-              {% if item.code %}
+            {% for item in result.items %}
+              <tr>
                 <td>
-                  <img src="https://flagcdn.com/48x36/{{ item.code.lower() }}.png" width="20" height="15">
+                  <label><input type="checkbox" class="checkbox" /></label>
                 </td>
+                <td>{{ item.name }}</td>
+                {% if item.code %}
+                  <td>
+                    <img
+                      src="https://flagcdn.com/48x36/{{ item.code.lower() }}.png"
+                      width="20"
+                      height="15"
+                    />
+                  </td>
                 {% else %}
-                <td></td>
-              {% endif %}
-            </tr>
-          {% endfor %}
+                  <td></td>
+                {% endif %}
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

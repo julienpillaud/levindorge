@@ -25,3 +25,6 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
             filters={"_id": {"$in": [ObjectId(id_) for id_ in article_ids]}},
             sort={"type": 1, "region": 1, "name.name1": 1, "name.name2": 1},
         )
+
+    def exists_by_producer(self, producer: str) -> bool:
+        return self.collection.find_one({"producer": producer}) is not None
