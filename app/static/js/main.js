@@ -12,7 +12,7 @@ import { buildCreateDropdownMenu } from "./menu.js";
 import { initArticles } from "./articles/init.js";
 import { initSearch } from "./search.js";
 import { initInventoriesTable } from "./inventories.js";
-import {createProducer, deleteProducers} from "./producers.js";
+import { createProducer, deleteProducers } from "./producers.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initSearch();
@@ -62,7 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Items
   const producerModal = document.getElementById("producer-modal");
 
-  const createProducerButton = document.getElementById("create-producer-button");
+  const createProducerButton = document.getElementById(
+    "create-producer-button",
+  );
   createProducerButton?.addEventListener("click", () => {
     producerModal?.showModal();
   });
@@ -75,13 +77,16 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
     createProducer(producerForm);
     producerModal?.close();
-  })
+  });
 
   const producersTableBody = document.querySelector("#producers-table tbody");
-  const deleteProducersButton = document.getElementById("delete-producer-button");
+  const deleteProducersButton = document.getElementById(
+    "delete-producer-button",
+  );
   producersTableBody?.addEventListener("change", (event) => {
     if (event.target.matches(".checkbox")) {
-      const hasChecked = producersTableBody.querySelector(".checkbox:checked") !== null;
+      const hasChecked =
+        producersTableBody.querySelector(".checkbox:checked") !== null;
       deleteProducersButton?.classList.toggle("hidden", !hasChecked);
     }
   });
@@ -89,6 +94,5 @@ document.addEventListener("DOMContentLoaded", () => {
   deleteProducersButton?.addEventListener("click", async () => {
     await deleteProducers(producersTableBody);
     deleteProducersButton?.classList.toggle("hidden", true);
-  })
-
+  });
 });
