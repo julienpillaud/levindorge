@@ -1,4 +1,4 @@
-from cleanstack.exceptions import ConflictError
+from cleanstack.exceptions import ConflictError, NotFoundError
 
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
@@ -33,3 +33,19 @@ def create_producer_command(
     created_producer = context.producer_repository.create(producer)
     context.cache_manager.invalidate_tag("producers")
     return created_producer
+
+
+def delete_producer_command(
+    context: ContextProtocol,
+    /,
+    producer_id: str,
+) -> None:
+    producer = context.producer_repository.get_by_id(producer_id)
+    if not producer:
+        raise NotFoundError()
+
+    if context.article_repository.exists_by_producer(producer.name):
+        raise ConflictError()
+
+    context.producer_repository.delete(producer)
+    context.cache_manager.invalidate_tag("producers")

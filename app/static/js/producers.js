@@ -1,5 +1,6 @@
 import {showToast} from "./utils.js";
 
+// -----------------------------------------------------------------------------
 export const createProducer = async (form) => {
   const data = Object.fromEntries(new FormData(form));
   const options = {
@@ -26,4 +27,30 @@ export const createProducer = async (form) => {
   tbody.insertAdjacentHTML("afterbegin", html);
   showToast(`${data.name} créé !`, {type: "success"})
   form.reset();
+}
+
+// -----------------------------------------------------------------------------
+export const deleteProducers = async (tbody) => {
+  const checked = tbody.querySelectorAll(".checkbox:checked");
+  for (const checkbox of checked) {
+    const row = checkbox.closest("tr");
+    const {id, name} = row.dataset;
+
+    const response = await fetch(`/producers/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      let message = "Erreur lors de la suppression"
+      if (response.status === 409) {
+        message = `${name} ne peut pas être supprimé`
+      }
+      showToast(message, {type: "warning"});
+      continue;
+    }
+
+    showToast(`${name} supprimé !`, {type: "success"})
+    row.remove();
+  }
+  tbody.querySelectorAll(".checkbox").forEach(cb => cb.checked = false);
 }

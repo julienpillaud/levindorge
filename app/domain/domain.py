@@ -37,7 +37,11 @@ from app.domain.price_labels.commands import (
     get_price_labels_command,
     get_price_labels_sheet_command,
 )
-from app.domain.producers.commands import create_producer_command, get_producers_command
+from app.domain.producers.commands import (
+    create_producer_command,
+    delete_producer_command,
+    get_producers_command,
+)
 from app.domain.stores.commands import get_stores_command
 from app.domain.users.commands import (
     refresh_token_command,
@@ -62,6 +66,7 @@ class Domain(BaseDomain[ContextProtocol]):
     # producers
     get_producers = CommandHandler(get_producers_command)
     create_producer = CommandHandler(create_producer_command)
+    delete_producer = CommandHandler(delete_producer_command)
     # distributors
     get_distributors = CommandHandler(get_distributors_command)
     # origins

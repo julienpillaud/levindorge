@@ -15,13 +15,16 @@
           </div>
           <div>
             <button class="btn" id="create-producer-button">Nouveau</button>
+            <button class="btn btn-outline btn-error hidden" id="delete-producer-button">
+              Supprimer
+            </button>
           </div>
         </div>
       </div>
       {# -------------------------------------------------------------------- #}
       {# Table #}
       <div class="overflow-x-auto rounded-box border border-base-300 md:w-4/12 md:mx-auto">
-        <table class="table table-pin-rows table-sm" id="items-table">
+        <table class="table table-pin-rows table-sm" id="producers-table">
           <tbody>
           {% for item in result.items %}
             {% include "items/_producer_row.html" %}

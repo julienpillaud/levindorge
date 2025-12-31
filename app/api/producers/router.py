@@ -53,3 +53,11 @@ def create_producer(
         name="items/_producer_row.html",
         context={"item": producer},
     )
+
+
+@router.delete("/{producer_id}", dependencies=[Depends(get_current_user)])
+def delete_producer(
+    domain: Annotated[Domain, Depends(get_domain)],
+    producer_id: str,
+) -> None:
+    domain.delete_producer(producer_id=producer_id)
