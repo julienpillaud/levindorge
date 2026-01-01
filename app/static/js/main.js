@@ -12,7 +12,7 @@ import { buildCreateDropdownMenu } from "./menu.js";
 import { initArticles } from "./articles/init.js";
 import { initSearch } from "./search.js";
 import { initInventoriesTable } from "./inventories.js";
-import {createItem, deleteItems} from "./items.js";
+import { createItem, deleteItems } from "./items.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initSearch();
@@ -97,7 +97,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------------
   // Distributors
   const distributorModal = document.getElementById("distributor-modal");
-  const distributorTableBody = document.querySelector("#distributors-table tbody");
+  const distributorTableBody = document.querySelector(
+    "#distributors-table tbody",
+  );
 
   const createDistributorButton = document.getElementById(
     "create-distributor-button",

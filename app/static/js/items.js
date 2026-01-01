@@ -39,9 +39,10 @@ export const deleteItems = async (tbody, endpoint) => {
     });
 
     if (!response.ok) {
-      const message = response.status === 409
-        ? `${name} ne peut pas être supprimé`
-        : "Erreur lors de la suppression";
+      const message =
+        response.status === 409
+          ? `${name} ne peut pas être supprimé`
+          : "Erreur lors de la suppression";
 
       showToast(message, { type: "warning" });
       continue;
