@@ -17,7 +17,11 @@ from app.domain.commons.commands import (
 )
 from app.domain.context import ContextProtocol
 from app.domain.deposits.commands import get_deposits_command
-from app.domain.distributors.commands import get_distributors_command
+from app.domain.distributors.commands import (
+    create_distributor_command,
+    delete_distributor_command,
+    get_distributors_command,
+)
 from app.domain.inventories.commands import (
     create_inventory_command,
     delete_inventory_command,
@@ -69,6 +73,8 @@ class Domain(BaseDomain[ContextProtocol]):
     delete_producer = CommandHandler(delete_producer_command)
     # distributors
     get_distributors = CommandHandler(get_distributors_command)
+    create_distributor = CommandHandler(create_distributor_command)
+    delete_distributor = CommandHandler(delete_distributor_command)
     # origins
     get_origins = CommandHandler(get_origins_command)
     # volumes

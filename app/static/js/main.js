@@ -12,7 +12,7 @@ import { buildCreateDropdownMenu } from "./menu.js";
 import { initArticles } from "./articles/init.js";
 import { initSearch } from "./search.js";
 import { initInventoriesTable } from "./inventories.js";
-import { createProducer, deleteProducers } from "./producers.js";
+import { createItem, deleteItems } from "./items.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initSearch();
@@ -59,8 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------------------------------------------------------
-  // Items
+  // Producers
   const producerModal = document.getElementById("producer-modal");
+  const producersTableBody = document.querySelector("#producers-table tbody");
 
   const createProducerButton = document.getElementById(
     "create-producer-button",
@@ -75,11 +76,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   producerForm?.addEventListener("submit", (event) => {
     event.preventDefault();
-    createProducer(producerForm);
+    createItem(producerForm, producersTableBody, "producers");
     producerModal?.close();
   });
 
-  const producersTableBody = document.querySelector("#producers-table tbody");
   const deleteProducersButton = document.getElementById(
     "delete-producer-button",
   );
@@ -90,9 +90,47 @@ document.addEventListener("DOMContentLoaded", () => {
       deleteProducersButton?.classList.toggle("hidden", !hasChecked);
     }
   });
-
   deleteProducersButton?.addEventListener("click", async () => {
-    await deleteProducers(producersTableBody);
+    await deleteItems(producersTableBody, "producers");
     deleteProducersButton?.classList.toggle("hidden", true);
   });
+  // ---------------------------------------------------------------------------
+  // Distributors
+  const distributorModal = document.getElementById("distributor-modal");
+  const distributorTableBody = document.querySelector(
+    "#distributors-table tbody",
+  );
+
+  const createDistributorButton = document.getElementById(
+    "create-distributor-button",
+  );
+  createDistributorButton?.addEventListener("click", () => {
+    distributorModal?.showModal();
+  });
+
+  const distributorForm = document.getElementById("distributor-form");
+  distributorForm?.addEventListener("reset", () => {
+    distributorModal.close();
+  });
+  distributorForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    createItem(distributorForm, distributorTableBody, "distributors");
+    distributorModal?.close();
+  });
+
+  const deleteDistributorsButton = document.getElementById(
+    "delete-distributor-button",
+  );
+  distributorTableBody?.addEventListener("change", (event) => {
+    if (event.target.matches(".checkbox")) {
+      const hasChecked =
+        distributorTableBody.querySelector(".checkbox:checked") !== null;
+      deleteDistributorsButton?.classList.toggle("hidden", !hasChecked);
+    }
+  });
+  deleteDistributorsButton?.addEventListener("click", async () => {
+    await deleteItems(distributorTableBody, "distributors");
+    deleteDistributorsButton?.classList.toggle("hidden", true);
+  });
+  // ---------------------------------------------------------------------------
 });
