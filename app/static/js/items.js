@@ -1,14 +1,15 @@
 import { showToast } from "./utils.js";
 
 // -----------------------------------------------------------------------------
-export const createProducer = async (form) => {
+export const createItem = async (form, tbody, endpoint) => {
   const data = Object.fromEntries(new FormData(form));
-  const options = {
-    body: JSON.stringify(data),
+
+  const response = await fetch(`/${endpoint}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-  };
-  const response = await fetch("/producers", options);
+    body: JSON.stringify(data),
+  });
+
   if (!response.ok) {
     let message = "Erreur lors de la création";
     if (response.status === 409) {
@@ -16,35 +17,32 @@ export const createProducer = async (form) => {
     }
     showToast(message, { type: "warning" });
     form.reset();
-
-    const error = await response.json();
-    console.error(error); // eslint-disable-line
     return;
   }
 
   const html = await response.text();
-  const tbody = document.querySelector("table tbody");
   tbody.insertAdjacentHTML("afterbegin", html);
   showToast(`${data.name} créé !`, { type: "success" });
   form.reset();
 };
 
 // -----------------------------------------------------------------------------
-export const deleteProducers = async (tbody) => {
+export const deleteItems = async (tbody, endpoint) => {
   const checked = tbody.querySelectorAll(".checkbox:checked");
+
   for (const checkbox of checked) {
     const row = checkbox.closest("tr");
     const { id, name } = row.dataset;
 
-    const response = await fetch(`/producers/${id}`, {
+    const response = await fetch(`/${endpoint}/${id}`, {
       method: "DELETE",
     });
 
     if (!response.ok) {
-      let message = "Erreur lors de la suppression";
-      if (response.status === 409) {
-        message = `${name} ne peut pas être supprimé`;
-      }
+      const message = response.status === 409
+        ? `${name} ne peut pas être supprimé`
+        : "Erreur lors de la suppression";
+
       showToast(message, { type: "warning" });
       continue;
     }
@@ -52,5 +50,6 @@ export const deleteProducers = async (tbody) => {
     showToast(`${name} supprimé !`, { type: "success" });
     row.remove();
   }
+
   tbody.querySelectorAll(".checkbox").forEach((cb) => (cb.checked = false));
 };

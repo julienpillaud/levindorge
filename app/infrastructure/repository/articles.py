@@ -28,3 +28,6 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
 
     def exists_by_producer(self, producer: str) -> bool:
         return self.collection.find_one({"producer": producer}) is not None
+
+    def exists_by_distributor(self, distributor: str) -> bool:
+        return self.collection.find_one({"distributor": distributor}) is not None

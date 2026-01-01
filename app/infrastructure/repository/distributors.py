@@ -10,3 +10,6 @@ class DistributorRepository(
     domain_entity_type = Distributor
     collection_name = "distributors"
     searchable_fields = ()
+
+    def exists(self, name: str) -> bool:
+        return self.collection.count_documents({"name": name}) > 0
