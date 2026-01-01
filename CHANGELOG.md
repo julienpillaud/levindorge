@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.0](https://github.com/julienpillaud/levindorge/compare/0.19.0...0.20.0) (2026-01-01)
+
+
+### Features
+
+* add distributor management ([#99](https://github.com/julienpillaud/levindorge/issues/99)) ([02bb8b0](https://github.com/julienpillaud/levindorge/commit/02bb8b05c6c09469cdd815b7b61d6576f86d222c))
+
 ## [0.19.0](https://github.com/julienpillaud/levindorge/compare/0.18.0...0.19.0) (2025-12-31)
 
 
