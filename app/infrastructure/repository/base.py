@@ -87,7 +87,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
 
         db_result = self._get_by_id(result.inserted_id)
         if not db_result:
-            raise NotFoundError()
+            raise NotFoundError("Entity not found.")
 
         return self._to_domain_entity(db_result)
 
@@ -107,7 +107,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
 
         db_result = self._get_by_id(entity.id)
         if not db_result:
-            raise NotFoundError()
+            raise NotFoundError("Entity not found.")
 
         return self._to_domain_entity(db_result)
 

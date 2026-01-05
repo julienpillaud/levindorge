@@ -16,7 +16,11 @@ from app.domain.commons.commands import (
     get_view_data_command,
 )
 from app.domain.context import ContextProtocol
-from app.domain.deposits.commands import get_deposits_command
+from app.domain.deposits.commands import (
+    create_deposit_command,
+    delete_deposit_command,
+    get_deposits_command,
+)
 from app.domain.distributors.commands import (
     create_distributor_command,
     delete_distributor_command,
@@ -81,6 +85,8 @@ class Domain(BaseDomain[ContextProtocol]):
     get_volumes = CommandHandler(get_volumes_command)
     # deposits
     get_deposits = CommandHandler(get_deposits_command)
+    create_deposit = CommandHandler(create_deposit_command)
+    delete_deposit = CommandHandler(delete_deposit_command)
     # articles
     get_articles = CommandHandler(get_articles_command)
     get_articles_by_ids = CommandHandler(get_articles_by_ids_command)

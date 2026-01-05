@@ -1,6 +1,7 @@
 from typing import Protocol
 
 from app.domain.articles.entities import Article
+from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId, PaginatedResponse
 from app.domain.protocols.repository import RepositoryProtocol
 
@@ -15,3 +16,5 @@ class ArticleRepositoryProtocol(RepositoryProtocol[Article], Protocol):
     def exists_by_producer(self, producer: str) -> bool: ...
 
     def exists_by_distributor(self, distributor: str) -> bool: ...
+
+    def exists_by_deposit(self, deposit: Deposit) -> bool: ...

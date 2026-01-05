@@ -38,7 +38,7 @@ def get_articles_by_ids_command(
 def get_article_command(context: ContextProtocol, /, article_id: EntityId) -> Article:
     article = context.article_repository.get_by_id(article_id)
     if not article:
-        raise NotFoundError()
+        raise NotFoundError(f"Article '{article_id}' not found.")
 
     return article
 
@@ -49,7 +49,7 @@ def create_article_command(
     data: ArticleCreateOrUpdate,
 ) -> Article:
     if not context.category_repository.get_by_name(data.category):
-        raise NotFoundError()
+        raise NotFoundError(f"Category '{data.category}' not found.")
 
     stores = _get_stores(context, store_slugs=list(data.store_data.keys()))
 
@@ -77,13 +77,13 @@ def update_article_command(
     data: ArticleCreateOrUpdate,
 ) -> Article:
     if not context.category_repository.get_by_name(data.category):
-        raise NotFoundError()
+        raise NotFoundError(f"Category '{data.category}' not found.")
 
     stores = _get_stores(context, store_slugs=list(data.store_data.keys()))
 
     existing_article = context.article_repository.get_by_id(article_id)
     if not existing_article:
-        raise NotFoundError()
+        raise NotFoundError(f"Article '{article_id}' not found.")
 
     article = Article(
         id=existing_article.id,
@@ -106,7 +106,7 @@ def update_article_command(
 def delete_article_command(context: ContextProtocol, /, article_id: EntityId) -> None:
     article = context.article_repository.get_by_id(article_id)
     if not article:
-        raise NotFoundError()
+        raise NotFoundError(f"Article '{article_id}' not found.")
 
     stores = _get_stores(context, store_slugs=list(article.store_data.keys()))
 
@@ -128,6 +128,6 @@ def _get_stores(
     for store_slug in store_slugs:
         store = context.store_repository.get_by_slug(store_slug)
         if not store:
-            raise NotFoundError()
+            raise NotFoundError("Store not found.")
         stores.append(store)
     return stores

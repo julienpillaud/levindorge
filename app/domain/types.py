@@ -10,4 +10,4 @@ type Command[**P, R: BaseModel] = Callable[Concatenate[ContextProtocol, P], R]
 
 type StoreName = str
 type StoreSlug = str
-DecimalType = Annotated[Decimal, PlainSerializer(str)]
+DecimalType = Annotated[Decimal, PlainSerializer(float)]

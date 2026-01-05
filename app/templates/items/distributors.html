@@ -23,11 +23,8 @@
       </div>
       {# -------------------------------------------------------------------- #}
       {# Table #}
-      <div
-        class="overflow-x-auto rounded-box border border-base-300 md:w-4/12 md:mx-auto"
-        id="distributors-table"
-      >
-        <table class="table table-pin-rows table-sm">
+      <div class="overflow-x-auto rounded-box border border-base-300 md:w-4/12 md:mx-auto">
+        <table class="table table-pin-rows table-sm" id="distributors-table">
           <tbody>
             {% for item in result.items %}
               {% include "items/_distributor_row.html" %}

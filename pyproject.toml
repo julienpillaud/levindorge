@@ -34,7 +34,7 @@ dev = [
 
 [tool.uv.sources]
 tactill = { git = "https://github.com/julienpillaud/tactill.git", tag = "0.7.0" }
-cleanstack = { git = "https://github.com/julienpillaud/cleanstack", tag = "0.7.0" }
+cleanstack = { git = "https://github.com/julienpillaud/cleanstack", tag = "0.8.0" }
 
 # disable automatic discovery (find node_modules as a top-level package, why ?)
 [tool.setuptools]

@@ -9,7 +9,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.api.dependencies import get_templates
 from app.core.config.settings import Settings
 from app.domain.exceptions import (
-    CannotDeleteError,
+    AlreadyExistsError,
+    EntityInUseError,
     UserUnauthorizedError,
 )
 
@@ -45,17 +46,13 @@ def add_exception_handler(app: FastAPI, settings: Settings) -> None:
 
     @app.exception_handler(ConflictError)
     async def conflict_error_handler(request: Request, exc: ConflictError) -> Response:
-        return JSONResponse(
-            status_code=status.HTTP_409_CONFLICT,
-            content={"detail": "Existe déjà !"},
-        )
+        if isinstance(exc, AlreadyExistsError):
+            message = f"'{exc.display_name}' existe déjà"
+        elif isinstance(exc, EntityInUseError):
+            message = f"'{exc.display_name}' ne peut pas être supprimé"
+        else:
+            message = "Conflit"
 
-    @app.exception_handler(CannotDeleteError)
-    async def cannot_delete_exception_handler(
-        request: Request,
-        exc: CannotDeleteError,
-    ) -> Response:
-        message = f"'{exc.item_name}' ne peut pas être supprimé"
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
             content={"detail": message},

@@ -1,4 +1,4 @@
-from cleanstack.exceptions import ForbiddenError
+from cleanstack.exceptions import ConflictError, ForbiddenError
 
 
 class UserUnauthorizedError(ForbiddenError):
@@ -9,17 +9,13 @@ class POSManagerError(Exception):
     pass
 
 
-# special case to put an error message in the session
-class CannotDeleteError(Exception):
-    def __init__(self, item_name: str):
-        self.item_name = item_name
+class AlreadyExistsError(ConflictError):
+    def __init__(self, message: str, display_name: str):
+        self.display_name = display_name
+        super().__init__(message)
 
 
-class VolumeInUseError(CannotDeleteError):
-    def __init__(self, item_name: str):
-        super().__init__(item_name=item_name)
-
-
-class DepositInUseError(CannotDeleteError):
-    def __init__(self, item_name: str):
-        super().__init__(item_name=item_name)
+class EntityInUseError(ConflictError):
+    def __init__(self, message: str, display_name: str):
+        self.display_name = display_name
+        super().__init__(message)

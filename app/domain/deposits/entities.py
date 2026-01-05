@@ -11,10 +11,20 @@ class DepositType(StrEnum):
     UNIT = "unit"
     CASE = "case"
 
+    @property
+    def label(self) -> str:
+        mapping = {DepositType.UNIT: "Unitaire", DepositType.CASE: "Caisse"}
+        return mapping[self]
+
 
 class DepositCategory(StrEnum):
     BEER = "beer"
     KEG = "keg"
+
+    @property
+    def label(self) -> str:
+        mapping = {DepositCategory.BEER: "Bière", DepositCategory.KEG: "Fût"}
+        return mapping[self]
 
 
 class Deposit(DomainEntity):
@@ -22,8 +32,12 @@ class Deposit(DomainEntity):
     type: DepositType
     category: DepositCategory
 
+    @property
+    def display_name(self) -> str:
+        return f'"{self.value} {self.type.label} {self.category.label}"'
+
 
 class DepositCreate(BaseModel):
-    value: float
+    value: Annotated[DecimalType, Field(gt=0, decimal_places=2)]
     type: DepositType
     category: DepositCategory
