@@ -24,6 +24,6 @@ def get_categories_command(
 def get_category_by_name_command(context: ContextProtocol, /, name: str) -> Category:
     category = context.category_repository.get_by_name(name=name)
     if not category:
-        raise NotFoundError()
+        raise NotFoundError(f"Category '{name}' not found.")
 
     return category

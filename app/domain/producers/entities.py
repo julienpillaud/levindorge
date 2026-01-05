@@ -11,3 +11,7 @@ class ProducerType(StrEnum):
 class Producer(DomainEntity):
     name: str
     type: ProducerType
+
+    @property
+    def display_name(self) -> str:
+        return self.name

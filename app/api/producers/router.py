@@ -48,11 +48,14 @@ def create_producer(
         name=producer_create.name,
         producer_type=producer_create.type,
     )
-    return templates.TemplateResponse(
+
+    response = templates.TemplateResponse(
         request=request,
         name="items/_producer_row.html",
         context={"item": producer},
     )
+    response.headers["X-Display-Name"] = producer.display_name
+    return response
 
 
 @router.delete("/{producer_id}", dependencies=[Depends(get_current_user)])

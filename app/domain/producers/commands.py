@@ -1,8 +1,9 @@
-from cleanstack.exceptions import ConflictError, NotFoundError
+from cleanstack.exceptions import NotFoundError
 
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
 from app.domain.entities import PaginatedResponse
+from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 from app.domain.producers.entities import Producer, ProducerType
 
 
@@ -26,10 +27,13 @@ def create_producer_command(
     name: str,
     producer_type: ProducerType,
 ) -> Producer:
-    if context.producer_repository.exists(name=name, producer_type=producer_type):
-        raise ConflictError()
-
     producer = Producer(name=name, type=producer_type)
+    if context.producer_repository.exists(name=name, producer_type=producer_type):
+        raise AlreadyExistsError(
+            f"`{producer.display_name}` already exists.",
+            producer.display_name,
+        )
+
     created_producer = context.producer_repository.create(producer)
     context.cache_manager.invalidate_tag("producers")
     return created_producer
@@ -42,10 +46,13 @@ def delete_producer_command(
 ) -> None:
     producer = context.producer_repository.get_by_id(producer_id)
     if not producer:
-        raise NotFoundError()
+        raise NotFoundError("Producer not found.")
 
     if context.article_repository.exists_by_producer(producer.name):
-        raise ConflictError()
+        raise EntityInUseError(
+            f"Producer `{producer.display_name}` is still in use.",
+            producer.display_name,
+        )
 
     context.producer_repository.delete(producer)
     context.cache_manager.invalidate_tag("producers")

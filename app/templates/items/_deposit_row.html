@@ -1,0 +1,8 @@
+<tr data-id="{{ item.id }}" data-name="{{ item.display_name }}">
+  <td>
+    <label><input type="checkbox" class="checkbox" /></label>
+  </td>
+  <td>{{ item.value | strip_zeros }}</td>
+  <td>{{ item.type.label }}</td>
+  <td>{{ item.category.label }}</td>
+</tr>

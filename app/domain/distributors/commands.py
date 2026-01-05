@@ -1,9 +1,10 @@
-from cleanstack.exceptions import ConflictError, NotFoundError
+from cleanstack.exceptions import NotFoundError
 
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
 from app.domain.distributors.entities import Distributor
 from app.domain.entities import PaginatedResponse
+from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 
 
 @cached_command(response_model=PaginatedResponse[Distributor], tag="distributors")
@@ -19,10 +20,13 @@ def create_distributor_command(
     /,
     name: str,
 ) -> Distributor:
-    if context.distributor_repository.exists(name=name):
-        raise ConflictError()
-
     distributor = Distributor(name=name)
+    if context.distributor_repository.exists(name=name):
+        raise AlreadyExistsError(
+            f"`{distributor.display_name}` already exists.",
+            distributor.display_name,
+        )
+
     created_distributor = context.distributor_repository.create(distributor)
     context.cache_manager.invalidate_tag("distributors")
     return created_distributor
@@ -35,10 +39,13 @@ def delete_distributor_command(
 ) -> None:
     distributor = context.distributor_repository.get_by_id(distributor_id)
     if not distributor:
-        raise NotFoundError()
+        raise NotFoundError("Distributor not found.")
 
     if context.article_repository.exists_by_distributor(distributor.name):
-        raise ConflictError()
+        raise EntityInUseError(
+            f"`{distributor.display_name}` is still in use.",
+            distributor.display_name,
+        )
 
     context.distributor_repository.delete(distributor)
     context.cache_manager.invalidate_tag("distributors")

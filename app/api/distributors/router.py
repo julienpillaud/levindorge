@@ -34,11 +34,14 @@ def create_distributor(
     distributor_create: DistributorDTO,
 ) -> Response:
     distributor = domain.create_distributor(name=distributor_create.name)
-    return templates.TemplateResponse(
+
+    response = templates.TemplateResponse(
         request=request,
         name="items/_distributor_row.html",
         context={"item": distributor},
     )
+    response.headers["X-Display-Name"] = distributor.display_name
+    return response
 
 
 @router.delete("/{distributor_id}", dependencies=[Depends(get_current_user)])

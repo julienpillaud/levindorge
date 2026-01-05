@@ -20,7 +20,7 @@ def create_price_labels_command(
 ) -> None:
     store = context.store_repository.get_by_slug(store_slug)
     if not store:
-        raise NotFoundError()
+        raise NotFoundError("Store not found.")
 
     large_price_labels, small_price_labels = split_by_size(
         context=context,
@@ -60,7 +60,7 @@ def get_price_labels_sheet_command(
 ) -> PriceLabelSheet:
     price_labels = context.price_label_repository.get_by_id(price_labels_id)
     if not price_labels:
-        raise NotFoundError()
+        raise NotFoundError("Price labels not found.")
 
     return price_labels
 
@@ -72,6 +72,6 @@ def delete_price_labels_command(
 ) -> None:
     price_labels = context.price_label_repository.get_by_id(price_labels_id)
     if not price_labels:
-        raise NotFoundError()
+        raise NotFoundError("Price labels not found.")
 
     context.price_label_repository.delete(price_labels)

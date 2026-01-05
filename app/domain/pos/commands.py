@@ -11,7 +11,7 @@ def create_pos_article_command(
 ) -> None:
     category = context.category_repository.get_by_name(name=data.article.category)
     if not category:
-        raise NotFoundError()
+        raise NotFoundError("Category not found.")
 
     context.pos_manager.create_article(
         data.store,
@@ -26,7 +26,7 @@ def update_pos_article_command(
 ) -> None:
     category = context.category_repository.get_by_name(name=data.article.category)
     if not category:
-        raise NotFoundError()
+        raise NotFoundError("Category not found.")
 
     context.pos_manager.update_article(
         data.store,

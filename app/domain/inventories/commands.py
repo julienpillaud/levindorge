@@ -24,7 +24,7 @@ def get_inventory_command(
 ) -> Inventory:
     inventory = context.inventory_repository.get_by_id(inventory_id)
     if not inventory:
-        raise NotFoundError()
+        raise NotFoundError("Inventory not found.")
 
     return inventory
 
@@ -93,7 +93,7 @@ def create_inventory_command(context: ContextProtocol, store: Store) -> Inventor
 def delete_inventory_command(context: ContextProtocol, inventory_id: EntityId) -> None:
     inventory = context.inventory_repository.get_by_id(inventory_id)
     if not inventory:
-        raise NotFoundError()
+        raise NotFoundError("Inventory not found.")
 
     context.inventory_repository.delete(inventory)
     # context.inventory_repository.delete(inventory_id)
