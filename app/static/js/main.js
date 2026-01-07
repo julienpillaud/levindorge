@@ -10,11 +10,12 @@ import {
 } from "./price-labels.js";
 import { buildCreateDropdownMenu } from "./menu.js";
 import { initArticles } from "./articles/init.js";
-import { initSearch } from "./search.js";
 import { initInventoriesTable } from "./inventories.js";
-import { createItem, deleteItems, initItemsManager } from "./items.js";
+import { initItemsManager } from "./items.js";
+import { initSearch } from "./search.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+
   initSearch();
   initArticles();
   buildCreateDropdownMenu();
@@ -60,14 +61,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ---------------------------------------------------------------------------
   // Producers
-  initItemsManager({ name: "producer", endpoint: "producers" });
+  initItemsManager({ endpoint: "producers", name: "producer" });
   // ---------------------------------------------------------------------------
   // Distributors
-  initItemsManager({ name: "distributor", endpoint: "distributors" });
+  initItemsManager({ endpoint: "distributors", name: "distributor" });
   // ---------------------------------------------------------------------------
   // Deposits
-  initItemsManager({ name: "deposit", endpoint: "deposits" });
+  initItemsManager({ endpoint: "deposits", name: "deposit" });
   // ---------------------------------------------------------------------------
   // Volumes
-  initItemsManager({ name: "volume", endpoint: "volumes" });
+  initItemsManager({ endpoint: "volumes", name: "volume" });
 });
