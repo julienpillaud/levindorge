@@ -67,4 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------------
   // Deposits
   initItemsManager({ name: "deposit", endpoint: "deposits" });
+  // ---------------------------------------------------------------------------
+  // Volumes
+  initItemsManager({ name: "volume", endpoint: "volumes" });
 });

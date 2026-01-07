@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.api.distributors.dtos import DistributorDTO
 from app.domain.domain import Domain
+from app.domain.entities import EntityId
 
 router = APIRouter(prefix="/distributors", tags=["Distributors"])
 
@@ -47,6 +48,6 @@ def create_distributor(
 @router.delete("/{distributor_id}", dependencies=[Depends(get_current_user)])
 def delete_distributor(
     domain: Annotated[Domain, Depends(get_domain)],
-    distributor_id: str,
+    distributor_id: EntityId,
 ) -> None:
     domain.delete_distributor(distributor_id=distributor_id)

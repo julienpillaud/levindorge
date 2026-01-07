@@ -6,20 +6,25 @@
       {# -------------------------------------------------------------------- #}
       {# Card #}
       <div class="card bg-base-200 shadow-sm">
-        <div class="card-body flex flex-row p-4 justify-between items-center">
+        <div class="card-body flex flex-col md:flex-row md:justify-between md:items-center p-4">
           <div class="flex items-center gap-4 py-2">
             <h1 class="card-title text-2xl">Volumes</h1>
             <div id="items-count" class="badge badge-outline badge-accent badge-md">
               {{ result.total }}
             </div>
           </div>
-          <div><button class="btn">Nouveau</button></div>
+          <div class="flex gap-2">
+            <button class="btn" id="create-volume-button">Nouveau</button>
+            <button class="btn btn-outline btn-error hidden" id="delete-volume-button">
+              Supprimer
+            </button>
+          </div>
         </div>
       </div>
       {# -------------------------------------------------------------------- #}
       {# Table #}
-      <div class="overflow-x-auto rounded-box border border-base-300 md:w-6/12 md:mx-auto">
-        <table class="table table-pin-rows table-sm">
+      <div class="overflow-x-auto rounded-box border border-base-300 md:w-4/12 md:mx-auto">
+        <table class="table table-pin-rows table-sm" id="volumes-table">
           <thead>
             <tr>
               <th></th>
@@ -29,13 +34,7 @@
           </thead>
           <tbody>
             {% for item in result.items %}
-              <tr>
-                <td>
-                  <label><input type="checkbox" class="checkbox" /></label>
-                </td>
-                <td>{{ item.value }} {{ item.unit }}</td>
-                <td>{{ item.category }}</td>
-              </tr>
+              {% include "items/_volume_row.html" %}
             {% endfor %}
           </tbody>
         </table>
@@ -43,4 +42,48 @@
       {# -------------------------------------------------------------------- #}
     </div>
   </div>
+
+  <dialog id="volume-modal" class="modal">
+    <div class="modal-box">
+      <form id="volume-form">
+        <div class="card shadow border border-base-300">
+          <div class="card-body pt-4">
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Catégorie</legend>
+              <select class="select w-full" name="category" required>
+                <option disabled selected></option>
+                <option value="beer">Bière</option>
+                <option value="keg">Fût</option>
+                <option value="spirit">Spiritueux</option>
+                <option value="wine">Vin</option>
+              </select>
+            </fieldset>
+
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Unité</legend>
+              <select class="select w-full" name="unit" required>
+                <option disabled selected></option>
+                <option value="cL">cL</option>
+                <option value="L">L</option>
+              </select>
+            </fieldset>
+
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Valeur</legend>
+              <input type="number" step="0.01" min="0" class="input w-full" name="value" required />
+            </fieldset>
+
+            <div class="card-actions flex justify-between">
+              <button type="reset" class="btn btn-circle btn-error text-base-100">
+                <i class="bi bi-x-lg"></i>
+              </button>
+              <button type="submit" class="btn btn-circle btn-success text-base-100">
+                <i class="bi bi-check-lg"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
 {% endblock %}

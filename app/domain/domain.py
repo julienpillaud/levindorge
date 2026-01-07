@@ -56,7 +56,11 @@ from app.domain.users.commands import (
     sign_in_with_password_command,
     update_user_password_command,
 )
-from app.domain.volumes.commands import get_volumes_command
+from app.domain.volumes.commands import (
+    create_volume_command,
+    delete_volume_command,
+    get_volumes_command,
+)
 
 
 class Domain(BaseDomain[ContextProtocol]):
@@ -83,6 +87,8 @@ class Domain(BaseDomain[ContextProtocol]):
     get_origins = CommandHandler(get_origins_command)
     # volumes
     get_volumes = CommandHandler(get_volumes_command)
+    create_volume = CommandHandler(create_volume_command)
+    delete_volume = CommandHandler(delete_volume_command)
     # deposits
     get_deposits = CommandHandler(get_deposits_command)
     create_deposit = CommandHandler(create_deposit_command)
