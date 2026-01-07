@@ -4,6 +4,7 @@ from app.domain.articles.entities import Article
 from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId, PaginatedResponse
 from app.domain.protocols.repository import RepositoryProtocol
+from app.domain.volumes.entities import Volume
 
 
 class ArticleRepositoryProtocol(RepositoryProtocol[Article], Protocol):
@@ -18,3 +19,5 @@ class ArticleRepositoryProtocol(RepositoryProtocol[Article], Protocol):
     def exists_by_distributor(self, distributor: str) -> bool: ...
 
     def exists_by_deposit(self, deposit: Deposit) -> bool: ...
+
+    def exists_by_volume(self, volume: Volume) -> bool: ...

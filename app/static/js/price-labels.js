@@ -1,6 +1,6 @@
 import { getCheckedArticleIds, setCheckedArticleIds } from "./checkboxes.js";
-import { getStores } from "./cache/stores.js";
 import { showToast, updateArticlesPage } from "./utils.js";
+import { getStores } from "./cache/stores.js";
 
 // -----------------------------------------------------------------------------
 export const showSelectedArticles = () => {
@@ -27,7 +27,9 @@ export const unselectArticles = () => {
 // -----------------------------------------------------------------------------
 export const initializePriceTagsDropdown = async () => {
   const dropdown = document.getElementById("price-labels-dropdown");
-  if (!dropdown) return;
+  if (!dropdown) {
+    return;
+  }
   const ul = dropdown.querySelector("ul");
 
   const stores = await getStores();
@@ -55,16 +57,16 @@ const createPriceLabels = async (slug) => {
   }
 
   const body = {
-    store_slug: slug,
     data: ids.map((id) => ({
-      article_id: id,
-      label_count: 1,
+      article_id: id, // eslint-disable-line
+      label_count: 1, // eslint-disable-line
     })),
+    store_slug: slug, // eslint-disable-line
   };
   const options = {
     body: JSON.stringify(body),
-    method: "POST",
     headers: { "Content-Type": "application/json" },
+    method: "POST",
   };
   const response = await fetch("/price-labels", options);
   if (!response.ok) {

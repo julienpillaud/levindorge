@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import computed_field
+from pydantic import BaseModel, computed_field
 
 from app.domain.entities import DomainEntity
 
@@ -23,6 +23,16 @@ class VolumeCategory(StrEnum):
     SPIRIT = "spirit"
     WINE = "wine"
 
+    @property
+    def label(self) -> str:
+        mapping = {
+            VolumeCategory.BEER: "Bière",
+            VolumeCategory.KEG: "Fût",
+            VolumeCategory.SPIRIT: "Spiritueux",
+            VolumeCategory.WINE: "Vin",
+        }
+        return mapping[self]
+
 
 class Volume(DomainEntity):
     value: float
@@ -34,6 +44,17 @@ class Volume(DomainEntity):
     def normalized_value(self) -> float:
         return self.unit.to_centiliter(self.value)
 
+    @property
+    def display_name(self) -> str:
+        formatted_value = str(self.value).rstrip("0").rstrip(".").replace(".", ",")
+        return f"{formatted_value} {self.unit}"
+
     def __str__(self) -> str:
         formatted_value = str(self.value).rstrip("0").rstrip(".").replace(".", ",")
         return f"{formatted_value} {self.unit}"
+
+
+class VolumeCreate(BaseModel):
+    value: float
+    unit: VolumeUnit
+    category: VolumeCategory

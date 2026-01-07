@@ -4,6 +4,7 @@ from app.domain.articles.entities import Article
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId, PaginatedResponse
+from app.domain.volumes.entities import Volume
 from app.infrastructure.repository.base import MongoRepository
 
 
@@ -36,5 +37,13 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
     def exists_by_deposit(self, deposit: Deposit) -> bool:
         return (
             self.collection.find_one({f"deposit.{deposit.type}": float(deposit.value)})
+            is not None
+        )
+
+    def exists_by_volume(self, volume: Volume) -> bool:
+        return (
+            self.collection.find_one(
+                {"volume.value": volume.value, "volume.unit": volume.unit}
+            )
             is not None
         )
