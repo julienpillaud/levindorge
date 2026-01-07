@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.21.0](https://github.com/julienpillaud/levindorge/compare/0.20.0...0.21.0) (2026-01-07)
+
+
+### Features
+
+* add deposits ([#101](https://github.com/julienpillaud/levindorge/issues/101)) ([f37c0a3](https://github.com/julienpillaud/levindorge/commit/f37c0a30292ac0c1a90fb66c1a4de644a380e389))
+* implement volume management ([#103](https://github.com/julienpillaud/levindorge/issues/103)) ([98cfaf0](https://github.com/julienpillaud/levindorge/commit/98cfaf04d7abf84742cb45be42d7f74b49db8fbf))
+
 ## [0.20.0](https://github.com/julienpillaud/levindorge/compare/0.19.0...0.20.0) (2026-01-01)
 
 
