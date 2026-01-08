@@ -1,6 +1,8 @@
 from enum import StrEnum
 from typing import Literal
 
+from pydantic import BaseModel
+
 from app.domain.entities import DomainEntity
 
 
@@ -14,6 +16,10 @@ class Origin(DomainEntity):
     code: str | None
     type: OriginType
 
+    @property
+    def display_name(self) -> str:
+        return self.name
+
 
 class Country(Origin):
     name: str
@@ -25,3 +31,9 @@ class Region(Origin):
     name: str
     code: None = None
     type: Literal[OriginType.REGION] = OriginType.REGION
+
+
+class OriginCreate(BaseModel):
+    name: str
+    code: str | None
+    type: OriginType

@@ -4,6 +4,7 @@ from app.domain.articles.entities import Article
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId, PaginatedResponse
+from app.domain.origins.entities import Origin
 from app.domain.volumes.entities import Volume
 from app.infrastructure.repository.base import MongoRepository
 
@@ -47,3 +48,6 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
             )
             is not None
         )
+
+    def exists_by_origin(self, origin: Origin) -> bool:
+        return self.collection.find_one({"origin": origin.name}) is not None
