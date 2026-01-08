@@ -15,7 +15,6 @@ import { initItemsManager } from "./items.js";
 import { initSearch } from "./search.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-
   initSearch();
   initArticles();
   buildCreateDropdownMenu();

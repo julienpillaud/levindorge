@@ -21,8 +21,6 @@ from app.domain.types import StoreSlug
 from app.domain.volumes.entities import VolumeUnit
 
 NON_MATCH_ORIGINS_MAP = {
-    "Ecosse": "Écosse",
-    "Etats-Unis": "États-Unis",
     "Corée": "Corée du Sud",
     "République tchèque": "Tchéquie",
 }

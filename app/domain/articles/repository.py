@@ -3,6 +3,7 @@ from typing import Protocol
 from app.domain.articles.entities import Article
 from app.domain.deposits.entities import Deposit
 from app.domain.entities import EntityId, PaginatedResponse
+from app.domain.origins.entities import Origin
 from app.domain.protocols.repository import RepositoryProtocol
 from app.domain.volumes.entities import Volume
 
@@ -21,3 +22,5 @@ class ArticleRepositoryProtocol(RepositoryProtocol[Article], Protocol):
     def exists_by_deposit(self, deposit: Deposit) -> bool: ...
 
     def exists_by_volume(self, volume: Volume) -> bool: ...
+
+    def exists_by_origin(self, origin: Origin) -> bool: ...

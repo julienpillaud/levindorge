@@ -32,7 +32,11 @@ from app.domain.inventories.commands import (
     get_inventories_command,
     get_inventory_command,
 )
-from app.domain.origins.commands import get_origins_command
+from app.domain.origins.commands import (
+    create_origin_command,
+    delete_origin_command,
+    get_origins_command,
+)
 from app.domain.pos.commands import (
     create_pos_article_command,
     delete_pos_article_command,
@@ -85,6 +89,8 @@ class Domain(BaseDomain[ContextProtocol]):
     delete_distributor = CommandHandler(delete_distributor_command)
     # origins
     get_origins = CommandHandler(get_origins_command)
+    create_origin = CommandHandler(create_origin_command)
+    delete_origin = CommandHandler(delete_origin_command)
     # volumes
     get_volumes = CommandHandler(get_volumes_command)
     create_volume = CommandHandler(create_volume_command)

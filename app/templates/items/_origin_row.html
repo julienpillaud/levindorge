@@ -1,0 +1,10 @@
+<tr data-id="{{ item.id }}" data-name="{{ item.name }}">
+  <td>{{ item.name }}</td>
+  {% if item.code %}
+    <td>
+      <img src="https://flagcdn.com/48x36/{{ item.code.lower() }}.png" width="20" height="15" />
+    </td>
+  {% else %}
+    <td></td>
+  {% endif %}
+</tr>
