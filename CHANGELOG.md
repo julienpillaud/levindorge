@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.0](https://github.com/julienpillaud/levindorge/compare/0.22.0...0.23.0) (2026-01-08)
+
+
+### Features
+
+* remove useless files ([#106](https://github.com/julienpillaud/levindorge/issues/106)) ([51c2ed3](https://github.com/julienpillaud/levindorge/commit/51c2ed38d14acf36c5c3a336850a66dce1641a16))
+
 ## [0.22.0](https://github.com/julienpillaud/levindorge/compare/0.21.0...0.22.0) (2026-01-08)
 
 
