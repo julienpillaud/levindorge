@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.0](https://github.com/julienpillaud/levindorge/compare/0.21.0...0.22.0) (2026-01-08)
+
+
+### Features
+
+* add origin CRUD ([#104](https://github.com/julienpillaud/levindorge/issues/104)) ([c7667c8](https://github.com/julienpillaud/levindorge/commit/c7667c89c1a81a0c53ca71fd1c94276a5e5c61aa))
+
 ## [0.21.0](https://github.com/julienpillaud/levindorge/compare/0.20.0...0.21.0) (2026-01-07)
 
 
