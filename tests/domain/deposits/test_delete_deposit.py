@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import pytest
+from bson import ObjectId
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.articles.entities import ArticleDeposit
@@ -18,12 +19,14 @@ def test_delete_deposit(
 ) -> None:
     deposit = deposit_factory.create_one()
 
-    assert delete_deposit_command(context, deposit_id=deposit.id) is None
+    delete_deposit_command(context, deposit_id=deposit.id)
+
+    assert context.deposit_repository.get_by_id(deposit.id) is None
 
 
 def test_delete_deposit_not_found(context: ContextProtocol) -> None:
     with pytest.raises(NotFoundError):
-        delete_deposit_command(context, deposit_id="111111111111111111111111")
+        delete_deposit_command(context, deposit_id=str(ObjectId()))
 
 
 def test_delete_deposit_in_use(
@@ -36,9 +39,9 @@ def test_delete_deposit_in_use(
         case=Decimal("4.5"),
         packaging=12,
     )
-    article = article_factory.create_one(deposit=article_deposit)
+    article_factory.create_one(deposit=article_deposit)
     deposit = deposit_factory.create_one(
-        value=article.deposit.unit,
+        value=article_deposit.unit,
         type=DepositType.UNIT,
         category=DepositCategory.BEER,
     )

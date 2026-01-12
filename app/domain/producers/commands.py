@@ -4,7 +4,7 @@ from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
 from app.domain.entities import PaginatedResponse
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
-from app.domain.producers.entities import Producer, ProducerType
+from app.domain.producers.entities import Producer, ProducerCreate, ProducerType
 
 
 @cached_command(response_model=PaginatedResponse[Producer], tag="producers")
@@ -24,11 +24,10 @@ def get_producers_command(
 def create_producer_command(
     context: ContextProtocol,
     /,
-    name: str,
-    producer_type: ProducerType,
+    producer_create: ProducerCreate,
 ) -> Producer:
-    producer = Producer(name=name, type=producer_type)
-    if context.producer_repository.exists(name=name, producer_type=producer_type):
+    producer = Producer(name=producer_create.name, type=producer_create.type)
+    if context.producer_repository.exists(producer):
         raise AlreadyExistsError(
             f"`{producer.display_name}` already exists.",
             producer.display_name,

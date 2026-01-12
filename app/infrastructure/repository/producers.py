@@ -1,4 +1,4 @@
-from app.domain.producers.entities import Producer, ProducerType
+from app.domain.producers.entities import Producer
 from app.domain.producers.repository import ProducerRepositoryProtocol
 from app.infrastructure.repository.base import MongoRepository
 
@@ -8,7 +8,10 @@ class ProducerRepository(MongoRepository[Producer], ProducerRepositoryProtocol):
     collection_name = "producers"
     searchable_fields = ()
 
-    def exists(self, name: str, producer_type: ProducerType) -> bool:
+    def exists(self, producer: Producer, /) -> bool:
         return (
-            self.collection.count_documents({"name": name, "type": producer_type}) > 0
+            self.collection.count_documents(
+                {"name": producer.name, "type": producer.type}
+            )
+            > 0
         )
