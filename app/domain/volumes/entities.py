@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, PositiveFloat, computed_field
 
 from app.domain.entities import DomainEntity
 
@@ -35,7 +35,7 @@ class VolumeCategory(StrEnum):
 
 
 class Volume(DomainEntity):
-    value: float
+    value: PositiveFloat
     unit: VolumeUnit
     category: VolumeCategory
 
@@ -55,6 +55,6 @@ class Volume(DomainEntity):
 
 
 class VolumeCreate(BaseModel):
-    value: float
+    value: PositiveFloat
     unit: VolumeUnit
     category: VolumeCategory

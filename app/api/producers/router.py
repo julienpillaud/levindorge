@@ -9,7 +9,7 @@ from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.api.producers.dtos import ProducerDTO
 from app.domain.domain import Domain
 from app.domain.entities import EntityId
-from app.domain.producers.entities import ProducerType
+from app.domain.producers.entities import ProducerCreate, ProducerType
 
 TITLE_MAPPING = {
     ProducerType.BREWERY: "Brasseries",
@@ -43,12 +43,10 @@ def create_producer(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
-    producer_create: ProducerDTO,
+    producer_request: ProducerDTO,
 ) -> Response:
-    producer = domain.create_producer(
-        name=producer_create.name,
-        producer_type=producer_create.type,
-    )
+    producer_create = ProducerCreate(**producer_request.model_dump())
+    producer = domain.create_producer(producer_create=producer_create)
 
     response = templates.TemplateResponse(
         request=request,

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any
 
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -7,7 +8,10 @@ from app.infrastructure.repository.deposits import DepositRepository
 from tests.factories.base import BaseMongoFactory
 
 
-class DepositEntityFactory(ModelFactory[Deposit]): ...
+class DepositEntityFactory(ModelFactory[Deposit]):
+    @classmethod
+    def value(cls) -> Decimal:
+        return Decimal("1.00") + cls.__random__.randint(0, 10)
 
 
 class DepositFactory(BaseMongoFactory[Deposit]):
