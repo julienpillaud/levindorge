@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.23.0](https://github.com/julienpillaud/levindorge/compare/0.22.0...0.23.0) (2026-01-12)
+
+
+### Features
+
+* add tests ([#109](https://github.com/julienpillaud/levindorge/issues/109)) ([53a87c2](https://github.com/julienpillaud/levindorge/commit/53a87c2f3f6a120cef7bdc5cd591771581993528))
+* add tests for creating and deleting deposits ([#108](https://github.com/julienpillaud/levindorge/issues/108)) ([1b96758](https://github.com/julienpillaud/levindorge/commit/1b96758020ac9148386bb531ad06b7b40c1f2832))
+* remove useless files ([#106](https://github.com/julienpillaud/levindorge/issues/106)) ([51c2ed3](https://github.com/julienpillaud/levindorge/commit/51c2ed38d14acf36c5c3a336850a66dce1641a16))
+
 ## [0.22.0](https://github.com/julienpillaud/levindorge/compare/0.21.0...0.22.0) (2026-01-08)
 
 
