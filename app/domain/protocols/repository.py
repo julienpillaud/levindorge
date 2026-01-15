@@ -1,26 +1,22 @@
-from typing import Any, Protocol
-
-from pydantic import PositiveInt
+from typing import Protocol
 
 from app.domain.entities import (
-    DEFAULT_PAGINATION_SIZE,
     DomainEntity,
     EntityId,
     PaginatedResponse,
+    Pagination,
+    QueryParams,
 )
 
 
 class RepositoryProtocol[T: DomainEntity](Protocol):
     def get_all(
         self,
-        filters: Any | None = None,
-        search: str | None = None,
-        sort: Any | None = None,
-        page: PositiveInt = 1,
-        limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
+        query: QueryParams | None = None,
+        pagination: Pagination | None = None,
     ) -> PaginatedResponse[T]: ...
 
-    def get_by_id(self, entity_id: str, /) -> T | None: ...
+    def get_by_id(self, entity_id: EntityId, /) -> T | None: ...
 
     def create(self, entity: T, /) -> T: ...
 

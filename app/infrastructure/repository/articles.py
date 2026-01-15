@@ -3,7 +3,7 @@ from bson import ObjectId
 from app.domain.articles.entities import Article
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.deposits.entities import Deposit
-from app.domain.entities import EntityId, PaginatedResponse
+from app.domain.entities import EntityId, PaginatedResponse, QueryParams
 from app.domain.origins.entities import Origin
 from app.domain.volumes.entities import Volume
 from app.infrastructure.repository.base import MongoRepository
@@ -25,8 +25,10 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
 
     def get_by_ids(self, article_ids: list[EntityId], /) -> PaginatedResponse[Article]:
         return self.get_all(
-            filters={"_id": {"$in": [ObjectId(id_) for id_ in article_ids]}},
-            sort={"type": 1, "region": 1, "name.name1": 1, "name.name2": 1},
+            query=QueryParams(
+                filters={"_id": {"$in": [ObjectId(id_) for id_ in article_ids]}},
+                sort={"type": 1, "region": 1, "name.name1": 1, "name.name2": 1},
+            )
         )
 
     def exists_by_producer(self, producer: str) -> bool:

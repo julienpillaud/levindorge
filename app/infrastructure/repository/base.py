@@ -2,15 +2,16 @@ from typing import Any
 
 from bson import ObjectId
 from cleanstack.exceptions import NotFoundError
-from pydantic import PositiveInt
 from pymongo.database import Database
 
 from app.domain.entities import (
-    DEFAULT_PAGINATION_SIZE,
     DomainEntity,
     EntityId,
     PaginatedResponse,
+    Pagination,
+    QueryParams,
 )
+from app.domain.filters import FilterEntity, FilterOperator
 from app.domain.protocols.repository import RepositoryProtocol
 from app.infrastructure.repository.exceptions import MongoRepositoryError
 from app.infrastructure.utils import iter_dicts
@@ -29,28 +30,29 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
 
     def get_all(
         self,
-        filters: dict[str, Any] | None = None,
-        search: str | None = None,
-        sort: dict[str, int] | None = None,
-        page: PositiveInt = 1,
-        limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
+        query: QueryParams | None = None,
+        pagination: Pagination | None = None,
     ) -> PaginatedResponse[T]:
-        skip = (page - 1) * limit
+        query = query or QueryParams()
+        pagination = pagination or Pagination()
 
         pipeline = []
-        if filters:
-            pipeline.extend([{"$match": filters}])
-        if search:
-            pipeline.extend(self._search_pipeline(search.strip()))
+
+        if query.filters:
+            mongo_filters = self._build_match_stage(query.filters)
+            pipeline.append({"$match": mongo_filters})
+
+        if query.search:
+            pipeline.extend(self._search_pipeline(query.search))
         pipeline.extend(self._aggregation_pipeline())
-        if sort:
-            pipeline.append({"$sort": sort})
+        if query.sort:
+            pipeline.append({"$sort": query.sort})
         facet_pipeline = [
             *pipeline,
             {
                 "$facet": {
                     "metadata": [{"$count": "total"}],
-                    "data": [{"$skip": skip}, {"$limit": limit}],
+                    "data": [{"$skip": pagination.skip}, {"$limit": pagination.limit}],
                 }
             },
         ]
@@ -60,10 +62,10 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
         items_db = result[0]["data"]
 
         return PaginatedResponse(
-            page=page,
-            limit=limit,
+            page=pagination.page,
+            limit=pagination.limit,
             total=total,
-            total_pages=(total + limit - 1) // limit,
+            total_pages=(total + pagination.limit - 1) // pagination.limit,
             items=[self._to_domain_entity(item) for item in items_db],
         )
 
@@ -76,7 +78,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
         result = next(self.collection.aggregate(pipeline), None)
         return self._to_domain_entity(result) if result else None
 
-    def get_by_id(self, entity_id: str, /) -> T | None:
+    def get_by_id(self, entity_id: EntityId, /) -> T | None:
         result = self._get_by_id(entity_id)
         return self._to_domain_entity(result) if result else None
 
@@ -131,7 +133,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
 
     def _search_pipeline(self, search: str, /) -> list[MongoDocument]:
         conditions = [
-            {field: {"$regex": search, "$options": "i"}}
+            {field: {"$regex": search.strip(), "$options": "i"}}
             for field in self.searchable_fields
         ]
         return [{"$match": {"$or": conditions}}]
@@ -145,3 +147,14 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
         for d in iter_dicts(document):
             if "_id" in d:
                 d["id"] = str(d.pop("_id"))
+
+    @staticmethod
+    def _build_match_stage(filters: list[FilterEntity]) -> dict[str, Any]:
+        match_query = {}
+
+        for filter_ in filters:
+            match filter_.operator:
+                case FilterOperator.EQ:
+                    match_query[filter_.field] = filter_.value
+
+        return match_query

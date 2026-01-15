@@ -1,15 +1,24 @@
+from decimal import Decimal
 from typing import Any
 
 from polyfactory.factories.pydantic_factory import ModelFactory
 
-from app.domain.articles.entities import Article, ArticleStoreData
+from app.domain.articles.entities import Article, ArticleDeposit, ArticleStoreData
 from app.domain.stores.entities import Store
 from app.infrastructure.repository.articles import ArticleRepository
 from tests.factories.base import BaseMongoFactory
 from tests.factories.categories import CategoryFactory
 
 
-class ArticleStoreDataEntityFactory(ModelFactory[ArticleStoreData]): ...
+class ArticleDepositEntityFactory(ModelFactory[ArticleDeposit]):
+    unit = Decimal("0.15")
+    case = Decimal("4.50")
+
+
+class ArticleStoreDataEntityFactory(ModelFactory[ArticleStoreData]):
+    gross_price = Decimal("2.00")
+    bar_price = Decimal("5.00")
+    recommended_price = Decimal("3.00")
 
 
 class ArticleEntityFactory(ModelFactory[Article]):

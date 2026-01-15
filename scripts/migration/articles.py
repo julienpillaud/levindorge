@@ -15,6 +15,7 @@ from app.domain.articles.utils import compute_article_margins, compute_recommend
 from app.domain.categories.entities import Category
 from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP, CategoryGroup
 from app.domain.commons.entities import PricingGroup
+from app.domain.entities import Pagination
 from app.domain.origins.entities import Origin
 from app.domain.stores.entities import Store
 from app.domain.types import StoreSlug
@@ -46,7 +47,9 @@ def create_articles(
     result = dst_context.article_repository.create_many(dst_articles)
     count = len(result)
     print(f"Created {count} articles ({len(src_articles)})")
-    return dst_context.article_repository.get_all(limit=count).items
+    return dst_context.article_repository.get_all(
+        pagination=Pagination(page=1, limit=count)
+    ).items
 
 
 def create_article_entities(

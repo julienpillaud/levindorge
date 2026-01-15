@@ -2,8 +2,9 @@ from cleanstack.exceptions import NotFoundError
 
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId, PaginatedResponse
+from app.domain.entities import EntityId, PaginatedResponse, Pagination, QueryParams
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
+from app.domain.filters import FilterEntity
 from app.domain.volumes.entities import Volume, VolumeCategory, VolumeCreate
 
 
@@ -13,11 +14,14 @@ def get_volumes_command(
     /,
     category: VolumeCategory | None = None,
 ) -> PaginatedResponse[Volume]:
-    filters = {"category": category} if category else {}
+    filters = [FilterEntity(field="category", value=category)] if category else []
+
     return context.volume_repository.get_all(
-        filters=filters,
-        sort={"category": 1, "normalized_value": 1},
-        limit=300,
+        query=QueryParams(
+            filters=filters,
+            sort={"category": 1, "normalized_value": 1},
+        ),
+        pagination=Pagination(page=1, limit=300),
     )
 
 

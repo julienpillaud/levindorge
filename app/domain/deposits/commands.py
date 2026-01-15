@@ -3,8 +3,9 @@ from cleanstack.exceptions import NotFoundError
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
 from app.domain.deposits.entities import Deposit, DepositCategory, DepositCreate
-from app.domain.entities import PaginatedResponse
+from app.domain.entities import PaginatedResponse, Pagination, QueryParams
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
+from app.domain.filters import FilterEntity
 
 
 @cached_command(response_model=PaginatedResponse[Deposit], tag="deposits")
@@ -13,11 +14,11 @@ def get_deposits_command(
     /,
     category: DepositCategory | None = None,
 ) -> PaginatedResponse[Deposit]:
-    filters = {"category": category} if category else {}
+    filters = [FilterEntity(field="category", value=category)] if category else []
+
     return context.deposit_repository.get_all(
-        filters=filters,
-        sort={"type": 1, "value": 1},
-        limit=300,
+        query=QueryParams(filters=filters, sort={"type": 1, "value": 1}),
+        pagination=Pagination(page=1, limit=300),
     )
 
 
