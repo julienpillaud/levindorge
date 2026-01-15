@@ -3,6 +3,7 @@ from typing import Any
 from rich import print
 
 from app.core.core import Context
+from app.domain.entities import Pagination
 from app.domain.stores.entities import Store
 from app.domain.users.entities import User
 
@@ -21,7 +22,9 @@ def create_users(
     result = dst_context.user_repository.create_many(dst_users)
     count = len(result)
     print(f"Created {count} users ({len(src_users)})")
-    return dst_context.user_repository.get_all(limit=count).items
+    return dst_context.user_repository.get_all(
+        pagination=Pagination(page=1, limit=count)
+    ).items
 
 
 def create_user_entities(

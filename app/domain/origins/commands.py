@@ -2,14 +2,17 @@ from cleanstack.exceptions import NotFoundError
 
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId, PaginatedResponse
+from app.domain.entities import EntityId, PaginatedResponse, Pagination, QueryParams
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 from app.domain.origins.entities import Origin, OriginCreate
 
 
 @cached_command(response_model=PaginatedResponse[Origin], tag="origins")
 def get_origins_command(context: ContextProtocol, /) -> PaginatedResponse[Origin]:
-    return context.origin_repository.get_all(sort={"name": 1}, limit=300)
+    return context.origin_repository.get_all(
+        query=QueryParams(sort={"name": 1}),
+        pagination=Pagination(page=1, limit=300),
+    )
 
 
 def create_origin_command(

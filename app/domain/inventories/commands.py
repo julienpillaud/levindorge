@@ -5,7 +5,7 @@ from typing import Any
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId, PaginatedResponse
+from app.domain.entities import EntityId, PaginatedResponse, Pagination, QueryParams
 from app.domain.inventories.entities import Inventory, InventoryDetail, InventoryRecord
 from app.domain.stores.entities import Store
 
@@ -30,7 +30,10 @@ def get_inventory_command(
 
 
 def create_inventory_command(context: ContextProtocol, store: Store) -> Inventory:
-    results = context.article_repository.get_all(sort={"type": 1}, page=1, limit=1000)
+    results = context.article_repository.get_all(
+        query=QueryParams(sort={"type": 1}),
+        pagination=Pagination(page=1, limit=1000),
+    )
     articles = results.items
     # TODO : get from category repository
     article_types_mapping: dict[str, Any] = {}

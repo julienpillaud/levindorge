@@ -8,7 +8,13 @@ from app.domain.articles.entities import (
     ArticleCreateOrUpdate,
 )
 from app.domain.context import ContextProtocol
-from app.domain.entities import DEFAULT_PAGINATION_SIZE, EntityId, PaginatedResponse
+from app.domain.entities import (
+    DEFAULT_PAGINATION_SIZE,
+    EntityId,
+    PaginatedResponse,
+    Pagination,
+    QueryParams,
+)
 from app.domain.stores.entities import Store
 from app.domain.types import StoreSlug
 
@@ -21,9 +27,8 @@ def get_articles_command(
     limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
 ) -> PaginatedResponse[Article]:
     return context.article_repository.get_all(
-        search=search,
-        page=page,
-        limit=limit,
+        query=QueryParams(search=search),
+        pagination=Pagination(page=page, limit=limit),
     )
 
 

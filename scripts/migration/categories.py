@@ -4,13 +4,16 @@ from app.core.core import Context
 from app.domain.categories.entities import Category
 from app.domain.commons.category_groups import CategoryGroupName
 from app.domain.commons.entities import InventoryGroup, PricingGroup
+from app.domain.entities import Pagination
 
 
 def create_categories(dst_context: Context) -> list[Category]:
     result = dst_context.category_repository.create_many(CATEGORIES)
     count = len(result)
     print(f"Created {count} categories")
-    return dst_context.category_repository.get_all(limit=count).items
+    return dst_context.category_repository.get_all(
+        pagination=Pagination(page=1, limit=count)
+    ).items
 
 
 CATEGORIES = [

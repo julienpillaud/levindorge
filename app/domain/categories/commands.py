@@ -4,7 +4,8 @@ from app.domain.caching import cached_command
 from app.domain.categories.entities import Category
 from app.domain.commons.category_groups import CategoryGroupName
 from app.domain.context import ContextProtocol
-from app.domain.entities import PaginatedResponse
+from app.domain.entities import PaginatedResponse, Pagination, QueryParams
+from app.domain.filters import FilterEntity
 
 
 @cached_command(response_model=PaginatedResponse[Category], tag="categories")
@@ -13,11 +14,15 @@ def get_categories_command(
     /,
     category_group: CategoryGroupName | None = None,
 ) -> PaginatedResponse[Category]:
-    filters = {"category_group": category_group} if category_group else {}
+    filters = (
+        [FilterEntity(field="category_group", value=category_group)]
+        if category_group
+        else []
+    )
+
     return context.category_repository.get_all(
-        filters=filters,
-        sort={"name": 1},
-        limit=300,
+        query=QueryParams(filters=filters, sort={"name": 1}),
+        pagination=Pagination(page=1, limit=300),
     )
 
 
