@@ -6,8 +6,11 @@ let searchTimer = null;
 export const initSearch = () => {
   const searchInput = document.getElementById("search");
   const clearSearchButton = document.getElementById("clear-search");
+  if (!searchInput || !clearSearchButton) {
+    return;
+  }
 
-  searchInput.addEventListener("keyup", (event) => {
+  searchInput.addEventListener("input", (event) => {
     performSearch(event.target.value);
   });
 
