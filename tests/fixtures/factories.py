@@ -2,7 +2,7 @@ import pytest
 from faker import Faker
 from pymongo.database import Database
 
-from app.infrastructure.repository.base import MongoDocument
+from app.infrastructure.repository.types import MongoDocument
 from tests.factories.articles import ArticleFactory
 from tests.factories.categories import CategoryFactory
 from tests.factories.deposits import DepositFactory

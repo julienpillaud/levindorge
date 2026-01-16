@@ -12,7 +12,6 @@ from app.domain.domain import Domain
 from app.infrastructure.event_publisher import FastStreamEventPublisher
 from app.infrastructure.redis.cache_manager import RedisCacheManager
 from app.infrastructure.repository.articles import ArticleRepository
-from app.infrastructure.repository.base import MongoDocument
 from app.infrastructure.repository.categories import CategoryRepository
 from app.infrastructure.repository.deposits import DepositRepository
 from app.infrastructure.repository.distributors import DistributorRepository
@@ -21,6 +20,7 @@ from app.infrastructure.repository.origins import OriginRepository
 from app.infrastructure.repository.price_labels import PriceLabelRepository
 from app.infrastructure.repository.producers import ProducerRepository
 from app.infrastructure.repository.stores import StoreRepository
+from app.infrastructure.repository.types import MongoDocument
 from app.infrastructure.repository.users import UserRepository
 from app.infrastructure.repository.volumes import VolumeRepository
 from app.infrastructure.supabase.identity_provider import SupabaseIdentityProvider
