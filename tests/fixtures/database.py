@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from pymongo.database import Database
 
 from app.core.config.settings import Settings
-from app.infrastructure.repository.base import MongoDocument
+from app.infrastructure.repository.types import MongoDocument
 
 
 @pytest.fixture

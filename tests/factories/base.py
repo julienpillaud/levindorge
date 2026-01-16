@@ -5,10 +5,8 @@ from pymongo.synchronous.database import Database
 
 from app.domain.entities import DomainEntity
 from app.domain.protocols.repository import RepositoryProtocol
-from app.infrastructure.repository.base import (
-    MongoDocument,
-    MongoRepository,
-)
+from app.infrastructure.repository.base import MongoRepository
+from app.infrastructure.repository.types import MongoDocument
 
 
 class BaseFactory[T: DomainEntity]:

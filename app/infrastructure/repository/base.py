@@ -11,12 +11,11 @@ from app.domain.entities import (
     Pagination,
     QueryParams,
 )
-from app.domain.filters import FilterEntity, FilterOperator
 from app.domain.protocols.repository import RepositoryProtocol
 from app.infrastructure.repository.exceptions import MongoRepositoryError
+from app.infrastructure.repository.types import MongoDocument
+from app.infrastructure.repository.utils import MongoQueryBuilder
 from app.infrastructure.utils import iter_dicts
-
-type MongoDocument = dict[str, Any]
 
 
 class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
@@ -39,14 +38,23 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
         pipeline = []
 
         if query.filters:
-            mongo_filters = self._build_match_stage(query.filters)
-            pipeline.append({"$match": mongo_filters})
+            pipeline.append(
+                MongoQueryBuilder.build_filters_stage(filters=query.filters)
+            )
 
         if query.search:
-            pipeline.extend(self._search_pipeline(query.search))
+            pipeline.append(
+                MongoQueryBuilder.build_search_stage(
+                    search_string=query.search,
+                    searchable_fields=self.searchable_fields,
+                )
+            )
+
         pipeline.extend(self._aggregation_pipeline())
+
         if query.sort:
             pipeline.append({"$sort": query.sort})
+
         facet_pipeline = [
             *pipeline,
             {
@@ -131,13 +139,6 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
     def _to_database_entity(entity: T, /) -> MongoDocument:
         return entity.model_dump(exclude={"id"})
 
-    def _search_pipeline(self, search: str, /) -> list[MongoDocument]:
-        conditions = [
-            {field: {"$regex": search.strip(), "$options": "i"}}
-            for field in self.searchable_fields
-        ]
-        return [{"$match": {"$or": conditions}}]
-
     @staticmethod
     def _aggregation_pipeline() -> list[MongoDocument]:
         return []
@@ -147,14 +148,3 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
         for d in iter_dicts(document):
             if "_id" in d:
                 d["id"] = str(d.pop("_id"))
-
-    @staticmethod
-    def _build_match_stage(filters: list[FilterEntity]) -> dict[str, Any]:
-        match_query = {}
-
-        for filter_ in filters:
-            match filter_.operator:
-                case FilterOperator.EQ:
-                    match_query[filter_.field] = filter_.value
-
-        return match_query
