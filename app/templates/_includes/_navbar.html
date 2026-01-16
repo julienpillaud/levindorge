@@ -18,13 +18,6 @@
 
   {# Navbar center ---------------------------------------------------------- #}
   <div class="navbar-center">
-    {# Search input centered (visible until 'md') #}
-    <div class="md:hidden">
-      {% with suffix = 'mobile' %}
-        {% include '_includes/_search.html' %}
-      {% endwith %}
-    </div>
-
     {# Horizontal menu visible from 'lg' onwards #}
     <div class="hidden lg:flex">
       <ul class="menu menu-horizontal">
@@ -36,13 +29,6 @@
 
   {# Navbar end ------------------------------------------------------------- #}
   <div class="navbar-end gap-4 pe-4">
-    {# Search input visible at end from 'md' onwards #}
-    <div class="hidden md:flex">
-      {% with suffix = 'desktop' %}
-        {% include '_includes/_search.html' %}
-      {% endwith %}
-    </div>
-
     {# Swap theme button always visible #}
     <label class="swap swap-rotate">
       <input type="checkbox" data-toggle-theme="light,dark" />

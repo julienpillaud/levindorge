@@ -22,7 +22,7 @@
   {% set start_page = 1 %}
 {% endif %}
 
-<div class="join">
+<div class="join" id="pagination">
   <a
     class="join-item btn btn-sm shadow-sm {% if result.page == 1 %}btn-disabled{% endif %}"
     href="{{ url_for('get_articles') }}?page=1{{ search_query }}"
