@@ -16,8 +16,7 @@ def test_create_article(
     category_factory: CategoryFactory,
     article_factory: ArticleFactory,
 ) -> None:
-    category = category_factory.create_one()
-    article_data = article_factory.build(category=category.name, stores=[store])
+    article_data = article_factory.build(stores=[store])
     data = ArticleCreateOrUpdate(**article_data.model_dump())
 
     article = create_article_command(context, data=data)
@@ -61,8 +60,7 @@ def test_create_article_store_not_found(
     category_factory: CategoryFactory,
     article_factory: ArticleFactory,
 ) -> None:
-    category = category_factory.create_one()
-    article_data = article_factory.build(category=category.name)
+    article_data = article_factory.build()
     data = ArticleCreateOrUpdate(**article_data.model_dump())
 
     with pytest.raises(NotFoundError):
