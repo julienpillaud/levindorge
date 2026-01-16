@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.1](https://github.com/julienpillaud/levindorge/compare/0.25.0...0.25.1) (2026-01-16)
+
+
+### Bug Fixes
+
+* use input event for search ([#116](https://github.com/julienpillaud/levindorge/issues/116)) ([d16a0e5](https://github.com/julienpillaud/levindorge/commit/d16a0e593e9a433d4b1174cde036d361e0349622))
+
 ## [0.25.0](https://github.com/julienpillaud/levindorge/compare/0.24.0...0.25.0) (2026-01-16)
 
 
