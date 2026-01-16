@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.24.0](https://github.com/julienpillaud/levindorge/compare/0.23.0...0.24.0) (2026-01-16)
+
+
+### Features
+
+* add filter entity ([#110](https://github.com/julienpillaud/levindorge/issues/110)) ([ee4bb9d](https://github.com/julienpillaud/levindorge/commit/ee4bb9dd31bc6a1a587c67509699fe4ea7758d40))
+
+
+### Bug Fixes
+
+* update tests ([#112](https://github.com/julienpillaud/levindorge/issues/112)) ([7f6331c](https://github.com/julienpillaud/levindorge/commit/7f6331c14770005cd759d8801e6cf4cae7415918))
+
 ## [0.23.0](https://github.com/julienpillaud/levindorge/compare/0.22.0...0.23.0) (2026-01-12)
 
 
