@@ -1,17 +1,18 @@
 from typing import Any
 
-from polyfactory.factories.pydantic_factory import ModelFactory
+from faker import Faker
 
 from app.domain.distributors.entities import Distributor
 from app.infrastructure.repository.distributors import DistributorRepository
 from tests.factories.base import BaseMongoFactory
 
 
-class DistributorEntityFactory(ModelFactory[Distributor]): ...
+def generate_distributor(faker: Faker, **kwargs: Any) -> Distributor:
+    return Distributor(name=kwargs["name"] if "name" in kwargs else faker.company())
 
 
 class DistributorFactory(BaseMongoFactory[Distributor]):
     repository_class = DistributorRepository
 
     def build(self, **kwargs: Any) -> Distributor:
-        return DistributorEntityFactory.build(**kwargs)
+        return generate_distributor(self.faker, **kwargs)

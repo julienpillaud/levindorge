@@ -24,12 +24,12 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "ruff==0.14.10",
+    "ruff==0.14.11",
     "mypy==1.19.1",
     "pytest==9.0.2",
     "pre-commit==4.5.1",
-    "polyfactory==3.2.0",
-    "ty==0.0.10",
+    "ty==0.0.12",
+    "faker==40.1.2",
 ]
 
 [tool.uv.sources]

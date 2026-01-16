@@ -1,28 +1,21 @@
-from decimal import Decimal
 from typing import Any
 
-from polyfactory import Use
-from polyfactory.factories.pydantic_factory import ModelFactory
+from faker import Faker
 
-from app.domain.commons.entities import PricingGroup
-from app.domain.stores.entities import PricingConfig, RoundConfig, RoundingMode, Store
+from app.domain.stores.entities import Store
 from app.infrastructure.repository.stores import StoreRepository
+from scripts.migration.stores import PRICING_CONFIG
 from tests.factories.base import BaseMongoFactory
 
 
-class StoreEntityFactory(ModelFactory[Store]):
-    # return only one PricingGroup: polyfactory do not handle Decimal correctly
-    pricing_configs = Use(
-        lambda: {
-            PricingGroup.BEER: PricingConfig(
-                value=Decimal("1.7"),
-                operator="*",
-                round_config=RoundConfig(
-                    value=Decimal("0.05"),
-                    rounding_mode=RoundingMode.ROUND_CEILING,
-                ),
-            )
-        }
+def generate_store(faker: Faker, **kwargs: Any) -> Store:
+    return Store(
+        name=kwargs["name"] if "name" in kwargs else faker.word(),
+        slug=kwargs["slug"] if "slug" in kwargs else faker.slug(),
+        tactill_api_key=kwargs["tactill_api_key"]
+        if "tactill_api_key" in kwargs
+        else faker.uuid4(),
+        pricing_configs=PRICING_CONFIG,
     )
 
 
@@ -30,4 +23,4 @@ class StoreFactory(BaseMongoFactory[Store]):
     repository_class = StoreRepository
 
     def build(self, **kwargs: Any) -> Store:
-        return StoreEntityFactory.build(**kwargs)
+        return generate_store(self.faker, **kwargs)

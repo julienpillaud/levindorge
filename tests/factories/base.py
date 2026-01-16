@@ -1,5 +1,6 @@
 from typing import Any
 
+from faker import Faker
 from pymongo.synchronous.database import Database
 
 from app.domain.entities import DomainEntity
@@ -27,6 +28,7 @@ class BaseFactory[T: DomainEntity]:
 class BaseMongoFactory[T: DomainEntity](BaseFactory[T]):
     repository_class: type[MongoRepository[T]]
 
-    def __init__(self, database: Database[MongoDocument]) -> None:
+    def __init__(self, faker: Faker, database: Database[MongoDocument]) -> None:
+        self.faker = faker
         self.database = database
         self.repository = self.repository_class(database=database)
