@@ -4,37 +4,16 @@ let searchTimer = null;
 
 // -----------------------------------------------------------------------------
 export const initSearch = () => {
-  const searchInputs = document.querySelectorAll(
-    "#search-mobile, #search-desktop",
-  );
-  setupSearch(searchInputs);
-  setupClearSearch(searchInputs);
-};
+  const searchInput = document.getElementById("search");
+  const clearSearchButton = document.getElementById("clear-search");
 
-// -----------------------------------------------------------------------------
-// Add event listeners to the search inputs
-const setupSearch = (inputs) => {
-  inputs.forEach((input) => {
-    input.addEventListener("keyup", (event) => {
-      performSearch(event.target.value);
-    });
+  searchInput.addEventListener("keyup", (event) => {
+    performSearch(event.target.value);
   });
-};
 
-// -----------------------------------------------------------------------------
-// Add event listeners to the clear search buttons
-const setupClearSearch = (inputs) => {
-  const clearButtons = document.querySelectorAll(
-    "#clear-search-mobile, #clear-search-desktop",
-  );
-
-  clearButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      inputs.forEach((input) => {
-        input.value = "";
-      });
-      performSearch("");
-    });
+  clearSearchButton.addEventListener("click", () => {
+    searchInput.value = "";
+    performSearch("");
   });
 };
 
