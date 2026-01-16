@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.25.0](https://github.com/julienpillaud/levindorge/compare/0.24.0...0.25.0) (2026-01-16)
+
+
+### Features
+
+* move query building logic to utils ([#115](https://github.com/julienpillaud/levindorge/issues/115)) ([f43ad12](https://github.com/julienpillaud/levindorge/commit/f43ad128e6fc84d5a968ad4f804d9795cb0aa4db))
+* simplify search input handling ([#113](https://github.com/julienpillaud/levindorge/issues/113)) ([000bc90](https://github.com/julienpillaud/levindorge/commit/000bc90a6f2f24e9be34f6db191a48b3b158d1d2))
+
 ## [0.24.0](https://github.com/julienpillaud/levindorge/compare/0.23.0...0.24.0) (2026-01-16)
 
 
