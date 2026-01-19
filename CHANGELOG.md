@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.0](https://github.com/julienpillaud/levindorge/compare/0.25.1...0.26.0) (2026-01-19)
+
+
+### Features
+
+* add quantity input for articles ([#118](https://github.com/julienpillaud/levindorge/issues/118)) ([6b5f8d9](https://github.com/julienpillaud/levindorge/commit/6b5f8d9555f6a2fdbeb268bcc982c817f5a24025))
+
 ## [0.25.1](https://github.com/julienpillaud/levindorge/compare/0.25.0...0.25.1) (2026-01-16)
 
 
