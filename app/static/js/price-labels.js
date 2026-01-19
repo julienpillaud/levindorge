@@ -1,13 +1,20 @@
-import { getCheckedArticleIds, setCheckedArticleIds } from "./checkboxes.js";
+import {
+  getCheckedArticles,
+  setCheckedArticles,
+  toggleQuantityInput,
+} from "./checkboxes.js";
 import { showToast, updateArticlesPage } from "./utils.js";
 import { getStores } from "./cache/stores.js";
 
 // -----------------------------------------------------------------------------
 export const showSelectedArticles = () => {
-  const ids = getCheckedArticleIds();
+  const articles = getCheckedArticles();
   const params = new URLSearchParams();
 
-  ids.forEach((id) => params.append("article_ids", id));
+  articles.forEach((article) => {
+    params.append("article_ids", article.id);
+  });
+
   const url = `/articles/ids?${params.toString()}`;
 
   updateArticlesPage(url);
@@ -16,12 +23,16 @@ export const showSelectedArticles = () => {
 // -----------------------------------------------------------------------------
 export const unselectArticles = () => {
   const checkboxes = document.querySelectorAll("table tbody .checkbox");
-  checkboxes.forEach((checkbox) => (checkbox.checked = false));
+
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = false;
+    toggleQuantityInput(checkbox);
+  });
 
   const priceTagsDropdown = document.getElementById("price-labels-dropdown");
   priceTagsDropdown.classList.add("hidden");
 
-  setCheckedArticleIds([]);
+  setCheckedArticles([]);
 };
 
 // -----------------------------------------------------------------------------
@@ -50,16 +61,16 @@ export const initializePriceTagsDropdown = async () => {
 
 // -----------------------------------------------------------------------------
 const createPriceLabels = async (slug) => {
-  const ids = getCheckedArticleIds();
-  if (ids.length === 0) {
+  const articles = getCheckedArticles();
+  if (articles.length === 0) {
     showToast("Aucun produit sélectionné", { type: "warning" });
     return;
   }
 
   const body = {
-    data: ids.map((id) => ({
-      article_id: id, // eslint-disable-line
-      label_count: 1, // eslint-disable-line
+    data: articles.map((article) => ({
+      article_id: article.id, // eslint-disable-line
+      label_count: article.quantity, // eslint-disable-line
     })),
     store_slug: slug, // eslint-disable-line
   };

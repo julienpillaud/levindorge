@@ -1,6 +1,17 @@
 <tr class="hover cursor-pointer" data-id="{{ article.id }}">
-  <td class="hover cursor-default">
-    <label><input type="checkbox" class="checkbox" /></label>
+  <td class="hover cursor-default w-1">
+    <div class="flex items-center gap-2">
+      <label>
+        <input type="checkbox" class="checkbox" />
+      </label>
+      <input
+        type="number"
+        data-type="quantity"
+        class="invisible input input-xs w-12"
+        value="1"
+        min="1"
+      />
+    </div>
   </td>
   <td class="text-nowrap">{{ article.display_name }}</td>
   <td class="text-nowrap">{{ article.origin if article.origin }}</td>

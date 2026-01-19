@@ -1,7 +1,7 @@
 import {
   initializeCheckboxes,
-  updateCheckedArticleIds,
-  updateDropdownVisibility,
+  updateArticleQuantity,
+  updateCheckedArticles,
 } from "./checkboxes.js";
 import {
   initializePriceTagsDropdown,
@@ -25,8 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("change", (event) => {
     if (event.target.matches("#articles-table tbody .checkbox")) {
-      updateCheckedArticleIds(event);
-      updateDropdownVisibility();
+      updateCheckedArticles(event.target);
+    }
+  });
+  document.addEventListener("input", (event) => {
+    if (event.target.matches('#articles-table tbody [data-type="quantity"]')) {
+      updateArticleQuantity(event.target);
     }
   });
   // ---------------------------------------------------------------------------
