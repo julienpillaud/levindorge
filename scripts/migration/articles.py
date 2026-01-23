@@ -3,6 +3,7 @@ import uuid
 from decimal import Decimal
 from typing import Any
 
+from bson import ObjectId
 from rich import print
 
 from app.core.core import Context
@@ -61,7 +62,7 @@ def dump_articles(articles: list[Article]) -> list[dict[str, Any]]:
     dst_articles = []
     for article in articles:
         data = article.model_dump()
-        data["_id"] = data.pop("id")
+        data["_id"] = ObjectId(data.pop("id"))
         dst_articles.append(data)
     return dst_articles
 

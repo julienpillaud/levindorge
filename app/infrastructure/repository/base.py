@@ -124,7 +124,7 @@ class MongoRepository[T: DomainEntity](RepositoryProtocol[T]):
     def delete(self, entity: T, /) -> None:
         self.collection.delete_one({"_id": ObjectId(entity.id)})
 
-    def _get_by_id(self, entity_id: str, /) -> MongoDocument | None:
+    def _get_by_id(self, entity_id: EntityId, /) -> MongoDocument | None:
         pipeline = [
             {"$match": {"_id": ObjectId(entity_id)}},
             *self._aggregation_pipeline(),

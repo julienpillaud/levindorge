@@ -97,7 +97,7 @@ def update_article_view(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
-    article_id: str,
+    article_id: EntityId,
 ) -> Response:
     stores = domain.get_stores()
     article = domain.get_article(article_id=article_id)
@@ -122,7 +122,7 @@ def update_article(
     domain: Annotated[Domain, Depends(get_domain)],
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     form_data: Annotated[ArticleDTO, Form()],
-    article_id: str,
+    article_id: EntityId,
 ) -> Response:
     article_update = ArticleCreateOrUpdate(**form_data.model_dump())
     article = domain.update_article(article_id=article_id, data=article_update)
@@ -137,7 +137,7 @@ def update_article(
 def delete_article(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
-    article_id: str,
+    article_id: EntityId,
 ) -> Response:
     domain.delete_article(article_id=article_id)
     display_group = URL(request.headers["referer"]).path.split("/")[-1]

@@ -3,7 +3,7 @@ from cleanstack.exceptions import NotFoundError
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
 from app.domain.distributors.entities import Distributor
-from app.domain.entities import PaginatedResponse, Pagination, QueryParams
+from app.domain.entities import EntityId, PaginatedResponse, Pagination, QueryParams
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 
 
@@ -38,7 +38,7 @@ def create_distributor_command(
 def delete_distributor_command(
     context: ContextProtocol,
     /,
-    distributor_id: str,
+    distributor_id: EntityId,
 ) -> None:
     distributor = context.distributor_repository.get_by_id(distributor_id)
     if not distributor:

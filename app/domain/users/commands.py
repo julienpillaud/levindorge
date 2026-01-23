@@ -1,11 +1,12 @@
 from app.domain.context import ContextProtocol
+from app.domain.entities import EntityId
 from app.domain.users.entities import User, UserWithCredentials
 
 
 def update_user_password_command(
     context: ContextProtocol,
     /,
-    user_id: str,
+    user_id: EntityId,
     password: str,
 ) -> User | None:
     return context.identity_provider.update_user_password(

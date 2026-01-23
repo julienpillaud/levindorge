@@ -1,5 +1,6 @@
 from typing import Any
 
+from bson import ObjectId
 from rich import print
 
 from app.core.core import Context
@@ -47,7 +48,7 @@ def dump_inventories(inventories: list[Inventory]) -> list[dict[str, Any]]:
     dst_inventories = []
     for inventory in inventories:
         data = inventory.model_dump()
-        data["_id"] = data.pop("id")
+        data["_id"] = ObjectId(data.pop("id"))
         dst_inventories.append(data)
     return dst_inventories
 

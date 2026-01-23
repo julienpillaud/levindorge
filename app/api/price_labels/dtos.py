@@ -1,10 +1,11 @@
 from pydantic import BaseModel
 
+from app.domain.entities import EntityId
 from app.domain.types import StoreSlug
 
 
 class PriceLabelItemRequest(BaseModel):
-    article_id: str
+    article_id: EntityId
     label_count: int
 
 

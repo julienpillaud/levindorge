@@ -31,7 +31,7 @@ def settings() -> Settings:
         rabbitmq_host="localhost",
         redis_host="localhost",
         redis_port=6379,
-    )  # ty:ignore[missing-argument]
+    )
 
 
 @pytest.fixture
