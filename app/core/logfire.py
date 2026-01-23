@@ -4,7 +4,7 @@ import logfire
 
 
 def scrubbing_callback(match: logfire.ScrubMatch) -> Any:
-    if match.path == ("attributes", "article", "social_security_levy"):
+    if "social_security_contribution" in match.path:
         return match.value
 
     return None

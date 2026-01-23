@@ -41,6 +41,16 @@
       "handlers": ["console", "logfire"],
       "propagate": false
     },
+    "aiormq": {
+      "level": "INFO",
+      "handlers": ["console", "logfire"],
+      "propagate": false
+    },
+    "aio_pika": {
+      "level": "INFO",
+      "handlers": ["console", "logfire"],
+      "propagate": false
+    },
     "watchfiles": {
       "level": "WARNING",
       "handlers": ["console", "logfire"],

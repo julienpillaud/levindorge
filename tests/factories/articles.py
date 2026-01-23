@@ -72,24 +72,12 @@ def generate_article(faker: Faker, **kwargs: Any) -> Article:
         deposit=kwargs["deposit"],
         created_at=kwargs["created_at"]
         if "created_at" in kwargs
-        else faker.date_this_year(),
+        else faker.date_time(),
         updated_at=kwargs["updated_at"]
         if "updated_at" in kwargs
-        else faker.date_this_year(),
+        else faker.date_time(),
         store_data=kwargs["store_data"],
     )
-
-
-# class ArticleEntityFactory(ModelFactory[Article]):
-#     @classmethod
-#     def build(cls, factory_use_construct: bool = False, **kwargs: Any) -> Article:
-#         if "store_data" not in kwargs:
-#             kwargs["store_data"] = {
-#                 cls.__faker__.slug(): ArticleStoreDataEntityFactory.build()
-#                 for _ in range(cls.__random__.choice([1, 2, 3]))
-#             }
-#         kwargs["deposit"] = ArticleDepositEntityFactory.build()
-#         return super().build(**kwargs)
 
 
 class ArticleFactory(BaseMongoFactory[Article]):

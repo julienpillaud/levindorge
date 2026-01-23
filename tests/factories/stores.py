@@ -4,7 +4,7 @@ from faker import Faker
 
 from app.domain.stores.entities import Store
 from app.infrastructure.repository.stores import StoreRepository
-from scripts.migration.stores import PRICING_CONFIG
+from data.stores import PRICING_CONFIG
 from tests.factories.base import BaseMongoFactory
 
 

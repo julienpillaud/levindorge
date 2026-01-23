@@ -39,7 +39,7 @@ class Volume(DomainEntity):
     unit: VolumeUnit
     category: VolumeCategory
 
-    @computed_field(repr=False)  # type: ignore[prop-decorator]
+    @computed_field(repr=False)
     @property
     def normalized_value(self) -> float:
         return self.unit.to_centiliter(self.value)

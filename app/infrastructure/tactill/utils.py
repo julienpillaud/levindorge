@@ -71,7 +71,7 @@ def define_name(display_group: InventoryGroup, article: Article) -> str:
 
     match display_group:
         case InventoryGroup.BEER | InventoryGroup.CIDER:
-            return f"{name2} {volume} {name1}".strip()
+            return f"{name2} {volume} {name1}" if name1 else f"{name2} {volume}"
         case (
             InventoryGroup.KEG
             | InventoryGroup.MINI_KEG
@@ -108,7 +108,7 @@ def define_icon_text(article: Article) -> str:
 
 def define_color(display_group: InventoryGroup, article: Article) -> TactillColor:
     if not article.color:
-        raise ValueError()
+        return TactillColor.GREEN
 
     match display_group:
         case (

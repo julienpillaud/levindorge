@@ -61,7 +61,7 @@ def create_inventory(
 def delete_inventory(
     request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
-    inventory_id: str,
+    inventory_id: EntityId,
 ) -> Response:
     domain.delete_inventory(inventory_id=inventory_id)
     return RedirectResponse(

@@ -2,9 +2,9 @@ import logging
 from collections.abc import Callable
 from typing import Annotated, ParamSpec, TypeVar
 
+import logfire
 from faststream import Context
-from faststream.redis import RedisRouter
-from faststream.redis.opentelemetry import RedisTelemetryMiddleware
+from faststream.rabbit import RabbitRouter
 from tactill import TactillError
 from tenacity import (
     before_sleep_log,
@@ -16,22 +16,22 @@ from tenacity import (
 
 from app.domain.domain import Domain
 from app.domain.exceptions import POSManagerError
-from app.domain.pos.entities import POSArticleCreateOrUpdate, POSArticleDelete
+from app.domain.pos.entities import POSArticleRequest
 
 logger = logging.getLogger(__name__)
 
 P = ParamSpec("P")
 R = TypeVar("R")
 
-router = RedisRouter(middlewares=(RedisTelemetryMiddleware(),))
+router = RabbitRouter()
 
 
 @router.subscriber("create.article")
 def create_article(
-    message: POSArticleCreateOrUpdate,
+    message: POSArticleRequest,
     domain: Annotated[Domain, Context()],
 ) -> None:
-    logger.info(
+    logfire.info(
         f"Creating article for {message.store.name}",
         extra=message.model_dump(),
     )
@@ -40,10 +40,10 @@ def create_article(
 
 @router.subscriber("update.article")
 def update_article(
-    message: POSArticleCreateOrUpdate,
+    message: POSArticleRequest,
     domain: Annotated[Domain, Context()],
 ) -> None:
-    logger.info(
+    logfire.info(
         f"Updating article for {message.store.name}",
         extra=message.model_dump(),
     )
@@ -52,10 +52,10 @@ def update_article(
 
 @router.subscriber("delete.article")
 def delete_article(
-    message: POSArticleDelete,
+    message: POSArticleRequest,
     domain: Annotated[Domain, Context()],
 ) -> None:
-    logger.info(
+    logfire.info(
         f"Deleting article for {message.store.name}",
         extra=message.model_dump(),
     )
@@ -67,7 +67,7 @@ def delete_article(
         retry_if_exception_type(POSManagerError) | retry_if_exception_type(TactillError)
     ),
     wait=wait_exponential_jitter(),
-    stop=stop_after_attempt(3),
+    stop=stop_after_attempt(5),
     reraise=True,
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )

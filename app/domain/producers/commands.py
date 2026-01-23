@@ -2,7 +2,7 @@ from cleanstack.exceptions import NotFoundError
 
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
-from app.domain.entities import PaginatedResponse, Pagination, QueryParams
+from app.domain.entities import EntityId, PaginatedResponse, Pagination, QueryParams
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 from app.domain.filters import FilterEntity
 from app.domain.producers.entities import Producer, ProducerCreate, ProducerType
@@ -42,7 +42,7 @@ def create_producer_command(
 def delete_producer_command(
     context: ContextProtocol,
     /,
-    producer_id: str,
+    producer_id: EntityId,
 ) -> None:
     producer = context.producer_repository.get_by_id(producer_id)
     if not producer:

@@ -26,6 +26,9 @@ def settings() -> Settings:
         mongo_host="localhost",
         mongo_port=27017,
         mongo_database="test",
+        rabbitmq_user="guest",
+        rabbitmq_password="guest",
+        rabbitmq_host="localhost",
         redis_host="localhost",
         redis_port=6379,
     )

@@ -25,11 +25,11 @@ class POSManagerProtocol(Protocol):
         category: Category,
     ) -> None: ...
 
-    def delete_article_by_reference(
+    def delete_article(
         self,
         store: Store,
         /,
-        reference: str,
+        article: Article,
     ) -> None: ...
 
     def reset_stocks_by_category(

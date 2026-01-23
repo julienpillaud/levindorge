@@ -1,4 +1,5 @@
 import datetime
+import uuid
 
 from cleanstack.exceptions import NotFoundError
 from pydantic import PositiveInt
@@ -15,6 +16,7 @@ from app.domain.entities import (
     Pagination,
     QueryParams,
 )
+from app.domain.protocols.event_publisher import Event
 from app.domain.stores.entities import Store
 from app.domain.types import StoreSlug
 
@@ -56,21 +58,26 @@ def create_article_command(
     if not context.category_repository.get_by_name(data.category):
         raise NotFoundError(f"Category '{data.category}' not found.")
 
-    stores = _get_stores(context, store_slugs=list(data.store_data.keys()))
-
     current_time = datetime.datetime.now(datetime.UTC)
+    reference = uuid.uuid7()
     article = Article(
         **data.model_dump(),
+        reference=reference,
         created_at=current_time,
         updated_at=current_time,
     )
     created_article = context.article_repository.create(article)
 
-    for store in stores:
-        context.event_publisher.publish(
-            "create.article",
-            {"shop": store, "article": created_article},
-        )
+    stores = _get_stores(context, store_slugs=list(data.store_data.keys()))
+    context.event_publisher.publish(
+        events=[
+            Event(
+                queue="create.article",
+                message={"store": store, "article": created_article},
+            )
+            for store in stores
+        ]
+    )
 
     return created_article
 
@@ -84,8 +91,6 @@ def update_article_command(
     if not context.category_repository.get_by_name(data.category):
         raise NotFoundError(f"Category '{data.category}' not found.")
 
-    stores = _get_stores(context, store_slugs=list(data.store_data.keys()))
-
     existing_article = context.article_repository.get_by_id(article_id)
     if not existing_article:
         raise NotFoundError(f"Article '{article_id}' not found.")
@@ -93,17 +98,23 @@ def update_article_command(
     article = Article(
         id=existing_article.id,
         **data.model_dump(),
+        reference=existing_article.reference,
         created_at=existing_article.created_at,
         updated_at=datetime.datetime.now(datetime.UTC),
     )
 
     updated_article = context.article_repository.update(article)
 
-    for store in stores:
-        context.event_publisher.publish(
-            "update.article",
-            {"shop": store, "article": updated_article},
-        )
+    stores = _get_stores(context, store_slugs=list(data.store_data.keys()))
+    context.event_publisher.publish(
+        events=[
+            Event(
+                queue="update.article",
+                message={"store": store, "article": updated_article},
+            )
+            for store in stores
+        ]
+    )
 
     return updated_article
 
@@ -113,15 +124,18 @@ def delete_article_command(context: ContextProtocol, /, article_id: EntityId) ->
     if not article:
         raise NotFoundError(f"Article '{article_id}' not found.")
 
-    stores = _get_stores(context, store_slugs=list(article.store_data.keys()))
-
     context.article_repository.delete(article)
 
-    for store in stores:
-        context.event_publisher.publish(
-            "delete.article",
-            {"shop": store, "article_id": article_id},
-        )
+    stores = _get_stores(context, store_slugs=list(article.store_data.keys()))
+    context.event_publisher.publish(
+        events=[
+            Event(
+                queue="delete.article",
+                message={"store": store, "article": article},
+            )
+            for store in stores
+        ]
+    )
 
 
 def _get_stores(

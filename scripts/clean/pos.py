@@ -25,7 +25,7 @@ def build_pos_containers(
                 POSArticleContainer(
                     client=client,
                     article_id=article.id,
-                    name=article.name,
+                    name=article.name or "",
                     stock_quantity=article.stock_quantity,
                 )
             )

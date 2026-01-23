@@ -3,7 +3,7 @@ from cleanstack.exceptions import NotFoundError
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
 from app.domain.deposits.entities import Deposit, DepositCategory, DepositCreate
-from app.domain.entities import PaginatedResponse, Pagination, QueryParams
+from app.domain.entities import EntityId, PaginatedResponse, Pagination, QueryParams
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 from app.domain.filters import FilterEntity
 
@@ -43,7 +43,7 @@ def create_deposit_command(
     return created_deposit
 
 
-def delete_deposit_command(context: ContextProtocol, /, deposit_id: str) -> None:
+def delete_deposit_command(context: ContextProtocol, /, deposit_id: EntityId) -> None:
     deposit = context.deposit_repository.get_by_id(deposit_id)
     if not deposit:
         raise NotFoundError(f"Deposit `{deposit_id}` not found.")

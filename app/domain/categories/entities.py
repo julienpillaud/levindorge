@@ -8,4 +8,3 @@ class Category(DomainEntity):
     pricing_group: PricingGroup
     category_group: CategoryGroupName
     inventory_group: InventoryGroup
-    tactill_category: str

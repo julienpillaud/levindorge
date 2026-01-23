@@ -1,6 +1,8 @@
 from pydantic import BaseModel, ConfigDict, Field
 from tactill import TactillClient
 
+from app.domain.entities import EntityId
+
 type ArticleReference = str
 
 
@@ -8,7 +10,7 @@ class POSArticleContainer(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     client: TactillClient = Field(repr=False)
-    article_id: str
+    article_id: EntityId
     name: str
     stock_quantity: int
 
