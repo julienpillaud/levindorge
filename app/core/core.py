@@ -2,7 +2,7 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 
 from fastapi import FastAPI
-from faststream.redis import RedisBroker
+from faststream.rabbit import RabbitBroker
 from pymongo import MongoClient
 from redis import Redis
 
@@ -32,9 +32,9 @@ class BaseContext(ContextProtocol):
         self.settings = settings
         self.client: MongoClient[MongoDocument] = MongoClient(settings.mongo_uri)
         self.database = self.client[settings.mongo_database]
-        self.broker = RedisBroker(str(settings.redis_faststream_dsn))
+        self.broker = RabbitBroker(str(settings.rabbitmq_dsn))
         self.redis_client = Redis.from_url(
-            str(settings.redis_cache_dsn),
+            str(settings.redis_dsn),
             decode_responses=True,
         )
 

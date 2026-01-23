@@ -3,7 +3,7 @@ from typing import Any
 
 from app.domain.categories.entities import Category
 from app.infrastructure.repository.categories import CategoryRepository
-from scripts.migration.categories import CATEGORIES
+from data.categories import CATEGORIES
 from tests.factories.base import BaseMongoFactory
 
 

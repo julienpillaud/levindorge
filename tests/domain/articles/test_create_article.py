@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 from cleanstack.exceptions import NotFoundError
 
@@ -22,7 +24,7 @@ def test_create_article(
     article = create_article_command(context, data=data)
 
     assert is_str_object_id(article.id)
-    assert article.reference == data.reference
+    assert isinstance(article.reference, uuid.UUID)
     assert article.category == data.category
     assert article.producer == data.producer
     assert article.product == data.product

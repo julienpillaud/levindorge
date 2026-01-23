@@ -1,7 +1,7 @@
 from enum import StrEnum
 from zoneinfo import ZoneInfo
 
-from pydantic import RedisDsn, computed_field
+from pydantic import AmqpDsn, RedisDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.config.paths import AppPaths
@@ -42,11 +42,16 @@ class Settings(BaseSettings):
     mongo_port: int = 27017
     mongo_database: str
 
-    redis_host: str
-    redis_port: int
-    redis_scheme: str = "redis"
+    rabbitmq_user: str
+    rabbitmq_password: str
+    rabbitmq_host: str
+    rabbitmq_port: int = 5672
+    rabbitmq_vhost: str = "/"
 
-    @computed_field  # type: ignore[prop-decorator]
+    redis_host: str
+    redis_port: int = 6379
+
+    @computed_field
     @property
     def mongo_uri(self) -> str:
         if self.mongo_host == "localhost":
@@ -60,22 +65,24 @@ class Settings(BaseSettings):
                 f"@{self.mongo_host}/?retryWrites=true&w=majority"
             )
 
-    @computed_field  # type: ignore[prop-decorator]
+    @computed_field
     @property
-    def redis_faststream_dsn(self) -> RedisDsn:
-        return RedisDsn.build(
-            host=self.redis_host,
-            port=self.redis_port,
-            scheme=self.redis_scheme,
-            path="0",
+    def rabbitmq_dsn(self) -> AmqpDsn:
+        return AmqpDsn.build(
+            scheme="amqp",
+            username=self.rabbitmq_user,
+            password=self.rabbitmq_password,
+            host=self.rabbitmq_host,
+            port=self.rabbitmq_port,
+            path=self.rabbitmq_vhost,
         )
 
-    @computed_field  # type: ignore[prop-decorator]
+    @computed_field
     @property
-    def redis_cache_dsn(self) -> RedisDsn:
+    def redis_dsn(self) -> RedisDsn:
         return RedisDsn.build(
+            scheme="redis",
             host=self.redis_host,
             port=self.redis_port,
-            scheme=self.redis_scheme,
-            path="1",
+            path="0",
         )

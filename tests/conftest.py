@@ -28,7 +28,7 @@ def settings() -> Settings:
         mongo_database="test",
         redis_host="localhost",
         redis_port=6379,
-    )
+    )  # ty:ignore[missing-argument]
 
 
 @pytest.fixture

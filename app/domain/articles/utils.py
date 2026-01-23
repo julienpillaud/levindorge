@@ -102,7 +102,7 @@ def extract_deposit_data(data: dict[str, Any]) -> None:
         return
 
     case = data.pop("deposit.case", None)
-    packaging = data.pop("packaging", None)
+    packaging = data.pop("deposit.packaging", None)
 
     data["deposit"] = {
         "unit": float(unit),

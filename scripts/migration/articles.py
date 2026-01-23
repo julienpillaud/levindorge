@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from decimal import Decimal
 from typing import Any
 
@@ -36,20 +37,33 @@ def create_articles(
 ) -> list[Article]:
     # Get previous articles
     src_articles = list(src_context.database["articles"].find())
+
     # Create articles with the new entity model
-    dst_articles = create_article_entities(
+    articles = create_article_entities(
         src_articles=src_articles,
         categories=categories,
         stores=stores,
         origins=origins,
     )
+
     # Save articles in the database
-    result = dst_context.article_repository.create_many(dst_articles)
-    count = len(result)
+    dst_articles = dump_articles(articles)
+    result = dst_context.database["articles"].insert_many(dst_articles)
+
+    count = len(result.inserted_ids)
     print(f"Created {count} articles ({len(src_articles)})")
     return dst_context.article_repository.get_all(
         pagination=Pagination(page=1, limit=count)
     ).items
+
+
+def dump_articles(articles: list[Article]) -> list[dict[str, Any]]:
+    dst_articles = []
+    for article in articles:
+        data = article.model_dump()
+        data["_id"] = data.pop("id")
+        dst_articles.append(data)
+    return dst_articles
 
 
 def create_article_entities(
@@ -74,7 +88,10 @@ def create_article_entities(
             article,
             category_group=category_group,
         )
-        dst_article = Article(  # type: ignore[call-arg]
+        dst_article = Article(
+            # Need to keep previous id
+            id=str(article["_id"]),
+            reference=uuid.uuid7(),
             category=article["type"],
             producer=producer,
             product=product,

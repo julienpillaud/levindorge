@@ -23,7 +23,7 @@ def create_inventories(
     )
 
     # Save inventories in the database
-    dst_inventories = [inventory.model_dump() for inventory in inventories]
+    dst_inventories = dump_inventories(inventories)
     result = dst_context.database["inventories"].insert_many(dst_inventories)
     print(f"Created {len(result.inserted_ids)} inventories ({len(src_inventories)})")
 
@@ -41,6 +41,15 @@ def create_inventories(
         f"Created {len(result.inserted_ids)} inventory records "
         f"({len(src_inventory_records)})"
     )
+
+
+def dump_inventories(inventories: list[Inventory]) -> list[dict[str, Any]]:
+    dst_inventories = []
+    for inventory in inventories:
+        data = inventory.model_dump()
+        data["_id"] = data.pop("id")
+        dst_inventories.append(data)
+    return dst_inventories
 
 
 def create_inventories_entities(

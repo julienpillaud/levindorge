@@ -32,3 +32,10 @@ mongodb container_name="mongodb" \
     -e MONGO_INITDB_ROOT_PASSWORD={{password}} \
     --restart unless-stopped \
     mongo:latest
+
+
+run-app:
+    uv run uvicorn app.core.app:app --reload --proxy-headers --log-config app/core/logging/config.json
+
+run-worker:
+    uv run faststream run app.core.event_handler:app --workers 3

@@ -1,13 +1,13 @@
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.context import ContextProtocol
-from app.domain.pos.entities import POSArticleCreateOrUpdate, POSArticleDelete
+from app.domain.pos.entities import POSArticleRequest
 from app.domain.stores.entities import Store
 
 
 def create_pos_article_command(
     context: ContextProtocol,
-    data: POSArticleCreateOrUpdate,
+    data: POSArticleRequest,
 ) -> None:
     category = context.category_repository.get_by_name(name=data.article.category)
     if not category:
@@ -22,7 +22,7 @@ def create_pos_article_command(
 
 def update_pos_article_command(
     context: ContextProtocol,
-    data: POSArticleCreateOrUpdate,
+    data: POSArticleRequest,
 ) -> None:
     category = context.category_repository.get_by_name(name=data.article.category)
     if not category:
@@ -37,12 +37,9 @@ def update_pos_article_command(
 
 def delete_pos_article_command(
     context: ContextProtocol,
-    data: POSArticleDelete,
+    data: POSArticleRequest,
 ) -> None:
-    context.pos_manager.delete_article_by_reference(
-        data.store,
-        reference=data.article_id,
-    )
+    context.pos_manager.delete_article(data.store, article=data.article)
 
 
 def reset_pos_stocks_command(

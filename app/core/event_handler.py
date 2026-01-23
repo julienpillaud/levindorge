@@ -1,7 +1,7 @@
 import logfire
 from faststream import ContextRepo, FastStream
-from faststream.redis import RedisBroker
-from faststream.redis.opentelemetry import RedisTelemetryMiddleware
+from faststream.rabbit import RabbitBroker
+from faststream.rabbit.opentelemetry import RabbitTelemetryMiddleware
 
 from app.core.config.settings import Settings
 from app.core.core import Context
@@ -24,9 +24,9 @@ logfire.instrument_pymongo(capture_statement=True)
 app_context = Context(settings=settings)
 domain = Domain(context=app_context)
 
-broker = RedisBroker(
-    str(settings.redis_faststream_dsn),
-    middlewares=(RedisTelemetryMiddleware(),),
+broker = RabbitBroker(
+    str(settings.rabbitmq_dsn),
+    middlewares=(RabbitTelemetryMiddleware(),),
 )
 broker.include_router(router)
 app = FastStream(broker)
@@ -35,3 +35,4 @@ app = FastStream(broker)
 @app.on_startup
 async def set_context(context: ContextRepo) -> None:
     context.set_global("domain", domain)
+    logfire.info("Worker started")

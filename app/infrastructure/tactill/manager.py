@@ -3,6 +3,7 @@ from collections.abc import Callable
 from functools import wraps
 from typing import Concatenate, Literal, ParamSpec, TypeVar
 
+import logfire
 from tactill import TactillClient
 from tactill.entities.catalog.article import Article as TactillArticle
 from tactill.entities.catalog.article import ArticleCreation, ArticleModification
@@ -24,6 +25,7 @@ from app.infrastructure.tactill.utils import (
     define_icon_text,
     define_name,
 )
+from data.categories import CATEGORY_MAPPING
 
 T = TypeVar("T", bound="TactillManager")
 P = ParamSpec("P")
@@ -76,7 +78,7 @@ class TactillManager(POSManagerProtocol):
     def _get_category(self, name: str) -> TactillCategory:
         categories = self._get_categories(name)
         if not categories:
-            raise POSManagerError()
+            raise POSManagerError(f"Category '{name}' not found.")
 
         return categories[0]
 
@@ -84,15 +86,20 @@ class TactillManager(POSManagerProtocol):
         filter_ = f"deprecated=false&rate={tax_rate}"
         taxes = self.client.get_taxes(filter=filter_)
         if not taxes:
-            raise POSManagerError()
+            raise POSManagerError(f"Tax rate '{tax_rate}' not found.")
 
         return taxes[0]
 
-    def get_article_by_reference(self, reference: str) -> TactillArticle:
+    def get_article_by_reference(self, article: Article) -> TactillArticle:
+        reference = article.reference.hex
         filter_ = f"deprecated=false&is_default=false&reference={reference}"
         articles = self.client.get_articles(filter=filter_)
         if not articles:
-            raise POSManagerError()
+            logfire.info(
+                f"Article '{article.id}' not found.",
+                extra=article.model_dump(),
+            )
+            raise POSManagerError(f"Article '{article.id}' not found.")
 
         return articles[0]
 
@@ -127,7 +134,7 @@ class TactillManager(POSManagerProtocol):
         article: Article,
         category: Category,
     ) -> POSArticle:
-        tactill_category = self._get_category(category.tactill_category)
+        tactill_category = self._get_category(CATEGORY_MAPPING[category.name])
         tactill_tax = self.get_tax(tax_rate=float(article.vat_rate))
 
         article_creation = ArticleCreation(
@@ -136,9 +143,9 @@ class TactillManager(POSManagerProtocol):
             name=define_name(display_group=category.inventory_group, article=article),
             icon_text=define_icon_text(article=article),
             color=define_color(display_group=category.inventory_group, article=article),
-            full_price=article.store_data[store.slug].gross_price,
+            full_price=float(article.store_data[store.slug].gross_price),
             barcode=article.barcode,
-            reference=article.id,
+            reference=article.reference.hex,
             in_stock=True,
         )
         result = self.client.create_article(article_creation=article_creation)
@@ -152,9 +159,9 @@ class TactillManager(POSManagerProtocol):
         article: Article,
         category: Category,
     ) -> None:
-        tactill_article = self.get_article_by_reference(reference=article.id)
+        tactill_article = self.get_article_by_reference(article=article)
 
-        tactill_category = self._get_category(category.tactill_category)
+        tactill_category = self._get_category(CATEGORY_MAPPING[category.name])
         tactill_tax = self.get_tax(tax_rate=float(article.vat_rate))
 
         article_modification = ArticleModification(
@@ -163,7 +170,7 @@ class TactillManager(POSManagerProtocol):
             name=define_name(display_group=category.inventory_group, article=article),
             icon_text=define_icon_text(article=article),
             color=define_color(display_group=category.inventory_group, article=article),
-            full_price=article.store_data[store.slug].gross_price,
+            full_price=float(article.store_data[store.slug].gross_price),
             barcode=article.barcode,
             in_stock=True,
         )
@@ -173,19 +180,14 @@ class TactillManager(POSManagerProtocol):
         )
 
     @with_client
-    def delete_article_by_reference(
+    def delete_article(
         self,
         store: Store,
         /,
-        reference: str,
+        article: Article,
     ) -> None:
-        filter_ = f"deprecated=false&is_default=false&reference={reference}"
-        articles = self.client.get_articles(filter=filter_)
-        if not articles:
-            raise POSManagerError()
-
-        article = articles[0]
-        self.client.delete_article(article_id=article.id)
+        tactill_article = self.get_article_by_reference(article=article)
+        self.client.delete_article(article_id=tactill_article.id)
 
     @with_client
     def reset_stocks_by_category(

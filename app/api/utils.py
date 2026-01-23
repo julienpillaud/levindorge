@@ -44,7 +44,7 @@ def mount_static(app: FastAPI, settings: Settings) -> None:
 
 
 def add_session_middleware(app: FastAPI, settings: Settings) -> None:
-    app.add_middleware(SessionMiddleware, secret_key=settings.secret_key)
+    app.add_middleware(SessionMiddleware, secret_key=settings.secret_key)  # ty:ignore[invalid-argument-type]
 
 
 def add_security_middleware(app: FastAPI, settings: Settings) -> None:

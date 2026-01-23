@@ -1,7 +1,7 @@
 from enum import StrEnum
-from typing import Literal
+from typing import Self
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from app.domain.entities import DomainEntity
 
@@ -13,24 +13,18 @@ class OriginType(StrEnum):
 
 class Origin(DomainEntity):
     name: str
-    code: str | None
-    type: OriginType
+    code: str | None = None
+    type: OriginType = OriginType.COUNTRY
+
+    @model_validator(mode="after")
+    def validate(self) -> Self:
+        if self.type == OriginType.COUNTRY and not self.code:
+            raise ValueError("Country must have a code")
+        return self
 
     @property
     def display_name(self) -> str:
         return self.name
-
-
-class Country(Origin):
-    name: str
-    code: str
-    type: Literal[OriginType.COUNTRY] = OriginType.COUNTRY
-
-
-class Region(Origin):
-    name: str
-    code: None = None
-    type: Literal[OriginType.REGION] = OriginType.REGION
 
 
 class OriginCreate(BaseModel):
