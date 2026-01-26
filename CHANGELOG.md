@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.27.0](https://github.com/julienpillaud/levindorge/compare/0.26.0...0.27.0) (2026-01-26)
+
+
+### Features
+
+* refactor event handling ([#120](https://github.com/julienpillaud/levindorge/issues/120)) ([c5cff76](https://github.com/julienpillaud/levindorge/commit/c5cff76f89443e411d37306c28f2c3e3aaf8230b))
+* update tactill dependency ([#122](https://github.com/julienpillaud/levindorge/issues/122)) ([7848762](https://github.com/julienpillaud/levindorge/commit/7848762cf7c884d23e1489ccf75a12a7e6da29a8))
+
 ## [0.26.0](https://github.com/julienpillaud/levindorge/compare/0.25.1...0.26.0) (2026-01-19)
 
 
