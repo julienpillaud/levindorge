@@ -1,4 +1,4 @@
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 from rich.console import Console
@@ -6,6 +6,7 @@ from rich.panel import Panel
 
 from app.core.config.settings import Settings
 from app.core.core import Context
+from app.domain.stores.entities import Store
 from app.infrastructure.tactill.utils import INCLUDED_CATEGORIES
 from scripts.clean.dashboard import (
     delete_dashboard_articles,
@@ -26,14 +27,14 @@ def clean(
     dry_run: Annotated[bool, typer.Option()] = True,
 ) -> None:
     if all_categories:
-        name_or_names: str | list[str] = INCLUDED_CATEGORIES
+        names = INCLUDED_CATEGORIES
     else:
         if not category:
             console.print(
                 "[bold red]You must specify a category or use --all[/bold red]"
             )
             raise typer.Exit()
-        name_or_names = category
+        names = [category]
 
     settings = Settings(mongo_database="dashboard")  # ty:ignore[missing-argument]
     context = Context(settings=settings)
@@ -42,7 +43,7 @@ def clean(
     containers = build_containers(
         context=context,
         stores=stores,
-        name_or_names=name_or_names,
+        names=names,
     )
     print_output(containers=containers)
     if not dry_run:
@@ -52,17 +53,11 @@ def clean(
 
 def build_containers(
     context: Context,
-    stores: list[dict[str, Any]],
-    name_or_names: str | list[str],
+    stores: list[Store],
+    names: list[str],
 ) -> Containers:
-    pos_containers = build_pos_containers(
-        stores=stores,
-        name_or_names=name_or_names,
-    )
-    dashboard_articles = get_dashboard_articles(
-        context=context,
-        name_or_names=name_or_names,
-    )
+    pos_containers = build_pos_containers(stores=stores, names=names)
+    dashboard_articles = get_dashboard_articles(context=context, names=names)
 
     all_references = set(pos_containers.keys()) | set(dashboard_articles.keys())
     containers = [

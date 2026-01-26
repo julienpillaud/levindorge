@@ -1,26 +1,29 @@
-from typing import Any
-
 from bson import ObjectId
 from rich import print
 
 from app.core.core import Context
+from app.domain.stores.entities import Store
 from scripts.clean.entities import ArticleReference, Container
 
 
-def get_stores(context: Context) -> list[dict[str, Any]]:
-    return list(context.database["shops"].find())
+def get_stores(context: Context) -> list[Store]:
+    result = list(context.database["shops"].find())
+    return [
+        Store(
+            name=store["name"],
+            slug=store["username"],
+            tactill_api_key=store["tactill_api_key"],
+            pricing_configs={},
+        )
+        for store in result
+    ]
 
 
 def get_dashboard_articles(
     context: Context,
-    name_or_names: str | list[str],
+    names: list[str],
 ) -> dict[ArticleReference, bool]:
-    category_names = (
-        [name_or_names] if isinstance(name_or_names, str) else name_or_names
-    )
-    categories = context.database["types"].find(
-        {"tactill_category": {"$in": category_names}}
-    )
+    categories = context.database["types"].find({"tactill_category": {"$in": names}})
     type_names = [x["name"] for x in categories]
     articles = context.database["articles"].find({"type": {"$in": type_names}})
     return {str(article["_id"]): True for article in articles}

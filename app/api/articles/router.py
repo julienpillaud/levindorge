@@ -1,11 +1,10 @@
 from decimal import Decimal
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form, status
-from fastapi.datastructures import URL
+from fastapi import APIRouter, Depends, Form
 from fastapi.params import Query
 from fastapi.requests import Request
-from fastapi.responses import RedirectResponse, Response
+from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
 from pydantic import PositiveInt
 
@@ -133,18 +132,12 @@ def update_article(
     )
 
 
-@router.get("/delete/{article_id}", dependencies=[Depends(get_current_user)])
+@router.delete("/{article_id}", dependencies=[Depends(get_current_user)])
 def delete_article(
-    request: Request,
     domain: Annotated[Domain, Depends(get_domain)],
     article_id: EntityId,
-) -> Response:
+) -> None:
     domain.delete_article(article_id=article_id)
-    display_group = URL(request.headers["referer"]).path.split("/")[-1]
-    return RedirectResponse(
-        url=request.url_for("get_articles_view", display_group=display_group),
-        status_code=status.HTTP_302_FOUND,
-    )
 
 
 @router.post("/recommended_prices")

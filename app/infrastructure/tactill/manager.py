@@ -4,13 +4,11 @@ from functools import wraps
 from typing import Concatenate, Literal, ParamSpec, TypeVar
 
 import logfire
-from tactill import TactillClient
-from tactill.entities.catalog.article import Article as TactillArticle
-from tactill.entities.catalog.article import ArticleCreation, ArticleModification
-from tactill.entities.catalog.category import Category as TactillCategory
-from tactill.entities.catalog.tax import Tax
+from tactill import FilterEntity, FilterOperator, QueryParams, TactillClient
+from tactill.entities import Article as TactillArticle
+from tactill.entities import ArticleCreation, ArticleModification, Tax
+from tactill.entities import Category as TactillCategory
 from tactill.entities.stock.movement import ArticleMovement, MovementCreation
-from tactill.utils import get_query_filter
 
 from app.domain.articles.entities import Article
 from app.domain.categories.entities import Category
@@ -34,6 +32,7 @@ R = TypeVar("R")
 
 class TactillManager(POSManagerProtocol):
     def __init__(self) -> None:
+        self._api_key: str | None = None
         self._client: TactillClient | None = None
 
     @property
@@ -48,52 +47,59 @@ class TactillManager(POSManagerProtocol):
     ) -> Callable[Concatenate[T, Store, P], R]:
         @wraps(func)
         def wrapper(self: T, store: Store, /, *args: P.args, **kwargs: P.kwargs) -> R:
-            self._client = TactillClient(api_key=store.tactill_api_key)
+            if store.tactill_api_key != self._api_key:
+                self._api_key = store.tactill_api_key
+                self._client = TactillClient(api_key=store.tactill_api_key)
             return func(self, store, *args, **kwargs)
 
         return wrapper
 
-    def _get_categories(
+    def _get_categories_by_name(
         self,
-        name_or_names: str | list[str],
-        query_operator: Literal["in", "nin"] | None = None,
+        names: list[str],
+        /,
+        operator: Literal[FilterOperator.IN, FilterOperator.NIN] = FilterOperator.IN,
     ) -> list[TactillCategory]:
-        if isinstance(name_or_names, str):
-            filter_ = f"deprecated=false&is_default=false&name={name_or_names}"
-        else:
-            if query_operator is None:
-                raise POSManagerError(
-                    "'query_operator' must be provided for list of names"
-                )
-
-            query_filter = get_query_filter(
-                field="name",
-                values=name_or_names,
-                query_operator=query_operator,
-            )
-            filter_ = f"deprecated=false&is_default=false&{query_filter}"
-
-        return self.client.get_categories(filter=filter_)
+        query = QueryParams(
+            filters=[
+                FilterEntity(field="deprecated", value="false"),
+                FilterEntity(field="is_default", value="false"),
+                FilterEntity(field="name", value=names, operator=operator),
+            ],
+        )
+        return self.client.get_categories(query=query)
 
     def _get_category(self, name: str) -> TactillCategory:
-        categories = self._get_categories(name)
+        categories = self._get_categories_by_name([name])
         if not categories:
             raise POSManagerError(f"Category '{name}' not found.")
 
         return categories[0]
 
-    def get_tax(self, tax_rate: float) -> Tax:
-        filter_ = f"deprecated=false&rate={tax_rate}"
-        taxes = self.client.get_taxes(filter=filter_)
+    def _get_tax(self, tax_rate: float) -> Tax:
+        query = QueryParams(
+            limit=1,
+            filters=[
+                FilterEntity(field="deprecated", value="false"),
+                FilterEntity(field="rate", value=tax_rate),
+            ],
+        )
+        taxes = self.client.get_taxes(query=query)
         if not taxes:
             raise POSManagerError(f"Tax rate '{tax_rate}' not found.")
 
         return taxes[0]
 
-    def get_article_by_reference(self, article: Article) -> TactillArticle:
-        reference = article.reference.hex
-        filter_ = f"deprecated=false&is_default=false&reference={reference}"
-        articles = self.client.get_articles(filter=filter_)
+    def _get_article_by_reference(self, article: Article) -> TactillArticle:
+        query = QueryParams(
+            limit=1,
+            filters=[
+                FilterEntity(field="deprecated", value="false"),
+                FilterEntity(field="is_default", value="false"),
+                FilterEntity(field="reference", value=article.reference.hex),
+            ],
+        )
+        articles = self.client.get_articles(query=query)
         if not articles:
             logfire.info(
                 f"Article '{article.id}' not found.",
@@ -103,28 +109,32 @@ class TactillManager(POSManagerProtocol):
 
         return articles[0]
 
-    def _get_articles_by_category(
+    @with_client
+    def get_articles_by_category(
         self,
+        store: Store,
+        /,
         category_ids: list[str],
-        query_operator: Literal["in", "nin"],
+        operator: Literal[FilterOperator.IN, FilterOperator.NIN] = FilterOperator.IN,
     ) -> list[POSArticle]:
-        query_filter = get_query_filter(
-            field="category_id",
-            values=category_ids,
-            query_operator=query_operator,
-        )
-        articles = self.client.get_articles(
+        query = QueryParams(
             limit=5000,
-            filter=f"deprecated=false&is_default=false&{query_filter}",
+            filters=[
+                FilterEntity(field="deprecated", value="false"),
+                FilterEntity(field="is_default", value="false"),
+                FilterEntity(
+                    field="category_id", value=category_ids, operator=operator
+                ),
+            ],
         )
+        articles = self.client.get_articles(query=query)
         return [POSArticle(**article.model_dump()) for article in articles]
 
     @with_client
-    def get_articles(self, _: Store, /) -> list[POSArticle]:
-        categories = self._get_categories(INCLUDED_CATEGORIES, query_operator="in")
+    def get_articles(self, store: Store, /) -> list[POSArticle]:
+        categories = self._get_categories_by_name(INCLUDED_CATEGORIES)
         category_ids = [category.id for category in categories]
-
-        return self._get_articles_by_category(category_ids, query_operator="in")
+        return self.get_articles_by_category(store, category_ids=category_ids)
 
     @with_client
     def create_article(
@@ -135,7 +145,7 @@ class TactillManager(POSManagerProtocol):
         category: Category,
     ) -> POSArticle:
         tactill_category = self._get_category(CATEGORY_MAPPING[category.name])
-        tactill_tax = self.get_tax(tax_rate=float(article.vat_rate))
+        tactill_tax = self._get_tax(tax_rate=float(article.vat_rate))
 
         article_creation = ArticleCreation(
             category_id=tactill_category.id,
@@ -159,10 +169,9 @@ class TactillManager(POSManagerProtocol):
         article: Article,
         category: Category,
     ) -> None:
-        tactill_article = self.get_article_by_reference(article=article)
-
+        tactill_article = self._get_article_by_reference(article=article)
         tactill_category = self._get_category(CATEGORY_MAPPING[category.name])
-        tactill_tax = self.get_tax(tax_rate=float(article.vat_rate))
+        tactill_tax = self._get_tax(tax_rate=float(article.vat_rate))
 
         article_modification = ArticleModification(
             category_id=tactill_category.id,
@@ -186,7 +195,7 @@ class TactillManager(POSManagerProtocol):
         /,
         article: Article,
     ) -> None:
-        tactill_article = self.get_article_by_reference(article=article)
+        tactill_article = self._get_article_by_reference(article=article)
         self.client.delete_article(article_id=tactill_article.id)
 
     @with_client
@@ -200,14 +209,11 @@ class TactillManager(POSManagerProtocol):
         if not category_names:
             raise POSManagerError()
 
-        categories = self._get_categories(category_names, query_operator="in")
+        categories = self._get_categories_by_name(category_names)
         categories_mapping = {category.id: category.name for category in categories}
         category_ids = [category.id for category in categories]
 
-        articles = self._get_articles_by_category(
-            category_ids=category_ids,
-            query_operator="in",
-        )
+        articles = self.get_articles_by_category(store, category_ids=category_ids)
 
         current_date = datetime.datetime.now(datetime.UTC).isoformat()
         article_movements_out = []

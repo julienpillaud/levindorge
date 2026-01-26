@@ -37,11 +37,18 @@ services:
     env_file:
       - .env
     depends_on:
-      - redis
+      - rabbitmq
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:4.2
+    restart: always
+    networks:
+      - internal
 
   redis:
     container_name: redis
-    image: redis:8.2
+    image: redis:8.4
     restart: always
     networks:
       - internal

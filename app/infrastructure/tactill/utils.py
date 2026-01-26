@@ -1,4 +1,4 @@
-from tactill import TactillColor
+from tactill.entities import TactillColor
 
 from app.domain.articles.entities import Article, ArticleColor
 from app.domain.commons.entities import InventoryGroup
