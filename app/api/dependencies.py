@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    return Settings()  # ty:ignore[missing-argument]
+    return Settings()
 
 
 def get_domain(request: Request) -> Domain:

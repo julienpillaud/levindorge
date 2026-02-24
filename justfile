@@ -10,6 +10,12 @@ build tag:
 push tag:
     docker push ghcr.io/julienpillaud/levindorge:{{ tag }}
 
+dev:
+    docker compose -f compose-dev.yaml up -d
+
+dev-down:
+    docker compose -f compose-dev.yaml down
+
 prod:
     IMAGE_TAG=dev \
     HOST=app.localhost \

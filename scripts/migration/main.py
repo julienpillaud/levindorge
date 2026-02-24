@@ -25,8 +25,8 @@ def migrate(
     destination: Annotated[str, typer.Argument()] = "temp",
     delete_destination: Annotated[bool, typer.Option("--delete", "-d")] = True,
 ) -> None:
-    src_settings = Settings(mongo_database=source)  # ty:ignore[missing-argument]
-    dst_settings = Settings(mongo_database=destination)  # ty:ignore[missing-argument]
+    src_settings = Settings(mongo_database=source)
+    dst_settings = Settings(mongo_database=destination)
     src_context = Context(settings=src_settings)
     dst_context = Context(settings=dst_settings)
 
