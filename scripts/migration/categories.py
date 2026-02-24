@@ -1,6 +1,6 @@
 from rich import print
 
-from app.core.core import Context
+from app.core.context import Context
 from app.domain.categories.entities import Category
 from app.domain.entities import Pagination
 from data.categories import CATEGORIES

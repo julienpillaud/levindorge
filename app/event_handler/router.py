@@ -1,9 +1,9 @@
 import logging
 from collections.abc import Callable
-from typing import Annotated, ParamSpec, TypeVar
+from typing import Annotated
 
 import logfire
-from faststream import Context
+from fast_depends import Depends
 from faststream.rabbit import RabbitRouter
 from tactill import TactillError
 from tenacity import (
@@ -17,19 +17,18 @@ from tenacity import (
 from app.domain.domain import Domain
 from app.domain.exceptions import POSManagerError
 from app.domain.pos.entities import POSArticleRequest
+from app.event_handler.dependencies import get_domain
 
 logger = logging.getLogger(__name__)
 
-P = ParamSpec("P")
-R = TypeVar("R")
 
 router = RabbitRouter()
 
 
 @router.subscriber("create.article")
 def create_article(
+    domain: Annotated[Domain, Depends(get_domain)],
     message: POSArticleRequest,
-    domain: Annotated[Domain, Context()],
 ) -> None:
     logfire.info(
         f"Creating article for {message.store.name}",
@@ -40,8 +39,8 @@ def create_article(
 
 @router.subscriber("update.article")
 def update_article(
+    domain: Annotated[Domain, Depends(get_domain)],
     message: POSArticleRequest,
-    domain: Annotated[Domain, Context()],
 ) -> None:
     logfire.info(
         f"Updating article for {message.store.name}",
@@ -52,8 +51,8 @@ def update_article(
 
 @router.subscriber("delete.article")
 def delete_article(
+    domain: Annotated[Domain, Depends(get_domain)],
     message: POSArticleRequest,
-    domain: Annotated[Domain, Context()],
 ) -> None:
     logfire.info(
         f"Deleting article for {message.store.name}",
@@ -71,7 +70,7 @@ def delete_article(
     reraise=True,
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
-def retry_command(
+def retry_command[**P, R](
     func: Callable[P, R],
     *args: P.args,
     **kwargs: P.kwargs,

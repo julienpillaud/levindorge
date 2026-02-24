@@ -1,5 +1,3 @@
-import logging
-
 from cleanstack.exceptions import ConflictError
 from fastapi import FastAPI, status
 from fastapi.requests import Request
@@ -13,8 +11,6 @@ from app.domain.exceptions import (
     EntityInUseError,
     UserUnauthorizedError,
 )
-
-logger = logging.getLogger(__name__)
 
 
 def add_exception_handler(app: FastAPI, settings: Settings) -> None:

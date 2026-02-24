@@ -3,7 +3,7 @@ from typing import Any
 from bson import ObjectId
 from rich import print
 
-from app.core.core import Context
+from app.core.context import Context
 from app.domain.articles.entities import ArticleDeposit
 from app.domain.commons.entities import InventoryGroup
 from app.domain.inventories.entities import Inventory, InventoryDetail, InventoryRecord
@@ -16,7 +16,7 @@ def create_inventories(
     stores: list[Store],
 ) -> None:
     # Get previous inventories
-    src_inventories = list(src_context.database["inventories"].find())
+    src_inventories = list(src_context.uow.mongo.database["inventories"].find())
     # Create inventories with the new entity model
     inventories = create_inventories_entities(
         src_inventories=src_inventories,
@@ -25,17 +25,19 @@ def create_inventories(
 
     # Save inventories in the database
     dst_inventories = dump_inventories(inventories)
-    result = dst_context.database["inventories"].insert_many(dst_inventories)
+    result = dst_context.uow.mongo.database["inventories"].insert_many(dst_inventories)
     print(f"Created {len(result.inserted_ids)} inventories ({len(src_inventories)})")
 
     # Get previous inventory records
-    src_inventory_records = list(src_context.database["inventory_records"].find())
+    src_inventory_records = list(
+        src_context.uow.mongo.database["inventory_records"].find()
+    )
     # Create inventory records with the new entity model
     inventory_records = create_inventory_record_entities(src_inventory_records)
     dst_inventory_records = [
         record.model_dump(exclude={"id"}) for record in inventory_records
     ]
-    result = dst_context.database["inventory_records"].insert_many(
+    result = dst_context.uow.mongo.database["inventory_records"].insert_many(
         dst_inventory_records
     )
     print(

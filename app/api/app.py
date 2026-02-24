@@ -16,7 +16,7 @@ from app.api.volumes.router import router as volumes_router
 from app.core.config.settings import Settings
 
 
-def create_app(settings: Settings) -> FastAPI:
+def create_fastapi_app(settings: Settings) -> FastAPI:
     app = FastAPI(
         title=settings.project_name,
         version=settings.app_version,

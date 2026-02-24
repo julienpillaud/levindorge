@@ -1,12 +1,7 @@
-from collections.abc import Callable
 from decimal import Decimal
-from typing import Annotated, Concatenate
+from typing import Annotated
 
-from pydantic import BaseModel, PlainSerializer
-
-from app.domain.context import ContextProtocol
-
-type Command[**P, R: BaseModel] = Callable[Concatenate[ContextProtocol, P], R]
+from pydantic import PlainSerializer
 
 type StoreName = str
 type StoreSlug = str

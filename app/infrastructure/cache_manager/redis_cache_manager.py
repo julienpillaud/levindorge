@@ -1,13 +1,14 @@
 from typing import cast
 
-from redis import Redis
-
+from app.core.config.settings import Settings
 from app.domain.protocols.cache_manager import CacheManagerProtocol
+from app.infrastructure.cache_manager.provider import RedisProvider
 
 
 class RedisCacheManager(CacheManagerProtocol):
-    def __init__(self, client: Redis):
-        self.client = client
+    def __init__(self, settings: Settings):
+        RedisProvider.init(settings)
+        self.client = RedisProvider.get_client()
 
     def set(
         self,

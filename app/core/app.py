@@ -1,8 +1,7 @@
 import logfire
 
-from app.api.app import create_app
+from app.api.app import create_fastapi_app
 from app.core.config.settings import Settings
-from app.core.core import initialize_app
 from app.core.logfire import scrubbing_callback
 
 settings = Settings()
@@ -20,6 +19,6 @@ logfire.instrument_pymongo(capture_statement=True)
 
 logfire.instrument_redis(capture_statement=True)
 
-app = create_app(settings=settings)
-initialize_app(settings=settings, app=app)
+app = create_fastapi_app(settings=settings)
+
 logfire.instrument_fastapi(app, capture_headers=True, extra_spans=True)

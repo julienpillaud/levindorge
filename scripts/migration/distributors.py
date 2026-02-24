@@ -1,6 +1,6 @@
 from rich import print
 
-from app.core.core import Context
+from app.core.context import Context
 from app.domain.articles.entities import Article
 from app.domain.distributors.entities import Distributor
 

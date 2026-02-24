@@ -1,6 +1,6 @@
 from rich import print
 
-from app.core.core import Context
+from app.core.context import Context
 from app.domain.entities import Pagination
 from app.domain.origins.entities import Origin
 from data.origins import ORIGINS

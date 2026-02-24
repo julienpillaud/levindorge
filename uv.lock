@@ -154,8 +154,8 @@ wheels = [
 
 [[package]]
 name = "cleanstack"
-version = "0.8.0"
-source = { git = "https://github.com/julienpillaud/cleanstack?tag=0.8.0#614a196ccd5d3f56f48272e1f3ace3a117754c68" }
+version = "0.12.0"
+source = { git = "https://github.com/julienpillaud/cleanstack?tag=0.12.0#c142cb5c564d395a457811d6624e261e0efad309" }
 dependencies = [
     { name = "fastapi" },
 ]
@@ -540,7 +540,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "cleanstack", git = "https://github.com/julienpillaud/cleanstack?tag=0.8.0" },
+    { name = "cleanstack", git = "https://github.com/julienpillaud/cleanstack?tag=0.12.0" },
     { name = "fastapi", specifier = "==0.132.0" },
     { name = "faststream", extras = ["cli", "rabbit"], specifier = "==0.6.6" },
     { name = "itsdangerous", specifier = "==2.2.0" },

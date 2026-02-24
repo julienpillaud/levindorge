@@ -2,7 +2,7 @@ from typing import Any
 
 from rich import print
 
-from app.core.core import Context
+from app.core.context import Context
 from app.domain.entities import Pagination
 from app.domain.stores.entities import Store
 from data.stores import PRICING_CONFIG
@@ -10,7 +10,7 @@ from data.stores import PRICING_CONFIG
 
 def create_stores(src_context: Context, dst_context: Context) -> list[Store]:
     # Get previous stores
-    src_stores = list(src_context.database["shops"].find())
+    src_stores = list(src_context.uow.mongo.database["shops"].find())
     # Create stores with the new entity model
     dst_stores = create_store_entities(src_stores)
 

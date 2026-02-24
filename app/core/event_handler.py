@@ -1,13 +1,8 @@
 import logfire
-from faststream import ContextRepo, FastStream
-from faststream.rabbit import RabbitBroker
-from faststream.rabbit.opentelemetry import RabbitTelemetryMiddleware
 
 from app.core.config.settings import Settings
-from app.core.core import Context
 from app.core.logfire import scrubbing_callback
-from app.domain.domain import Domain
-from app.event_handler.router import router
+from app.event_handler.app import create_faststream_app
 
 settings = Settings()
 logfire.configure(
@@ -21,18 +16,4 @@ logfire.configure(
 )
 logfire.instrument_pymongo(capture_statement=True)
 
-app_context = Context(settings=settings)
-domain = Domain(context=app_context)
-
-broker = RabbitBroker(
-    str(settings.rabbitmq_dsn),
-    middlewares=(RabbitTelemetryMiddleware(),),
-)
-broker.include_router(router)
-app = FastStream(broker)
-
-
-@app.on_startup
-async def set_context(context: ContextRepo) -> None:
-    context.set_global("domain", domain)
-    logfire.info("Worker started")
+app = create_faststream_app(settings=settings)
