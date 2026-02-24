@@ -1,7 +1,7 @@
 from enum import StrEnum
 from zoneinfo import ZoneInfo
 
-from pydantic import AmqpDsn, RedisDsn, computed_field
+from pydantic import AmqpDsn, MongoDsn, RedisDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.config.paths import AppPaths
@@ -36,8 +36,8 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_audience: str = "authenticated"
 
-    mongo_user: str
-    mongo_password: str
+    mongo_user: str | None = None
+    mongo_password: str | None = None
     mongo_host: str
     mongo_port: int = 27017
     mongo_database: str
@@ -55,10 +55,14 @@ class Settings(BaseSettings):
     @property
     def mongo_uri(self) -> str:
         if self.mongo_host == "localhost":
-            return (
-                f"mongodb://{self.mongo_user}:{self.mongo_password}"
-                f"@{self.mongo_host}:{self.mongo_port}"
+            mongo_dsn = MongoDsn.build(
+                scheme="mongodb",
+                host="localhost",
+                username=self.mongo_user,
+                password=self.mongo_password,
+                port=self.mongo_port,
             )
+            return str(mongo_dsn)
         else:
             return (
                 f"mongodb+srv://{self.mongo_user}:{self.mongo_password}"
