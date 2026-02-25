@@ -1,13 +1,14 @@
 import asyncio
 
-from faststream.rabbit import RabbitBroker
-
+from app.core.config.settings import Settings
 from app.domain.protocols.event_publisher import Event, EventPublisherProtocol
+from app.infrastructure.event_publisher.provider import RabbitMQProvider
 
 
 class FastStreamEventPublisher(EventPublisherProtocol):
-    def __init__(self, broker: RabbitBroker):
-        self.broker = broker
+    def __init__(self, settings: Settings):
+        RabbitMQProvider.init(settings)
+        self.broker = RabbitMQProvider.get_broker()
 
     async def _publish(self, events: list[Event]) -> None:
         async with self.broker as broker:

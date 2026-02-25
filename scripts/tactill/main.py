@@ -4,8 +4,8 @@ import typer
 from rich import print
 
 from app.core.config.settings import Settings
-from app.core.core import Context
 from app.domain.domain import Domain
+from scripts.utils import get_context
 
 app = typer.Typer()
 
@@ -13,8 +13,8 @@ app = typer.Typer()
 @app.command()
 def migrate(database: Annotated[str, typer.Argument()] = "temp") -> None:
     settings = Settings(mongo_database=database)
-    context = Context(settings=settings)
-    domain = Domain(context=context)
+    context = get_context(settings=settings)
+    domain = Domain(uow=context.uow, context=context)
 
     articles = domain.get_articles(limit=3000)
     print(f"Dashboard articles: {len(articles.items)}\n")

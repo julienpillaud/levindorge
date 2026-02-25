@@ -1,15 +1,15 @@
 import hashlib
 import json
-import logging
 from collections.abc import Callable
 from functools import wraps
+from typing import Concatenate
 
 from pydantic import BaseModel
 
 from app.domain.context import ContextProtocol
-from app.domain.types import Command
+from app.domain.logger import logger
 
-logger = logging.getLogger(__name__)
+type Command[**P, R: BaseModel] = Callable[Concatenate[ContextProtocol, P], R]
 
 
 def cached_command[**P, R: BaseModel](

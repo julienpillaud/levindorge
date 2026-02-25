@@ -1,4 +1,3 @@
-import logging
 from collections.abc import Awaitable, Callable
 from typing import Any, Literal
 from urllib.parse import urlencode
@@ -16,10 +15,7 @@ from app.api.filters import (
     create_local_timezone_filter,
     strip_zeros,
 )
-from app.api.security.token import decode_jwt
 from app.core.config.settings import Settings
-
-logger = logging.getLogger(__name__)
 
 
 def init_templates(settings: Settings) -> Jinja2Templates:
@@ -53,41 +49,67 @@ def add_security_middleware(app: FastAPI, settings: Settings) -> None:
         request: Request,
         call_next: Callable[[Request], Awaitable[Response]],
     ) -> Response:
-        request.state.new_access_token = None
-
-        access_token = request.cookies.get("access_token")
-        refresh_token = request.cookies.get("refresh_token")
-
-        # Access token is valid -> continue
-        if access_token and decode_jwt(access_token, settings=settings):
-            return await call_next(request)
-
-        # No refresh token -> continue
-        if not refresh_token:
-            return await call_next(request)
-
-        # Access token is invalid -> refresh it
-        logger.debug("Refreshing access token...")
-        user = app.state.domain.refresh_token(token=refresh_token)
-        if not user:
-            logger.warning("Failed to refresh access token")
-            return await call_next(request)
-
-        request.state.new_access_token = user.credentials.access_token
         response = await call_next(request)
-        set_cookie(
-            response,
-            key="access_token",
-            value=user.credentials.access_token,
-            max_age=settings.access_token_expire,
-        )
-        set_cookie(
-            response,
-            key="refresh_token",
-            value=user.credentials.refresh_token,
-            max_age=settings.refresh_token_expire,
-        )
+
+        credentials = getattr(request.state, "credentials", None)
+        if credentials:
+            set_cookie(
+                response,
+                key="access_token",
+                value=credentials.access_token,
+                max_age=settings.access_token_expire,
+            )
+            set_cookie(
+                response,
+                key="refresh_token",
+                value=credentials.refresh_token,
+                max_age=settings.refresh_token_expire,
+            )
+
         return response
+
+
+# def add_security_middleware(app: FastAPI, settings: Settings) -> None:
+#     @app.middleware("http")
+#     async def security_middleware(
+#         request: Request,
+#         call_next: Callable[[Request], Awaitable[Response]],
+#     ) -> Response:
+#         request.state.new_access_token = None
+#
+#         access_token = request.cookies.get("access_token")
+#         refresh_token = request.cookies.get("refresh_token")
+#
+#         # Access token is valid -> continue
+#         if access_token and decode_jwt(access_token, settings=settings):
+#             return await call_next(request)
+#
+#         # No refresh token -> continue
+#         if not refresh_token:
+#             return await call_next(request)
+#
+#         # Access token is invalid -> refresh it
+#         logger.debug("Refreshing access token...")
+#         user = app.state.domain.refresh_token(token=refresh_token)
+#         if not user:
+#             logger.warning("Failed to refresh access token")
+#             return await call_next(request)
+#
+#         request.state.new_access_token = user.credentials.access_token
+#         response = await call_next(request)
+#         set_cookie(
+#             response,
+#             key="access_token",
+#             value=user.credentials.access_token,
+#             max_age=settings.access_token_expire,
+#         )
+#         set_cookie(
+#             response,
+#             key="refresh_token",
+#             value=user.credentials.refresh_token,
+#             max_age=settings.refresh_token_expire,
+#         )
+#         return response
 
 
 def set_cookie(

@@ -17,7 +17,7 @@ class Origin(DomainEntity):
     type: OriginType = OriginType.COUNTRY
 
     @model_validator(mode="after")
-    def validate(self) -> Self:
+    def validate(self) -> Self:  # type: ignore
         if self.type == OriginType.COUNTRY and not self.code:
             raise ValueError("Country must have a code")
         return self

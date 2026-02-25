@@ -5,7 +5,7 @@ from rich.console import Console
 from rich.panel import Panel
 
 from app.core.config.settings import Settings
-from app.core.core import Context
+from app.core.context import Context
 from app.domain.stores.entities import Store
 from app.infrastructure.tactill.utils import INCLUDED_CATEGORIES
 from scripts.clean.dashboard import (
@@ -15,6 +15,7 @@ from scripts.clean.dashboard import (
 )
 from scripts.clean.entities import Container, Containers
 from scripts.clean.pos import build_pos_containers, delete_pos_articles
+from scripts.utils import get_context
 
 app = typer.Typer()
 console = Console()
@@ -37,7 +38,7 @@ def clean(
         names = [category]
 
     settings = Settings(mongo_database="dashboard")
-    context = Context(settings=settings)
+    context = get_context(settings=settings)
 
     stores = get_stores(context=context)
     containers = build_containers(

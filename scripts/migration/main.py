@@ -4,7 +4,6 @@ import typer
 from rich.console import Console
 
 from app.core.config.settings import Settings
-from app.core.core import Context
 from scripts.migration.articles import create_articles
 from scripts.migration.categories import create_categories
 from scripts.migration.deposits import create_deposits
@@ -14,6 +13,7 @@ from scripts.migration.origins import create_origins
 from scripts.migration.producers import create_producers
 from scripts.migration.stores import create_stores
 from scripts.migration.volumes import create_volume
+from scripts.utils import get_context
 
 app = typer.Typer()
 console = Console()
@@ -27,12 +27,12 @@ def migrate(
 ) -> None:
     src_settings = Settings(mongo_database=source)
     dst_settings = Settings(mongo_database=destination)
-    src_context = Context(settings=src_settings)
-    dst_context = Context(settings=dst_settings)
+    src_context = get_context(settings=src_settings)
+    dst_context = get_context(settings=dst_settings)
 
     if delete_destination:
-        for collection_name in dst_context.database.list_collection_names():
-            dst_context.database[collection_name].drop()
+        for collection_name in dst_context.uow.mongo.database.list_collection_names():
+            dst_context.uow.mongo.database[collection_name].drop()
 
     stores = create_stores(src_context=src_context, dst_context=dst_context)
     categories = create_categories(dst_context=dst_context)

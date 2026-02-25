@@ -1,67 +1,67 @@
-from typing import TYPE_CHECKING, Protocol
+from functools import cached_property
+from typing import Protocol
 
-from cleanstack.domain import UnitOfWorkProtocol
+from cleanstack.context import BaseContextProtocol
 
-if TYPE_CHECKING:
-    from app.domain.articles.repository import ArticleRepositoryProtocol
-    from app.domain.categories.repository import CategoryRepositoryProtocol
-    from app.domain.deposits.repository import DepositRepositoryProtocol
-    from app.domain.distributors.repository import DistributorRepositoryProtocol
-    from app.domain.inventories.repository import InventoryRepositoryProtocol
-    from app.domain.origins.repository import OriginRepositoryProtocol
-    from app.domain.price_labels.repository import PriceLabelRepositoryProtocol
-    from app.domain.producers.repository import ProducerRepositoryProtocol
-    from app.domain.protocols.cache_manager import CacheManagerProtocol
-    from app.domain.protocols.event_publisher import EventPublisherProtocol
-    from app.domain.protocols.identity_provider import IdentityProviderProtocol
-    from app.domain.protocols.pos_manager import POSManagerProtocol
-    from app.domain.stores.repository import StoreRepositoryProtocol
-    from app.domain.users.repository import UserRepositoryProtocol
-    from app.domain.volumes.repository import VolumeRepositoryProtocol
+from app.domain.articles.repository import ArticleRepositoryProtocol
+from app.domain.categories.repository import CategoryRepositoryProtocol
+from app.domain.deposits.repository import DepositRepositoryProtocol
+from app.domain.distributors.repository import DistributorRepositoryProtocol
+from app.domain.inventories.repository import InventoryRepositoryProtocol
+from app.domain.origins.repository import OriginRepositoryProtocol
+from app.domain.price_labels.repository import PriceLabelRepositoryProtocol
+from app.domain.producers.repository import ProducerRepositoryProtocol
+from app.domain.protocols.cache_manager import CacheManagerProtocol
+from app.domain.protocols.event_publisher import EventPublisherProtocol
+from app.domain.protocols.identity_provider import IdentityProviderProtocol
+from app.domain.protocols.pos_manager import POSManagerProtocol
+from app.domain.stores.repository import StoreRepositoryProtocol
+from app.domain.users.repository import UserRepositoryProtocol
+from app.domain.volumes.repository import VolumeRepositoryProtocol
 
 
-class ContextProtocol(UnitOfWorkProtocol, Protocol):
-    @property
+class ContextProtocol(BaseContextProtocol, Protocol):
+    @cached_property
     def identity_provider(self) -> IdentityProviderProtocol: ...
 
-    @property
+    @cached_property
     def store_repository(self) -> StoreRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def user_repository(self) -> UserRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def category_repository(self) -> CategoryRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def article_repository(self) -> ArticleRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def producer_repository(self) -> ProducerRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def distributor_repository(self) -> DistributorRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def origin_repository(self) -> OriginRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def volume_repository(self) -> VolumeRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def deposit_repository(self) -> DepositRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def price_label_repository(self) -> PriceLabelRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def inventory_repository(self) -> InventoryRepositoryProtocol: ...
 
-    @property
+    @cached_property
     def pos_manager(self) -> POSManagerProtocol: ...
 
-    @property
+    @cached_property
     def cache_manager(self) -> CacheManagerProtocol: ...
 
-    @property
+    @cached_property
     def event_publisher(self) -> EventPublisherProtocol: ...

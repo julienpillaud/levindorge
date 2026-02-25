@@ -1,8 +1,10 @@
 import pytest
 
 from app.core.config.settings import AppEnvironment, Settings
-from app.core.core import Context
+from app.core.context import Context
+from app.core.uow import UnitOfWork
 from app.domain.stores.entities import Store
+from app.infrastructure.repository.uow import MongoUnitOfWork
 from tests.factories.stores import StoreFactory
 
 pytest_plugins = [
@@ -12,8 +14,7 @@ pytest_plugins = [
 ]
 
 
-@pytest.fixture(scope="session")
-def settings() -> Settings:
+def get_settings_override() -> Settings:
     return Settings(
         app_version="",
         environment=AppEnvironment.TESTING,
@@ -33,13 +34,28 @@ def settings() -> Settings:
     )
 
 
+@pytest.fixture(scope="session")
+def settings() -> Settings:
+    return get_settings_override()
+
+
 @pytest.fixture
 def store(store_factory: StoreFactory) -> Store:
     return store_factory.create_one(name="Store Test", slug="store-test")
 
 
 @pytest.fixture
-def context(settings: Settings) -> Context:
-    ctx = Context(settings=settings)
-    ctx.cache_manager.flush()
-    return ctx
+def mongo_uow(settings: Settings) -> MongoUnitOfWork:
+    return MongoUnitOfWork(settings=settings)
+
+
+@pytest.fixture
+def uow(mongo_uow: MongoUnitOfWork) -> UnitOfWork:
+    return UnitOfWork(mongo=mongo_uow)
+
+
+@pytest.fixture
+def context(settings: Settings, uow: UnitOfWork) -> Context:
+    context = Context(settings=settings, uow=uow)
+    context.cache_manager.flush()
+    return context

@@ -1,4 +1,6 @@
-from cleanstack.domain import BaseDomain, CommandHandler
+from cleanstack.domain import BaseDomain
+from cleanstack.handlers import CommandHandler
+from cleanstack.uow import UnitOfWorkProtocol
 
 from app.domain.articles.commands import (
     create_article_command,
@@ -67,7 +69,7 @@ from app.domain.volumes.commands import (
 )
 
 
-class Domain(BaseDomain[ContextProtocol]):
+class Domain(BaseDomain[UnitOfWorkProtocol, ContextProtocol]):
     update_user_password = CommandHandler(update_user_password_command)
     sign_in_with_password = CommandHandler(sign_in_with_password_command)
     refresh_token = CommandHandler(refresh_token_command)
