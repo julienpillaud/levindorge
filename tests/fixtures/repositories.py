@@ -1,28 +1,27 @@
 import pytest
-from pymongo.database import Database
+from cleanstack.infrastructure.mongodb.uow import MongoDBContext
 
 from app.infrastructure.repository.articles import ArticleRepository
 from app.infrastructure.repository.categories import CategoryRepository
 from app.infrastructure.repository.stores import StoreRepository
-from app.infrastructure.repository.types import MongoDocument
 from app.infrastructure.repository.users import UserRepository
 
 
 @pytest.fixture
-def store_repository(database: Database[MongoDocument]) -> StoreRepository:
-    return StoreRepository(database=database)
+def store_repository(mongo_context: MongoDBContext) -> StoreRepository:
+    return StoreRepository(database=mongo_context.database)
 
 
 @pytest.fixture
-def user_repository(database: Database[MongoDocument]) -> UserRepository:
-    return UserRepository(database=database)
+def user_repository(mongo_context: MongoDBContext) -> UserRepository:
+    return UserRepository(database=mongo_context.database)
 
 
 @pytest.fixture
-def category_repository(database: Database[MongoDocument]) -> CategoryRepository:
-    return CategoryRepository(database=database)
+def category_repository(mongo_context: MongoDBContext) -> CategoryRepository:
+    return CategoryRepository(database=mongo_context.database)
 
 
 @pytest.fixture
-def article_repository(database: Database[MongoDocument]) -> ArticleRepository:
-    return ArticleRepository(database=database)
+def article_repository(mongo_context: MongoDBContext) -> ArticleRepository:
+    return ArticleRepository(database=mongo_context.database)

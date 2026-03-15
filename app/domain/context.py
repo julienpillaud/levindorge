@@ -1,4 +1,3 @@
-from functools import cached_property
 from typing import Protocol
 
 from cleanstack.context import BaseContextProtocol
@@ -21,47 +20,47 @@ from app.domain.volumes.repository import VolumeRepositoryProtocol
 
 
 class ContextProtocol(BaseContextProtocol, Protocol):
-    @cached_property
+    @property
     def identity_provider(self) -> IdentityProviderProtocol: ...
 
-    @cached_property
+    @property
     def store_repository(self) -> StoreRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def user_repository(self) -> UserRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def category_repository(self) -> CategoryRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def article_repository(self) -> ArticleRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def producer_repository(self) -> ProducerRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def distributor_repository(self) -> DistributorRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def origin_repository(self) -> OriginRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def volume_repository(self) -> VolumeRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def deposit_repository(self) -> DepositRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def price_label_repository(self) -> PriceLabelRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def inventory_repository(self) -> InventoryRepositoryProtocol: ...
 
-    @cached_property
+    @property
     def pos_manager(self) -> POSManagerProtocol: ...
 
-    @cached_property
+    @property
     def cache_manager(self) -> CacheManagerProtocol: ...
 
-    @cached_property
+    @property
     def event_publisher(self) -> EventPublisherProtocol: ...

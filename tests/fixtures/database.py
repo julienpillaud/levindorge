@@ -1,24 +1,23 @@
 from collections.abc import Iterator
 
 import pytest
-from pymongo import MongoClient
-from pymongo.database import Database
+from cleanstack.infrastructure.mongodb.uow import MongoDBContext
 
 from app.core.config.settings import Settings
-from app.infrastructure.repository.types import MongoDocument
+
+
+@pytest.fixture(scope="session")
+def mongo_context_init(settings: Settings) -> MongoDBContext:
+    return MongoDBContext.from_settings(
+        host=settings.mongo_uri,
+        database_name=settings.mongo_database,
+    )
 
 
 @pytest.fixture
-def client(settings: Settings) -> MongoClient[MongoDocument]:
-    return MongoClient(settings.mongo_uri)
+def mongo_context(mongo_context_init: MongoDBContext) -> Iterator[MongoDBContext]:
+    yield mongo_context_init
 
-
-@pytest.fixture
-def database(
-    settings: Settings,
-    client: MongoClient[MongoDocument],
-) -> Iterator[Database[MongoDocument]]:
-    mongo_database = client[settings.mongo_database]
-    yield mongo_database
-    for collection in mongo_database.list_collection_names():
-        mongo_database.drop_collection(collection)
+    database = mongo_context_init.database
+    for collection in database.list_collection_names():
+        database.drop_collection(collection)

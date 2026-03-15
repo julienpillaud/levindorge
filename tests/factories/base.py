@@ -1,32 +1,40 @@
+from abc import ABC, abstractmethod
+from collections.abc import Iterator
+from contextlib import contextmanager
 from typing import Any
-
-from faker import Faker
-from pymongo.synchronous.database import Database
 
 from app.domain.entities import DomainEntity
 from app.domain.protocols.repository import RepositoryProtocol
-from app.infrastructure.repository.base import MongoRepository
-from app.infrastructure.repository.types import MongoDocument
 
 
-class BaseFactory[T: DomainEntity]:
-    repository: RepositoryProtocol[T]
-
-    def build(self, **kwargs: Any) -> T:
-        raise NotImplementedError()
-
+class BaseFactory[T: DomainEntity](ABC):
     def create_one(self, **kwargs: Any) -> T:
         entity = self.build(**kwargs)
-        return self.repository.create(entity)
+        with self._persistence_context():
+            created = self._repository.create(entity)
+            self._commit()
+            return created
 
     def create_many(self, count: int, /, **kwargs: Any) -> list[T]:
-        return [self.create_one(**kwargs) for _ in range(count)]
+        entities = [self.build(**kwargs) for _ in range(count)]
+        created_entities: list[T] = []
+        with self._persistence_context():
+            for entity in entities:
+                created = self._repository.create(entity)
+                created_entities.append(created)
+            self._commit()
+        return created_entities
 
+    @abstractmethod
+    def build(self, **kwargs: Any) -> T: ...
 
-class BaseMongoFactory[T: DomainEntity](BaseFactory[T]):
-    repository_class: type[MongoRepository[T]]
+    @abstractmethod
+    def _commit(self) -> None: ...
 
-    def __init__(self, faker: Faker, database: Database[MongoDocument]) -> None:
-        self.faker = faker
-        self.database = database
-        self.repository = self.repository_class(database=database)
+    @contextmanager
+    @abstractmethod
+    def _persistence_context(self) -> Iterator[None]: ...
+
+    @property
+    @abstractmethod
+    def _repository(self) -> RepositoryProtocol[T]: ...

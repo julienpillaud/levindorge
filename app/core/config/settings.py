@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     mongo_password: str | None = None
     mongo_host: str
     mongo_port: int = 27017
+    mongo_rs_name: str = "rs0"
     mongo_database: str
 
     rabbitmq_user: str
@@ -54,13 +55,15 @@ class Settings(BaseSettings):
     @computed_field
     @property
     def mongo_uri(self) -> str:
-        if self.mongo_host == "localhost":
+        if self.mongo_host in {"localhost", "127.0.0.1"}:
+            query = f"replicaSet={self.mongo_rs_name}" if self.mongo_rs_name else None
             mongo_dsn = MongoDsn.build(
                 scheme="mongodb",
                 host="localhost",
                 username=self.mongo_user,
                 password=self.mongo_password,
                 port=self.mongo_port,
+                query=query,
             )
             return str(mongo_dsn)
         else:

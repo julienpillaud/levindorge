@@ -3,7 +3,7 @@ from typing import Any
 
 from app.domain.volumes.entities import Volume, VolumeCategory, VolumeUnit
 from app.infrastructure.repository.volumes import VolumeRepository
-from tests.factories.base import BaseMongoFactory
+from tests.factories.mongo import BaseMongoFactory
 
 
 def generate_volume(**kwargs: Any) -> Volume:
@@ -17,7 +17,12 @@ def generate_volume(**kwargs: Any) -> Volume:
 
 
 class VolumeFactory(BaseMongoFactory[Volume]):
-    repository_class = VolumeRepository
-
     def build(self, **kwargs: Any) -> Volume:
         return generate_volume(**kwargs)
+
+    @property
+    def _repository(self) -> VolumeRepository:
+        return VolumeRepository(
+            database=self.context.database,
+            session=self.uow.session,
+        )

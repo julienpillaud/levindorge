@@ -4,7 +4,7 @@ from typing import Any
 from app.domain.categories.entities import Category
 from app.infrastructure.repository.categories import CategoryRepository
 from data.categories import CATEGORIES
-from tests.factories.base import BaseMongoFactory
+from tests.factories.mongo import BaseMongoFactory
 
 
 def generate_category(**kwargs: Any) -> Category:
@@ -17,7 +17,12 @@ def generate_category(**kwargs: Any) -> Category:
 
 
 class CategoryFactory(BaseMongoFactory[Category]):
-    repository_class = CategoryRepository
-
     def build(self, **kwargs: Any) -> Category:
         return generate_category(**kwargs)
+
+    @property
+    def _repository(self) -> CategoryRepository:
+        return CategoryRepository(
+            database=self.context.database,
+            session=self.uow.session,
+        )

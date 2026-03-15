@@ -4,7 +4,7 @@ from faker import Faker
 
 from app.domain.distributors.entities import Distributor
 from app.infrastructure.repository.distributors import DistributorRepository
-from tests.factories.base import BaseMongoFactory
+from tests.factories.mongo import BaseMongoFactory
 
 
 def generate_distributor(faker: Faker, **kwargs: Any) -> Distributor:
@@ -12,7 +12,12 @@ def generate_distributor(faker: Faker, **kwargs: Any) -> Distributor:
 
 
 class DistributorFactory(BaseMongoFactory[Distributor]):
-    repository_class = DistributorRepository
-
     def build(self, **kwargs: Any) -> Distributor:
         return generate_distributor(self.faker, **kwargs)
+
+    @property
+    def _repository(self) -> DistributorRepository:
+        return DistributorRepository(
+            database=self.context.database,
+            session=self.uow.session,
+        )

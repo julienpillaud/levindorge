@@ -5,7 +5,7 @@ from faker import Faker
 
 from app.domain.producers.entities import Producer, ProducerType
 from app.infrastructure.repository.producers import ProducerRepository
-from tests.factories.base import BaseMongoFactory
+from tests.factories.mongo import BaseMongoFactory
 
 
 def generate_producer(faker: Faker, **kwargs: Any) -> Producer:
@@ -16,7 +16,12 @@ def generate_producer(faker: Faker, **kwargs: Any) -> Producer:
 
 
 class ProducerFactory(BaseMongoFactory[Producer]):
-    repository_class = ProducerRepository
-
     def build(self, **kwargs: Any) -> Producer:
         return generate_producer(self.faker, **kwargs)
+
+    @property
+    def _repository(self) -> ProducerRepository:
+        return ProducerRepository(
+            database=self.context.database,
+            session=self.uow.session,
+        )

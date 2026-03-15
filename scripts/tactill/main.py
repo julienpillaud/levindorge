@@ -1,6 +1,7 @@
 from typing import Annotated
 
 import typer
+from cleanstack.uow import CompositeUniOfWork
 from rich import print
 
 from app.core.config.settings import Settings
@@ -14,7 +15,8 @@ app = typer.Typer()
 def migrate(database: Annotated[str, typer.Argument()] = "temp") -> None:
     settings = Settings(mongo_database=database)
     context = get_context(settings=settings)
-    domain = Domain(uow=context.uow, context=context)
+    uow = CompositeUniOfWork(members=context.members)
+    domain = Domain(uow=uow, context=context)
 
     articles = domain.get_articles(limit=3000)
     print(f"Dashboard articles: {len(articles.items)}\n")

@@ -1,7 +1,12 @@
 from app.domain.articles.entities import Article
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.deposits.entities import Deposit
-from app.domain.entities import EntityId, PaginatedResponse, QueryParams
+from app.domain.entities import (
+    EntityId,
+    PaginatedResponse,
+    SortEntity,
+    SortOrder,
+)
 from app.domain.filters import FilterEntity, FilterOperator
 from app.domain.origins.entities import Origin
 from app.domain.volumes.entities import Volume
@@ -24,16 +29,18 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
 
     def get_by_ids(self, article_ids: list[EntityId], /) -> PaginatedResponse[Article]:
         return self.get_all(
-            query=QueryParams(
-                filters=[
-                    FilterEntity(
-                        field="id",
-                        value=article_ids,
-                        operator=FilterOperator.IN,
-                    )
-                ],
-                sort={"type": 1, "region": 1, "name.name1": 1, "name.name2": 1},
-            )
+            filters=[
+                FilterEntity(
+                    field="id",
+                    value=article_ids,
+                    operator=FilterOperator.IN,
+                )
+            ],
+            sort=[
+                SortEntity(field="type", order=SortOrder.ASC),
+                SortEntity(field="name.name1", order=SortOrder.ASC),
+                SortEntity(field="name.name2", order=SortOrder.ASC),
+            ],
         )
 
     def exists_by_producer(self, producer: str) -> bool:

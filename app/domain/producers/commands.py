@@ -2,7 +2,13 @@ from cleanstack.exceptions import NotFoundError
 
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId, PaginatedResponse, Pagination, QueryParams
+from app.domain.entities import (
+    EntityId,
+    PaginatedResponse,
+    Pagination,
+    SortEntity,
+    SortOrder,
+)
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 from app.domain.filters import FilterEntity
 from app.domain.producers.entities import Producer, ProducerCreate, ProducerType
@@ -15,9 +21,9 @@ def get_producers_command(
     producer_type: ProducerType | None = None,
 ) -> PaginatedResponse[Producer]:
     filters = [FilterEntity(field="type", value=producer_type)] if producer_type else []
-
     return context.producer_repository.get_all(
-        query=QueryParams(filters=filters, sort={"name": 1}),
+        filters=filters,
+        sort=[SortEntity(field="name", order=SortOrder.ASC)],
         pagination=Pagination(page=1, limit=300),
     )
 

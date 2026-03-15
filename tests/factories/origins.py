@@ -5,7 +5,7 @@ from faker import Faker
 
 from app.domain.origins.entities import Origin, OriginType
 from app.infrastructure.repository.origins import OriginRepository
-from tests.factories.base import BaseMongoFactory
+from tests.factories.mongo import BaseMongoFactory
 
 
 def generate_origin(faker: Faker, **kwargs: Any) -> Origin:
@@ -25,7 +25,12 @@ def generate_origin(faker: Faker, **kwargs: Any) -> Origin:
 
 
 class OriginFactory(BaseMongoFactory[Origin]):
-    repository_class = OriginRepository
-
     def build(self, **kwargs: Any) -> Origin:
         return generate_origin(self.faker, **kwargs)
+
+    @property
+    def _repository(self) -> OriginRepository:
+        return OriginRepository(
+            database=self.context.database,
+            session=self.uow.session,
+        )
