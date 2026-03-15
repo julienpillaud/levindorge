@@ -37,7 +37,7 @@ def create_articles(
     origins: list[Origin],
 ) -> list[Article]:
     # Get previous articles
-    src_articles = list(src_context.uow.mongo.database["articles"].find())
+    src_articles = list(src_context.mongo_context.database["articles"].find())
 
     # Create articles with the new entity model
     articles = create_article_entities(
@@ -49,7 +49,7 @@ def create_articles(
 
     # Save articles in the database
     dst_articles = dump_articles(articles)
-    result = dst_context.uow.mongo.database["articles"].insert_many(dst_articles)
+    result = dst_context.mongo_context.database["articles"].insert_many(dst_articles)
 
     count = len(result.inserted_ids)
     print(f"Created {count} articles ({len(src_articles)})")

@@ -15,10 +15,10 @@ from app.domain.articles.entities import (
 )
 from app.domain.stores.entities import Store
 from app.infrastructure.repository.articles import ArticleRepository
-from tests.factories.base import BaseMongoFactory
 from tests.factories.categories import CategoryFactory
 from tests.factories.deposits import DepositFactory
 from tests.factories.distributors import DistributorFactory
+from tests.factories.mongo import BaseMongoFactory
 from tests.factories.origins import OriginFactory
 from tests.factories.producers import ProducerFactory
 from tests.factories.utils import generate_decimal
@@ -81,31 +81,29 @@ def generate_article(faker: Faker, **kwargs: Any) -> Article:
 
 
 class ArticleFactory(BaseMongoFactory[Article]):
-    repository_class = ArticleRepository
-
     @property
     def category_factory(self) -> CategoryFactory:
-        return CategoryFactory(faker=self.faker, database=self.database)
+        return CategoryFactory(faker=self.faker, context=self.context)
 
     @property
     def producer_factory(self) -> ProducerFactory:
-        return ProducerFactory(faker=self.faker, database=self.database)
+        return ProducerFactory(faker=self.faker, context=self.context)
 
     @property
     def distributor_factory(self) -> DistributorFactory:
-        return DistributorFactory(faker=self.faker, database=self.database)
+        return DistributorFactory(faker=self.faker, context=self.context)
 
     @property
     def origin_factory(self) -> OriginFactory:
-        return OriginFactory(faker=self.faker, database=self.database)
+        return OriginFactory(faker=self.faker, context=self.context)
 
     @property
     def volume_factory(self) -> VolumeFactory:
-        return VolumeFactory(faker=self.faker, database=self.database)
+        return VolumeFactory(faker=self.faker, context=self.context)
 
     @property
     def deposit_factory(self) -> DepositFactory:
-        return DepositFactory(faker=self.faker, database=self.database)
+        return DepositFactory(faker=self.faker, context=self.context)
 
     def build(self, *, stores: list[Store] | None = None, **kwargs: Any) -> Article:
         if "category" not in kwargs:
@@ -147,3 +145,10 @@ class ArticleFactory(BaseMongoFactory[Article]):
             kwargs["store_data"] = {"store_test": generate_article_store_data()}
 
         return generate_article(self.faker, **kwargs)
+
+    @property
+    def _repository(self) -> ArticleRepository:
+        return ArticleRepository(
+            database=self.context.database,
+            session=self.uow.session,
+        )

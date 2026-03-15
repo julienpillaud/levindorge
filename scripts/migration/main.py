@@ -31,8 +31,10 @@ def migrate(
     dst_context = get_context(settings=dst_settings)
 
     if delete_destination:
-        for collection_name in dst_context.uow.mongo.database.list_collection_names():
-            dst_context.uow.mongo.database[collection_name].drop()
+        for (
+            collection_name
+        ) in dst_context.mongo_context.database.list_collection_names():
+            dst_context.mongo_context.database[collection_name].drop()
 
     stores = create_stores(src_context=src_context, dst_context=dst_context)
     categories = create_categories(dst_context=dst_context)

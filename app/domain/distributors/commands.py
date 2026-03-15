@@ -3,7 +3,13 @@ from cleanstack.exceptions import NotFoundError
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
 from app.domain.distributors.entities import Distributor
-from app.domain.entities import EntityId, PaginatedResponse, Pagination, QueryParams
+from app.domain.entities import (
+    EntityId,
+    PaginatedResponse,
+    Pagination,
+    SortEntity,
+    SortOrder,
+)
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 
 
@@ -13,7 +19,7 @@ def get_distributors_command(
     /,
 ) -> PaginatedResponse[Distributor]:
     return context.distributor_repository.get_all(
-        query=QueryParams(sort={"name": 1}),
+        sort=[SortEntity(field="name", order=SortOrder.ASC)],
         pagination=Pagination(page=1, limit=300),
     )
 

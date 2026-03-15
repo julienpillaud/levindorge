@@ -1,7 +1,8 @@
+from cleanstack.infrastructure.mongodb.types import MongoDocument
+
 from app.domain.users.entities import User
 from app.domain.users.repository import UserRepositoryProtocol
 from app.infrastructure.repository.base import MongoRepository
-from app.infrastructure.repository.types import MongoDocument
 
 
 class UserRepository(MongoRepository[User], UserRepositoryProtocol):
@@ -17,8 +18,8 @@ class UserRepository(MongoRepository[User], UserRepositoryProtocol):
         # document["stores"] = [store.slug for store in entity.stores]
         return document
 
-    @staticmethod
-    def _aggregation_pipeline() -> list[MongoDocument]:
+    @property
+    def _lookups(self) -> list[MongoDocument]:
         return [
             {
                 "$lookup": {

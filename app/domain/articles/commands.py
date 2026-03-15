@@ -14,7 +14,6 @@ from app.domain.entities import (
     EntityId,
     PaginatedResponse,
     Pagination,
-    QueryParams,
 )
 from app.domain.protocols.event_publisher import Event
 from app.domain.stores.entities import Store
@@ -29,7 +28,7 @@ def get_articles_command(
     limit: PositiveInt = DEFAULT_PAGINATION_SIZE,
 ) -> PaginatedResponse[Article]:
     return context.article_repository.get_all(
-        query=QueryParams(search=search),
+        search=search,
         pagination=Pagination(page=page, limit=limit),
     )
 

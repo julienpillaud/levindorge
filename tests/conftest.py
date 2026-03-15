@@ -1,10 +1,12 @@
+from collections.abc import Iterator
+
 import pytest
+from cleanstack.infrastructure.mongodb.uow import MongoDBContext, MongoDBUnitOfWork
+from cleanstack.uow import CompositeUniOfWork
 
 from app.core.config.settings import AppEnvironment, Settings
 from app.core.context import Context
-from app.core.uow import UnitOfWork
 from app.domain.stores.entities import Store
-from app.infrastructure.repository.uow import MongoUnitOfWork
 from tests.factories.stores import StoreFactory
 
 pytest_plugins = [
@@ -25,6 +27,7 @@ def get_settings_override() -> Settings:
         mongo_user=None,
         mongo_password=None,
         mongo_host="localhost",
+        mongo_rs_name="rs0",
         mongo_database="test",
         rabbitmq_user="guest",
         rabbitmq_password="guest",
@@ -45,17 +48,28 @@ def store(store_factory: StoreFactory) -> Store:
 
 
 @pytest.fixture
-def mongo_uow(settings: Settings) -> MongoUnitOfWork:
-    return MongoUnitOfWork(settings=settings)
+def mongo_uow(mongo_context: MongoDBContext) -> MongoDBUnitOfWork:
+    return MongoDBUnitOfWork(context=mongo_context)
 
 
 @pytest.fixture
-def uow(mongo_uow: MongoUnitOfWork) -> UnitOfWork:
-    return UnitOfWork(mongo=mongo_uow)
+def uow(mongo_uow: MongoDBUnitOfWork) -> Iterator[CompositeUniOfWork]:
+    uow = CompositeUniOfWork(members=[mongo_uow])
+    with uow.transaction():
+        yield uow
 
 
 @pytest.fixture
-def context(settings: Settings, uow: UnitOfWork) -> Context:
-    context = Context(settings=settings, uow=uow)
+def context(
+    settings: Settings,
+    mongo_context: MongoDBContext,
+    mongo_uow: MongoDBUnitOfWork,
+    uow: Iterator[CompositeUniOfWork],
+) -> Context:
+    context = Context(
+        settings=settings,
+        mongo_context=mongo_context,
+        mongo_uow=mongo_uow,
+    )
     context.cache_manager.flush()
     return context

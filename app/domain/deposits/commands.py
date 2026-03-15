@@ -3,9 +3,16 @@ from cleanstack.exceptions import NotFoundError
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
 from app.domain.deposits.entities import Deposit, DepositCategory, DepositCreate
-from app.domain.entities import EntityId, PaginatedResponse, Pagination, QueryParams
+from app.domain.entities import (
+    EntityId,
+    PaginatedResponse,
+    Pagination,
+    SortEntity,
+    SortOrder,
+)
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 from app.domain.filters import FilterEntity
+from app.domain.logger import logger
 
 
 @cached_command(response_model=PaginatedResponse[Deposit], tag="deposits")
@@ -15,9 +22,12 @@ def get_deposits_command(
     category: DepositCategory | None = None,
 ) -> PaginatedResponse[Deposit]:
     filters = [FilterEntity(field="category", value=category)] if category else []
-
     return context.deposit_repository.get_all(
-        query=QueryParams(filters=filters, sort={"type": 1, "value": 1}),
+        filters=filters,
+        sort=[
+            SortEntity(field="type", order=SortOrder.ASC),
+            SortEntity(field="value", order=SortOrder.ASC),
+        ],
         pagination=Pagination(page=1, limit=300),
     )
 
@@ -44,6 +54,7 @@ def create_deposit_command(
 
 
 def delete_deposit_command(context: ContextProtocol, /, deposit_id: EntityId) -> None:
+    logger.info("START COMMAND")
     deposit = context.deposit_repository.get_by_id(deposit_id)
     if not deposit:
         raise NotFoundError(f"Deposit `{deposit_id}` not found.")
@@ -56,3 +67,4 @@ def delete_deposit_command(context: ContextProtocol, /, deposit_id: EntityId) ->
 
     context.deposit_repository.delete(deposit)
     context.cache_manager.invalidate_tag("deposits")
+    logger.info("END COMMAND")

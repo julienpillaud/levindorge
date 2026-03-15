@@ -5,14 +5,17 @@ from app.domain.entities import (
     EntityId,
     PaginatedResponse,
     Pagination,
-    QueryParams,
+    SortEntity,
 )
+from app.domain.filters import FilterEntity
 
 
 class RepositoryProtocol[T: DomainEntity](Protocol):
     def get_all(
         self,
-        query: QueryParams | None = None,
+        filters: list[FilterEntity] | None = None,
+        search: str | None = None,
+        sort: list[SortEntity] | None = None,
         pagination: Pagination | None = None,
     ) -> PaginatedResponse[T]: ...
 

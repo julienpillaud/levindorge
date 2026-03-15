@@ -10,7 +10,7 @@ from data.stores import PRICING_CONFIG
 
 def create_stores(src_context: Context, dst_context: Context) -> list[Store]:
     # Get previous stores
-    src_stores = list(src_context.uow.mongo.database["shops"].find())
+    src_stores = list(src_context.mongo_context.database["shops"].find())
     # Create stores with the new entity model
     dst_stores = create_store_entities(src_stores)
 

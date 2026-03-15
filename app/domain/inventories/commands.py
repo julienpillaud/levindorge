@@ -5,7 +5,13 @@ from typing import Any
 from cleanstack.exceptions import NotFoundError
 
 from app.domain.context import ContextProtocol
-from app.domain.entities import EntityId, PaginatedResponse, Pagination, QueryParams
+from app.domain.entities import (
+    EntityId,
+    PaginatedResponse,
+    Pagination,
+    SortEntity,
+    SortOrder,
+)
 from app.domain.inventories.entities import Inventory, InventoryDetail, InventoryRecord
 from app.domain.stores.entities import Store
 
@@ -31,7 +37,7 @@ def get_inventory_command(
 
 def create_inventory_command(context: ContextProtocol, store: Store) -> Inventory:
     results = context.article_repository.get_all(
-        query=QueryParams(sort={"type": 1}),
+        sort=[SortEntity(field="type", order=SortOrder.ASC)],
         pagination=Pagination(page=1, limit=1000),
     )
     articles = results.items

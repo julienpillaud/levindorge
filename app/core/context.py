@@ -1,7 +1,8 @@
-from functools import cached_property
+from cleanstack.infrastructure.mongodb.uow import MongoDBContext, MongoDBUnitOfWork
+from cleanstack.uow import UnitOfWorkProtocol
+from pymongo.client_session import ClientSession
 
 from app.core.config.settings import Settings
-from app.core.uow import UnitOfWork
 from app.domain.context import ContextProtocol
 from app.infrastructure.cache_manager.redis_cache_manager import RedisCacheManager
 from app.infrastructure.event_publisher.faststream_event_publisher import (
@@ -23,66 +24,116 @@ from app.infrastructure.tactill.manager import TactillManager
 
 
 class Context(ContextProtocol):
-    def __init__(self, settings: Settings, uow: UnitOfWork):
+    def __init__(
+        self,
+        settings: Settings,
+        mongo_context: MongoDBContext,
+        mongo_uow: MongoDBUnitOfWork | None = None,
+    ):
         self.settings = settings
-        self.uow = uow
+        self.mongo_context = mongo_context
+        self.mongo_uow = mongo_uow
+        self.members = self._get_members()
 
-    @cached_property
+    def _get_members(self) -> list[UnitOfWorkProtocol]:
+        members: list[UnitOfWorkProtocol] = []
+        if self.mongo_uow:
+            members.append(self.mongo_uow)
+        return members
+
+    @property
+    def _mongo_session(self) -> ClientSession | None:
+        return self.mongo_uow.session if self.mongo_uow else None
+
+    @property
     def identity_provider(self) -> SupabaseIdentityProvider:
         return SupabaseIdentityProvider(settings=self.settings)
 
-    @cached_property
+    @property
     def store_repository(self) -> StoreRepository:
-        return StoreRepository(database=self.uow.mongo.database)
+        return StoreRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def user_repository(self) -> UserRepository:
-        return UserRepository(database=self.uow.mongo.database)
+        return UserRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def category_repository(self) -> CategoryRepository:
-        return CategoryRepository(database=self.uow.mongo.database)
+        return CategoryRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def article_repository(self) -> ArticleRepository:
-        return ArticleRepository(database=self.uow.mongo.database)
+        return ArticleRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def producer_repository(self) -> ProducerRepository:
-        return ProducerRepository(database=self.uow.mongo.database)
+        return ProducerRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def distributor_repository(self) -> DistributorRepository:
-        return DistributorRepository(database=self.uow.mongo.database)
+        return DistributorRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def origin_repository(self) -> OriginRepository:
-        return OriginRepository(database=self.uow.mongo.database)
+        return OriginRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def volume_repository(self) -> VolumeRepository:
-        return VolumeRepository(database=self.uow.mongo.database)
+        return VolumeRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def deposit_repository(self) -> DepositRepository:
-        return DepositRepository(database=self.uow.mongo.database)
+        return DepositRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def price_label_repository(self) -> PriceLabelRepository:
-        return PriceLabelRepository(database=self.uow.mongo.database)
+        return PriceLabelRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def inventory_repository(self) -> InventoryRepository:
-        return InventoryRepository(database=self.uow.mongo.database)
+        return InventoryRepository(
+            database=self.mongo_context.database,
+            session=self._mongo_session,
+        )
 
-    @cached_property
+    @property
     def pos_manager(self) -> TactillManager:
         return TactillManager()
 
-    @cached_property
+    @property
     def cache_manager(self) -> RedisCacheManager:
         return RedisCacheManager(settings=self.settings)
 
-    @cached_property
+    @property
     def event_publisher(self) -> FastStreamEventPublisher:
         return FastStreamEventPublisher(settings=self.settings)

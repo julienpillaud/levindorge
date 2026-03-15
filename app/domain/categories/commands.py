@@ -4,7 +4,12 @@ from app.domain.caching import cached_command
 from app.domain.categories.entities import Category
 from app.domain.commons.category_groups import CategoryGroupName
 from app.domain.context import ContextProtocol
-from app.domain.entities import PaginatedResponse, Pagination, QueryParams
+from app.domain.entities import (
+    PaginatedResponse,
+    Pagination,
+    SortEntity,
+    SortOrder,
+)
 from app.domain.filters import FilterEntity
 
 
@@ -21,7 +26,8 @@ def get_categories_command(
     )
 
     return context.category_repository.get_all(
-        query=QueryParams(filters=filters, sort={"name": 1}),
+        filters=filters,
+        sort=[SortEntity(field="name", order=SortOrder.ASC)],
         pagination=Pagination(page=1, limit=300),
     )
 

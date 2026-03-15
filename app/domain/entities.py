@@ -1,10 +1,10 @@
+from enum import StrEnum
+
 from pydantic import (
     BaseModel,
     NonNegativeInt,
     PositiveInt,
 )
-
-from app.domain.filters import FilterEntity
 
 type EntityId = str
 
@@ -32,7 +32,11 @@ class PaginatedResponse[T: DomainEntity](BaseModel):
     items: list[T]
 
 
-class QueryParams(BaseModel):
-    filters: list[FilterEntity] | None = None
-    search: str | None = None
-    sort: dict[str, int] | None = None
+class SortOrder(StrEnum):
+    ASC = "asc"
+    DESC = "desc"
+
+
+class SortEntity(BaseModel):
+    field: str
+    order: SortOrder = SortOrder.ASC

@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from app.domain.entities import Pagination, QueryParams
+from app.domain.entities import Pagination
 from app.domain.filters import FilterEntity
 from app.infrastructure.repository.articles import ArticleRepository
 from tests.factories.articles import ArticleFactory
@@ -54,7 +54,7 @@ def test_get_all_search(
     article_factory.create_one(**{field_name: val_3})
     article_factory.create_many(10, **{field_name: "Incorrect Value"})
 
-    result = article_repository.get_all(query=QueryParams(search=search_token))
+    result = article_repository.get_all(search=search_token)
 
     assert len(result.items) == result_count
 
@@ -67,9 +67,7 @@ def test_get_all_filters(
     article = article_factory.create_one()
 
     result = article_repository.get_all(
-        query=QueryParams(
-            filters=[FilterEntity(field="product", value=article.product)]
-        )
+        filters=[FilterEntity(field="product", value=article.product)]
     )
 
     assert len(result.items) == 1

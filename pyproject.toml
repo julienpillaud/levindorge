@@ -4,19 +4,19 @@ name = "levindorge"
 dynamic = ["version"]
 requires-python = ">=3.14"
 dependencies = [
-    "cleanstack",
-    "fastapi==0.133.0",
-    "faststream[cli,rabbit]==0.6.6",
+    "cleanstack[mongo]",
+    "fastapi==0.135.1",
+    "faststream[cli,rabbit]==0.6.7",
     "itsdangerous==2.2.0",
     "jinja2==3.1.6",
-    "logfire[fastapi,pymongo,redis]==4.25.0",
+    "logfire[fastapi,pymongo,redis]==4.29.0",
     "pillow==12.1.1",
     "pydantic-settings==2.13.1",
     "pyjwt==2.11.0",
     "pymongo==4.16.0",
     "python-multipart==0.0.22",
-    "redis==7.2.0",
-    "supabase==2.28.0",
+    "redis==7.3.0",
+    "supabase==2.28.2",
     "tactill",
     "tenacity==9.1.4",
     "unidecode==1.4.0",
@@ -25,17 +25,16 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "ruff==0.15.2",
+    "ruff==0.15.6",
     "mypy==1.19.1",
     "pytest==9.0.2",
-    "pre-commit==4.5.1",
-    "ty==0.0.18",
-    "faker==40.5.1",
+    "pre-commit>=4",
+    "faker>=40",
 ]
 
 [tool.uv.sources]
 tactill = { git = "https://github.com/julienpillaud/tactill.git", tag = "0.8.1" }
-cleanstack = { git = "https://github.com/julienpillaud/cleanstack", tag = "0.12.0" }
+cleanstack = { git = "https://github.com/julienpillaud/cleanstack", tag = "0.13.0" }
 
 # disable automatic discovery (find node_modules as a top-level package, why ?)
 [tool.setuptools]
@@ -73,3 +72,8 @@ disable_error_code = [
     "prop-decorator"
 ]
 plugins = ['pydantic.mypy']
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "info"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(name)30s - %(message)s"
