@@ -12,10 +12,6 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     services:
-      mongo:
-        image: mongo:8
-        ports:
-          - 27017:27017
       rabbitmq:
         image: rabbitmq
         ports:
@@ -28,6 +24,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.1
+        with:
+          mongodb-replica-set: rs0
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
