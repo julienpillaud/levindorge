@@ -43,14 +43,14 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
             filters=[
                 FilterEntity(
                     field="id",
-                    value=article_ids,
+                    value=[str(article_id) for article_id in article_ids],
                     operator=FilterOperator.IN,
                 )
             ],
             sort=[
-                SortEntity(field="type", order=SortOrder.ASC),
-                SortEntity(field="name.name1", order=SortOrder.ASC),
-                SortEntity(field="name.name2", order=SortOrder.ASC),
+                SortEntity(field="category", order=SortOrder.ASC),
+                SortEntity(field="producer", order=SortOrder.ASC),
+                SortEntity(field="product", order=SortOrder.ASC),
             ],
         )
 
