@@ -21,5 +21,9 @@ class DistributorRepository(
 
         return distributors
 
+    def get_by_name(self, name: str) -> Distributor | None:
+        distributor = self.collection.find_one({"name": name})
+        return self._to_domain_entity(distributor) if distributor else None
+
     def exists(self, name: str) -> bool:
         return self.collection.count_documents({"name": name}) > 0

@@ -18,6 +18,10 @@ class ProducerRepository(MongoRepository[Producer], ProducerRepositoryProtocol):
 
         return producers
 
+    def get_by_name(self, name: str) -> Producer | None:
+        producer = self.collection.find_one({"name": name})
+        return self._to_domain_entity(producer) if producer else None
+
     def exists(self, producer: Producer, /) -> bool:
         return (
             self.collection.count_documents(

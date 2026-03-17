@@ -57,6 +57,15 @@ def create_article_command(
     if not context.category_repository.get_by_name(data.category):
         raise NotFoundError(f"Category '{data.category}' not found.")
 
+    if data.producer and not context.producer_repository.get_by_name(data.producer):
+        raise NotFoundError(f"Producer '{data.producer}' not found.")
+
+    if not context.distributor_repository.get_by_name(data.distributor):
+        raise NotFoundError(f"Distributor '{data.distributor}' not found.")
+
+    if data.origin and not context.origin_repository.get_by_name(data.origin):
+        raise NotFoundError(f"Origin '{data.origin}' not found.")
+
     current_time = datetime.datetime.now(datetime.UTC)
     article = Article(
         id=uuid.uuid7(),

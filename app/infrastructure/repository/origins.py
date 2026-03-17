@@ -18,5 +18,9 @@ class OriginRepository(MongoRepository[Origin], OriginRepositoryProtocol):
 
         return origins
 
+    def get_by_name(self, name: str) -> Origin | None:
+        origin = self.collection.find_one({"name": name})
+        return self._to_domain_entity(origin) if origin else None
+
     def exists(self, origin: Origin) -> bool:
         return self.collection.count_documents(origin.model_dump(exclude={"id"})) > 0
