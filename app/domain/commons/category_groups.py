@@ -1,10 +1,11 @@
+import uuid
 from enum import StrEnum
 
+from cleanstack.entities import DomainEntity
 from pydantic import BaseModel
 
 from app.domain.articles.entities import ColorCategory
 from app.domain.deposits.entities import DepositCategory
-from app.domain.entities import DomainEntity
 from app.domain.producers.entities import ProducerType
 from app.domain.volumes.entities import VolumeCategory
 
@@ -47,6 +48,7 @@ class CategoryGroup(DomainEntity):
 
 CATEGORY_GROUPS_MAP = {
     CategoryGroupName.BEER: CategoryGroup(
+        id=uuid.uuid7(),
         name=CategoryGroupName.BEER,
         display_name="Bière / Cidre",
         producer=ProducerData(
@@ -66,6 +68,7 @@ CATEGORY_GROUPS_MAP = {
         ),
     ),
     CategoryGroupName.KEG: CategoryGroup(
+        id=uuid.uuid7(),
         name=CategoryGroupName.KEG,
         display_name="Fût / Mini-fût",
         producer=ProducerData(
@@ -85,6 +88,7 @@ CATEGORY_GROUPS_MAP = {
         ),
     ),
     CategoryGroupName.SPIRIT: CategoryGroup(
+        id=uuid.uuid7(),
         name=CategoryGroupName.SPIRIT,
         display_name="Spiritueux",
         producer=ProducerData(
@@ -98,6 +102,7 @@ CATEGORY_GROUPS_MAP = {
         alcohol_by_volume=True,
     ),
     CategoryGroupName.WINE: CategoryGroup(
+        id=uuid.uuid7(),
         name=CategoryGroupName.WINE,
         display_name="Vin",
         producer=ProducerData(display_name="Appellation"),
@@ -108,6 +113,7 @@ CATEGORY_GROUPS_MAP = {
         alcohol_by_volume=False,
     ),
     CategoryGroupName.OTHER: CategoryGroup(
+        id=uuid.uuid7(),
         name=CategoryGroupName.OTHER,
         display_name="Autre",
         producer=None,

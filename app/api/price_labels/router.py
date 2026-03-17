@@ -1,5 +1,6 @@
 from typing import Annotated, Literal
 
+from cleanstack.entities import EntityId
 from fastapi import APIRouter, Depends, status
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse, RedirectResponse, Response
@@ -14,7 +15,6 @@ from app.api.dependencies import (
 from app.api.price_labels.dtos import PriceLabelRequest
 from app.core.config.settings import Settings
 from app.domain.domain import Domain
-from app.domain.entities import EntityId
 from app.domain.price_labels.entities import PriceLabelCreate
 
 router = APIRouter(prefix="/price-labels", tags=["Price Labels"])

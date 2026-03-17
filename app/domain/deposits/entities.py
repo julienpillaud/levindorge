@@ -1,9 +1,9 @@
 from enum import StrEnum
 from typing import Annotated
 
+from cleanstack.entities import DomainEntity
 from pydantic import BaseModel, Field
 
-from app.domain.entities import DomainEntity
 from app.domain.types import DecimalType
 
 

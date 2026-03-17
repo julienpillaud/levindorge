@@ -1,8 +1,8 @@
 from collections.abc import Iterator
 
 import pytest
-from cleanstack.infrastructure.mongodb.uow import MongoDBContext, MongoDBUnitOfWork
-from cleanstack.uow import CompositeUniOfWork
+from cleanstack.domain import CompositeUniOfWork
+from cleanstack.infrastructure.mongo.uow import MongoContext, MongoUnitOfWork
 
 from app.core.config.settings import AppEnvironment, Settings
 from app.core.context import Context
@@ -48,12 +48,12 @@ def store(store_factory: StoreFactory) -> Store:
 
 
 @pytest.fixture
-def mongo_uow(mongo_context: MongoDBContext) -> MongoDBUnitOfWork:
-    return MongoDBUnitOfWork(context=mongo_context)
+def mongo_uow(mongo_context: MongoContext) -> MongoUnitOfWork:
+    return MongoUnitOfWork(context=mongo_context)
 
 
 @pytest.fixture
-def uow(mongo_uow: MongoDBUnitOfWork) -> Iterator[CompositeUniOfWork]:
+def uow(mongo_uow: MongoUnitOfWork) -> Iterator[CompositeUniOfWork]:
     uow = CompositeUniOfWork(members=[mongo_uow])
     with uow.transaction():
         yield uow
@@ -62,8 +62,8 @@ def uow(mongo_uow: MongoDBUnitOfWork) -> Iterator[CompositeUniOfWork]:
 @pytest.fixture
 def context(
     settings: Settings,
-    mongo_context: MongoDBContext,
-    mongo_uow: MongoDBUnitOfWork,
+    mongo_context: MongoContext,
+    mongo_uow: MongoUnitOfWork,
     uow: Iterator[CompositeUniOfWork],
 ) -> Context:
     context = Context(

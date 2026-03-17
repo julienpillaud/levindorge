@@ -1,8 +1,7 @@
 from enum import StrEnum
 
+from cleanstack.entities import DomainEntity
 from pydantic import BaseModel
-
-from app.domain.entities import DomainEntity
 
 
 class ProducerType(StrEnum):

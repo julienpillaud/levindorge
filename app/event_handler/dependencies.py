@@ -1,8 +1,8 @@
 from functools import lru_cache
 from typing import Annotated
 
-from cleanstack.infrastructure.mongodb.uow import MongoDBContext, MongoDBUnitOfWork
-from cleanstack.uow import CompositeUniOfWork
+from cleanstack.domain import CompositeUniOfWork
+from cleanstack.infrastructure.mongo.uow import MongoContext, MongoUnitOfWork
 from fast_depends import Depends
 
 from app.core.config.settings import Settings
@@ -18,23 +18,23 @@ def get_settings() -> Settings:
 @lru_cache(maxsize=1)
 def get_mongo_context(
     settings: Annotated[Settings, Depends(get_settings)],
-) -> MongoDBContext:
-    return MongoDBContext.from_settings(
+) -> MongoContext:
+    return MongoContext.from_settings(
         host=settings.mongo_uri,
         database_name=settings.mongo_database,
     )
 
 
 def get_mongo_uow(
-    context: Annotated[MongoDBContext, Depends(get_mongo_context)],
-) -> MongoDBUnitOfWork:
-    return MongoDBUnitOfWork(context=context)
+    context: Annotated[MongoContext, Depends(get_mongo_context)],
+) -> MongoUnitOfWork:
+    return MongoUnitOfWork(context=context)
 
 
 def get_context(
     settings: Annotated[Settings, Depends(get_settings)],
-    mongo_context: Annotated[MongoDBContext, Depends(get_mongo_context)],
-    mongo_uow: Annotated[MongoDBUnitOfWork, Depends(get_mongo_uow)],
+    mongo_context: Annotated[MongoContext, Depends(get_mongo_context)],
+    mongo_uow: Annotated[MongoUnitOfWork, Depends(get_mongo_uow)],
 ) -> Context:
     return Context(
         settings=settings,

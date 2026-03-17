@@ -1,5 +1,5 @@
-from cleanstack.infrastructure.mongodb.uow import MongoDBContext, MongoDBUnitOfWork
-from cleanstack.uow import UnitOfWorkProtocol
+from cleanstack.domain import UnitOfWorkProtocol
+from cleanstack.infrastructure.mongo.uow import MongoContext, MongoUnitOfWork
 from pymongo.client_session import ClientSession
 
 from app.core.config.settings import Settings
@@ -17,7 +17,6 @@ from app.infrastructure.repository.origins import OriginRepository
 from app.infrastructure.repository.price_labels import PriceLabelRepository
 from app.infrastructure.repository.producers import ProducerRepository
 from app.infrastructure.repository.stores import StoreRepository
-from app.infrastructure.repository.users import UserRepository
 from app.infrastructure.repository.volumes import VolumeRepository
 from app.infrastructure.supabase.identity_provider import SupabaseIdentityProvider
 from app.infrastructure.tactill.manager import TactillManager
@@ -27,8 +26,8 @@ class Context(ContextProtocol):
     def __init__(
         self,
         settings: Settings,
-        mongo_context: MongoDBContext,
-        mongo_uow: MongoDBUnitOfWork | None = None,
+        mongo_context: MongoContext,
+        mongo_uow: MongoUnitOfWork | None = None,
     ):
         self.settings = settings
         self.mongo_context = mongo_context
@@ -52,13 +51,6 @@ class Context(ContextProtocol):
     @property
     def store_repository(self) -> StoreRepository:
         return StoreRepository(
-            database=self.mongo_context.database,
-            session=self._mongo_session,
-        )
-
-    @property
-    def user_repository(self) -> UserRepository:
-        return UserRepository(
             database=self.mongo_context.database,
             session=self._mongo_session,
         )

@@ -1,17 +1,19 @@
-from cleanstack.exceptions import NotFoundError
+import uuid
 
-from app.domain.caching import cached_command
-from app.domain.context import ContextProtocol
-from app.domain.deposits.entities import Deposit, DepositCategory, DepositCreate
-from app.domain.entities import (
+from cleanstack.domain import NotFoundError
+from cleanstack.entities import (
     EntityId,
+    FilterEntity,
     PaginatedResponse,
     Pagination,
     SortEntity,
     SortOrder,
 )
+
+from app.domain.caching import cached_command
+from app.domain.context import ContextProtocol
+from app.domain.deposits.entities import Deposit, DepositCategory, DepositCreate
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
-from app.domain.filters import FilterEntity
 from app.domain.logger import logger
 
 
@@ -28,7 +30,7 @@ def get_deposits_command(
             SortEntity(field="type", order=SortOrder.ASC),
             SortEntity(field="value", order=SortOrder.ASC),
         ],
-        pagination=Pagination(page=1, limit=300),
+        pagination=Pagination(page=1, size=300),
     )
 
 
@@ -38,6 +40,7 @@ def create_deposit_command(
     deposit_create: DepositCreate,
 ) -> Deposit:
     deposit = Deposit(
+        id=uuid.uuid7(),
         value=deposit_create.value,
         type=deposit_create.type,
         category=deposit_create.category,

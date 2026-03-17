@@ -1,5 +1,6 @@
 from typing import Annotated
 
+from cleanstack.entities import EntityId
 from fastapi import APIRouter, Body, Depends, status
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse, Response
@@ -7,7 +8,6 @@ from fastapi.templating import Jinja2Templates
 
 from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.domain.domain import Domain
-from app.domain.entities import EntityId
 from app.domain.stores.entities import Store
 
 router = APIRouter(prefix="/inventories", tags=["Inventories"])

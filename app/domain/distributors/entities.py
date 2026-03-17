@@ -1,4 +1,4 @@
-from app.domain.entities import DomainEntity
+from cleanstack.entities import DomainEntity
 
 
 class Distributor(DomainEntity):

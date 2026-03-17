@@ -1,16 +1,16 @@
-from cleanstack.exceptions import NotFoundError
-
-from app.domain.caching import cached_command
-from app.domain.categories.entities import Category
-from app.domain.commons.category_groups import CategoryGroupName
-from app.domain.context import ContextProtocol
-from app.domain.entities import (
+from cleanstack.domain import NotFoundError
+from cleanstack.entities import (
+    FilterEntity,
     PaginatedResponse,
     Pagination,
     SortEntity,
     SortOrder,
 )
-from app.domain.filters import FilterEntity
+
+from app.domain.caching import cached_command
+from app.domain.categories.entities import Category
+from app.domain.commons.category_groups import CategoryGroupName
+from app.domain.context import ContextProtocol
 
 
 @cached_command(response_model=PaginatedResponse[Category], tag="categories")
@@ -28,7 +28,7 @@ def get_categories_command(
     return context.category_repository.get_all(
         filters=filters,
         sort=[SortEntity(field="name", order=SortOrder.ASC)],
-        pagination=Pagination(page=1, limit=300),
+        pagination=Pagination(page=1, size=300),
     )
 
 

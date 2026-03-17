@@ -1,12 +1,33 @@
-from app.domain.inventories.entities import Inventory
+from cleanstack.infrastructure.mongo.base import MongoRepository, MongoRepositoryError
+from cleanstack.infrastructure.mongo.types import MongoDocument
+
+from app.domain.inventories.entities import Inventory, InventoryRecord
 from app.domain.inventories.repository import InventoryRepositoryProtocol
-from app.infrastructure.repository.base import MongoRepository
 
 
 class InventoryRepository(MongoRepository[Inventory], InventoryRepositoryProtocol):
     domain_entity_type = Inventory
     collection_name = "inventories"
     searchable_fields = ()
+
+    def create_records(self, record: list[InventoryRecord]) -> list[InventoryRecord]:
+        entities = self._dump_records(record)
+
+        result = self.database["inventory_records"].insert_many(entities)
+        if not result.acknowledged:
+            raise MongoRepositoryError("Failed to insert inventory records")
+
+        return record
+
+    @staticmethod
+    def _dump_records(records: list[InventoryRecord]) -> list[MongoDocument]:
+        documents: list[MongoDocument] = []
+        for record in records:
+            document = record.model_dump(exclude={"id"})
+            document["_id"] = record.id
+            documents.append(document)
+
+        return documents
 
 
 # class InventoryRepository(MongoRepositoryProtocol, InventoryRepositoryProtocol):

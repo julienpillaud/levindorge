@@ -3,7 +3,6 @@ import uuid
 from decimal import Decimal
 from typing import Any
 
-from bson import ObjectId
 from rich import print
 
 from app.core.context import Context
@@ -17,7 +16,6 @@ from app.domain.articles.utils import compute_article_margins, compute_recommend
 from app.domain.categories.entities import Category
 from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP, CategoryGroup
 from app.domain.commons.entities import PricingGroup
-from app.domain.entities import Pagination
 from app.domain.origins.entities import Origin
 from app.domain.stores.entities import Store
 from app.domain.types import StoreSlug
@@ -35,12 +33,11 @@ def create_articles(
     stores: list[Store],
     categories: list[Category],
     origins: list[Origin],
-) -> list[Article]:
+) -> dict[str, Article]:
     # Get previous articles
-    src_articles = list(src_context.mongo_context.database["articles"].find())
-
+    src_articles = src_context.mongo_context.database["articles"].find().to_list()
     # Create articles with the new entity model
-    articles = create_article_entities(
+    articles_mapping = create_article_entities(
         src_articles=src_articles,
         categories=categories,
         stores=stores,
@@ -48,23 +45,13 @@ def create_articles(
     )
 
     # Save articles in the database
-    dst_articles = dump_articles(articles)
-    result = dst_context.mongo_context.database["articles"].insert_many(dst_articles)
+    dst_articles = list(articles_mapping.values())
+    result = dst_context.article_repository.create_many(dst_articles)
 
-    count = len(result.inserted_ids)
+    count = len(result)
     print(f"Created {count} articles ({len(src_articles)})")
-    return dst_context.article_repository.get_all(
-        pagination=Pagination(page=1, limit=count)
-    ).items
 
-
-def dump_articles(articles: list[Article]) -> list[dict[str, Any]]:
-    dst_articles = []
-    for article in articles:
-        data = article.model_dump()
-        data["_id"] = ObjectId(data.pop("id"))
-        dst_articles.append(data)
-    return dst_articles
+    return articles_mapping
 
 
 def create_article_entities(
@@ -72,7 +59,7 @@ def create_article_entities(
     categories: list[Category],
     stores: list[Store],
     origins: list[Origin],
-) -> list[Article]:
+) -> dict[str, Article]:
     categories_map = {category.name: category for category in categories}
     pricing_groups_map = {
         category.name: category.pricing_group for category in categories
@@ -80,7 +67,8 @@ def create_article_entities(
     origins_map = {origin.name: origin for origin in origins}
 
     current_date = datetime.datetime.now(datetime.UTC)
-    dst_articles: list[Article] = []
+    # Mapping between a previous article and a new article
+    dst_articles: dict[str, Article] = {}
     for article in src_articles:
         category = categories_map[article["type"]]
         category_group = CATEGORY_GROUPS_MAP[category.category_group]
@@ -90,8 +78,7 @@ def create_article_entities(
             category_group=category_group,
         )
         dst_article = Article(
-            # Need to keep previous id
-            id=str(article["_id"]),
+            id=uuid.uuid7(),
             reference=uuid.uuid7(),
             category=article["type"],
             producer=producer,
@@ -116,7 +103,7 @@ def create_article_entities(
                 stores=stores,
             ),
         )
-        dst_articles.append(dst_article)
+        dst_articles[str(article["_id"])] = dst_article
 
     return dst_articles
 

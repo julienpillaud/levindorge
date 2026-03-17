@@ -1,7 +1,13 @@
 import datetime
 import uuid
 
-from cleanstack.exceptions import NotFoundError
+from cleanstack.domain import NotFoundError
+from cleanstack.entities import (
+    DEFAULT_PAGINATION_SIZE,
+    EntityId,
+    PaginatedResponse,
+    Pagination,
+)
 from pydantic import PositiveInt
 
 from app.domain.articles.entities import (
@@ -9,12 +15,6 @@ from app.domain.articles.entities import (
     ArticleCreateOrUpdate,
 )
 from app.domain.context import ContextProtocol
-from app.domain.entities import (
-    DEFAULT_PAGINATION_SIZE,
-    EntityId,
-    PaginatedResponse,
-    Pagination,
-)
 from app.domain.protocols.event_publisher import Event
 from app.domain.stores.entities import Store
 from app.domain.types import StoreSlug
@@ -29,7 +29,7 @@ def get_articles_command(
 ) -> PaginatedResponse[Article]:
     return context.article_repository.get_all(
         search=search,
-        pagination=Pagination(page=page, limit=limit),
+        pagination=Pagination(page=page, size=limit),
     )
 
 
@@ -58,10 +58,10 @@ def create_article_command(
         raise NotFoundError(f"Category '{data.category}' not found.")
 
     current_time = datetime.datetime.now(datetime.UTC)
-    reference = uuid.uuid7()
     article = Article(
+        id=uuid.uuid7(),
+        reference=uuid.uuid7(),
         **data.model_dump(),
-        reference=reference,
         created_at=current_time,
         updated_at=current_time,
     )

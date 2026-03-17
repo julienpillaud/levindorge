@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from cleanstack.context import BaseContextProtocol
+from cleanstack.domain import BaseContextProtocol
 
 from app.domain.articles.repository import ArticleRepositoryProtocol
 from app.domain.categories.repository import CategoryRepositoryProtocol
@@ -15,7 +15,6 @@ from app.domain.protocols.event_publisher import EventPublisherProtocol
 from app.domain.protocols.identity_provider import IdentityProviderProtocol
 from app.domain.protocols.pos_manager import POSManagerProtocol
 from app.domain.stores.repository import StoreRepositoryProtocol
-from app.domain.users.repository import UserRepositoryProtocol
 from app.domain.volumes.repository import VolumeRepositoryProtocol
 
 
@@ -25,9 +24,6 @@ class ContextProtocol(BaseContextProtocol, Protocol):
 
     @property
     def store_repository(self) -> StoreRepositoryProtocol: ...
-
-    @property
-    def user_repository(self) -> UserRepositoryProtocol: ...
 
     @property
     def category_repository(self) -> CategoryRepositoryProtocol: ...

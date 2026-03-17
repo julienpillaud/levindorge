@@ -1,6 +1,7 @@
+import uuid
+
 import pytest
-from bson import ObjectId
-from cleanstack.exceptions import NotFoundError
+from cleanstack.domain import NotFoundError
 
 from app.domain.articles.entities import ArticleVolume
 from app.domain.context import ContextProtocol
@@ -23,7 +24,7 @@ def test_delete_volume(
 
 def test_delete_volume_not_found(context: ContextProtocol) -> None:
     with pytest.raises(NotFoundError):
-        delete_volume_command(context, volume_id=str(ObjectId()))
+        delete_volume_command(context, volume_id=uuid.uuid7())
 
 
 def test_delete_volume_in_use(

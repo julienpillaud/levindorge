@@ -1,6 +1,7 @@
+import uuid
+
 import pytest
-from bson import ObjectId
-from cleanstack.exceptions import NotFoundError
+from cleanstack.domain import NotFoundError
 
 from app.domain.context import ContextProtocol
 from app.domain.exceptions import EntityInUseError
@@ -22,7 +23,7 @@ def test_delete_origin(
 
 def test_delete_origin_not_found(context: ContextProtocol) -> None:
     with pytest.raises(NotFoundError):
-        delete_origin_command(context, origin_id=str(ObjectId()))
+        delete_origin_command(context, origin_id=uuid.uuid7())
 
 
 def test_delete_origin_in_use(

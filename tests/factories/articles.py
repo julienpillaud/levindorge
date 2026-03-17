@@ -2,6 +2,7 @@ import random
 import uuid
 from typing import Any
 
+from cleanstack.factories.mongo import BaseMongoFactory
 from faker import Faker
 
 from app.domain.articles.entities import (
@@ -18,7 +19,6 @@ from app.infrastructure.repository.articles import ArticleRepository
 from tests.factories.categories import CategoryFactory
 from tests.factories.deposits import DepositFactory
 from tests.factories.distributors import DistributorFactory
-from tests.factories.mongo import BaseMongoFactory
 from tests.factories.origins import OriginFactory
 from tests.factories.producers import ProducerFactory
 from tests.factories.utils import generate_decimal
@@ -40,6 +40,7 @@ def generate_article_store_data() -> ArticleStoreData:
 
 def generate_article(faker: Faker, **kwargs: Any) -> Article:
     return Article(
+        id=kwargs["id"] if "id" in kwargs else uuid.uuid7(),
         reference=uuid.uuid7(),
         category=kwargs["category"],
         producer=kwargs["producer"],

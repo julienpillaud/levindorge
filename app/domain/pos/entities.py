@@ -1,9 +1,9 @@
 import datetime
 
+from cleanstack.entities import EntityId
 from pydantic import BaseModel
 
 from app.domain.articles.entities import Article
-from app.domain.entities import EntityId
 from app.domain.stores.entities import Store
 
 

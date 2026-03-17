@@ -1,16 +1,18 @@
-from app.domain.articles.entities import Article
-from app.domain.articles.repository import ArticleRepositoryProtocol
-from app.domain.deposits.entities import Deposit
-from app.domain.entities import (
+from cleanstack.entities import (
     EntityId,
+    FilterEntity,
+    FilterOperator,
     PaginatedResponse,
     SortEntity,
     SortOrder,
 )
-from app.domain.filters import FilterEntity, FilterOperator
+from cleanstack.infrastructure.mongo.base import MongoRepository, MongoRepositoryError
+
+from app.domain.articles.entities import Article
+from app.domain.articles.repository import ArticleRepositoryProtocol
+from app.domain.deposits.entities import Deposit
 from app.domain.origins.entities import Origin
 from app.domain.volumes.entities import Volume
-from app.infrastructure.repository.base import MongoRepository
 
 
 class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
@@ -26,6 +28,15 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
         "color",
         "taste",
     )
+
+    def create_many(self, articles: list[Article]) -> list[Article]:
+        entities = [self._to_database_entity(entity) for entity in articles]
+
+        result = self.collection.insert_many(entities)
+        if not result.acknowledged:
+            raise MongoRepositoryError("Failed to insert entities")
+
+        return articles
 
     def get_by_ids(self, article_ids: list[EntityId], /) -> PaginatedResponse[Article]:
         return self.get_all(

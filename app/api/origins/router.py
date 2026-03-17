@@ -1,5 +1,6 @@
 from typing import Annotated
 
+from cleanstack.entities import EntityId
 from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 from fastapi.responses import Response
@@ -8,7 +9,6 @@ from fastapi.templating import Jinja2Templates
 from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.api.origins.dtos import OriginDTO
 from app.domain.domain import Domain
-from app.domain.entities import EntityId
 from app.domain.origins.entities import OriginCreate
 
 router = APIRouter(prefix="/origins", tags=["Origins"])

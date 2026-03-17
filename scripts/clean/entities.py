@@ -1,6 +1,6 @@
+from cleanstack.entities import EntityId
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.domain.entities import EntityId
 from app.infrastructure.tactill.manager import TactillManager
 
 type ArticleReference = str

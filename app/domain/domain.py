@@ -1,6 +1,5 @@
-from cleanstack.domain import BaseDomain
-from cleanstack.handlers import CommandHandler
-from cleanstack.uow import UnitOfWorkProtocol
+from cleanstack.domain import BaseDomain, UnitOfWorkProtocol
+from cleanstack.domain.handlers import CommandHandler
 
 from app.domain.articles.commands import (
     create_article_command,

@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from io import StringIO
 from typing import TextIO
 
@@ -44,6 +45,7 @@ def create_small_price_labels(
 
         price_labels.append(
             PriceLabelSheet(
+                id=uuid.uuid7(),
                 type=PriceLabelType.SMALL,
                 store_name=store.name,
                 index=index,

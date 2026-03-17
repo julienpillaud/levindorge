@@ -1,4 +1,4 @@
-from cleanstack.exceptions import ConflictError
+from cleanstack.domain import ConflictError
 from fastapi import FastAPI, status
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse, RedirectResponse, Response

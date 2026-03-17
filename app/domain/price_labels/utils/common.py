@@ -1,12 +1,12 @@
 import itertools
 from collections.abc import Iterator
 
+from cleanstack.entities import Pagination
 from PIL.ImageFont import FreeTypeFont
 
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
 from app.domain.context import ContextProtocol
-from app.domain.entities import Pagination
 from app.domain.price_labels.entities import PriceLabelCreate, PriceLabelWrapper
 
 LARGE_LABELS_CATEGORY = {
@@ -56,7 +56,7 @@ def split_by_size(
     )
     articles_map = {article.id: article for article in articles.items}
     categories = context.category_repository.get_all(
-        pagination=Pagination(page=1, limit=300)
+        pagination=Pagination(page=1, size=300)
     )
     categories_map = {category.name: category for category in categories.items}
 

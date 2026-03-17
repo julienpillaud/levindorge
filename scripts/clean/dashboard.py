@@ -1,3 +1,5 @@
+import uuid
+
 from bson import ObjectId
 from rich import print
 
@@ -10,6 +12,7 @@ def get_stores(context: Context) -> list[Store]:
     result = list(context.mongo_context.database["shops"].find())
     return [
         Store(
+            id=uuid.uuid7(),
             name=store["name"],
             slug=store["username"],
             tactill_api_key=store["tactill_api_key"],
