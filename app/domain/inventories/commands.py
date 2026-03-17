@@ -1,17 +1,18 @@
 import datetime
+import uuid
 from collections import defaultdict
 from typing import Any
 
-from cleanstack.exceptions import NotFoundError
-
-from app.domain.context import ContextProtocol
-from app.domain.entities import (
+from cleanstack.domain import NotFoundError
+from cleanstack.entities import (
     EntityId,
     PaginatedResponse,
     Pagination,
     SortEntity,
     SortOrder,
 )
+
+from app.domain.context import ContextProtocol
 from app.domain.inventories.entities import Inventory, InventoryDetail, InventoryRecord
 from app.domain.stores.entities import Store
 
@@ -38,7 +39,7 @@ def get_inventory_command(
 def create_inventory_command(context: ContextProtocol, store: Store) -> Inventory:
     results = context.article_repository.get_all(
         sort=[SortEntity(field="type", order=SortOrder.ASC)],
-        pagination=Pagination(page=1, limit=1000),
+        pagination=Pagination(page=1, size=1000),
     )
     articles = results.items
     # TODO : get from category repository
@@ -56,17 +57,15 @@ def create_inventory_command(context: ContextProtocol, store: Store) -> Inventor
 
     records = []
     for article in articles:
-        stock_quantity = stock_quantity_mapping.get(article.id)
+        stock_quantity = stock_quantity_mapping.get(str(article.id))
         if stock_quantity is None:
             continue
 
         records.append(
             InventoryRecord(
+                id=uuid.uuid7(),
                 inventory_id="",
-                category=article.category,
-                display_name=article.display_name,
-                total_cost=article.total_cost,
-                deposit=article.deposit,
+                article_id=article.id,
                 stock_quantity=stock_quantity,
                 inventory_value=article.inventory_value(stock_quantity),
                 deposit_value=article.deposit_value(stock_quantity),
@@ -83,7 +82,7 @@ def create_inventory_command(context: ContextProtocol, store: Store) -> Inventor
 
     inventory_create = Inventory(
         id="",
-        date=datetime.datetime.now(datetime.UTC),
+        created_at=datetime.datetime.now(datetime.UTC),
         store=store.name,
         inventory=inventory_details,
         inventory_value=sum(

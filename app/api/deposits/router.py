@@ -1,5 +1,6 @@
 from typing import Annotated
 
+from cleanstack.entities import EntityId
 from fastapi import APIRouter, Depends
 from fastapi.requests import Request
 from fastapi.responses import Response
@@ -9,7 +10,6 @@ from app.api.dependencies import get_current_user, get_domain, get_templates
 from app.api.deposits.dtos import DepositDTO
 from app.domain.deposits.entities import DepositCreate
 from app.domain.domain import Domain
-from app.domain.entities import EntityId
 
 router = APIRouter(prefix="/deposits", tags=["Deposits"])
 

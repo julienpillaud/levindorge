@@ -2,10 +2,10 @@ from decimal import ROUND_CEILING, ROUND_HALF_EVEN
 from enum import Enum
 from typing import Literal
 
+from cleanstack.entities import DomainEntity
 from pydantic import BaseModel, ConfigDict
 
 from app.domain.commons.entities import PricingGroup
-from app.domain.entities import DomainEntity
 from app.domain.types import DecimalType, StoreName, StoreSlug
 
 

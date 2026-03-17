@@ -1,10 +1,13 @@
+import uuid
+
 from rich import print
 
 from app.core.context import Context
 from app.domain.articles.entities import Article
 from app.domain.categories.entities import Category
 from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP
-from app.domain.deposits.entities import Deposit, DepositType
+from app.domain.deposits.entities import Deposit, DepositCategory, DepositType
+from app.domain.types import DecimalType
 
 
 def create_deposits(
@@ -12,11 +15,15 @@ def create_deposits(
     categories: list[Category],
     articles: list[Article],
 ) -> None:
+    # Create deposits with the new entity model
     dst_deposits = create_deposit_entities(
         categories=categories,
         articles=articles,
     )
+
+    # Save deposits in the database
     result = dst_context.deposit_repository.create_many(dst_deposits)
+
     count = len(result)
     print(f"Created {count} deposits")
 
@@ -27,7 +34,7 @@ def create_deposit_entities(
 ) -> list[Deposit]:
     categories_map = {category.name: category for category in categories}
 
-    dst_deposits: list[Deposit] = []
+    dst_deposits: dict[tuple[DecimalType, DepositType, DepositCategory], Deposit] = {}
     for article in articles:
         if not article.deposit:
             continue
@@ -38,20 +45,31 @@ def create_deposit_entities(
             continue
 
         if article.deposit.unit:
-            deposit = Deposit(
-                value=article.deposit.unit,
-                type=DepositType.UNIT,
-                category=category_group.deposit.category,
+            key = (
+                article.deposit.unit,
+                DepositType.UNIT,
+                category_group.deposit.category,
             )
-            if deposit not in dst_deposits:
-                dst_deposits.append(deposit)
-        if article.deposit.case:
-            deposit = Deposit(
-                value=article.deposit.case,
-                type=DepositType.CASE,
-                category=category_group.deposit.category,
-            )
-            if deposit not in dst_deposits:
-                dst_deposits.append(deposit)
+            if key not in dst_deposits:
+                dst_deposits[key] = Deposit(
+                    id=uuid.uuid7(),
+                    value=article.deposit.unit,
+                    type=DepositType.UNIT,
+                    category=category_group.deposit.category,
+                )
 
-    return dst_deposits
+        if article.deposit.case:
+            key = (
+                article.deposit.case,
+                DepositType.CASE,
+                category_group.deposit.category,
+            )
+            if key not in dst_deposits:
+                dst_deposits[key] = Deposit(
+                    id=uuid.uuid7(),
+                    value=article.deposit.case,
+                    type=DepositType.CASE,
+                    category=category_group.deposit.category,
+                )
+
+    return list(dst_deposits.values())

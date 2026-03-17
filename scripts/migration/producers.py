@@ -1,10 +1,12 @@
+import uuid
+
 from rich import print
 
 from app.core.context import Context
 from app.domain.articles.entities import Article
 from app.domain.categories.entities import Category
 from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP
-from app.domain.producers.entities import Producer
+from app.domain.producers.entities import Producer, ProducerType
 
 
 def create_producers(
@@ -17,8 +19,10 @@ def create_producers(
         articles=articles,
         categories=categories,
     )
+
     # Save producers in the database
     result = dst_context.producer_repository.create_many(dst_producers)
+
     count = len(result)
     print(f"Created {count} producers")
 
@@ -29,7 +33,7 @@ def create_producer_entities(
 ) -> list[Producer]:
     categories_map = {category.name: category for category in categories}
 
-    dst_producers: list[Producer] = []
+    dst_producers: dict[tuple[str, ProducerType], Producer] = {}
     for article in articles:
         if not article.producer:
             continue
@@ -41,11 +45,12 @@ def create_producer_entities(
         if not category_group.producer.type:
             continue
 
-        producer = Producer(
-            name=article.producer,
-            type=category_group.producer.type,
-        )
-        if producer not in dst_producers:
-            dst_producers.append(producer)
+        key = (article.producer, category_group.producer.type)
+        if key not in dst_producers:
+            dst_producers[key] = Producer(
+                id=uuid.uuid7(),
+                name=article.producer,
+                type=category_group.producer.type,
+            )
 
-    return dst_producers
+    return list(dst_producers.values())

@@ -1,7 +1,7 @@
 import uuid
 
 import pytest
-from cleanstack.exceptions import NotFoundError
+from cleanstack.domain import NotFoundError
 
 from app.domain.articles.commands import create_article_command
 from app.domain.articles.entities import ArticleCreateOrUpdate
@@ -9,7 +9,6 @@ from app.domain.context import ContextProtocol
 from app.domain.stores.entities import Store
 from tests.factories.articles import ArticleFactory
 from tests.factories.categories import CategoryFactory
-from tests.utils import is_str_object_id
 
 
 def test_create_article(
@@ -23,7 +22,7 @@ def test_create_article(
 
     article = create_article_command(context, data=data)
 
-    assert is_str_object_id(article.id)
+    assert isinstance(article.id, uuid.UUID)
     assert isinstance(article.reference, uuid.UUID)
     assert article.category == data.category
     assert article.producer == data.producer

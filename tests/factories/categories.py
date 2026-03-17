@@ -1,10 +1,11 @@
 import random
 from typing import Any
 
+from cleanstack.factories.mongo import BaseMongoFactory
+
 from app.domain.categories.entities import Category
 from app.infrastructure.repository.categories import CategoryRepository
 from data.categories import CATEGORIES
-from tests.factories.mongo import BaseMongoFactory
 
 
 def generate_category(**kwargs: Any) -> Category:

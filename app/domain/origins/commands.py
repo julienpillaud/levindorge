@@ -1,14 +1,16 @@
-from cleanstack.exceptions import NotFoundError
+import uuid
 
-from app.domain.caching import cached_command
-from app.domain.context import ContextProtocol
-from app.domain.entities import (
+from cleanstack.domain import NotFoundError
+from cleanstack.entities import (
     EntityId,
     PaginatedResponse,
     Pagination,
     SortEntity,
     SortOrder,
 )
+
+from app.domain.caching import cached_command
+from app.domain.context import ContextProtocol
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 from app.domain.origins.entities import Origin, OriginCreate
 
@@ -17,7 +19,7 @@ from app.domain.origins.entities import Origin, OriginCreate
 def get_origins_command(context: ContextProtocol, /) -> PaginatedResponse[Origin]:
     return context.origin_repository.get_all(
         sort=[SortEntity(field="name", order=SortOrder.ASC)],
-        pagination=Pagination(page=1, limit=300),
+        pagination=Pagination(page=1, size=300),
     )
 
 
@@ -27,6 +29,7 @@ def create_origin_command(
     origin_create: OriginCreate,
 ) -> Origin:
     origin = Origin(
+        id=uuid.uuid7(),
         name=origin_create.name,
         code=origin_create.code,
         type=origin_create.type,

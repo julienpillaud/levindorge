@@ -1,4 +1,4 @@
-from cleanstack.exceptions import ConflictError, ForbiddenError
+from cleanstack.domain import ConflictError, ForbiddenError
 
 
 class UserUnauthorizedError(ForbiddenError):

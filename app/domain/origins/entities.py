@@ -1,9 +1,8 @@
 from enum import StrEnum
 from typing import Self
 
+from cleanstack.entities import DomainEntity
 from pydantic import BaseModel, model_validator
-
-from app.domain.entities import DomainEntity
 
 
 class OriginType(StrEnum):

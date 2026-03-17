@@ -1,11 +1,12 @@
 import random
+import uuid
 from typing import Any, cast
 
+from cleanstack.factories.mongo import BaseMongoFactory
 from faker import Faker
 
 from app.domain.origins.entities import Origin, OriginType
 from app.infrastructure.repository.origins import OriginRepository
-from tests.factories.mongo import BaseMongoFactory
 
 
 def generate_origin(faker: Faker, **kwargs: Any) -> Origin:
@@ -21,7 +22,12 @@ def generate_origin(faker: Faker, **kwargs: Any) -> Origin:
             name = kwargs["name"] if "name" in kwargs else faker.country()
             code = kwargs["code"] if "code" in kwargs else faker.country_code()
 
-    return Origin(name=name, code=code, type=origin_type)
+    return Origin(
+        id=kwargs["id"] if "id" in kwargs else uuid.uuid7(),
+        name=name,
+        code=code,
+        type=origin_type,
+    )
 
 
 class OriginFactory(BaseMongoFactory[Origin]):

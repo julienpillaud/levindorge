@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from io import StringIO
 from typing import TextIO
 
@@ -48,6 +49,7 @@ def create_large_price_labels(
 
         price_labels.append(
             PriceLabelSheet(
+                id=uuid.uuid7(),
                 type=PriceLabelType.LARGE,
                 store_name=store.name,
                 index=index,

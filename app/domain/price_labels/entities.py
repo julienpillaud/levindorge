@@ -1,11 +1,11 @@
 import datetime
 from enum import StrEnum
 
+from cleanstack.entities import DomainEntity, EntityId
 from pydantic import BaseModel
 
 from app.domain.articles.entities import Article
 from app.domain.commons.entities import PricingGroup
-from app.domain.entities import DomainEntity, EntityId
 from app.domain.types import StoreName
 
 

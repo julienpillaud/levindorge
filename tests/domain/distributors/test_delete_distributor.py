@@ -1,6 +1,7 @@
+import uuid
+
 import pytest
-from bson import ObjectId
-from cleanstack.exceptions import NotFoundError
+from cleanstack.domain import NotFoundError
 
 from app.domain.context import ContextProtocol
 from app.domain.distributors.commands import delete_distributor_command
@@ -22,7 +23,7 @@ def test_delete_distributor(
 
 def test_delete_distributor_not_found(context: ContextProtocol) -> None:
     with pytest.raises(NotFoundError):
-        delete_distributor_command(context, distributor_id=str(ObjectId()))
+        delete_distributor_command(context, distributor_id=uuid.uuid7())
 
 
 def test_delete_distributor_in_use(

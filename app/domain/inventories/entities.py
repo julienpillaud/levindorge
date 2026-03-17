@@ -2,20 +2,17 @@ import datetime
 from decimal import Decimal
 from typing import Annotated
 
+from cleanstack.entities import DomainEntity, EntityId
 from pydantic import BaseModel, Field, field_validator
 
-from app.domain.articles.entities import ArticleDeposit
 from app.domain.commons.entities import InventoryGroup
-from app.domain.entities import DomainEntity, EntityId
 from app.domain.types import DecimalType, StoreName
 
 
-class InventoryRecord(BaseModel):
+class InventoryRecord(DomainEntity):
     inventory_id: EntityId
-    category: str
-    display_name: str
-    total_cost: Annotated[DecimalType, Field(ge=0, decimal_places=4)]
-    deposit: ArticleDeposit | None
+    article_id: EntityId | None  # Can be None for legacy
+    article_name: str | None  # As id fallback for legacy
     stock_quantity: int
     inventory_value: Annotated[DecimalType, Field(ge=0, decimal_places=2)]
     deposit_value: Annotated[DecimalType | None, Field(ge=0, decimal_places=2)]
@@ -37,7 +34,7 @@ class InventoryDetail(BaseModel):
 
 
 class Inventory(DomainEntity):
-    date: datetime.datetime
+    created_at: datetime.datetime
     store: StoreName
     inventory: dict[InventoryGroup, InventoryDetail]
     inventory_value: Annotated[DecimalType, Field(ge=0, decimal_places=2)]

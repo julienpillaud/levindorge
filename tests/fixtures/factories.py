@@ -1,5 +1,5 @@
 import pytest
-from cleanstack.infrastructure.mongodb.uow import MongoDBContext
+from cleanstack.infrastructure.mongo.uow import MongoContext
 from faker import Faker
 
 from tests.factories.articles import ArticleFactory
@@ -18,42 +18,42 @@ def faker() -> Faker:
 
 
 @pytest.fixture
-def store_factory(faker: Faker, mongo_context: MongoDBContext) -> StoreFactory:
+def store_factory(faker: Faker, mongo_context: MongoContext) -> StoreFactory:
     return StoreFactory(faker=faker, context=mongo_context)
 
 
 @pytest.fixture
-def category_factory(faker: Faker, mongo_context: MongoDBContext) -> CategoryFactory:
+def category_factory(faker: Faker, mongo_context: MongoContext) -> CategoryFactory:
     return CategoryFactory(faker=faker, context=mongo_context)
 
 
 @pytest.fixture
-def article_factory(faker: Faker, mongo_context: MongoDBContext) -> ArticleFactory:
+def article_factory(faker: Faker, mongo_context: MongoContext) -> ArticleFactory:
     return ArticleFactory(faker=faker, context=mongo_context)
 
 
 @pytest.fixture
-def deposit_factory(faker: Faker, mongo_context: MongoDBContext) -> DepositFactory:
+def deposit_factory(faker: Faker, mongo_context: MongoContext) -> DepositFactory:
     return DepositFactory(faker=faker, context=mongo_context)
 
 
 @pytest.fixture
 def distributor_factory(
-    faker: Faker, mongo_context: MongoDBContext
+    faker: Faker, mongo_context: MongoContext
 ) -> DistributorFactory:
     return DistributorFactory(faker=faker, context=mongo_context)
 
 
 @pytest.fixture
-def origin_factory(faker: Faker, mongo_context: MongoDBContext) -> OriginFactory:
+def origin_factory(faker: Faker, mongo_context: MongoContext) -> OriginFactory:
     return OriginFactory(faker=faker, context=mongo_context)
 
 
 @pytest.fixture
-def producer_factory(faker: Faker, mongo_context: MongoDBContext) -> ProducerFactory:
+def producer_factory(faker: Faker, mongo_context: MongoContext) -> ProducerFactory:
     return ProducerFactory(faker=faker, context=mongo_context)
 
 
 @pytest.fixture
-def volume_factory(faker: Faker, mongo_context: MongoDBContext) -> VolumeFactory:
+def volume_factory(faker: Faker, mongo_context: MongoContext) -> VolumeFactory:
     return VolumeFactory(faker=faker, context=mongo_context)

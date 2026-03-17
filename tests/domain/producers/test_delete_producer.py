@@ -1,6 +1,7 @@
+import uuid
+
 import pytest
-from bson import ObjectId
-from cleanstack.exceptions import NotFoundError
+from cleanstack.domain import NotFoundError
 
 from app.domain.context import ContextProtocol
 from app.domain.exceptions import EntityInUseError
@@ -24,7 +25,7 @@ def test_delete_producer_not_found(
     context: ContextProtocol, producer_factory: ProducerFactory
 ) -> None:
     with pytest.raises(NotFoundError):
-        delete_producer_command(context, producer_id=str(ObjectId()))
+        delete_producer_command(context, producer_id=uuid.uuid7())
 
 
 def test_delete_producer_in_use(

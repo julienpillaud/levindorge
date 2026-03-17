@@ -4,6 +4,7 @@ from decimal import Decimal
 from enum import StrEnum
 from typing import Annotated
 
+from cleanstack.entities import DomainEntity
 from pydantic import (
     BaseModel,
     Field,
@@ -13,7 +14,6 @@ from pydantic import (
     PositiveInt,
 )
 
-from app.domain.entities import DomainEntity
 from app.domain.types import DecimalType, StoreSlug
 from app.domain.volumes.entities import VolumeUnit
 

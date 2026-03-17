@@ -1,6 +1,7 @@
+from cleanstack.entities import DomainEntity
+
 from app.domain.commons.category_groups import CategoryGroupName
 from app.domain.commons.entities import InventoryGroup, PricingGroup
-from app.domain.entities import DomainEntity
 
 
 class Category(DomainEntity):

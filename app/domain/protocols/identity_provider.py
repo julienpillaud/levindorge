@@ -1,6 +1,7 @@
 from typing import Protocol
 
-from app.domain.entities import EntityId
+from cleanstack.entities import EntityId
+
 from app.domain.users.entities import User, UserWithCredentials
 
 

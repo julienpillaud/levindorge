@@ -1,15 +1,17 @@
+import uuid
 from typing import Any
 
+from cleanstack.factories.mongo import BaseMongoFactory
 from faker import Faker
 
 from app.domain.stores.entities import Store
 from app.infrastructure.repository.stores import StoreRepository
 from data.stores import PRICING_CONFIG
-from tests.factories.mongo import BaseMongoFactory
 
 
 def generate_store(faker: Faker, **kwargs: Any) -> Store:
     return Store(
+        id=kwargs["id"] if "id" in kwargs else uuid.uuid7(),
         name=kwargs["name"] if "name" in kwargs else faker.word(),
         slug=kwargs["slug"] if "slug" in kwargs else faker.slug(),
         tactill_api_key=kwargs["tactill_api_key"]

@@ -1,15 +1,17 @@
-from cleanstack.exceptions import NotFoundError
+import uuid
 
-from app.domain.caching import cached_command
-from app.domain.context import ContextProtocol
-from app.domain.distributors.entities import Distributor
-from app.domain.entities import (
+from cleanstack.domain import NotFoundError
+from cleanstack.entities import (
     EntityId,
     PaginatedResponse,
     Pagination,
     SortEntity,
     SortOrder,
 )
+
+from app.domain.caching import cached_command
+from app.domain.context import ContextProtocol
+from app.domain.distributors.entities import Distributor
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
 
 
@@ -20,7 +22,7 @@ def get_distributors_command(
 ) -> PaginatedResponse[Distributor]:
     return context.distributor_repository.get_all(
         sort=[SortEntity(field="name", order=SortOrder.ASC)],
-        pagination=Pagination(page=1, limit=300),
+        pagination=Pagination(page=1, size=300),
     )
 
 
@@ -29,7 +31,7 @@ def create_distributor_command(
     /,
     name: str,
 ) -> Distributor:
-    distributor = Distributor(name=name)
+    distributor = Distributor(id=uuid.uuid7(), name=name)
     if context.distributor_repository.exists(name=name):
         raise AlreadyExistsError(
             f"`{distributor.display_name}` already exists.",

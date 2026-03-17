@@ -13,9 +13,9 @@
   {% set start_page = 1 %}
 {% endif %}
 
-{% if end_page > result.total_pages %}
-  {% set start_page = start_page - (end_page - result.total_pages) %}
-  {% set end_page = result.total_pages %}
+{% if end_page > result.pages %}
+  {% set start_page = start_page - (end_page - result.pages) %}
+  {% set end_page = result.pages %}
 {% endif %}
 
 {% if start_page < 1 %}

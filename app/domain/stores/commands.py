@@ -1,6 +1,7 @@
+from cleanstack.entities import PaginatedResponse
+
 from app.domain.caching import cached_command
 from app.domain.context import ContextProtocol
-from app.domain.entities import PaginatedResponse
 from app.domain.stores.entities import Store
 
 

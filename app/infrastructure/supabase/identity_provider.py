@@ -1,9 +1,9 @@
+from cleanstack.entities import EntityId
 from supabase import Client
 from supabase.lib.client_options import SyncClientOptions
 from supabase_auth.errors import AuthApiError
 
 from app.core.config.settings import Settings
-from app.domain.entities import EntityId
 from app.domain.protocols.identity_provider import IdentityProviderProtocol
 from app.domain.users.entities import User, UserCredentials, UserWithCredentials
 
@@ -26,7 +26,7 @@ class SupabaseIdentityProvider(IdentityProviderProtocol):
     def update_user_password(self, user_id: EntityId, password: str) -> User | None:
         try:
             response = self.client.auth.admin.update_user_by_id(
-                user_id,
+                str(user_id),
                 {"password": password},
             )
         except AuthApiError:

@@ -1,4 +1,4 @@
-from cleanstack.exceptions import NotFoundError
+from cleanstack.domain import NotFoundError
 
 from app.domain.context import ContextProtocol
 from app.domain.pos.entities import POSArticleRequest

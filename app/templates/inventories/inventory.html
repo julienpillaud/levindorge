@@ -5,12 +5,12 @@
 
       <div class="flex gap-2 opacity-50 text-xs font-medium">
         <i class="bi bi-calendar-event text-primary"></i>
-        {{ (inventory.date | local_timezone).strftime("%d/%m/%Y") }}
+        {{ (inventory.created_at | local_timezone).strftime("%d/%m/%Y") }}
       </div>
 
       <div class="flex gap-2 opacity-50 text-xs font-medium">
         <i class="bi bi-clock text-primary"></i>
-        {{ (inventory.date | local_timezone).strftime("%H:%M") }}
+        {{ (inventory.created_at | local_timezone).strftime("%H:%M") }}
       </div>
     </div>
 
@@ -37,22 +37,22 @@
 <div class="overflow-x-auto rounded-box border border-base-300">
   <table class="table table-pin-rows table-sm">
     <thead>
-      <tr>
-        <th>Catégorie</th>
-        <th>Valeur marchande</th>
-        <th>Valeur consigne</th>
-      </tr>
+    <tr>
+      <th>Catégorie</th>
+      <th>Valeur marchande</th>
+      <th>Valeur consigne</th>
+    </tr>
     </thead>
     <tbody>
-      {% for category, values in inventory.inventory.items() %}
-        <tr>
-          <td class="text-nowrap">{{ category }}</td>
-          <td>{{ values.inventory_value | strip_zeros }} €</td>
-          <td>
-            {% if values.deposit_value %}{{ values.deposit_value | strip_zeros }} €{% endif %}
-          </td>
-        </tr>
-      {% endfor %}
+    {% for category, values in inventory.inventory.items() %}
+      <tr>
+        <td class="text-nowrap">{{ category }}</td>
+        <td>{{ values.inventory_value | strip_zeros }} €</td>
+        <td>
+          {% if values.deposit_value %}{{ values.deposit_value | strip_zeros }} €{% endif %}
+        </td>
+      </tr>
+    {% endfor %}
     </tbody>
   </table>
 </div>

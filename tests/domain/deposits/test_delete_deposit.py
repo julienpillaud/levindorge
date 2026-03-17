@@ -1,8 +1,8 @@
+import uuid
 from decimal import Decimal
 
 import pytest
-from bson import ObjectId
-from cleanstack.exceptions import NotFoundError
+from cleanstack.domain import NotFoundError
 
 from app.domain.articles.entities import ArticleDeposit
 from app.domain.context import ContextProtocol
@@ -26,7 +26,7 @@ def test_delete_deposit(
 
 def test_delete_deposit_not_found(context: ContextProtocol) -> None:
     with pytest.raises(NotFoundError):
-        delete_deposit_command(context, deposit_id=str(ObjectId()))
+        delete_deposit_command(context, deposit_id=uuid.uuid7())
 
 
 def test_delete_deposit_in_use(

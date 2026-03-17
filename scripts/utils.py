@@ -1,11 +1,11 @@
-from cleanstack.infrastructure.mongodb.uow import MongoDBContext
+from cleanstack.infrastructure.mongo.uow import MongoContext
 
 from app.core.config.settings import Settings
 from app.core.context import Context
 
 
 def get_context(settings: Settings) -> Context:
-    mongo_context = MongoDBContext.from_settings(
+    mongo_context = MongoContext.from_settings(
         host=settings.mongo_uri,
         database_name=settings.mongo_database,
     )

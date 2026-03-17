@@ -1,16 +1,18 @@
-from cleanstack.exceptions import NotFoundError
+import uuid
 
-from app.domain.caching import cached_command
-from app.domain.context import ContextProtocol
-from app.domain.entities import (
+from cleanstack.domain import NotFoundError
+from cleanstack.entities import (
     EntityId,
+    FilterEntity,
     PaginatedResponse,
     Pagination,
     SortEntity,
     SortOrder,
 )
+
+from app.domain.caching import cached_command
+from app.domain.context import ContextProtocol
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
-from app.domain.filters import FilterEntity
 from app.domain.volumes.entities import Volume, VolumeCategory, VolumeCreate
 
 
@@ -27,7 +29,7 @@ def get_volumes_command(
             SortEntity(field="category", order=SortOrder.ASC),
             SortEntity(field="normalized_value", order=SortOrder.ASC),
         ],
-        pagination=Pagination(page=1, limit=300),
+        pagination=Pagination(page=1, size=300),
     )
 
 
@@ -37,6 +39,7 @@ def create_volume_command(
     volume_create: VolumeCreate,
 ) -> Volume:
     volume = Volume(
+        id=uuid.uuid7(),
         value=volume_create.value,
         unit=volume_create.unit,
         category=volume_create.category,

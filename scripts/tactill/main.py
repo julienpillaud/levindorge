@@ -1,7 +1,7 @@
 from typing import Annotated
 
 import typer
-from cleanstack.uow import CompositeUniOfWork
+from cleanstack.domain import CompositeUniOfWork
 from rich import print
 
 from app.core.config.settings import Settings
@@ -35,7 +35,7 @@ def migrate(database: Annotated[str, typer.Argument()] = "temp") -> None:
             if article.id not in tactill_articles_map:
                 print(f"Article not found: {article.display_name}")
 
-        for article in tactill_articles:
+        for article in tactill_articles:  # type: ignore
             if (
                 article.reference not in articles_map
                 and article.reference not in articles_not_found

@@ -1,7 +1,12 @@
 from typing import Protocol
 
-from app.domain.inventories.entities import Inventory
-from app.domain.protocols.repository import RepositoryProtocol
+from cleanstack.domain import RepositoryProtocol
+
+from app.domain.inventories.entities import Inventory, InventoryRecord
 
 
-class InventoryRepositoryProtocol(RepositoryProtocol[Inventory], Protocol): ...
+class InventoryRepositoryProtocol(RepositoryProtocol[Inventory], Protocol):
+    def create_records(
+        self,
+        record: list[InventoryRecord],
+    ) -> list[InventoryRecord]: ...

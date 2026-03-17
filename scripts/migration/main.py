@@ -40,13 +40,14 @@ def migrate(
     categories = create_categories(dst_context=dst_context)
     origins = create_origins(dst_context=dst_context)
 
-    articles = create_articles(
+    articles_mapping = create_articles(
         src_context=src_context,
         dst_context=dst_context,
         stores=stores,
         categories=categories,
         origins=origins,
     )
+    articles = list(articles_mapping.values())
 
     create_producers(
         dst_context=dst_context,
@@ -69,6 +70,7 @@ def migrate(
         src_context=src_context,
         dst_context=dst_context,
         stores=stores,
+        articles_mapping=articles_mapping,
     )
 
 

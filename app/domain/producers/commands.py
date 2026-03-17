@@ -1,16 +1,18 @@
-from cleanstack.exceptions import NotFoundError
+import uuid
 
-from app.domain.caching import cached_command
-from app.domain.context import ContextProtocol
-from app.domain.entities import (
+from cleanstack.domain import NotFoundError
+from cleanstack.entities import (
     EntityId,
+    FilterEntity,
     PaginatedResponse,
     Pagination,
     SortEntity,
     SortOrder,
 )
+
+from app.domain.caching import cached_command
+from app.domain.context import ContextProtocol
 from app.domain.exceptions import AlreadyExistsError, EntityInUseError
-from app.domain.filters import FilterEntity
 from app.domain.producers.entities import Producer, ProducerCreate, ProducerType
 
 
@@ -24,7 +26,7 @@ def get_producers_command(
     return context.producer_repository.get_all(
         filters=filters,
         sort=[SortEntity(field="name", order=SortOrder.ASC)],
-        pagination=Pagination(page=1, limit=300),
+        pagination=Pagination(page=1, size=300),
     )
 
 
@@ -33,7 +35,11 @@ def create_producer_command(
     /,
     producer_create: ProducerCreate,
 ) -> Producer:
-    producer = Producer(name=producer_create.name, type=producer_create.type)
+    producer = Producer(
+        id=uuid.uuid7(),
+        name=producer_create.name,
+        type=producer_create.type,
+    )
     if context.producer_repository.exists(producer):
         raise AlreadyExistsError(
             f"`{producer.display_name}` already exists.",

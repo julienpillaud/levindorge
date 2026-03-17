@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel
 
 from app.domain.commons.entities import PricingGroup
@@ -6,7 +8,7 @@ from app.domain.types import StoreSlug
 
 
 class StoreDTO(BaseModel):
-    id: str
+    id: uuid.UUID
     name: str
     slug: StoreSlug
     pricing_configs: dict[PricingGroup, PricingConfig]
