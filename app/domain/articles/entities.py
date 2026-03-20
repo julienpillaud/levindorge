@@ -1,85 +1,15 @@
 import datetime
 import uuid
 from decimal import Decimal
-from enum import StrEnum
 from typing import Annotated
 
 from cleanstack.entities import DomainEntity
-from pydantic import (
-    BaseModel,
-    Field,
-    NonNegativeFloat,
-    PlainSerializer,
-    PositiveFloat,
-    PositiveInt,
-)
+from pydantic import BaseModel, Field, NonNegativeFloat
 
+from app.domain.metadata.entities.deposits import ArticleDeposit
+from app.domain.metadata.entities.origins import ArticleOrigin
+from app.domain.metadata.entities.volumes import ArticleVolume
 from app.domain.types import DecimalType, StoreSlug
-from app.domain.volumes.entities import VolumeUnit
-
-LITER_TO_CENTILITER = 100
-
-
-class ColorCategory(StrEnum):
-    BEER = "beer"
-    WINE = "wine"
-
-
-class CategorizedStrEnum(StrEnum):
-    _category: ColorCategory
-
-    def __new__(cls, value: str, category: ColorCategory) -> CategorizedStrEnum:
-        obj = str.__new__(cls, value)
-        obj._value_ = value
-        obj._category = category
-        return obj
-
-    @property
-    def category(self) -> ColorCategory:
-        return self._category
-
-    @classmethod
-    def from_category[T: CategorizedStrEnum](
-        cls: type[T], category: ColorCategory, /
-    ) -> list[T]:
-        return [item for item in cls if item.category == category]
-
-
-class ArticleColor(CategorizedStrEnum):
-    AMBER_BEER = ("Ambrée", ColorCategory.BEER)
-    WHITE_BEER = ("Blanche", ColorCategory.BEER)
-    BLONDE_BEER = ("Blonde", ColorCategory.BEER)
-    BROWN_BEER = ("Brune", ColorCategory.BEER)
-    FRUITY_BEER = ("Fruitée", ColorCategory.BEER)
-    WHITE_WINE = ("Blanc", ColorCategory.WINE)
-    ROSE_WINE = ("Rosé", ColorCategory.WINE)
-    RED_WINE = ("Rouge", ColorCategory.WINE)
-
-
-class ArticleTaste(StrEnum):
-    OAKY = "Boisé"
-    SPICY = "Epicé"
-    FLORAL = "Floral"
-    FRUITY = "Fruité"
-    BRINY = "Iodé"
-    TOASTY = "Toasté"
-    PEATY = "Tourbé"
-    HERBAL = "Végétal"
-
-
-class ArticleVolume(BaseModel):
-    value: PositiveFloat
-    unit: VolumeUnit
-
-    def __str__(self) -> str:
-        formatted_value = str(self.value).rstrip("0").rstrip(".").replace(".", ",")
-        return f"{formatted_value} {self.unit}"
-
-
-class ArticleDeposit(BaseModel):
-    unit: Annotated[DecimalType, Field(gt=0, decimal_places=2)]
-    case: Annotated[DecimalType | None, Field(gt=0, decimal_places=2)]
-    packaging: PositiveInt | None
 
 
 class ArticleMargins(BaseModel):
@@ -97,7 +27,7 @@ class ArticleStoreData(BaseModel):
 
 class BaseArticle(BaseModel):
     category: str
-    producer: Annotated[str | None, Field(min_length=1, default=None)]
+    producer: str | None
     product: str
     cost_price: Annotated[DecimalType, Field(gt=0, decimal_places=4)]
     excise_duty: Annotated[
@@ -110,10 +40,10 @@ class BaseArticle(BaseModel):
     ]
     vat_rate: Annotated[DecimalType, Field(ge=0, le=100, decimal_places=2)]
     distributor: str
-    barcode: str = ""
-    origin: Annotated[str | None, Field(min_length=1)]
-    color: ArticleColor | None
-    taste: ArticleTaste | None
+    barcode: str
+    origin: ArticleOrigin | None
+    color: str | None
+    taste: str | None
     volume: ArticleVolume | None
     alcohol_by_volume: NonNegativeFloat | None
     deposit: ArticleDeposit | None
@@ -151,7 +81,7 @@ class ArticleCreateOrUpdate(BaseArticle):
 
 
 class Article(DomainEntity, BaseArticle):
-    reference: Annotated[uuid.UUID, PlainSerializer(str)]
+    reference: uuid.UUID
     created_at: datetime.datetime
     updated_at: datetime.datetime
     store_data: dict[StoreSlug, ArticleStoreData]

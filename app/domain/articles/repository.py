@@ -4,9 +4,6 @@ from cleanstack.domain import RepositoryProtocol
 from cleanstack.entities import EntityId, PaginatedResponse
 
 from app.domain.articles.entities import Article
-from app.domain.deposits.entities import Deposit
-from app.domain.origins.entities import Origin
-from app.domain.volumes.entities import Volume
 
 
 class ArticleRepositoryProtocol(RepositoryProtocol[Article], Protocol):
@@ -17,13 +14,3 @@ class ArticleRepositoryProtocol(RepositoryProtocol[Article], Protocol):
         article_ids: list[EntityId],
         /,
     ) -> PaginatedResponse[Article]: ...
-
-    def exists_by_producer(self, producer: str) -> bool: ...
-
-    def exists_by_distributor(self, distributor: str) -> bool: ...
-
-    def exists_by_deposit(self, deposit: Deposit) -> bool: ...
-
-    def exists_by_volume(self, volume: Volume) -> bool: ...
-
-    def exists_by_origin(self, origin: Origin) -> bool: ...

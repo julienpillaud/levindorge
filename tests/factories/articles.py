@@ -5,15 +5,12 @@ from typing import Any
 from cleanstack.factories.mongo import BaseMongoFactory
 from faker import Faker
 
-from app.domain.articles.entities import (
-    Article,
-    ArticleColor,
-    ArticleDeposit,
-    ArticleMargins,
-    ArticleStoreData,
-    ArticleTaste,
-    ArticleVolume,
-)
+from app.domain.articles.entities import Article, ArticleMargins, ArticleStoreData
+from app.domain.commons.entities import ArticleTaste
+from app.domain.metadata.entities.colors import ArticleColor
+from app.domain.metadata.entities.deposits import ArticleDeposit, DepositType
+from app.domain.metadata.entities.origins import ArticleOrigin
+from app.domain.metadata.entities.volumes import ArticleVolume
 from app.domain.stores.entities import Store
 from app.infrastructure.repository.articles import ArticleRepository
 from tests.factories.categories import CategoryFactory
@@ -111,13 +108,18 @@ class ArticleFactory(BaseMongoFactory[Article]):
             kwargs["category"] = self.category_factory.create_one().name
 
         if "producer" not in kwargs:
-            kwargs["producer"] = self.producer_factory.create_one().name
+            kwargs["producer"] = self.producer_factory.build().name
 
         if "distributor" not in kwargs:
-            kwargs["distributor"] = self.distributor_factory.create_one().name
+            kwargs["distributor"] = self.distributor_factory.build().name
 
         if "origin" not in kwargs:
-            kwargs["origin"] = self.origin_factory.create_one().name
+            origin = self.origin_factory.create_one()
+            kwargs["origin"] = ArticleOrigin(
+                name=origin.name,
+                code=origin.code,
+                type=origin.type,
+            )
 
         if "volume" not in kwargs:
             volume = self.volume_factory.create_one()
@@ -125,17 +127,9 @@ class ArticleFactory(BaseMongoFactory[Article]):
 
         if "deposit" not in kwargs:
             kwargs["deposit"] = ArticleDeposit(
-                unit=self.deposit_factory.create_one().value,
-                case=(
-                    self.deposit_factory.create_one().value
-                    if self.faker.boolean(chance_of_getting_true=50)
-                    else None
-                ),
-                packaging=(
-                    random.randint(1, 24)
-                    if self.faker.boolean(chance_of_getting_true=50)
-                    else None
-                ),
+                unit=self.deposit_factory.create_one(type=DepositType.UNIT).value,
+                case=self.deposit_factory.create_one(type=DepositType.CASE).value,
+                packaging=random.randint(1, 24),
             )
 
         if stores:

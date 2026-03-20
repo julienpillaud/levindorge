@@ -1,7 +1,4 @@
-import json
-from collections import defaultdict
 from decimal import Decimal
-from typing import Any
 
 from app.domain.articles.entities import ArticleMargins
 from app.domain.commons.entities import PricingGroup
@@ -82,55 +79,8 @@ def compute_article_margins(
     )
 
 
-def extract_volume(data: dict[str, Any]) -> None:
-    volume_data = data.pop("volume", None)
-    if not volume_data:
-        data["volume"] = None
-        return
-
-    try:
-        volume = json.loads(volume_data)
-        data["volume"] = volume
-    except json.decoder.JSONDecodeError as error:
-        raise ValueError("Invalid volume data") from error
-
-
-def extract_deposit_data(data: dict[str, Any]) -> None:
-    unit = data.pop("deposit.unit", None)
-    if not unit:
-        data["deposit"] = None
-        return
-
-    case = data.pop("deposit.case", None)
-    packaging = data.pop("deposit.packaging", None)
-
-    data["deposit"] = {
-        "unit": float(unit),
-        "case": float(case) if case else None,
-        "packaging": float(packaging) if packaging else None,
-    }
-
-
-def extract_deposit(data: dict[str, Any], key: str) -> float | None:
-    value = data.pop(key, None)
-    if not value:
-        return None
-    return float(value)
-
-
-def extract_shops(data: dict[str, Any]) -> None:
-    store_data: dict[str, dict[str, Any]] = defaultdict(dict)
-
-    for key, value in data.items():
-        if "store_data" not in key:
-            continue
-
-        parts = key.split(".")
-        store_slug = parts[1]
-        if "margins" in parts:
-            store_data[store_slug].setdefault("margins", {})
-            store_data[store_slug]["margins"][parts[3]] = float(value)
-            continue
-        store_data[store_slug][parts[2]] = float(value) if value else 0
-
-    data["store_data"] = store_data
+# def extract_deposit(data: dict[str, Any], key: str) -> float | None:
+#     value = data.pop(key, None)
+#     if not value:
+#         return None
+#     return float(value)

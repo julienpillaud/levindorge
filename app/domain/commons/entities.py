@@ -2,12 +2,23 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
-from app.domain.articles.entities import ArticleColor, ArticleTaste
-from app.domain.deposits.entities import Deposit
-from app.domain.distributors.entities import Distributor
-from app.domain.origins.entities import Origin
-from app.domain.producers.entities import Producer
-from app.domain.volumes.entities import Volume
+from app.domain.metadata.entities.colors import ArticleColor
+from app.domain.metadata.entities.deposits import Deposit
+from app.domain.metadata.entities.distributors import Distributor
+from app.domain.metadata.entities.origins import Origin
+from app.domain.metadata.entities.producers import Producer
+from app.domain.metadata.entities.volumes import ArticleVolume
+
+
+class ArticleTaste(StrEnum):
+    OAKY = "Boisé"
+    SPICY = "Epicé"
+    FLORAL = "Floral"
+    FRUITY = "Fruité"
+    BRINY = "Iodé"
+    TOASTY = "Toasté"
+    PEATY = "Tourbé"
+    HERBAL = "Végétal"
 
 
 class InventoryGroup(StrEnum):
@@ -46,5 +57,5 @@ class ViewData(BaseModel):
     colors: list[ArticleColor]
     tastes: list[ArticleTaste]
     origins: list[Origin]
-    volumes: list[Volume]
+    volumes: list[ArticleVolume]
     deposits: list[Deposit]

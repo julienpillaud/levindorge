@@ -51,7 +51,7 @@
   </a>
   <a
     class="join-item btn btn-sm shadow-sm {% if result.page == result.total_pages %}btn-disabled{% endif %}"
-    href="{{ url_for('get_articles') }}?page={{ result.total_pages }}{{ search_query }}"
+    href="{{ url_for('get_articles') }}?page={{ result.pages }}{{ search_query }}"
   >
     <i class="bi bi-chevron-double-right"></i>
   </a>

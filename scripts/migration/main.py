@@ -4,7 +4,7 @@ import typer
 from rich.console import Console
 
 from app.core.config.settings import Settings
-from scripts.migration.articles import create_articles
+from scripts.migration.articles.articles import create_articles
 from scripts.migration.categories import create_categories
 from scripts.migration.deposits import create_deposits
 from scripts.migration.distributors import create_distributors
@@ -38,31 +38,38 @@ def migrate(
 
     stores = create_stores(src_context=src_context, dst_context=dst_context)
     categories = create_categories(dst_context=dst_context)
-    origins = create_origins(dst_context=dst_context)
 
-    articles_mapping = create_articles(
+    articles = create_articles(
         src_context=src_context,
         dst_context=dst_context,
         stores=stores,
         categories=categories,
-        origins=origins,
     )
-    articles = list(articles_mapping.values())
 
+    create_origins(
+        src_context=src_context,
+        dst_context=dst_context,
+        articles=articles,
+    )
     create_producers(
+        src_context=src_context,
         dst_context=dst_context,
         articles=articles,
         categories=categories,
     )
-    create_distributors(dst_context=dst_context, articles=articles)
-    create_volume(
+    create_distributors(
+        src_context=src_context,
         dst_context=dst_context,
-        categories=categories,
+        articles=articles,
+    )
+    create_volume(
+        src_context=src_context,
+        dst_context=dst_context,
         articles=articles,
     )
     create_deposits(
+        src_context=src_context,
         dst_context=dst_context,
-        categories=categories,
         articles=articles,
     )
 
@@ -70,7 +77,6 @@ def migrate(
         src_context=src_context,
         dst_context=dst_context,
         stores=stores,
-        articles_mapping=articles_mapping,
     )
 
 

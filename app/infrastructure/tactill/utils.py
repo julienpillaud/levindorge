@@ -1,7 +1,8 @@
 from tactill.entities import TactillColor
 
-from app.domain.articles.entities import Article, ArticleColor
+from app.domain.articles.entities import Article
 from app.domain.commons.entities import InventoryGroup
+from app.domain.metadata.entities.colors import ArticleColor
 
 INCLUDED_CATEGORIES = [
     "ABSINTHE",

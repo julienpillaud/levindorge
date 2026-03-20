@@ -1,7 +1,7 @@
 from cleanstack.infrastructure.mongo.base import MongoRepository, MongoRepositoryError
 
-from app.domain.deposits.entities import Deposit
-from app.domain.deposits.repository import DepositRepositoryProtocol
+from app.domain.metadata.entities.deposits import Deposit
+from app.domain.metadata.repositories import DepositRepositoryProtocol
 
 
 class DepositRepository(MongoRepository[Deposit], DepositRepositoryProtocol):
@@ -17,6 +17,3 @@ class DepositRepository(MongoRepository[Deposit], DepositRepositoryProtocol):
             raise MongoRepositoryError("Failed to insert entities")
 
         return deposits
-
-    def exists(self, deposit: Deposit, /) -> bool:
-        return self.collection.count_documents(deposit.model_dump(exclude={"id"})) > 0
