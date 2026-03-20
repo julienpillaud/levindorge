@@ -13,31 +13,14 @@ from app.domain.categories.commands import (
     get_categories_command,
     get_category_by_name_command,
 )
-from app.domain.commons.commands import (
-    get_view_data_command,
-)
 from app.domain.context import ContextProtocol
-from app.domain.deposits.commands import (
-    create_deposit_command,
-    delete_deposit_command,
-    get_deposits_command,
-)
-from app.domain.distributors.commands import (
-    create_distributor_command,
-    delete_distributor_command,
-    get_distributors_command,
-)
 from app.domain.inventories.commands import (
     create_inventory_command,
     delete_inventory_command,
     get_inventories_command,
     get_inventory_command,
 )
-from app.domain.origins.commands import (
-    create_origin_command,
-    delete_origin_command,
-    get_origins_command,
-)
+from app.domain.metadata.commands import get_metadata_command
 from app.domain.pos.commands import (
     create_pos_article_command,
     delete_pos_article_command,
@@ -50,21 +33,11 @@ from app.domain.price_labels.commands import (
     get_price_labels_command,
     get_price_labels_sheet_command,
 )
-from app.domain.producers.commands import (
-    create_producer_command,
-    delete_producer_command,
-    get_producers_command,
-)
 from app.domain.stores.commands import get_stores_command
 from app.domain.users.commands import (
     refresh_token_command,
     sign_in_with_password_command,
     update_user_password_command,
-)
-from app.domain.volumes.commands import (
-    create_volume_command,
-    delete_volume_command,
-    get_volumes_command,
 )
 
 
@@ -73,33 +46,13 @@ class Domain(BaseDomain[UnitOfWorkProtocol, ContextProtocol]):
     sign_in_with_password = CommandHandler(sign_in_with_password_command)
     refresh_token = CommandHandler(refresh_token_command)
 
-    # common
-    get_view_data = CommandHandler(get_view_data_command)
+    get_metadata = CommandHandler(get_metadata_command)
+
     # stores
     get_stores = CommandHandler(get_stores_command)
     # categories
     get_categories = CommandHandler(get_categories_command)
     get_category_by_name = CommandHandler(get_category_by_name_command)
-    # producers
-    get_producers = CommandHandler(get_producers_command)
-    create_producer = CommandHandler(create_producer_command)
-    delete_producer = CommandHandler(delete_producer_command)
-    # distributors
-    get_distributors = CommandHandler(get_distributors_command)
-    create_distributor = CommandHandler(create_distributor_command)
-    delete_distributor = CommandHandler(delete_distributor_command)
-    # origins
-    get_origins = CommandHandler(get_origins_command)
-    create_origin = CommandHandler(create_origin_command)
-    delete_origin = CommandHandler(delete_origin_command)
-    # volumes
-    get_volumes = CommandHandler(get_volumes_command)
-    create_volume = CommandHandler(create_volume_command)
-    delete_volume = CommandHandler(delete_volume_command)
-    # deposits
-    get_deposits = CommandHandler(get_deposits_command)
-    create_deposit = CommandHandler(create_deposit_command)
-    delete_deposit = CommandHandler(delete_deposit_command)
     # articles
     get_articles = CommandHandler(get_articles_command)
     get_articles_by_ids = CommandHandler(get_articles_by_ids_command)

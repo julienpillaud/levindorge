@@ -1,13 +1,8 @@
-import uuid
 from enum import StrEnum
 
-from cleanstack.entities import DomainEntity
 from pydantic import BaseModel
 
-from app.domain.articles.entities import ColorCategory
-from app.domain.deposits.entities import DepositCategory
-from app.domain.producers.entities import ProducerType
-from app.domain.volumes.entities import VolumeCategory
+from app.domain.metadata.entities.producers import ProducerType
 
 
 class CategoryGroupName(StrEnum):
@@ -23,32 +18,26 @@ class ProducerData(BaseModel):
     type: ProducerType | None = None
 
 
-class ColorData(BaseModel):
-    category: ColorCategory
-
-
 class DepositData(BaseModel):
     unit: bool
     case: bool
     packaging: bool
-    category: DepositCategory
 
 
-class CategoryGroup(DomainEntity):
+class CategoryGroup(BaseModel):
     name: CategoryGroupName
     display_name: str
     producer: ProducerData | None
     origin: bool
-    color: ColorData | None
+    color: bool
     taste: bool
-    volume: VolumeCategory | None = None
+    volume: bool
     alcohol_by_volume: bool
     deposit: DepositData | None = None
 
 
 CATEGORY_GROUPS_MAP = {
     CategoryGroupName.BEER: CategoryGroup(
-        id=uuid.uuid7(),
         name=CategoryGroupName.BEER,
         display_name="Bière / Cidre",
         producer=ProducerData(
@@ -56,19 +45,13 @@ CATEGORY_GROUPS_MAP = {
             type=ProducerType.BREWERY,
         ),
         origin=True,
-        color=ColorData(category=ColorCategory.BEER),
+        color=True,
         taste=False,
-        volume=VolumeCategory.BEER,
+        volume=True,
         alcohol_by_volume=True,
-        deposit=DepositData(
-            unit=True,
-            case=True,
-            packaging=True,
-            category=DepositCategory.BEER,
-        ),
+        deposit=DepositData(unit=True, case=True, packaging=True),
     ),
     CategoryGroupName.KEG: CategoryGroup(
-        id=uuid.uuid7(),
         name=CategoryGroupName.KEG,
         display_name="Fût / Mini-fût",
         producer=ProducerData(
@@ -76,19 +59,13 @@ CATEGORY_GROUPS_MAP = {
             type=ProducerType.BREWERY,
         ),
         origin=True,
-        color=ColorData(category=ColorCategory.BEER),
+        color=True,
         taste=False,
-        volume=VolumeCategory.KEG,
+        volume=True,
         alcohol_by_volume=True,
-        deposit=DepositData(
-            unit=True,
-            case=False,
-            packaging=False,
-            category=DepositCategory.KEG,
-        ),
+        deposit=DepositData(unit=True, case=False, packaging=False),
     ),
     CategoryGroupName.SPIRIT: CategoryGroup(
-        id=uuid.uuid7(),
         name=CategoryGroupName.SPIRIT,
         display_name="Spiritueux",
         producer=ProducerData(
@@ -96,30 +73,29 @@ CATEGORY_GROUPS_MAP = {
             type=ProducerType.DISTILLERY,
         ),
         origin=True,
-        color=None,
+        color=False,
         taste=True,
-        volume=VolumeCategory.SPIRIT,
+        volume=True,
         alcohol_by_volume=True,
     ),
     CategoryGroupName.WINE: CategoryGroup(
-        id=uuid.uuid7(),
         name=CategoryGroupName.WINE,
         display_name="Vin",
         producer=ProducerData(display_name="Appellation"),
         origin=True,
-        color=ColorData(category=ColorCategory.WINE),
+        color=True,
         taste=False,
-        volume=VolumeCategory.WINE,
+        volume=True,
         alcohol_by_volume=False,
     ),
     CategoryGroupName.OTHER: CategoryGroup(
-        id=uuid.uuid7(),
         name=CategoryGroupName.OTHER,
         display_name="Autre",
         producer=None,
         origin=False,
-        color=None,
+        color=False,
         taste=False,
+        volume=False,
         alcohol_by_volume=False,
     ),
 }

@@ -1,6 +1,6 @@
 import uuid
 
-from app.domain.origins.entities import Origin, OriginType
+from app.domain.metadata.entities.origins import Origin, OriginType
 
 ORIGINS = [
     Origin(id=uuid.uuid7(), name="Afrique du Sud", code="ZA"),

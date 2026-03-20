@@ -36,7 +36,7 @@ def test_create_article(
     assert article.origin == data.origin
     assert article.color == data.color
     assert article.taste == data.taste
-    assert article.volume == data.volume
+    assert article.volume == article_data.volume
     assert article.alcohol_by_volume == data.alcohol_by_volume
     assert article.deposit == data.deposit
     assert article.created_at

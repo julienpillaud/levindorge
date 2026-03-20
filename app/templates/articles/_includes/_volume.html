@@ -9,7 +9,7 @@
         <option
           value='{"value":"{{ volume.value }}","unit":"{{ volume.unit }}"}'
           {% if volume_exists and article.volume.value == volume.value and article.volume.unit == volume.unit %}
-            selected
+          selected
           {% endif %}
         >
           {{ volume }}

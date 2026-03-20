@@ -5,7 +5,7 @@ from typing import Any, cast
 from cleanstack.factories.mongo import BaseMongoFactory
 from faker import Faker
 
-from app.domain.origins.entities import Origin, OriginType
+from app.domain.metadata.entities.origins import Origin, OriginType
 from app.infrastructure.repository.origins import OriginRepository
 
 

@@ -61,7 +61,7 @@ def create_article_view(
     stores = domain.get_stores()
     categories = domain.get_categories(category_group=category_group_name)
     category_group = CATEGORY_GROUPS_MAP[category_group_name]
-    data = domain.get_view_data(category_group=category_group)
+    data = domain.get_metadata(category_group=category_group)
     return templates.TemplateResponse(
         request=request,
         name="articles/_article.html",
@@ -102,7 +102,7 @@ def update_article_view(
     article = domain.get_article(article_id=article_id)
     category = domain.get_category_by_name(article.category)
     category_group = CATEGORY_GROUPS_MAP[category.category_group]
-    data = domain.get_view_data(category_group=category_group)
+    data = domain.get_metadata(category_group=category_group)
     return templates.TemplateResponse(
         request=request,
         name="articles/_article.html",

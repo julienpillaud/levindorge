@@ -3,7 +3,7 @@ from cleanstack.entities import EntityId, PaginatedResponse
 
 from app.core.config.settings import Settings
 from app.domain.context import ContextProtocol
-from app.domain.origins.commands import get_origins_command
+from app.domain.metadata.commands import get_origins_command
 from app.domain.price_labels.entities import PriceLabelCreate, PriceLabelSheet
 from app.domain.price_labels.utils.common import split_by_size
 from app.domain.price_labels.utils.large import create_large_price_labels

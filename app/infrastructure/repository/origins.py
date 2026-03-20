@@ -1,7 +1,7 @@
 from cleanstack.infrastructure.mongo.base import MongoRepository, MongoRepositoryError
 
-from app.domain.origins.entities import Origin
-from app.domain.origins.repository import OriginRepositoryProtocol
+from app.domain.metadata.entities.origins import Origin
+from app.domain.metadata.repositories import OriginRepositoryProtocol
 
 
 class OriginRepository(MongoRepository[Origin], OriginRepositoryProtocol):
@@ -17,10 +17,3 @@ class OriginRepository(MongoRepository[Origin], OriginRepositoryProtocol):
             raise MongoRepositoryError("Failed to insert entities")
 
         return origins
-
-    def get_by_name(self, name: str) -> Origin | None:
-        origin = self.collection.find_one({"name": name})
-        return self._to_domain_entity(origin) if origin else None
-
-    def exists(self, origin: Origin) -> bool:
-        return self.collection.count_documents(origin.model_dump(exclude={"id"})) > 0

@@ -4,7 +4,7 @@ from scripts.clean.main import app as clean_app
 from scripts.migration.main import app as migration_app
 from scripts.tactill.main import app as tactill_app
 
-app = typer.Typer()
+app = typer.Typer(pretty_exceptions_show_locals=False)
 
 app.add_typer(clean_app)
 app.add_typer(migration_app)

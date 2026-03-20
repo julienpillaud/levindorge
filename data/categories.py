@@ -203,6 +203,7 @@ CATEGORIES = [
     ),
 ]
 
+# Mapping of category names to their corresponding Tactill category
 CATEGORY_MAPPING = {
     "Bière": "BIÈRE",
     "Cidre": "CIDRE",

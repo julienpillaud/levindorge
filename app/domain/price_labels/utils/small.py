@@ -4,7 +4,7 @@ from io import StringIO
 from typing import TextIO
 
 from app.domain.articles.entities import Article
-from app.domain.origins.entities import Origin
+from app.domain.metadata.entities.origins import Origin
 from app.domain.price_labels.entities import (
     PriceLabelSheet,
     PriceLabelType,
@@ -109,7 +109,8 @@ def write_small_price_labels(
     sell_price_tag = f"{sell_price:.0f}".replace(".", ", ")
     file.write(f'<div class="priceClass">{sell_price_tag} €</div>\n')
     # ----------------------------------------------------------
-    origin = origins_map.get(article.origin or "")
+    article_origin = article.origin
+    origin = origins_map.get(article_origin.name if article_origin else "")
     file.write('<div class="flagClass">\n')
     if origin and origin.code:
         file.write(f'<img src="https://flagcdn.com/w160/{origin.code.lower()}.png">')

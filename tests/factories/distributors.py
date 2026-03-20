@@ -4,7 +4,7 @@ from typing import Any
 from cleanstack.factories.mongo import BaseMongoFactory
 from faker import Faker
 
-from app.domain.distributors.entities import Distributor
+from app.domain.metadata.entities.distributors import Distributor
 from app.infrastructure.repository.distributors import DistributorRepository
 
 

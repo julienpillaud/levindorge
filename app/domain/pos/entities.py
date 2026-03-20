@@ -1,6 +1,5 @@
 import datetime
 
-from cleanstack.entities import EntityId
 from pydantic import BaseModel
 
 from app.domain.articles.entities import Article
@@ -17,6 +16,6 @@ class POSArticle(BaseModel):
     created_at: datetime.datetime
     updated_at: datetime.datetime
     stock_quantity: int = 0
-    category_id: EntityId
+    category_id: str
     name: str
     reference: str

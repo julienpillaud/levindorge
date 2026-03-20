@@ -5,52 +5,43 @@ from rich import print
 
 from app.core.context import Context
 from app.domain.articles.entities import Article
-from app.domain.categories.entities import Category
-from app.domain.commons.category_groups import CATEGORY_GROUPS_MAP
-from app.domain.volumes.entities import Volume, VolumeCategory, VolumeUnit
+from app.domain.metadata.entities.volumes import Volume, VolumeUnit
+from scripts.migration.utils import to_database_entity
+
+COLLECTION_NAME = "volumes"
 
 
 def create_volume(
+    src_context: Context,
     dst_context: Context,
-    categories: list[Category],
     articles: list[Article],
 ) -> None:
-    # Create volumes with the new entity model
-    dst_volumes = create_volume_entities(
-        categories=categories,
-        articles=articles,
-    )
+    volumes = src_context.mongo_context.database[COLLECTION_NAME].find().to_list()
+    previous_count = len(volumes)
 
-    # Save volumes in the database
-    dst_context.volume_repository.create_many(dst_volumes)
+    # Create entities with the new model
+    entities = create_entities(articles)
 
-    count = len(dst_volumes)
-    print(f"Created {count} volumes")
+    # Save in the database
+    documents = [to_database_entity(entity) for entity in entities]
+    dst_context.mongo_context.database[COLLECTION_NAME].insert_many(documents)
+
+    result = dst_context.mongo_context.database[COLLECTION_NAME].find().to_list()
+    print(f"Created {len(result)} {COLLECTION_NAME} ({previous_count})")
 
 
-def create_volume_entities(
-    categories: list[Category],
-    articles: list[Article],
-) -> list[Volume]:
-    categories_map = {category.name: category for category in categories}
-
-    dst_volumes: dict[tuple[PositiveFloat, VolumeUnit, VolumeCategory], Volume] = {}
+def create_entities(articles: list[Article], /) -> list[Volume]:
+    dst_entities: dict[tuple[PositiveFloat, VolumeUnit], Volume] = {}
     for article in articles:
         if not article.volume:
             continue
 
-        category = categories_map[article.category]
-        category_group = CATEGORY_GROUPS_MAP[category.category_group]
-        if not category_group.volume:
-            continue
-
-        key = (article.volume.value, article.volume.unit, category_group.volume)
-        if key not in dst_volumes:
-            dst_volumes[key] = Volume(
+        key = (article.volume.value, article.volume.unit)
+        if key not in dst_entities:
+            dst_entities[key] = Volume(
                 id=uuid.uuid7(),
                 value=article.volume.value,
                 unit=VolumeUnit(article.volume.unit),
-                category=category_group.volume,
             )
 
-    return list(dst_volumes.values())
+    return list(dst_entities.values())
