@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.28.0](https://github.com/julienpillaud/levindorge/compare/0.27.0...0.28.0) (2026-03-20)
+
+
+### Features
+
+* add Redis instrumentation for logfire ([#123](https://github.com/julienpillaud/levindorge/issues/123)) ([e5d6504](https://github.com/julienpillaud/levindorge/commit/e5d65042c66ec5bf50cd25361c1ad6dccc7002f2))
+* refactor article entity ([#129](https://github.com/julienpillaud/levindorge/issues/129)) ([6591f35](https://github.com/julienpillaud/levindorge/commit/6591f35500de0630d0f6855ef7d164bd3e45c591))
+* remove unused MongoDB repository code ([#128](https://github.com/julienpillaud/levindorge/issues/128)) ([b0d3cfd](https://github.com/julienpillaud/levindorge/commit/b0d3cfdce630124e1e8248575a554eaa158ffc44))
+* replace custom MongoDB utilities with shared cleanstack modules ([#127](https://github.com/julienpillaud/levindorge/issues/127)) ([2cdc397](https://github.com/julienpillaud/levindorge/commit/2cdc397ea91bc0d18dcba3dd98881a2edc2b414c))
+* update dependencies and improve configurations ([#125](https://github.com/julienpillaud/levindorge/issues/125)) ([92f9f8f](https://github.com/julienpillaud/levindorge/commit/92f9f8fa26dcd0eede43790c40683c6a766ac4fa))
+* upgrade cleanstack to integrate new domain context and uow ([#126](https://github.com/julienpillaud/levindorge/issues/126)) ([b2873c7](https://github.com/julienpillaud/levindorge/commit/b2873c75dc6649d27734e2382e2e4cc2a81dddb0))
+
 ## [0.27.0](https://github.com/julienpillaud/levindorge/compare/0.26.0...0.27.0) (2026-01-26)
 
 
