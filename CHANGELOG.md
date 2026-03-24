@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.29.0](https://github.com/julienpillaud/levindorge/compare/0.28.0...0.29.0) (2026-03-24)
+
+
+### Features
+
+* add `previous_id` field to `Article` for retro compatibility ([#130](https://github.com/julienpillaud/levindorge/issues/130)) ([690f7ed](https://github.com/julienpillaud/levindorge/commit/690f7ed6e4313dc06487570aa45d26a0e47fc417))
+
 ## [0.28.0](https://github.com/julienpillaud/levindorge/compare/0.27.0...0.28.0) (2026-03-20)
 
 
