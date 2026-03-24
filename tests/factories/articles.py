@@ -6,10 +6,10 @@ from cleanstack.factories.mongo import BaseMongoFactory
 from faker import Faker
 
 from app.domain.articles.entities import Article, ArticleMargins, ArticleStoreData
-from app.domain.commons.entities import ArticleTaste
 from app.domain.metadata.entities.colors import ArticleColor
 from app.domain.metadata.entities.deposits import ArticleDeposit, DepositType
 from app.domain.metadata.entities.origins import ArticleOrigin
+from app.domain.metadata.entities.tastes import ArticleTaste
 from app.domain.metadata.entities.volumes import ArticleVolume
 from app.domain.stores.entities import Store
 from app.infrastructure.repository.articles import ArticleRepository
@@ -39,6 +39,7 @@ def generate_article(faker: Faker, **kwargs: Any) -> Article:
     return Article(
         id=kwargs["id"] if "id" in kwargs else uuid.uuid7(),
         reference=uuid.uuid7(),
+        previous_id=kwargs.get("previous_id"),
         category=kwargs["category"],
         producer=kwargs["producer"],
         product=kwargs["product"] if "product" in kwargs else faker.word(),
@@ -108,10 +109,10 @@ class ArticleFactory(BaseMongoFactory[Article]):
             kwargs["category"] = self.category_factory.create_one().name
 
         if "producer" not in kwargs:
-            kwargs["producer"] = self.producer_factory.build().name
+            kwargs["producer"] = self.producer_factory.create_one().name
 
         if "distributor" not in kwargs:
-            kwargs["distributor"] = self.distributor_factory.build().name
+            kwargs["distributor"] = self.distributor_factory.create_one().name
 
         if "origin" not in kwargs:
             origin = self.origin_factory.create_one()

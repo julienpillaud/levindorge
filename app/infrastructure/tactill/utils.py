@@ -108,8 +108,10 @@ def define_icon_text(article: Article) -> str:
 
 
 def define_color(display_group: InventoryGroup, article: Article) -> TactillColor:
-    if not article.color:
+    if not article.color or article.color not in ArticleColor:
         return TactillColor.GREEN
+
+    article_color = ArticleColor(article.color)
 
     match display_group:
         case (
@@ -118,7 +120,7 @@ def define_color(display_group: InventoryGroup, article: Article) -> TactillColo
             | InventoryGroup.KEG
             | InventoryGroup.MINI_KEG
         ):
-            return COLORS_MAPPING[article.color]
+            return COLORS_MAPPING[article_color]
         case InventoryGroup.RUM:
             return TactillColor.TEAL
         case InventoryGroup.WHISKY:
@@ -131,7 +133,7 @@ def define_color(display_group: InventoryGroup, article: Article) -> TactillColo
             | InventoryGroup.FORTIFIED_WINE
             | InventoryGroup.BIB
         ):
-            return COLORS_MAPPING[article.color]
+            return COLORS_MAPPING[article_color]
         case InventoryGroup.BOX:
             return TactillColor.MAGENTA
         case InventoryGroup.OTHER | InventoryGroup.FOOD:

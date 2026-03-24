@@ -91,12 +91,19 @@ class TactillManager(POSManagerProtocol):
         return taxes[0]
 
     def _get_article_by_reference(self, article: Article) -> TactillArticle:
+        if article.previous_id:
+            logfire.info(f"Searching article by previous id: {article.previous_id}")
+            reference = article.previous_id
+        else:
+            logfire.info(f"Searching article by reference: {article.reference.hex}")
+            reference = article.reference.hex
+
         query = QueryParams(
             limit=1,
             filters=[
                 FilterEntity(field="deprecated", value="false"),
                 FilterEntity(field="is_default", value="false"),
-                FilterEntity(field="reference", value=article.reference.hex),
+                FilterEntity(field="reference", value=reference),
             ],
         )
         articles = self.client.get_articles(query=query)
