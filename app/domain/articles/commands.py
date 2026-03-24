@@ -16,8 +16,7 @@ from app.domain.articles.entities import (
 )
 from app.domain.context import ContextProtocol
 from app.domain.protocols.event_publisher import Event
-from app.domain.stores.entities import Store
-from app.domain.types import StoreSlug
+from app.domain.stores.commands import get_stores_by_slug_command
 
 
 def get_articles_command(
@@ -57,17 +56,30 @@ def create_article_command(
     if not context.category_repository.get_by_name(data.category):
         raise NotFoundError(f"Category '{data.category}' not found.")
 
+    if data.producer and not context.producer_repository.get_by_name(data.producer):
+        raise NotFoundError(f"Producer '{data.producer}' not found.")
+
+    if not context.distributor_repository.get_by_name(data.distributor):
+        raise NotFoundError(f"Distributor '{data.distributor}' not found.")
+
+    if data.origin and not context.origin_repository.get_by_name(data.origin.name):
+        raise NotFoundError(f"Origin '{data.origin}' not found.")
+
     current_time = datetime.datetime.now(datetime.UTC)
     article = Article(
         id=uuid.uuid7(),
         reference=uuid.uuid7(),
+        previous_id=None,  # new articles use reference, not previous_id
         **data.model_dump(),
         created_at=current_time,
         updated_at=current_time,
     )
     created_article = context.article_repository.create(article)
 
-    stores = _get_stores(context, store_slugs=list(data.store_data.keys()))
+    stores = get_stores_by_slug_command(
+        context,
+        store_slugs=list(data.store_data.keys()),
+    )
     context.event_publisher.publish(
         events=[
             Event(
@@ -97,6 +109,8 @@ def update_article_command(
     article = Article(
         id=existing_article.id,
         **data.model_dump(),
+        # keep previous_id until while the app is not completely migrated
+        previous_id=existing_article.previous_id,
         reference=existing_article.reference,
         created_at=existing_article.created_at,
         updated_at=datetime.datetime.now(datetime.UTC),
@@ -104,7 +118,10 @@ def update_article_command(
 
     updated_article = context.article_repository.update(article)
 
-    stores = _get_stores(context, store_slugs=list(data.store_data.keys()))
+    stores = get_stores_by_slug_command(
+        context,
+        store_slugs=list(data.store_data.keys()),
+    )
     context.event_publisher.publish(
         events=[
             Event(
@@ -125,7 +142,10 @@ def delete_article_command(context: ContextProtocol, /, article_id: EntityId) ->
 
     context.article_repository.delete(article)
 
-    stores = _get_stores(context, store_slugs=list(article.store_data.keys()))
+    stores = get_stores_by_slug_command(
+        context,
+        store_slugs=list(article.store_data.keys()),
+    )
     context.event_publisher.publish(
         events=[
             Event(
@@ -135,17 +155,3 @@ def delete_article_command(context: ContextProtocol, /, article_id: EntityId) ->
             for store in stores
         ]
     )
-
-
-def _get_stores(
-    context: ContextProtocol,
-    /,
-    store_slugs: list[StoreSlug],
-) -> list[Store]:
-    stores: list[Store] = []
-    for store_slug in store_slugs:
-        store = context.store_repository.get_by_slug(store_slug)
-        if not store:
-            raise NotFoundError("Store not found.")
-        stores.append(store)
-    return stores

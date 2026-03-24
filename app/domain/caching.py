@@ -4,19 +4,21 @@ from collections.abc import Callable
 from functools import wraps
 from typing import Concatenate
 
-from pydantic import BaseModel
+from pydantic import TypeAdapter
 
 from app.domain.context import ContextProtocol
 from app.domain.logger import logger
 
-type Command[**P, R: BaseModel] = Callable[Concatenate[ContextProtocol, P], R]
+type Command[**P, R] = Callable[Concatenate[ContextProtocol, P], R]
 
 
-def cached_command[**P, R: BaseModel](
-    response_model: type[R],
+def cached_command[**P, R](
+    return_type: type[R],
     ttl: int = 3600,
     tag: str | None = None,
 ) -> Callable[[Command[P, R]], Command[P, R]]:
+    adapter = TypeAdapter(return_type)
+
     def decorator(func: Command[P, R]) -> Command[P, R]:
         @wraps(func)
         def wrapper(
@@ -29,12 +31,12 @@ def cached_command[**P, R: BaseModel](
             cached = context.cache_manager.get(key=key)
             if cached:
                 logger.debug(f"Cache hit for key: {key}")
-                return response_model.model_validate_json(cached)
+                return adapter.validate_json(cached)
 
             result = func(context, *args, **kwargs)
             context.cache_manager.set(
                 key=key,
-                value=result.model_dump_json(),
+                value=adapter.dump_json(result).decode(),
                 ttl=ttl,
                 tag=tag,
             )
@@ -45,7 +47,7 @@ def cached_command[**P, R: BaseModel](
     return decorator
 
 
-def build_cache_key[**P, R: BaseModel](
+def build_cache_key[**P, R](
     func: Command[P, R],
     *args: P.args,
     **kwargs: P.kwargs,

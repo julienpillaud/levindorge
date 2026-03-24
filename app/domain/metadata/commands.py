@@ -9,13 +9,13 @@ from pydantic import BaseModel
 
 from app.domain.caching import cached_command
 from app.domain.commons.category_groups import CategoryGroup
-from app.domain.commons.entities import ArticleTaste
 from app.domain.context import ContextProtocol
 from app.domain.metadata.entities.colors import ArticleColor
 from app.domain.metadata.entities.deposits import Deposit
 from app.domain.metadata.entities.distributors import Distributor
 from app.domain.metadata.entities.origins import Origin
 from app.domain.metadata.entities.producers import Producer, ProducerType
+from app.domain.metadata.entities.tastes import ArticleTaste
 from app.domain.metadata.entities.volumes import Volume
 
 
@@ -53,7 +53,7 @@ def get_colors(category_group: CategoryGroup) -> list[ArticleColor]:
     return ArticleColor.from_category(category_group.name)
 
 
-@cached_command(response_model=PaginatedResponse[Deposit], tag="deposits")
+@cached_command(return_type=PaginatedResponse[Deposit], tag="deposits")
 def get_deposits_command(context: ContextProtocol, /) -> PaginatedResponse[Deposit]:
     return context.deposit_repository.get_all(
         sort=[
@@ -64,7 +64,7 @@ def get_deposits_command(context: ContextProtocol, /) -> PaginatedResponse[Depos
     )
 
 
-@cached_command(response_model=PaginatedResponse[Distributor], tag="distributors")
+@cached_command(return_type=PaginatedResponse[Distributor], tag="distributors")
 def get_distributors_command(
     context: ContextProtocol,
     /,
@@ -75,7 +75,7 @@ def get_distributors_command(
     )
 
 
-@cached_command(response_model=PaginatedResponse[Origin], tag="origins")
+@cached_command(return_type=PaginatedResponse[Origin], tag="origins")
 def get_origins_command(context: ContextProtocol, /) -> PaginatedResponse[Origin]:
     return context.origin_repository.get_all(
         sort=[SortEntity(field="name", order=SortOrder.ASC)],
@@ -83,7 +83,7 @@ def get_origins_command(context: ContextProtocol, /) -> PaginatedResponse[Origin
     )
 
 
-@cached_command(response_model=PaginatedResponse[Producer], tag="producers")
+@cached_command(return_type=PaginatedResponse[Producer], tag="producers")
 def get_producers_command(
     context: ContextProtocol,
     /,
@@ -97,7 +97,7 @@ def get_producers_command(
     )
 
 
-@cached_command(response_model=PaginatedResponse[Volume], tag="volumes")
+@cached_command(return_type=PaginatedResponse[Volume], tag="volumes")
 def get_volumes_command(context: ContextProtocol, /) -> PaginatedResponse[Volume]:
     return context.volume_repository.get_all(
         sort=[SortEntity(field="normalized_value", order=SortOrder.ASC)],

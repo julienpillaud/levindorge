@@ -1,5 +1,5 @@
 from cleanstack.domain import BaseDomain, UnitOfWorkProtocol
-from cleanstack.domain.handlers import CommandHandler
+from cleanstack.domain.handlers import CommandHandler, QueryHandler
 
 from app.domain.articles.commands import (
     create_article_command,
@@ -46,17 +46,17 @@ class Domain(BaseDomain[UnitOfWorkProtocol, ContextProtocol]):
     sign_in_with_password = CommandHandler(sign_in_with_password_command)
     refresh_token = CommandHandler(refresh_token_command)
 
-    get_metadata = CommandHandler(get_metadata_command)
+    get_metadata = QueryHandler(get_metadata_command)
 
     # stores
-    get_stores = CommandHandler(get_stores_command)
+    get_stores = QueryHandler(get_stores_command)
     # categories
-    get_categories = CommandHandler(get_categories_command)
-    get_category_by_name = CommandHandler(get_category_by_name_command)
+    get_categories = QueryHandler(get_categories_command)
+    get_category_by_name = QueryHandler(get_category_by_name_command)
     # articles
-    get_articles = CommandHandler(get_articles_command)
-    get_articles_by_ids = CommandHandler(get_articles_by_ids_command)
-    get_article = CommandHandler(get_article_command)
+    get_articles = QueryHandler(get_articles_command)
+    get_articles_by_ids = QueryHandler(get_articles_by_ids_command)
+    get_article = QueryHandler(get_article_command)
     create_article = CommandHandler(create_article_command)
     update_article = CommandHandler(update_article_command)
     delete_article = CommandHandler(delete_article_command)

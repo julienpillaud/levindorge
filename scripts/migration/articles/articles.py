@@ -65,6 +65,7 @@ def create_article_entities(
         dst_article = Article(
             id=uuid.uuid7(),
             reference=uuid.uuid7(),
+            previous_id=str(article["_id"]),
             category=article["type"],
             producer=producer,
             product=product,

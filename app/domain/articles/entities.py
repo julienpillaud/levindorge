@@ -82,6 +82,7 @@ class ArticleCreateOrUpdate(BaseArticle):
 
 class Article(DomainEntity, BaseArticle):
     reference: uuid.UUID
+    previous_id: str | None  # for retro compatibility
     created_at: datetime.datetime
     updated_at: datetime.datetime
     store_data: dict[StoreSlug, ArticleStoreData]

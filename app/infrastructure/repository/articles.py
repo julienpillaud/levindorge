@@ -50,3 +50,7 @@ class ArticleRepository(MongoRepository[Article], ArticleRepositoryProtocol):
                 SortEntity(field="product", order=SortOrder.ASC),
             ],
         )
+
+    def get_by_id(self, entity_id: EntityId, /) -> Article | None:
+        result = self.collection.find_one({"_id": entity_id}, session=self.session)
+        return self._to_domain_entity(result) if result else None
